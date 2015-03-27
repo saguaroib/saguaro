@@ -18,7 +18,7 @@ repod.utility_quotes = {
 			div_class: "hover_post"
 		}
 		this.config = {
-			in_thread: ($("span.op_post > a[title='Quote']").length == 1) ? true : false
+			in_thread: ($("span.op_post").length == 1) ? true : false
 		}
 		if (repod.suite_settings) {
 			repod.suite_settings.info.push({menu:{category:'Quotes & Replying',read:this.backlinks.config.enabled,variable:'repod_utility_quotes_hover',label:'Quote preview',hover:'Enable inline quote previews'}});
@@ -36,7 +36,7 @@ repod.utility_quotes = {
 		update: function() {
 			$("a:contains('>>'):not(.inline_quote)").attr("class","inline_quote");
 			if (repod.utility_quotes.backlinks.config.enabled) {
-				prefix = repod.utility_quotes.backlinks.config.prefix;
+				var prefix = repod.utility_quotes.backlinks.config.prefix;
 				$("a.qu[title='Quote']").each(function () {
 					var this_post = $(this).text();
 					var num = $("a.inline_quote:not('.backlink')").filter(function(index) { return $(this).text() === ">>"+this_post; }).length; //http://stackoverflow.com/a/6673805

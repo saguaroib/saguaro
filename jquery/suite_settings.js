@@ -69,7 +69,7 @@ repod.suite_settings = {
 			});
 		},
 		spawn_category: function(cat,cat_safe) {
-			var cat_safe = (cat_safe) ? cat_safe : cat.replace(/[\A\W]/g,"-");
+			cat_safe = (cat_safe) ? cat_safe : cat.replace(/[\A\W]/g,"-");
 			!$("#populated_settings > #"+cat_safe).length && $("#populated_settings").append("<div id='"+cat_safe+"' style='display:none'><strong>"+cat+"</strong> <div class='grouptoggle' style='font-size:11px;display:inline'>(<a href='#'>On</a> | <a href='#'>Off</a>)</div><br /><span></span></div>"); 
 		},
 		popup: function(popup_data) {

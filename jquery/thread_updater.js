@@ -65,7 +65,7 @@ repod.thread_updater = {
 		}
 	},
 	load_thread_url: function(url) {
-		var url = (url) ? url : location.href;
+		url = (url) ? url : location.href;
 		var do_scroll = ($(window).scrollTop() + $(window).height() == repod_jsuite_getDocHeight()) ? true : false;
 		$.ajax({url:url,success:function(result){
 			var counter = 0;

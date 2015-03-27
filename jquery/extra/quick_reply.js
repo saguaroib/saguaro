@@ -7,7 +7,7 @@ repod.quick_reply = {
 			enabled: repod.suite_settings && !!repod_jsuite_getCookie("repod_quick_reply_enabled") ? repod_jsuite_getCookie("repod_quick_reply_enabled") === "true" : true,
 			persist: repod.suite_settings && !!repod_jsuite_getCookie("repod_quick_reply_persist") ? repod_jsuite_getCookie("repod_quick_reply_persist") === "true" : false,
 			autoreload: repod.suite_settings && !!repod_jsuite_getCookie("repod_quick_reply_autoreload") ? repod_jsuite_getCookie("repod_quick_reply_autoreload") === "true" : false,	
-			op: ($("span.op_post > a[title='Quote']").length == 1) ? parseInt($("span.op_post > a[title='Quote']").text()) : false
+			op: ($("span.op_post").length == 1) ? parseInt($("span.op_post > a.qu").eq(1).text()) : false
 		}
 		this.details = { baseurl: "", qrbasetitle: "", basename: "", baseemail: "" }
 		if (repod.suite_settings) {
@@ -19,7 +19,7 @@ repod.quick_reply = {
 	},
 	update: function() {
 		if (this.config.op) {
-			$(document).on("click", "a.qu[title=Quote]", function(e) {
+			$(document).on("click", "a.qu:odd", function(e) {
 				e.preventDefault();
 				if ($("div#repod_jquery_quick_reply_container").length > 0) {
 					insertAtCaret("repod_jquery_quick_reply_textarea",">>"+$(this).text()+"\n");
@@ -30,7 +30,7 @@ repod.quick_reply = {
 		}
 	},
 	spawn_window: function(input) {
-		var input = (input) ? ">>"+input+"\n" : "";	var op = this.config.op; 
+		input = (input) ? ">>"+input+"\n" : "";	var op = this.config.op; 
 		var qreply_clone = $("div.postarea > form").clone();
 		qreply_clone.find("form").attr({"id":"repod_jquick_reply_form"});
 		qreply_clone.find("td").css({"padding":"0px","margin":"0px"})
