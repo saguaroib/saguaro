@@ -20,7 +20,7 @@ Remember to look through older threads and see if your problem wasn't solved alr
 
 */
 include "config.php";
-include "strings_e.php";		//String resource file
+include "lang/".LANGUAGE.".php"; //Language file.
 
 $num = $_REQUEST['num'];
 $capkeyx = substr($_SESSION['capkey'],0,5);
