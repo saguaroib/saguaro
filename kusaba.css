@@ -1,0 +1,195 @@
+body {
+    background: url("bg.png") no-repeat fixed right top #EEFFEE;
+    color: #;
+    font-size: 12pt;
+}
+form {
+margin: 0px 0px 0px 0px; 
+}
+a.qu {
+    color: #800000;
+    font-size: 12pt;
+    text-decoration: none;
+}
+a.qu:hover {
+    color: #800000;
+    font-size: 12pt;
+    font-weight: bold;
+    text-decoration: none;
+}
+a.qu:visited {
+    color: #800000;
+    font-size: 12pt;
+    text-decoration: none;
+}
+a {
+    background: inherit;
+    color: #345C34;
+    font-family: serif;
+    text-decoration: underline;
+}
+a:visited {
+    background: inherit;
+    color: #345C34;
+    font-family: serif;
+    text-decoration: underline;
+}
+a:hover {
+    background: inherit;
+    color: #117743;
+    font-family: serif;
+    text-decoration: underline;
+}
+.adminbar {
+    background: inherit;
+    clear: both;
+    float: right;
+    text-align: right;
+}
+.logo {
+    background: inherit;
+    clear: both;
+    color: #117743;
+    font-size: 24pt;
+    text-align: center;
+    width: 100%;
+}
+.theader {
+    background: none repeat scroll 0 0 #00E010;
+    color: #FFFFFF;
+    width: 100%;
+}
+.headsub {
+    background: inherit;
+    color: #666666;
+    font-family: sans-serif;
+    font-size: 11px;
+    text-align: center;
+}
+.boardlist {
+    background: inherit;
+    color: #000000;
+    text-align: left;
+}
+.postarea {
+    background: inherit;
+}
+.rules {
+    font-family: sans-serif;
+    font-size: 10px;
+}
+.postblock {
+    background: none repeat scroll 0 0 #88DD88;
+    color: #800000;
+    font-weight: 800;
+}
+.footer {
+    font-family: serif;
+    font-size: 12px;
+    text-align: center;
+}
+.passvalid {
+    background: none repeat scroll 0 0 #EEAA88;
+    color: #FFFFFF;
+    text-align: center;
+    width: 100%;
+}
+.dellist {
+    background: inherit;
+    text-align: center;
+}
+.delbuttons {
+    background: inherit;
+    padding-bottom: 4px;
+    text-align: center;
+}
+.managehead {
+    background: none repeat scroll 0 0 #0F8FE1;
+    color: #800000;
+    font-family: sans-serif;
+    font-size: 14px;
+    padding: 0;
+}
+.postlists {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #800000;
+    padding: 0;
+    width: 100%;
+}
+.row1 {
+    background: none repeat scroll 0 0 #9AD2F6;
+    color: #800000;
+    font-family: sans-serif;
+    font-size: 12px;
+}
+.row2 {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #800000;
+    font-family: sans-serif;
+    font-size: 12px;
+}
+.unkfunc {
+    color: #789922;
+}
+.filesize {
+    font-family: serif;
+    font-size: 16px;
+    text-decoration: none;
+}
+.filetitle {
+    background: inherit;
+    color: #0F5D0C;
+    font-family: serif;
+    font-size: 18px;
+    font-weight: 800;
+}
+.postername {
+    background: inherit;
+    color: #117743;
+    font-family: serif;
+    font-size: 16px;
+}
+.oldpost {
+    background: inherit;
+    color: #CC1105;
+    font-family: serif;
+    font-size: 18px;
+    font-weight: 800;
+}
+.omittedposts {
+    background: inherit;
+    color: #666666;
+    font-family: serif;
+    font-size: 11px;
+    font-weight: 800;
+}
+.reply {
+    background: none repeat scroll 0 0 #DAF0D6;
+    color: #800000;
+    font-family: serif;
+}
+.doubledash {
+    clear: both;
+    float: left;
+    vertical-align: top;
+}
+.replytitle {
+    background: inherit;
+    color: #0F5D0C;
+    font-family: serif;
+    font-size: 18px;
+    font-weight: 800;
+}
+.commentpostername {
+    background: inherit;
+    color: #117743;
+    font-family: serif;
+    font-size: 16px;
+    font-weight: 800;
+}
+.thumbnailmsg {
+    background: inherit;
+    color: #800000;
+    font-family: sans-serif;
+    font-size: 9px;
+}
