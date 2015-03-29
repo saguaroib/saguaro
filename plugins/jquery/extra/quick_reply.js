@@ -54,7 +54,7 @@ repod.quick_reply = {
 		repod.quick_reply.details.qrbasetitle = "Quick Reply - Thread No. "+op;
 		qreply_clone.find("textarea").attr("id","repod_jquery_quick_reply_textarea").removeAttr("cols").css({"width":"300px","min-width":"300px"}).parent().prev("td").remove();
 		$("div#repod_jquery_quick_reply_container").remove();
-		$("body").append("<div style='max-width:310px;position:fixed;right:0px;top:100px' id='repod_jquery_quick_reply_container' class='reply'><div id='repod_jquery_quick_reply_container_title' class='theader' style='text-align:center;width:100%;cursor:move'><small><strong>"+repod.quick_reply.details.qrbasetitle+"</strong></small><img id='r_qr_close' style='float:right;cursor:pointer;position:relative;right:5px;font-size:small' src='jquery/close.jpg' title='Close' alt='[X]'></div></div>")
+		$("body").append("<div style='max-width:310px;position:fixed;right:0px;top:100px' id='repod_jquery_quick_reply_container' class='reply'><div id='repod_jquery_quick_reply_container_title' class='theader' style='text-align:center;width:100%;cursor:move'><small><strong>"+repod.quick_reply.details.qrbasetitle+"</strong></small><img id='r_qr_close' style='float:right;cursor:pointer;position:relative;right:5px;font-size:small' src='plugins/jquery/close.jpg' title='Close' alt='[X]'></div></div>")
 		$("div#repod_jquery_quick_reply_container").append("<span style='max-width:300px' id='repod_jquery_quick_reply_window'></span>");
 		$("span#repod_jquery_quick_reply_window").append(qreply_clone);
 		$("img#qr_captcha").on("click", function() { $(this).attr("src",repod.quick_reply.details.baseurl+"?"+new Date().getTime()); });	

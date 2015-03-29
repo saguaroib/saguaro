@@ -1,4 +1,4 @@
-<?
+<?php
 /*	this method (ereg_replace...) didn't really worked, so i just changed it to the one you see in
 here and the other tripcodes script. PROTIP: i will leave you the last one (the other 2 came with this
 file), just go and try it out... you'll get a nice surprise xD

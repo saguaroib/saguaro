@@ -12,7 +12,7 @@ This will help explain things a little bit while you set up your new image board
 -kusaba.css       [This file determines the look of your board. {another style}]
 -img.css	  [This file makes the thumbnails in the admin panel work.]
 -imgboard.php     [This file is essentially the brain of the board, {This is your brain on drugs.}]
--gif2png          [Only here because it has to be (i think)]
+-gif2png          Creates the static thumbnail for animated (GIF) images.
 -php_captcha.php  [This creates captcha images]
 -img.jpg	  [This is used by php_captcha.php]
 -styleswitch.js	  [This is the javascript that adds the stylesheet switcher]
@@ -61,8 +61,8 @@ If you want any more help than this with making the board links, Google 'HTML Tu
 ========================
 ====Bare Necessities====
 ========================
-+php installed {not sure which version, but the newer the better-maybe}
-+mysql installed {again not sure, newer = better-maybe}
++PHP 5.x.x installed
++MySQL Version 4.0 or higher
 
 ============
 ====Tips====
