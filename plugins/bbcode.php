@@ -1,4 +1,4 @@
-<?
+<?php
     $com = preg_replace("/\[b\](.*)\[\/b\]/Usi", "<b>\\1</b>", $com);
     $com = preg_replace("/\[u\](.*)\[\/u\]/Usi", "<u>\\1</u>", $com);
     $com = preg_replace("/\[i\](.*)\[\/i\]/Usi", "<i>\\1</i>", $com);

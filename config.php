@@ -1,4 +1,4 @@
-<? 
+<?php
 //Essentials - You NEED to change these, or at least make sure they're good
 define(SQLLOG, 'CHANGEME');									//Table (NOT DATABASE) used by image board
 define(SQLHOST, 'CHANGEME');							//MySQL server address, usually localhost
@@ -82,6 +82,7 @@ define(PHP_SELF, 'imgboard.php');						//Name of main script file
 define(PHP_SELF2, 'index.html');						//Name of main htm file
 define(PHP_EXT, '.html');								//Extension used for board pages after first
 define(JS_PATH, 'jquery'); 								//relative path from imgboard.php of the jquery folder without a trailing slash
+define(PLUG_PATH, 'plugins');                              //Plugins folder path without the trailing slash
 
 //Even more settings - there can never be enough
 define(S_OMITT_NUM, '5');								//number of posts to display in each thread on the index

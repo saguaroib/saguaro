@@ -15,7 +15,7 @@ repod.suite_settings = {
 	spawn: {
 		settings_window: function() {
 			$("body").append("<div id='settings_container' style='position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25);'><div style='display:table-cell;vertical-align:middle;height:inherit'><div id='settings_window' class='reply' style='max-height:480px;width:"+repod.suite_settings.config.width+"px;overflow:auto;margin-left:auto;margin-right:auto;border-style:solid;border-width:1px;padding:5px 0px 5px 0px;text-align:center;'></div></div></div>");
-			$("#settings_window").append("<strong>Settings</strong> <img id='close' style='float:right;cursor:pointer;position:relative;top:5px;right:5px;' src='jquery/close.jpg' title='Close' alt='[X]'></img><hr/><div id='populated_settings' style='text-align:left;padding:0px 3px 0px 3px;'></div><hr /><input type='submit' value='Save'> <input type='submit' value='Reset'></input><br /><span style='font-size:10px'>Requires cookies. See source for integration instructions.</span>");
+			$("#settings_window").append("<strong>Settings</strong> <img id='close' style='float:right;cursor:pointer;position:relative;top:5px;right:5px;' src='plugins/jquery/close.jpg' title='Close' alt='[X]'></img><hr/><div id='populated_settings' style='text-align:left;padding:0px 3px 0px 3px;'></div><hr /><input type='submit' value='Save'> <input type='submit' value='Reset'></input><br /><span style='font-size:10px'>Requires cookies. See source for integration instructions.</span>");
 			$("#settings_container").on("click", function() { $(this).remove(); });
 			$("#settings_window").on("click", function(event) {	event.stopPropagation(); });
 			$("img#close").on("click", function() { $("div#settings_container").remove(); });
@@ -24,7 +24,7 @@ repod.suite_settings = {
 		popup: function(popup_data) {
 			if (popup_data["type"] !== "function") {
 				$("body").append("<div id='settings_popup_container' style='position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25);'><div style='display:table-cell;vertical-align:middle;height:inherit'><div id='settings_popup_window' class='reply' style='max-height:480px;width:"+repod.suite_settings.config.width+"px;overflow:auto;margin-left:auto;margin-right:auto;border-style:solid;border-width:1px;padding:5px 0px 5px 0px;text-align:center;'></div></div></div>");
-				$("#settings_popup_window").append("<strong>"+popup_data["title"]+"</strong> <img id='close' style='float:right;cursor:pointer;position:relative;top:5px;right:5px;' src='jquery/close.jpg' title='Close' alt='[X]'></img><hr/><div id='pop_content_area' style='text-align:left;padding:0px 3px 0px 3px;'></div><hr />");
+				$("#settings_popup_window").append("<strong>"+popup_data["title"]+"</strong> <img id='close' style='float:right;cursor:pointer;position:relative;top:5px;right:5px;' src='plugins/jquery/close.jpg' title='Close' alt='[X]'></img><hr/><div id='pop_content_area' style='text-align:left;padding:0px 3px 0px 3px;'></div><hr />");
 				$("#settings_popup_container").on("click", function() { $(this).remove(); });
 				$("#settings_popup_window").on("click", function(event) { event.stopPropagation(); });
 				$("#settings_popup_window").append(repod.suite_settings.populate.popup_footer(popup_data["type"]));
