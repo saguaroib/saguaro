@@ -23,6 +23,6 @@ repod.image_toolbar = {
 	},
 	format: function(a) {
 		var url = location.href.substring(0, location.href.lastIndexOf("/")) + "/" + $(a).parent().attr('href');
-		return " <a class='searchgoogle' href='http://www.google.com/searchbyimage?image_url="+ url +"'><img src='jquery/gis.jpg' alt='[Google]' /></a> <a class='searchiqdb' href='http://iqdb.org/?url="+ url +"'><img src='jquery/iqdb.jpg' alt='[IQDB]' /></a>";
+		return " <a class='searchgoogle' href='http://www.google.com/searchbyimage?image_url="+ url +"'><img src='plugins/jquery/gis.jpg' alt='[Google]' /></a> <a class='searchiqdb' href='http://iqdb.org/?url="+ url +"'><img src='plugins/jquery/iqdb.jpg' alt='[IQDB]' /></a>";
 	}
 };

@@ -81,7 +81,7 @@ define(LOG_MAX,  '1500');								//Maxium number of entries
 define(PHP_SELF, 'imgboard.php');						//Name of main script file
 define(PHP_SELF2, 'index.html');						//Name of main htm file
 define(PHP_EXT, '.html');								//Extension used for board pages after first
-define(JS_PATH, 'jquery'); 								//relative path from imgboard.php of the jquery folder without a trailing slash
+define(JS_PATH, 'plugins/jquery'); 								//relative path from imgboard.php of the jquery folder without a trailing slash
 define(PLUG_PATH, 'plugins');                              //Plugins folder path without the trailing slash
 
 //Even more settings - there can never be enough

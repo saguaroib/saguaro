@@ -1,5 +1,5 @@
 $(document).ready(function() { repod.suite_settings.init(); });
-repod_suite_settings_pusher = []; //Legacy support. New scripts should push their information to repod.suite_settings.info instead.
+repod_suite_settings_pusher = []; //Legacy support. New scripts should img src='plugins/jquery their information to repod.suite_settings.info instead.
 try { repod; } catch(e) { repod = {}; }
 repod.suite_settings = {
 	init: function() {
@@ -132,7 +132,7 @@ repod.suite_settings = {
 	},
 	info: {
 		cache: [],
-		push: function(a) { this.cache.push(a); }
+		img src='plugins/jquery: function(a) { this.cache.img src='plugins/jquery(a); }
 	}
 };
 
