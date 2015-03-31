@@ -1336,9 +1336,9 @@ function valid($pass)
 
 function ban($ip, $pubreason, $staffreason)
 {
-	$query = mysql_query("SELECT ip FROM board_test_bans WHERE ip = '$ip'");
+	$query = mysql_query("SELECT ip FROM " . SQLBANLOG . "WHERE ip = '$ip'");
 	if(mysql_num_rows($query) <= 0) {
-		$sql = "INSERT INTO board_test_bans (ip, pubreason, staffreason) VALUES ('$ip', '$pubreason', '$staffreason')";
+		$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason) VALUES ('$ip', '$pubreason', '$staffreason')";
 		if(mysql_query($sql)){
 		    echo "Banned " . $ip . " for " . $staffreason ."";
 		} else {
