@@ -1,10 +1,11 @@
 <?php
 //Essentials - You NEED to change these, or at least make sure they're good
-define(SQLLOG, 'CHANGEME');									//Table (NOT DATABASE) used by image board
+define(SQLDB, 'CHANGEME');									//Database used by image board
 define(SQLHOST, 'CHANGEME');							//MySQL server address, usually localhost
+define(SQLLOG, 'CHANGEME');									//Table (NOT DATABASE) used by image board
+define(SQLBANLOG, 'CHANEGME');                                   // Table (NOT DATABASE) that holds ban records
 define(SQLUSER, 'CHANGEME');									//MySQL user (must be changed)
 define(SQLPASS, 'CHANGEME');							//MySQL user's password (must be changed)
-define(SQLDB, 'CHANGEME');									//Database used by image board
 
 //Basic settings
 define(PANEL_PASS, 'CHANGEME');							//Janitor password  (CHANGE THIS YO)

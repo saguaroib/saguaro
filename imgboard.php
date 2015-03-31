@@ -29,6 +29,19 @@ extract($_POST);
 extract($_GET);
 extract($_COOKIE);
 
+$host = $_SERVER['REMOTE_ADDR'];
+$con = mysql_connect(SQLHOST, SQLUSER, SQLPASS);
+
+if (!$con) {
+    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
+    exit;
+}
+
+$db_id = mysql_select_db(SQLDB, $con);
+if (!$db_id) {
+    echo S_SQLDBSF;
+}
+
 if ($num == $capkeyx) {
     $auth = 1;
 }
@@ -45,22 +58,17 @@ $badfile   = array(
     "dummy",
     "dummy2"
 ); //Refused files (md5 hashes)
+
+/* Legacy bans, Marked for deletion
 $badip     = array(
     '"dummy","dummy1"'
 ); //Refused hosts (IP bans)
+*/
 
-if (!$con = mysql_connect(SQLHOST, SQLUSER, SQLPASS)) {
-    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
-    exit;
-}
-
-$db_id = mysql_select_db(SQLDB, $con);
-if (!$db_id) {
-    echo S_SQLDBSF;
-}
+$badip= mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = ". $host ."");
 
 if (!table_exist(SQLLOG)) {
-    echo (SQLLOG . S_TCREATE);
+    echo (S_TCREATE . SQLLOG . "<br />");
     $result = mysql_call("create table " . SQLLOG . " (primary key(no),
     no    int not null auto_increment,
     now   text,
@@ -79,10 +87,26 @@ if (!table_exist(SQLLOG)) {
     fsize int,
     root  timestamp,
     resto int)");
+    
     if (!$result) {
-        echo S_TCREATEF;
+        echo S_TCREATEF . SQLLOG . "<br />";
     }
 }
+
+if (!table_exist(SQLBANLOG)) {
+    echo (S_TCREATE . SQLBANLOG . "<br />");
+    $result = mysql_call("create table " . SQLBANLOG . " (
+    ip   VARCHAR(25) PRIMARY KEY,
+    pubreason  VARCHAR(250),
+    staffreason  VARCHAR(250),
+    placedOn timestamp)");
+   
+   if (!$result) {
+        echo S_TCREATEF . SQLBANLOG . "<br />";
+    }
+}
+
+
 
 function updatelog($resno = 0)
 {
@@ -669,6 +693,8 @@ function foot(&$dat)
  
 </body></html>';
 }
+
+
 function error($mes, $dest = '')
 {
     global $upfile_name, $path;
@@ -868,11 +894,23 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
         //host check
         $host = $_SERVER["REMOTE_ADDR"];
         
+	   /* Part of old ban system, marked for deletion
         foreach ($badip as $value) { //Refusal hosts
             if (eregi("$value$", $host)) {
                 error(S_BADHOST, $dest);
             }
         }
+	   */
+	   
+	   //Check if user IP is in bans table
+	if ($badip && mysql_num_rows($badip) > 0) {
+		//Not banned
+	} else {
+		//NOW YOU FUCKED UP
+		//TODO: make this fancier soon, maybe a ban page on its own
+		error(S_BADHOST, $dest);
+	}
+	   
         if (eregi("^mail", $host) || eregi("^ns", $host) || eregi("^dns", $host) || eregi("^ftp", $host) || eregi("^prox", $host) || eregi("^pc", $host) || eregi("^[^\.]\.[^\.]$", $host)) {
             $pxck = "on";
         }
@@ -1296,11 +1334,19 @@ function valid($pass)
     }
 }
 
-function ban($ip, $reason)
+function ban($ip, $pubreason, $staffreason)
 {
-    $what = fopen(".htaccess", "a");
-    fwrite($what, "\nDENY FROM " . $ip . " ##" . $reason . "");
-    fclose($what);
+	$query = mysql_query("SELECT ip FROM board_test_bans WHERE ip = '$ip'");
+	if(mysql_num_rows($query) <= 0) {
+		$sql = "INSERT INTO board_test_bans (ip, pubreason, staffreason) VALUES ('$ip', '$pubreason', '$staffreason')";
+		if(mysql_query($sql)){
+		    echo "Banned " . $ip . " for " . $staffreason ."";
+		} else {
+		    echo "ERROR: Could not execute $sql. " . mysql_error();
+		}
+	} else {
+		echo "This IP is already banned!";
+	}
 }
 
 /* Admin deletion */
@@ -1443,8 +1489,14 @@ function admindel($pass)
     
     echo "</table><input type=submit value=\"" . S_ITDELETES . "$msg\">";
     echo "<input type=reset value=\"" . S_RESET . "\"></form>";
-    echo "<br /><hr /><br /><form method=\"post\" action=\"".PHP_SELF."?mode=banish\" ><table><tr><th>IP</th><td><input type='text' name='ip_to_ban' /></td></tr><tr><th>Reason</th><td><input type='text' name='reason' /></td></tr></table><input type=\"submit\" value=\"" . S_BANS . "\"/></form>" . S_BANS_EXTRA . "";
-    echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/img.css\" />";
+    echo "<br /><hr /><br /><form method=\"post\" action=\"".PHP_SELF."?mode=banish\" >
+    <table><tr><th>IP</th><td><input type='text' name='ip_to_ban' /></td></tr>
+    <tr><th>Public Reason</th>
+    <td><input type='text' name='pubreason' /></td></tr>
+    <tr><th>Staff Reason</th>
+    <td><input type='text' name='staffreason' /></td></tr></table>
+    <input type=\"submit\" value=\"" . S_BANS . "\"/></form>" . S_BANS_EXTRA . "";
+    echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/img.css\" />";  
     
     $all = (int) ($all / 1024);
     echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";
@@ -1468,13 +1520,11 @@ switch ($mode) {
         }
         break;
     case 'banish':
-        ban($_POST['ip_to_ban'], $_POST['reason']);
-        echo 'IP banned!
-	<script type="text/javascript">
-	<!--
-	window.location = "index.html"
-	//-->
-	</script>';
+	    $ip = $_POST['ip_to_ban'];
+		$pubreason  = mysql_escape_string($_POST['pubreason']);
+		$staffreason = mysql_escape_string($_POST['staffreason']);
+		ban($ip, $pubreason, $staffreason);
+		echo '<br/ > <a href="'. PHP_SELF . '?mode=admin" />Return</a>';
         break;
     case 'usrdel':
         usrdel($no, $pwd);
