@@ -132,7 +132,7 @@ repod.suite_settings = {
 	},
 	info: {
 		cache: [],
-		img src='plugins/jquery: function(a) { this.cache.img src='plugins/jquery(a); }
+		push: function(a) { this.cache.img src='plugins/jquery(a); }
 	}
 };
 
