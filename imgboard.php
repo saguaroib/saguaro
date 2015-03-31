@@ -904,11 +904,11 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
 	   
 	   //Check if user IP is in bans table
 	if ($badip && mysql_num_rows($badip) > 0) {
-		//Not banned
-	} else {
 		//NOW YOU FUCKED UP
 		//TODO: make this fancier soon, maybe a ban page on its own
 		error(S_BADHOST, $dest);
+	} else {
+	//Not banned
 	}
 	   
         if (eregi("^mail", $host) || eregi("^ns", $host) || eregi("^dns", $host) || eregi("^ftp", $host) || eregi("^prox", $host) || eregi("^pc", $host) || eregi("^[^\.]\.[^\.]$", $host)) {
