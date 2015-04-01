@@ -65,7 +65,7 @@ $badip     = array(
 ); //Refused hosts (IP bans)
 */
 
-$badip= mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = ". $host ."");
+$badip= mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' ");
 
 if (!table_exist(SQLLOG)) {
     echo (S_TCREATE . SQLLOG . "<br />");
