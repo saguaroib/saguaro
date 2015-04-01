@@ -1385,6 +1385,12 @@ function admindel($pass)
                     if (!mysql_call("delete from " . SQLLOG . " where no=" . $no)) {
                         echo S_SQLFAIL;
                     }
+                    //eat the baby posts too if we kill the parent (OP) post
+                    $findchildren = mysql_call("SELECT * FROM " . SQLLOG . " where  resto=" . $no);
+                    if (mysql_num_rows($findchildren) > 0) {
+                       $eatchildren = mysql_call("DELETE FROM " . SQLLOG . " where resto=" . $no);
+                       mysql_query($eatchildren);
+                    }
                     $delfile = $path . $tim . $ext; //Delete file
                     if (is_file($delfile))
                         unlink($delfile); //Delete
