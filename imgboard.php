@@ -59,12 +59,6 @@ $badfile   = array(
     "dummy2"
 ); //Refused files (md5 hashes)
 
-/* Legacy bans, Marked for deletion
-$badip     = array(
-    '"dummy","dummy1"'
-); //Refused hosts (IP bans)
-*/
-
 $badip= mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' ");
 
 if (!table_exist(SQLLOG)) {
@@ -794,17 +788,23 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
             }
             
             // Picture reduction
-            if ($W > MAX_W || $H > MAX_H) {
-                $W2 = MAX_W / $W;
-                $H2 = MAX_H / $H;
+		if (!$resto) {
+		    $maxw = MAX_W;
+		    $maxh = MAX_H;
+		} else {
+		    $maxw = MAXR_W;
+		    $maxh = MAXR_H;
+		}
+		  
+            if ($W > $maxw || $H > $maxh) {
+                $W2 = $maxw / $W;
+                $H2 = $maxh / $H;
                 ($W2 < $H2) ? $key = $W2 : $key = $H2;
                 $W = ceil($W * $key);
                 $H = ceil($H * $key);
-            }
-            $mes = S_UPGOOD;
-            
-            
-            
+            } 
+		  
+		  $mes = $upfile_name . ' ' . S_UPGOOD;     
         }
         
         if ($_FILES["upfile"]["error"] == 2) {
@@ -893,22 +893,14 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
         
         //host check
         $host = $_SERVER["REMOTE_ADDR"];
-        
-	   /* Part of old ban system, marked for deletion
-        foreach ($badip as $value) { //Refusal hosts
-            if (eregi("$value$", $host)) {
-                error(S_BADHOST, $dest);
-            }
-        }
-	   */
-	   
+
 	   //Check if user IP is in bans table
-	if ($badip && mysql_num_rows($badip) > 0) {
+	if (mysql_num_rows($badip) == 0) {
+		// Not Banned
+	} else {
 		//NOW YOU FUCKED UP
 		//TODO: make this fancier soon, maybe a ban page on its own
 		error(S_BADHOST, $dest);
-	} else {
-	//Not banned
 	}
 	   
         if (eregi("^mail", $host) || eregi("^ns", $host) || eregi("^dns", $host) || eregi("^ftp", $host) || eregi("^prox", $host) || eregi("^pc", $host) || eregi("^[^\.]\.[^\.]$", $host)) {

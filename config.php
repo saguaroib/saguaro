@@ -20,8 +20,10 @@ define(LANGUAGE, 'en-us');								//Language file to use from "lang" folder.
 
 //Extra settings - No need to change these for a basic installation, but you may want these options
 define(MAX_KB, '2048');									//Maximum upload size in KB
-define(MAX_W,  '250');									//Images exceeding this width will be thumbnailed
-define(MAX_H,  '250');									//Images exceeding this height will be thumbnailed
+define(MAX_W,  '250');									//OP images exceeding this width will be thumbnailed
+define(MAX_H,  '250');									//OP images exceeding this height will be thumbnailed
+define(MAXR_W,  '125');									//Image replies exceeding this width will be thumbnailed
+define(MAXR_H,  '125');									//Image replies exceeding this height will be thumbnailed
 define(MIN_W, '30');									//minimum image dimensions - width
 define(MIN_H, '30');									//minimum image dimensions - height
 define(PAGE_DEF, '10');									//Images per page
