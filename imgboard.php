@@ -93,6 +93,7 @@ if (!table_exist(SQLBANLOG)) {
     ip   VARCHAR(25) PRIMARY KEY,
     pubreason  VARCHAR(250),
     staffreason  VARCHAR(250),
+    banlength  VARCHAR(250),
     placedOn timestamp)");
    
    if (!$result) {
@@ -1326,11 +1327,11 @@ function valid($pass)
     }
 }
 
-function ban($ip, $pubreason, $staffreason)
+function ban($ip, $pubreason, $staffreason, $banlength)
 {
-	$query = mysql_query("SELECT ip FROM " . SQLBANLOG . "WHERE ip = '$ip'");
-	if(mysql_num_rows($query) <= 0) {
-		$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason) VALUES ('$ip', '$pubreason', '$staffreason')";
+	$query = mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip'");
+	if(mysql_num_rows($query) == 0) {
+		$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength) VALUES ('$ip', '$pubreason', '$staffreason', '$banlength')";
 		if(mysql_query($sql)){
 		    echo "Banned " . $ip . " for " . $staffreason ."";
 		} else {
@@ -1488,11 +1489,13 @@ function admindel($pass)
     echo "</table><input type=submit value=\"" . S_ITDELETES . "$msg\">";
     echo "<input type=reset value=\"" . S_RESET . "\"></form>";
     echo "<br /><hr /><br /><form method=\"post\" action=\"".PHP_SELF."?mode=banish\" >
-    <table><tr><th>IP</th><td><input type='text' name='ip_to_ban' /></td></tr>
+    <table><tr><th>IP</th><td><input required type='text' name='ip_to_ban' /></td></tr>
     <tr><th>Public Reason</th>
-    <td><input type='text' name='pubreason' /></td></tr>
+    <td><input required type='text' name='pubreason' /></td></tr>
     <tr><th>Staff Reason</th>
-    <td><input type='text' name='staffreason' /></td></tr></table>
+    <td><input required type='text' name='staffreason' /></td></tr>
+    <tr><th>Length</th>
+    <td><input required placeholder=\"In seconds\" type='text' name='timebannedfor' /></td></tr></table>
     <input type=\"submit\" value=\"" . S_BANS . "\"/></form>" . S_BANS_EXTRA . "";
     echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/img.css\" />";  
     
@@ -1518,10 +1521,11 @@ switch ($mode) {
         }
         break;
     case 'banish':
-	    $ip = $_POST['ip_to_ban'];
+	     $ip = $_POST['ip_to_ban'];
 		$pubreason  = mysql_escape_string($_POST['pubreason']);
 		$staffreason = mysql_escape_string($_POST['staffreason']);
-		ban($ip, $pubreason, $staffreason);
+		$banlength = mysql_escape_string($_POST['timebannedfor']);
+		ban($ip, $pubreason, $staffreason, $banlength);
 		echo '<br/ > <a href="'. PHP_SELF . '?mode=admin" />Return</a>';
         break;
     case 'usrdel':

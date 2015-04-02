@@ -1,0 +1,212 @@
+body {
+		font-size:10pt;
+		background:#FFFFEE;
+		color:#800000;
+		font-family: Arial, Helvetica, sans-serif;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+a.qu {
+		color:#800000;
+		font-size:10pt;
+		text-decoration:none;
+}
+a.qu:hover {
+		font-weight:bold;
+		color:#800000;
+		font-size:10pt;
+		font-weight: 800;
+}
+a.qu:visited {
+		color:#800000;
+		font-size:10pt;
+		text-decoration:none;
+}
+form {
+		margin: 0px 0px 0px 0px; 
+}
+/*^ new to saguaro ^*/
+a       {
+        background:inherit;
+        color:#0000EE;
+        text-decoration:underline;
+        font-family: Arial, Helvetica, sans-serif;
+}
+a:visited {
+        background:inherit;
+        color:#0000EE;
+        text-decoration:underline;
+        font-family: inherit;
+}
+a:hover {
+        color:#DD0000;
+        background:inherit;
+        text-decoration:underline;
+        font-family: Arial, Helvetica, sans-serif;
+}
+.adminbar {
+        text-align:right;
+        background:inherit;
+        clear:both;
+        float:right;
+}
+.logo {
+        clear:both;
+        text-align:center;
+        background:inherit;
+        font-size:24pt;
+        color:#800000;
+        width:100%;
+}
+.theader {
+        background:#0010E0;
+        color:#FFFFFF;
+        width:100%;
+}
+
+.headsub {
+        color:#666666;
+        text-align:center;
+        background:inherit;
+        font-size:11px;
+        font-family: Arial, Helvetica, sans-serif;
+
+}
+
+.boardlist {
+       background:inherit;
+       color:#800000;
+       text-align:left;
+}
+
+
+.postarea {
+        background:inherit;
+}
+.rules {
+        font-size:10px;
+        font-family: Arial, Helvetica, sans-serif;
+}
+.postblock {
+        background:#EEAA88;
+        color:#800000;
+}
+.footer {
+        text-align:center;
+        font-size:12px;
+        font-family: Arial, Helvetica, sans-serif;
+}
+.passvalid {
+	background:#EEAA88;
+	text-align:center;
+	width:100%;
+	color:#ffffff;
+}
+.dellist {
+	background:inherit;
+	text-align:center;
+}
+.delbuttons {
+	background:inherit;
+	text-align:center;
+	padding-bottom:4px;
+
+}
+.managehead {
+	background:#0F8FE1;
+	color:#800000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size:14px;
+	padding:0px;
+}
+.postlists {
+	background:#FFFFFF;
+	width:100%;
+	padding:0px;
+	color:#800000;
+}
+.row1 {
+	background:#9AD2F6;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size:10pt;
+	color:#800000;
+}
+.row2 {
+        background:#FFFFFF;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size:10pt;
+        color:#800000;
+}
+.unkfunc {
+        color:#789922;
+        text-decoration: none;
+}
+.filesize {
+	font-size:10pt;
+	font-family: Arial, Helvetica, sans-serif;
+	text-decoration:none;
+}
+.filetitle {
+	background:inherit;
+	font-size:16pt;
+	font-family: Arial, Helvetica, sans-serif;
+	color:#CC1105;
+}
+.postername {
+	background:inherit;
+	font-size:10pt;
+	font-family: Arial, Helvetica, sans-serif;
+	color:#117743;
+	}
+.oldpost {
+        background:inherit;
+        font-size:8pt;
+        font-family: Arial, Helvetica, sans-serif;
+	   padding-left: 20px;
+}
+}
+.omittedposts {
+        background:inherit;
+        font-size:11px;
+        font-family: Arial, Helvetica, sans-serif;
+        color:#666666;
+        font-weight:800;
+}
+.reply {
+	background:#F0E0D6;
+	color:#800000;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.doubledash {
+ 	vertical-align:top;
+	clear:both;
+	float:left;
+}
+.replytitle {
+        background:inherit;
+        font-size:18px;
+        font-family: Arial, Helvetica, sans-serif;
+        color:#CC1105;
+}
+.commentpostername {
+        background:inherit;
+        font-size:16px;
+        font-family: Arial, Helvetica, sans-serif;
+        color:#117743;
+}
+.thumbnailmsg {
+	background:inherit;
+	font-size:9px;
+	font-family: Arial, Helvetica, sans-serif;
+	color:#800000;
+	padding-left: 20px;
+}
+
+.pages {
+		border-collapse: collapse;
+		background-color: #9988EE;
+		padding: 5px;
+}
