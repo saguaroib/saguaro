@@ -289,13 +289,7 @@ function updatelog($resno = 0)
                 $com = preg_replace("/(^|>)(&gt;[^<]*|＞[^<]*)/", "$1<span class=\"unkfunc\">$2</span>", $com);
                 $com = preg_replace("/(^|>)(&gt;&gt;[^0-9])/", "$1 $2", $com);
                 $com = preg_replace("/(^|>)(&gt;&gt;)([(0-9)+]*)([^<]*)/", "$1</font><a href=\"$threadurl#$3\" onclick=\"replyhl('$3');\">$2$3</a>$4<font>", $com);
-                
-                /*$com = eregi_replace("(^|>)(&gt;[^<]*)", "\\1<div class=\"unkfunc\">\\2</div>", $com);
-                $com = eregi_replace("/(^|>)(&gt;&gt;)([(0-9)+]*)([^<]*)",
-                "1</font><a href=$threadurl#3\" onclick=\"replyhl('3');\">23</a>4<font>", $com);*/
-                
-                
-                
+
                 // Main creation
                 //replies (not op) 
                 
@@ -309,7 +303,7 @@ function updatelog($resno = 0)
                     $quote   = "$threadurl#q$no\"";
                 }
                 
-                $dat .= "<table><tr><td class=\"doubledash\">&gt;&gt;</td><td class=\"reply\">\n";
+                $dat .= "<table><tr><td class=\"reply\">\n";
                 $dat .= "<input type=\"checkbox\" name=\"$no\" value=\"delete\" /><span class=\"replytitle\">$sub</span> \n";
                 $dat .= "<span class=\"postername\"><b>$name</b></span> $now " . "<a id=\"$no\" href=\"$threadurl#$no\" class=\"qu\" title=\"Permalink thread\" $onclick>No.</a>" . "<a href=\"$quote\" title=\"Quote\" class=\"qu\">$no</a> &nbsp; \n";
                 
@@ -697,10 +691,14 @@ function error($mes, $dest = '')
         unlink($dest);
     head($dat);
     echo $dat;
-    echo "<br /><br /><hr size=1><br /><br />
-        <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2 . ">" . S_RELOAD . "</a></b></font></center>
-        <br /><br /><hr size=1>";
+    if ($mes == S_BADHOST) { 
     die("</body></html>");
+    } else {
+	    echo "<br /><br /><hr size=1><br /><br />
+		   <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2 . ">" . S_RELOAD . "</a></b></font></center>
+		   <br /><br /><hr size=1>";
+	    die("</body></html>");
+    }
 }
 /* Auto Linker */
 function auto_link($proto)
@@ -900,7 +898,7 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
 		// Not Banned
 	} else {
 		//NOW YOU FUCKED UP
-		//TODO: make this fancier soon, maybe a ban page on its own
+		echo '<html><head><meta http-equiv="refresh" content="0; url=banned.php"></head></html>';
 		error(S_BADHOST, $dest);
 	}
 	   
@@ -1330,16 +1328,47 @@ function valid($pass)
 function ban($ip, $pubreason, $staffreason, $banlength)
 {
 	$query = mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip'");
+	switch ($banlength) {
+	     case 'warn':
+		   $banset = '100';
+		   break;
+	     case '3hr':
+		   $banset = '1';
+		   break;
+	     case '3day':
+		   $banset = '2';
+		   break;
+		case '1wk':
+		   $banset = '3';
+		   break;
+	    case '1mon':
+		   $banset = '4';
+		   break;
+	    case 'perma':
+		   $banset = '-1';
+		   break;
+	    default:
+	    //Sure is 2007 around here
+		   $banset = '9001';
+	}
 	if(mysql_num_rows($query) == 0) {
-		$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength) VALUES ('$ip', '$pubreason', '$staffreason', '$banlength')";
+		$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength) VALUES ('$ip', '$pubreason', '$staffreason', '$banset')";
+
 		if(mysql_query($sql)){
-		    echo "Banned " . $ip . " for " . $staffreason ."";
+			if ($banset == '100') { 
+				echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason ." </b><br />";
+				echo "Logged private reason: <br /><b> " . $staffreason ." </b>";
+			} else {
+				echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason ." </b><br />";
+				echo "Logged private reason: <br /><b> " . $staffreason ." </b>";
+			}
 		} else {
 		    echo "ERROR: Could not execute $sql. " . mysql_error();
 		}
 	} else {
 		echo "This IP is already banned!";
 	}
+	mysql_free_result($query);
 }
 
 /* Admin deletion */
@@ -1495,7 +1524,14 @@ function admindel($pass)
     <tr><th>Staff Reason</th>
     <td><input required type='text' name='staffreason' /></td></tr>
     <tr><th>Length</th>
-    <td><input required placeholder=\"In seconds\" type='text' name='timebannedfor' /></td></tr></table>
+    <td><select name =\"timebannedfor\" value=\"timebannedfor\">
+  <option value=\"warn\">Warn</option>
+  <option value=\"3hr\">3 hours</option>
+  <option value=\"3day\">3 days</option>
+  <option value=\"1wk\">1 week</option>
+  <option value=\"1mon\">1 month</option>
+  <option value=\"perma\">Permanent</option>
+</select></td></tr></table>
     <input type=\"submit\" value=\"" . S_BANS . "\"/></form>" . S_BANS_EXTRA . "";
     echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/img.css\" />";  
     
