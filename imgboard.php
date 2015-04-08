@@ -692,7 +692,7 @@ function error($mes, $dest = '')
     head($dat);
     echo $dat;
     if ($mes == S_BADHOST) { 
-    die("</body></html>");
+    die("<html><head><meta http-equiv=\"refresh\" content=\"0; url=/banned.php\"></head></html>");
     } else {
 	    echo "<br /><br /><hr size=1><br /><br />
 		   <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2 . ">" . S_RELOAD . "</a></b></font></center>
@@ -898,7 +898,6 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
 		// Not Banned
 	} else {
 		//NOW YOU FUCKED UP
-		echo '<html><head><meta http-equiv="refresh" content="0; url=banned.php"></head></html>';
 		error(S_BADHOST, $dest);
 	}
 	   
