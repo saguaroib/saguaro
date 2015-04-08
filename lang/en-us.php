@@ -1,4 +1,4 @@
-<?
+<?php
 define(S_HOME, 'Home');											//Forwards to home page
 define(S_ADMIN, 'Manage');										//Forwards to Management Panel
 define(S_RETURN, 'Return');										//Returns to image board
@@ -19,7 +19,7 @@ define(S_RULES, '<ul><li>Supported file types are: GIF, JPG, PNG</li>
 <li>Images smaller than '.MIN_W.'x'.MIN_H.' pixels will be refused.</li>
 </ul>');				//Prints rules under posting section
 define(S_REPORTERR, 'Error: Cannot find reply.');							//Returns error when a reply (res) cannot be found
-define(S_THUMB, 'Thumbnail displayed, click image for full size.');					//Prints instructions for viewing real source
+define(S_THUMB, '');					//Prints instructions for viewing real source
 define(S_PICNAME, 'File : ');										//Prints text before upload name/link
 define(S_REPLY, 'Reply');										//Prints text for reply link
 define(S_OLD, 'Marked for deletion (old).');								//Prints text to be displayed before post is marked for deletion, see: retention
@@ -49,7 +49,7 @@ define(S_MANAGEMENT, 'Manager : ');									//Defines prefix for Manager Post na
 define(S_DELETION, 'Deletion');										//Prints deletion message with quotes?
 define(S_TOOLONG, 'Error: Field too long.');								//Returns error for too many characters in a given field
 define(S_UNUSUAL, 'Error: Abnormal reply.');								//Returns error for abnormal reply? (this is a mystery!)
-define(S_BADHOST, 'You are banned from posting on this board.');								//Returns error for banned host ($badip string)
+define(S_BADHOST, '');								//Returns error for banned host ($badip string)
 define(S_PROXY80, 'Error: Proxy detected on :80.');							//Returns error for proxy detection on port 80
 define(S_PROXY8080, 'Error: Proxy detected on :8080.');							//Returns error for proxy detection on port 8080
 define(S_SUN, 'Sun');											//Defines abbreviation used for "Sunday"
@@ -81,8 +81,8 @@ define(S_DELLIST, 'Management Panel');									//Prints sub-heading of Managemen
 define(S_ITDELETES, 'Delete');										//Defines for deletion button in Management Panel
 define(S_MDRESET, 'Reset');										//Defines name for field reset button in Management Panel
 define(S_MDONLYPIC, 'File Only');									//Sets whether or not to delete only file, or entire post/thread
-define(S_MDTABLE1, '<th>Delete?</th><th>Post No.</th><th>Time</th><th>Subject</th>');			//Explains field names for Management Panel (Delete?->Subject)
-define(S_MDTABLE2, '<th>Name</th><th>Comment</th><th>Host</th><th>Size<br />(Bytes)</th><th>md5</th><th>Reply #</th><th>Local filename</th><th>Age</th>');	//Explains names for Management Panel (Name->md5)
+define(S_MDTABLE1, '<th>Delete?</th><th>Post No.</th><th>Reply to</th><th>Time</th><th>Subject</th>');			//Explains field names for Management Panel (Delete?->Subject)
+define(S_MDTABLE2, '<th>Name</th><th>Comment</th><th>Host</th><th>Size<br />(Bytes)</th><th>md5</th><th>Local filename</th><th>Age</th><th>Ban</th>');	//Explains names for Management Panel (Name->md5)
 define(S_RESET, 'Reset');										//Sets name for field reset button (global)
 define(S_IMGSPACEUSAGE, 'Space used :');						//Prints space used KB by the board under Management Panel
 define(S_CANNOTWRITE, 'Error: Cannot write to directory.<br />');						//Returns error when the script cannot write to the directory, this is used on initial setup--check your chmod (777)

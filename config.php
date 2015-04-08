@@ -6,10 +6,11 @@ define(SQLLOG, 'CHANGEME');									//Table (NOT DATABASE) used by image board
 define(SQLBANLOG, 'CHANEGME');                                   // Table (NOT DATABASE) that holds ban records
 define(SQLUSER, 'CHANGEME');									//MySQL user (must be changed)
 define(SQLPASS, 'CHANGEME');							//MySQL user's password (must be changed)
+define(BOARD_DIR, 'CHANGEME');                               //Folder name of board, EX: /ba/ would be ba
+define(PANEL_PASS, 'CHANGEME');							//Janitor password  (CHANGE THIS YO)
 
 //Basic settings
-define(PANEL_PASS, 'CHANGEME');							//Janitor password  (CHANGE THIS YO)
-define(TITLE, 'Unconfigured Imageboard');				//Name of this image board
+define(TITLE, 'Saguaro Imageboard');				//Name of this image board
 define(S_HEADSUB, 'Fresh outta the .zip!');  			//subtitle underneath title
 define(SHOWTITLETXT, '1');								//Show TITLE at top (1: yes  0: no)
 define(SHOWTITLEIMG, '0');								//Show image at top (0: no, 1: single, 2: rotating)

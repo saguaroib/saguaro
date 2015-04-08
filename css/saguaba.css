@@ -93,6 +93,8 @@ a:hover {
 .postblock {
         background:#EEAA88;
         color:#800000;
+        border: 1px solid #800000;
+        padding: 4px;
 }
 .footer {
         text-align:center;
@@ -151,7 +153,7 @@ a:hover {
 }
 .filetitle {
 	background:inherit;
-	font-size:16pt;
+	font-size:16px;
 	font-family: Arial, Helvetica, sans-serif;
 	color:#CC1105;
 }
@@ -207,6 +209,7 @@ a:hover {
 
 .pages {
 		border-collapse: collapse;
-		background-color: #9988EE;
+        color: black;
+		background-color: #EEAA88;
 		padding: 5px;
 }
