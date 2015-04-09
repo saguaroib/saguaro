@@ -1,4 +1,4 @@
-<?
+<?php
 define(S_HOME, 'Home');											//Forwards to home page
 define(S_ADMIN, 'Manage');										//Forwards to Management Panel
 define(S_RETURN, 'Return');										//Returns to image board
@@ -19,7 +19,7 @@ define(S_RULES, '<ul><li>Supported file types are: GIF, JPG, PNG</li>
 <li>Images smaller than '.MIN_W.'x'.MIN_H.' pixels will be refused.</li>
 </ul>');				//Prints rules under posting section
 define(S_REPORTERR, 'Error: Cannot find reply.');							//Returns error when a reply (res) cannot be found
-define(S_THUMB, 'Thumbnail displayed, click image for full size.');					//Prints instructions for viewing real source
+define(S_THUMB, '');					//Prints instructions for viewing real source
 define(S_PICNAME, 'File : ');										//Prints text before upload name/link
 define(S_REPLY, 'Reply');										//Prints text for reply link
 define(S_OLD, 'Marked for deletion (old).');								//Prints text to be displayed before post is marked for deletion, see: retention
@@ -40,7 +40,7 @@ define(S_NOREC, 'Error: Cannot find record.');								//Returns error when recor
 define(S_SAMEPIC, 'Error: Duplicate md5 checksum detected.');						//Returns error when a md5 checksum dupe is detected
 define(S_TOOBIG, 'This image is too large!  Upload something smaller!');
 define(S_TOOBIGORNONE, 'Either this image is too big or there is no image at all.  Yeah.');
-define(S_UPGOOD, ' '.$upfile_name.' uploaded!<br><br>');					//Defines message to be displayed when file is successfully uploaded
+define(S_UPGOOD, ' '.$upfile_name.' uploaded!<br /><br />');					//Defines message to be displayed when file is successfully uploaded
 define(S_STRREF, 'Error: String refused.');								//Returns error when a string is refused
 define(S_UNJUST, 'Error: Unjust POST.');								//Returns error on an unjust POST - prevents floodbots or ways not using POST method?
 define(S_NOPIC, 'Error: No file selected.');								//Returns error for no file selected and override unchecked
@@ -49,7 +49,7 @@ define(S_MANAGEMENT, 'Manager : ');									//Defines prefix for Manager Post na
 define(S_DELETION, 'Deletion');										//Prints deletion message with quotes?
 define(S_TOOLONG, 'Error: Field too long.');								//Returns error for too many characters in a given field
 define(S_UNUSUAL, 'Error: Abnormal reply.');								//Returns error for abnormal reply? (this is a mystery!)
-define(S_BADHOST, 'Error: Host is banned.');								//Returns error for banned host ($badip string)
+define(S_BADHOST, '');								//Returns error for banned host ($badip string)
 define(S_PROXY80, 'Error: Proxy detected on :80.');							//Returns error for proxy detection on port 80
 define(S_PROXY8080, 'Error: Proxy detected on :8080.');							//Returns error for proxy detection on port 8080
 define(S_SUN, 'Sun');											//Defines abbreviation used for "Sunday"
@@ -81,19 +81,19 @@ define(S_DELLIST, 'Management Panel');									//Prints sub-heading of Managemen
 define(S_ITDELETES, 'Delete');										//Defines for deletion button in Management Panel
 define(S_MDRESET, 'Reset');										//Defines name for field reset button in Management Panel
 define(S_MDONLYPIC, 'File Only');									//Sets whether or not to delete only file, or entire post/thread
-define(S_MDTABLE1, '<th>Delete?</th><th>Post No.</th><th>Time</th><th>Subject</th>');			//Explains field names for Management Panel (Delete?->Subject)
-define(S_MDTABLE2, '<th>Name</th><th>Comment</th><th>Host</th><th>Size<br>(Bytes)</th><th>md5</th><th>Reply #</th><th>Local filename</th><th>Age</th>');	//Explains names for Management Panel (Name->md5)
+define(S_MDTABLE1, '<th>Delete?</th><th>Post No.</th><th>Reply to</th><th>Time</th><th>Subject</th>');			//Explains field names for Management Panel (Delete?->Subject)
+define(S_MDTABLE2, '<th>Name</th><th>Comment</th><th>Host</th><th>Size<br />(Bytes)</th><th>md5</th><th>Local filename</th><th>Age</th><th>Ban</th>');	//Explains names for Management Panel (Name->md5)
 define(S_RESET, 'Reset');										//Sets name for field reset button (global)
 define(S_IMGSPACEUSAGE, 'Space used :');						//Prints space used KB by the board under Management Panel
-define(S_CANNOTWRITE, 'Error: Cannot write to directory.<br>');						//Returns error when the script cannot write to the directory, this is used on initial setup--check your chmod (777)
-define(S_NOTWRITE, 'Error: Cannot write to directory.<br>');						//Returns error when the script cannot write to the directory, the chmod (777) is wrong
-define(S_NOTREAD, 'Error: Cannot read from directory.<br>');						//Returns error when the script cannot read from the directory, the chmod (777) is wrong
-define(S_NOTDIR, 'Error: Directory does not exist.<br>');						//Returns error when the script cannot find/read from the directory (does not exist/isn't directory), the chmod (777) is wrong
+define(S_CANNOTWRITE, 'Error: Cannot write to directory.<br />');						//Returns error when the script cannot write to the directory, this is used on initial setup--check your chmod (777)
+define(S_NOTWRITE, 'Error: Cannot write to directory.<br />');						//Returns error when the script cannot write to the directory, the chmod (777) is wrong
+define(S_NOTREAD, 'Error: Cannot read from directory.<br />');						//Returns error when the script cannot read from the directory, the chmod (777) is wrong
+define(S_NOTDIR, 'Error: Directory does not exist.<br />');						//Returns error when the script cannot find/read from the directory (does not exist/isn't directory), the chmod (777) is wrong
 define(S_SQLCONF, 'MySQL connection failure');		//MySQL connection failure
-define(S_SQLDBSF, 'Database error, check SQL settings<br>');	//database select failure
-define(S_TCREATE, 'Creating table!<br>\n');	//creating table
-define(S_TCREATEF, 'Unable to create table!<br>');		//table creation failed
-define(S_SQLFAIL, 'Critical SQL problem!<br>');		//SQL Failure
+define(S_SQLDBSF, 'Database error, check SQL settings <br />');	//database select failure
+define(S_TCREATE, 'Creating table: ');	//creating table
+define(S_TCREATEF, 'Unable to create table: ');		//table creation failed
+define(S_SQLFAIL, 'Critical SQL problem! <br />');		//SQL Failure
 define(S_QUOTE, 'Quote');
 define(S_PERMALINK, 'Permalink thread');
 define(S_RESNUM, 'Reply to thread:');

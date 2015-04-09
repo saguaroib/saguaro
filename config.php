@@ -1,14 +1,16 @@
 <?php
 //Essentials - You NEED to change these, or at least make sure they're good
-define(SQLLOG, 'CHANGEME');									//Table (NOT DATABASE) used by image board
+define(SQLDB, 'CHANGEME');									//Database used by image board
 define(SQLHOST, 'CHANGEME');							//MySQL server address, usually localhost
+define(SQLLOG, 'CHANGEME');									//Table (NOT DATABASE) used by image board
+define(SQLBANLOG, 'CHANEGME');                                   // Table (NOT DATABASE) that holds ban records
 define(SQLUSER, 'CHANGEME');									//MySQL user (must be changed)
 define(SQLPASS, 'CHANGEME');							//MySQL user's password (must be changed)
-define(SQLDB, 'CHANGEME');									//Database used by image board
+define(BOARD_DIR, 'CHANGEME');                               //Folder name of board, EX: /ba/ would be ba
+define(PANEL_PASS, 'CHANGEME');							//Janitor password  (CHANGE THIS YO)
 
 //Basic settings
-define(PANEL_PASS, 'CHANGEME');							//Janitor password  (CHANGE THIS YO)
-define(TITLE, 'Unconfigured Imageboard');				//Name of this image board
+define(TITLE, 'Saguaro Imageboard');				//Name of this image board
 define(S_HEADSUB, 'Fresh outta the .zip!');  			//subtitle underneath title
 define(SHOWTITLETXT, '1');								//Show TITLE at top (1: yes  0: no)
 define(SHOWTITLEIMG, '0');								//Show image at top (0: no, 1: single, 2: rotating)
@@ -19,8 +21,10 @@ define(LANGUAGE, 'en-us');								//Language file to use from "lang" folder.
 
 //Extra settings - No need to change these for a basic installation, but you may want these options
 define(MAX_KB, '2048');									//Maximum upload size in KB
-define(MAX_W,  '250');									//Images exceeding this width will be thumbnailed
-define(MAX_H,  '250');									//Images exceeding this height will be thumbnailed
+define(MAX_W,  '250');									//OP images exceeding this width will be thumbnailed
+define(MAX_H,  '250');									//OP images exceeding this height will be thumbnailed
+define(MAXR_W,  '125');									//Image replies exceeding this width will be thumbnailed
+define(MAXR_H,  '125');									//Image replies exceeding this height will be thumbnailed
 define(MIN_W, '30');									//minimum image dimensions - width
 define(MIN_H, '30');									//minimum image dimensions - height
 define(PAGE_DEF, '10');									//Images per page
@@ -81,7 +85,7 @@ define(LOG_MAX,  '1500');								//Maxium number of entries
 define(PHP_SELF, 'imgboard.php');						//Name of main script file
 define(PHP_SELF2, 'index.html');						//Name of main htm file
 define(PHP_EXT, '.html');								//Extension used for board pages after first
-define(JS_PATH, 'jquery'); 								//relative path from imgboard.php of the jquery folder without a trailing slash
+define(JS_PATH, 'plugins/jquery'); 								//relative path from imgboard.php of the jquery folder without a trailing slash
 define(PLUG_PATH, 'plugins');                              //Plugins folder path without the trailing slash
 
 //Even more settings - there can never be enough

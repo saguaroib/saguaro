@@ -29,6 +29,19 @@ extract($_POST);
 extract($_GET);
 extract($_COOKIE);
 
+$host = $_SERVER['REMOTE_ADDR'];
+$con = mysql_connect(SQLHOST, SQLUSER, SQLPASS);
+
+if (!$con) {
+    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
+    exit;
+}
+
+$db_id = mysql_select_db(SQLDB, $con);
+if (!$db_id) {
+    echo S_SQLDBSF;
+}
+
 if ($num == $capkeyx) {
     $auth = 1;
 }
@@ -45,22 +58,11 @@ $badfile   = array(
     "dummy",
     "dummy2"
 ); //Refused files (md5 hashes)
-$badip     = array(
-    '"dummy","dummy1"'
-); //Refused hosts (IP bans)
 
-if (!$con = mysql_connect(SQLHOST, SQLUSER, SQLPASS)) {
-    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
-    exit;
-}
-
-$db_id = mysql_select_db(SQLDB, $con);
-if (!$db_id) {
-    echo S_SQLDBSF;
-}
+$badip= mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' ");
 
 if (!table_exist(SQLLOG)) {
-    echo (SQLLOG . S_TCREATE);
+    echo (S_TCREATE . SQLLOG . "<br />");
     $result = mysql_call("create table " . SQLLOG . " (primary key(no),
     no    int not null auto_increment,
     now   text,
@@ -79,10 +81,27 @@ if (!table_exist(SQLLOG)) {
     fsize int,
     root  timestamp,
     resto int)");
+    
     if (!$result) {
-        echo S_TCREATEF;
+        echo S_TCREATEF . SQLLOG . "<br />";
     }
 }
+
+if (!table_exist(SQLBANLOG)) {
+    echo (S_TCREATE . SQLBANLOG . "<br />");
+    $result = mysql_call("create table " . SQLBANLOG . " (
+    ip   VARCHAR(25) PRIMARY KEY,
+    pubreason  VARCHAR(250),
+    staffreason  VARCHAR(250),
+    banlength  VARCHAR(250),
+    placedOn timestamp)");
+   
+   if (!$result) {
+        echo S_TCREATEF . SQLBANLOG . "<br />";
+    }
+}
+
+
 
 function updatelog($resno = 0)
 {
@@ -270,13 +289,7 @@ function updatelog($resno = 0)
                 $com = preg_replace("/(^|>)(&gt;[^<]*|＞[^<]*)/", "$1<span class=\"unkfunc\">$2</span>", $com);
                 $com = preg_replace("/(^|>)(&gt;&gt;[^0-9])/", "$1 $2", $com);
                 $com = preg_replace("/(^|>)(&gt;&gt;)([(0-9)+]*)([^<]*)/", "$1</font><a href=\"$threadurl#$3\" onclick=\"replyhl('$3');\">$2$3</a>$4<font>", $com);
-                
-                /*$com = eregi_replace("(^|>)(&gt;[^<]*)", "\\1<div class=\"unkfunc\">\\2</div>", $com);
-                $com = eregi_replace("/(^|>)(&gt;&gt;)([(0-9)+]*)([^<]*)",
-                "1</font><a href=$threadurl#3\" onclick=\"replyhl('3');\">23</a>4<font>", $com);*/
-                
-                
-                
+
                 // Main creation
                 //replies (not op) 
                 
@@ -290,7 +303,7 @@ function updatelog($resno = 0)
                     $quote   = "$threadurl#q$no\"";
                 }
                 
-                $dat .= "<table><tr><td class=\"doubledash\">&gt;&gt;</td><td class=\"reply\">\n";
+                $dat .= "<table><tr><td class=\"reply\">\n";
                 $dat .= "<input type=\"checkbox\" name=\"$no\" value=\"delete\" /><span class=\"replytitle\">$sub</span> \n";
                 $dat .= "<span class=\"postername\"><b>$name</b></span> $now " . "<a id=\"$no\" href=\"$threadurl#$no\" class=\"qu\" title=\"Permalink thread\" $onclick>No.</a>" . "<a href=\"$quote\" title=\"Quote\" class=\"qu\">$no</a> &nbsp; \n";
                 
@@ -669,6 +682,8 @@ function foot(&$dat)
  
 </body></html>';
 }
+
+
 function error($mes, $dest = '')
 {
     global $upfile_name, $path;
@@ -676,10 +691,14 @@ function error($mes, $dest = '')
         unlink($dest);
     head($dat);
     echo $dat;
-    echo "<br /><br /><hr size=1><br /><br />
-        <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2 . ">" . S_RELOAD . "</a></b></font></center>
-        <br /><br /><hr size=1>";
-    die("</body></html>");
+    if ($mes == S_BADHOST) { 
+    die("<html><head><meta http-equiv=\"refresh\" content=\"0; url=/banned.php\"></head></html>");
+    } else {
+	    echo "<br /><br /><hr size=1><br /><br />
+		   <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2 . ">" . S_RELOAD . "</a></b></font></center>
+		   <br /><br /><hr size=1>";
+	    die("</body></html>");
+    }
 }
 /* Auto Linker */
 function auto_link($proto)
@@ -768,17 +787,23 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
             }
             
             // Picture reduction
-            if ($W > MAX_W || $H > MAX_H) {
-                $W2 = MAX_W / $W;
-                $H2 = MAX_H / $H;
+		if (!$resto) {
+		    $maxw = MAX_W;
+		    $maxh = MAX_H;
+		} else {
+		    $maxw = MAXR_W;
+		    $maxh = MAXR_H;
+		}
+		  
+            if ($W > $maxw || $H > $maxh) {
+                $W2 = $maxw / $W;
+                $H2 = $maxh / $H;
                 ($W2 < $H2) ? $key = $W2 : $key = $H2;
                 $W = ceil($W * $key);
                 $H = ceil($H * $key);
-            }
-            $mes = S_UPGOOD;
-            
-            
-            
+            } 
+		  
+		  $mes = $upfile_name . ' ' . S_UPGOOD;     
         }
         
         if ($_FILES["upfile"]["error"] == 2) {
@@ -867,12 +892,15 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
         
         //host check
         $host = $_SERVER["REMOTE_ADDR"];
-        
-        foreach ($badip as $value) { //Refusal hosts
-            if (eregi("$value$", $host)) {
-                error(S_BADHOST, $dest);
-            }
-        }
+
+	   //Check if user IP is in bans table
+	if (mysql_num_rows($badip) == 0) {
+		// Not Banned
+	} else {
+		//NOW YOU FUCKED UP
+		error(S_BADHOST, $dest);
+	}
+	   
         if (eregi("^mail", $host) || eregi("^ns", $host) || eregi("^dns", $host) || eregi("^ftp", $host) || eregi("^prox", $host) || eregi("^pc", $host) || eregi("^[^\.]\.[^\.]$", $host)) {
             $pxck = "on";
         }
@@ -1296,11 +1324,50 @@ function valid($pass)
     }
 }
 
-function ban($ip, $reason)
+function ban($ip, $pubreason, $staffreason, $banlength)
 {
-    $what = fopen(".htaccess", "a");
-    fwrite($what, "\nDENY FROM " . $ip . " ##" . $reason . "");
-    fclose($what);
+	$query = mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip'");
+	switch ($banlength) {
+	     case 'warn':
+		   $banset = '100';
+		   break;
+	     case '3hr':
+		   $banset = '1';
+		   break;
+	     case '3day':
+		   $banset = '2';
+		   break;
+		case '1wk':
+		   $banset = '3';
+		   break;
+	    case '1mon':
+		   $banset = '4';
+		   break;
+	    case 'perma':
+		   $banset = '-1';
+		   break;
+	    default:
+	    //Sure is 2007 around here
+		   $banset = '9001';
+	}
+	if(mysql_num_rows($query) == 0) {
+		$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength) VALUES ('$ip', '$pubreason', '$staffreason', '$banset')";
+
+		if(mysql_query($sql)){
+			if ($banset == '100') { 
+				echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason ." </b><br />";
+				echo "Logged private reason: <br /><b> " . $staffreason ." </b>";
+			} else {
+				echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason ." </b><br />";
+				echo "Logged private reason: <br /><b> " . $staffreason ." </b>";
+			}
+		} else {
+		    echo "ERROR: Could not execute $sql. " . mysql_error();
+		}
+	} else {
+		echo "This IP is already banned!";
+	}
+	mysql_free_result($query);
 }
 
 /* Admin deletion */
@@ -1338,6 +1405,12 @@ function admindel($pass)
                     $find = TRUE;
                     if (!mysql_call("delete from " . SQLLOG . " where no=" . $no)) {
                         echo S_SQLFAIL;
+                    }
+                    //eat the baby posts too if we kill the parent (OP) post
+                    $findchildren = mysql_call("SELECT * FROM " . SQLLOG . " where  resto=" . $no);
+                    if (mysql_num_rows($findchildren) > 0) {
+                       $eatchildren = mysql_call("DELETE FROM " . SQLLOG . " where resto=" . $no);
+                       mysql_query($eatchildren);
                     }
                     $delfile = $path . $tim . $ext; //Delete file
                     if (is_file($delfile))
@@ -1443,8 +1516,23 @@ function admindel($pass)
     
     echo "</table><input type=submit value=\"" . S_ITDELETES . "$msg\">";
     echo "<input type=reset value=\"" . S_RESET . "\"></form>";
-    echo "<br /><hr /><br /><form method=\"post\" action=\"".PHP_SELF."'?mode=banish\" ><table><tr><th>IP</th><td><input type='text' name='ip_to_ban' /></td></tr><tr><th>Reason</th><td><input type='text' name='reason' /></td></tr></table><input type=\"submit\" value=\"" . S_BANS . "\"/></form>" . S_BANS_EXTRA . "";
-    echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/img.css\" />";
+    echo "<br /><hr /><br /><form method=\"post\" action=\"".PHP_SELF."?mode=banish\" >
+    <table><tr><th>IP</th><td><input required type='text' name='ip_to_ban' /></td></tr>
+    <tr><th>Public Reason</th>
+    <td><input required type='text' name='pubreason' /></td></tr>
+    <tr><th>Staff Reason</th>
+    <td><input required type='text' name='staffreason' /></td></tr>
+    <tr><th>Length</th>
+    <td><select name =\"timebannedfor\" value=\"timebannedfor\">
+  <option value=\"warn\">Warn</option>
+  <option value=\"3hr\">3 hours</option>
+  <option value=\"3day\">3 days</option>
+  <option value=\"1wk\">1 week</option>
+  <option value=\"1mon\">1 month</option>
+  <option value=\"perma\">Permanent</option>
+</select></td></tr></table>
+    <input type=\"submit\" value=\"" . S_BANS . "\"/></form>" . S_BANS_EXTRA . "";
+    echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/img.css\" />";  
     
     $all = (int) ($all / 1024);
     echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";
@@ -1468,13 +1556,12 @@ switch ($mode) {
         }
         break;
     case 'banish':
-        ban($_POST['ip_to_ban'], $_POST['reason']);
-        echo 'IP banned!
-	<script type="text/javascript">
-	<!--
-	window.location = "index.html"
-	//-->
-	</script>';
+	     $ip = $_POST['ip_to_ban'];
+		$pubreason  = mysql_escape_string($_POST['pubreason']);
+		$staffreason = mysql_escape_string($_POST['staffreason']);
+		$banlength = mysql_escape_string($_POST['timebannedfor']);
+		ban($ip, $pubreason, $staffreason, $banlength);
+		echo '<br/ > <a href="'. PHP_SELF . '?mode=admin" />Return</a>';
         break;
     case 'usrdel':
         usrdel($no, $pwd);
