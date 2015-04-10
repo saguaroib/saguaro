@@ -1,6 +1,10 @@
 <?php
 session_start();
-
+////////////////////////////////////////////////////////////////////////////////
+//  I dont give a FRICK if this is bad practice,              //
+//  I'll revisit this after later updates, at least it works  //
+//  and is out of the way.          - <3 Halcyon            //
+//////////////////////////////////////////////////////////////////////////////
 include("config.php");
 
 $con = mysql_connect(SQLHOST, SQLUSER, SQLPASS);
@@ -30,15 +34,9 @@ while ($row = mysql_fetch_array($query)) {
 	    
 }
 
-
-/* FINAL TODO: Bans remove themselves after time is served
-function amend_ban 
-{
-	hahahahhhaha
-}
-*/
-
 if ($ip == $host) {
+global $expires;
+$calcPlaced = date('F d, Y', $placedOn);
 	switch ($banlength) {
 		case '100':
 			$status = 'have been warned';
@@ -48,27 +46,48 @@ if ($ip == $host) {
 		case '1':
 			$status = 'have been banned';
 			$blength = '<b>3 hours</b>';
+            $expiresOn = strtotime('+3 hour', $placedOn);
+            $expires = date('F d, Y', $placedOn);
+            if ( $expires > $placedOn) {
+                mysql_query("DELETE FROM " . SQLBANLOG . " WHERE ip='$host'");
+                }
 			$type = 2;
 			break;
 		case '2':
 			$status = 'have been banned';
 			$blength = '<b>3 days</b>';
+            $expiresOn = strtotime('+3 day', $placedOn);
+            $expires = date('F d, Y', $expiresOn);
+            if ( $expires <= $placedOn) {
+                mysql_query("DELETE FROM " . SQLBANLOG . " WHERE ip='$host'");
+            }
 			$type = 2;
 			break;
 		case '3':
 			$status = 'have been banned';
 			$blength = '<b>1 week</b>';
+            $expiresOn = strtotime('+1 week', $placedOn);
+            $expires = date('F d, Y', $expiresOn);
+            if ( $expires <= $placedOn) {
+                mysql_query("DELETE FROM " . SQLBANLOG . " WHERE ip='$host'");
+            }
 			$type = 2;
 			break;
 		case '4':
 			$status = 'have been banned';
 			$blength = '<b>1 month</b>';
+            $expiresOn = strtotime('+1 month', $placedOn);
+            $expires = date('F d, Y', $expiresOn);
+            if ( $expires <= $placedOn) {
+                mysql_query("DELETE FROM " . SQLBANLOG . " WHERE ip='$host'");
+            }
 			$type = 2;
 			break;
 		case '-1':
 			$status = 'have been permanently banned';
 			$blength = '<b>forever</b>';
 			$type = 2;
+            $expires = 'forever'
 			break;
 	}
 } else {
@@ -95,7 +114,7 @@ if ($type == 0) {
 				<h3>This warn was issued for the IP address ' . $ip . '</h3>' . $footer;
 } else {
 	echo '<p>You <b>' . $status . '</b> from posting on board: <b>/' . BOARD_DIR . '/ - ' . TITLE . '</b> for the following reason: </p><br /><p><b>' . $pubreason . '</b></p><br /><hr />
-				<p>This ban will last ' . $blength . '. It was placed on <b>' . $placedOn . '</b><br/><h3>This ban was issued for the IP address ' . $ip . '</h3>' . $footer;// and will remain in effect until ' . $expiresOn . '</p>
+				<p>This ban is for ' . $blength . '. It was placed on <b>' . $calcPlaced . '</b> and will last until: <b>' . $expires . '</b><br/><h3>This ban was issued for the IP address ' . $ip . '</h3>' . $footer;
 				
 }
 
