@@ -100,4 +100,4 @@ define(S_RESNUM, 'Reply to thread:');
 define(S_BANS, 'Ban');
 define(S_BANS_EXTRA, '');
 define(S_CAPFAIL, 'You seem to have mistyped the verification.');
-?>
+define(S_THREADLOCKED, 'You cannot reply to a locked thread.');

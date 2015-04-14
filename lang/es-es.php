@@ -1,4 +1,4 @@
-<?
+<?php
 define(S_HOME, 'Inicio');											//Forwards to home page
 define(S_ADMIN, 'Administracion');										//Forwards to Management Panel
 define(S_RETURN, 'Regresar');										//Returns to image board
@@ -100,4 +100,5 @@ define(S_RESNUM, 'Respuesta para enhebrar:');
 define(S_BANS, 'Prohibicion');
 define(S_BANS_EXTRA, '');
 define(S_CAPFAIL, 'Usted parece tener mistyped la verificación.');
+define(S_THREADLOCKED, 'Responder prohibido');
 ?>

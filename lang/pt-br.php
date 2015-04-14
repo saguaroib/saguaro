@@ -1,4 +1,4 @@
-<?
+<?php
 define(S_HOME, 'In&#237;cio');											//Forwards to home page
 define(S_ADMIN, 'Gerenciar');										//Forwards to Management Panel
 define(S_RETURN, 'Retornar');										//Returns to image board
@@ -100,4 +100,5 @@ define(S_RESNUM, 'Responder &#224; thread:');
 define(S_BANS, 'Ban');
 define(S_BANS_EXTRA, '');
 define(S_CAPFAIL, 'Voc&#234; parece ter errado a verifica&#231;&#227;o.');
+define(S_THREADLOCKED, 'Responder proibido');
 ?>

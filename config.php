@@ -16,6 +16,7 @@ define(SHOWTITLETXT, '1');								//Show TITLE at top (1: yes  0: no)
 define(SHOWTITLEIMG, '0');								//Show image at top (0: no, 1: single, 2: rotating)
 define(TITLEIMG, '');									//Title image (point to php file if rotating)
 define(LANGUAGE, 'en-us');								//Language file to use from "lang" folder.
+define(DATE_FORMAT, 'm/d/y');                      //Formatting for the date in each post, see http://php.net/manual/en/function.date.php for different options
 
 //From here down all these settings are optional.
 
