@@ -60,14 +60,18 @@ define(USE_EXTRAS, '1');       	 						//Automatically include all .js files in 
 //CSS stuff.
 //These are required, but you can change them.
 //TO-DO: Make scalable. - RePod
-define(CSSFILE, 'css/futaba.css');							//location of the css file, also the default
-define(STYLESHEET_1, 'Futaba');							//Name of the first stylesheet.
-define(CSSFILE2, 'css/burichan.css');						//location of the second stylesheet.
-define(STYLESHEET_2, 'Burichan');						//Name of the second stylesheet.
-define(CSSFILE3, 'css/kusaba.css');						//location of the third stylesheet.
+define(CSSFILE, 'css/saguaba.css');							//location of the css file, also the default
+define(STYLESHEET_1, 'Saguaba');							//Name of the first stylesheet.
+define(CSSFILE2, 'css/sagurichan.css');						//location of the second stylesheet.
+define(STYLESHEET_2, 'Sagurichan');						//Name of the second stylesheet.
+define(CSSFILE3, 'css/futaba.css');						//location of the third stylesheet.
+define(STYLESHEET_3, 'Futaba');						//Name of the third stylesheet.
+define(CSSFILE4, 'css/burichan.css');						//location of the fourth stylesheet.
+define(STYLESHEET_4, 'Burichan');						//Name of the fourth stylesheet.
+/*define(CSSFILE3, 'css/kusaba.css');						//location of the third stylesheet.
 define(STYLESHEET_3, 'Kusaba');						//Name of the third stylesheet.
 define(CSSFILE4, 'css/monotone.css');						//location of the fourth stylesheet.
-define(STYLESHEET_4, 'Monotone');						//Name of the fourth stylesheet.
+define(STYLESHEET_4, 'Monotone');						//Name of the fourth stylesheet.*/
 
 
 //Capcodes - show 'em who's boss (put it as your trip. IE: "name#CHANGEME" would result as "name## Admin ##!09EKYZv3TU")
