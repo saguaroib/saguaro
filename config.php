@@ -1,4 +1,5 @@
 <?php
+
 //Essentials - You NEED to change these, or at least make sure they're good
 define(SQLDB, 'CHANGEME');									//Database used by image board
 define(SQLHOST, 'CHANGEME');							//MySQL server address, usually localhost
@@ -110,4 +111,8 @@ define(ADS2, '<center>ads ads ads</center>');		//advertisement code (below post 
 
 define(USE_ADS3, 0);		//Use advertisements (bottom) (1: yes  0: no)
 define(ADS3, '<center>ads ads ads</center>');		//advertisement code (bottom)			
+
+//BEWARE: Debug mode can display sensitive data that could be exploited. Use with caution
+define(DEBUG_MODE, 0);                              //0: off, 1: on. Enabling this will display any SQL errors as well as making redirects between posting/log updates slower.
+
 ?>
