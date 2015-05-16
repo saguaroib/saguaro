@@ -20,7 +20,13 @@ Remember to look through older threads and see if your problem wasn't solved alr
 
 */
 include "config.php";
-include "lang/" . LANGUAGE . ".php"; //Language file.
+include "lang/" . (LANGUAGE) ? LANGUAGE : "en-us" . ".php"; //Language file
+
+if(DEBUG_MODE) {
+    ini_set('display_errors', 1);
+} else {
+    ini_set('display_errors', 0);
+}
 
 $num     = $_REQUEST['num'];
 $capkeyx = substr($_SESSION['capkey'], 0, 5);
@@ -467,9 +473,12 @@ function mysql_call($query)
 {
     $ret = mysql_query($query);
     if (!$ret) {
-        echo "error!!<br />";
-        #echo $query . "<br />";
-       #echo mysql_errno().": ". mysql_error() ."<br />";
+        if (DEBUG_MODE) {
+            echo "Error on query: " . $query . "<br />";
+            echo mysql_error() ."<br />";
+        } else {
+            echo "MySQL error!<br />";
+        }
     }
     return $ret;
 }
@@ -1184,7 +1193,12 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
 		   //No noko
             $redirect = PHP_SELF;
         }
-        echo "<html><head><meta http-equiv=\"refresh\" content=\"0;URL=" . $redirect . "\" /></head>";
+        
+        if (DEBUG_MODE) {
+            echo "<html><head><meta http-equiv=\"refresh\" content=\"4;URL=" . $redirect . "\" /></head>";
+        } else {        
+            echo "<html><head><meta http-equiv=\"refresh\" content=\"0;URL=" . $redirect . "\" /></head>";
+        }
         echo "<body>$mes " . S_SCRCHANGE . "</body></html>";
     } else {
         error(S_CAPFAIL, $dest);
