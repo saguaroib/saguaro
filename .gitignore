@@ -5,5 +5,3 @@ configs/*
 # Etc.
 Thumbs.db
 .DS_Store
-images/*
-*.zip
