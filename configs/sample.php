@@ -24,7 +24,7 @@ define(TITLE, 'Saguaro Imageboard');                    //Name of this image boa
 define(S_HEADSUB, 'Fresh outta the .zip!');             //subtitle underneath title
 define(SHOWTITLETXT, '1');                              //Show TITLE at top (1: yes  0: no)
 define(SHOWTITLEIMG, '0');                              //Show image at top (0: no, 1: single, 2: rotating)
-define(TITLEIMG, '');                                   Title image (point to php file if rotating)
+define(TITLEIMG, '');                                   //Title image (point to php file if rotating)
 define(LANGUAGE, 'en-us');                              //Language file to use from "lang" folder.
 
 //From here down all these settings are optional.
