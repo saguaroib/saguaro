@@ -151,10 +151,6 @@ a:hover {
 	font-family: Arial, Helvetica, sans-serif;
 	text-decoration:none;
 }
-
-span.filesize {
-    padding: 20px;    
-}
 .filetitle {
 	background:inherit;
 	font-size:16px;

@@ -4,7 +4,7 @@ session_start();
 =================================
 ===Saguaro Imageboard Software===
 =================================
->>0.99.20
+>>0.99.0
 http://saguaroimgboard.tk/download/
 the above link will have the latest version.
 
@@ -174,7 +174,7 @@ function updatelog($resno = 0)
                 echo "";
             }
             ;
-			list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize, $fname,  ) = mysql_fetch_row( $treeline );
+            list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize, ) = mysql_fetch_row($treeline);
             if (!$no) {
                 break;
             }
@@ -198,40 +198,26 @@ function updatelog($resno = 0)
             "1</font><a href=$threadurl#3\" onclick=\"replyhl('3');\">23</a>4<font>", $com);*/
             $dat .= "<span class=\"thread\"><span class=\"op_post\">";
             
-			//OP Post image
-			
-			// Picture file name
-			$img        = $path . $tim . $ext;
-			$displaysrc = IMG_DIR . $tim . $ext;
-			if ( strlen( $fname ) > 40 ) {
-				$truncname = substr( $fname, 0, 40 ) . "...." . $ext;
-			} else {
-				$truncname = $fname;
-			}
-			// img tag creation
-			$imgsrc = "";
-			if ( $ext ) {
-				//Filesize calculated
-				$shortmd5 = base64_encode( pack( "H*", $md5 ) );
-				if ( $fsize >= 1048576 ) {
-					$size = round( ( $fsize / 1048576 ), 2 ) . " M";
-				} else if ( $fsize >= 1024 ) {
-					$size = round( $fsize / 1024 ) . " K";
-				} else {
-					$size = $fsize . " ";
-				}
-				if ( $w && $h ) { //when there is size...
-					if ( @is_file( THUMB_DIR . $tim . 's.jpg' ) ) {
-						$imgsrc = "    <span class=\"thumbnailmsg\">" . S_THUMB . "</span><br /><a href=\"" . $displaysrc . "\" target=_blank><img src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" border=\"0\" align=\"left\" class=\"postimg\" width=\"$w\" height=\"$h\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
-					} else {
-						$imgsrc = "<a href=\"" . $tim . "\" target=_blank><img src=\"" . $displaysrc . "\" border=\"0\" align=\"left\" class=\"postimg\" width=\"$w\" height=\"$h\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
-					}
-				} else {
-					$imgsrc = "<a href=\"" . $tim . "\"><img src=\"" . $displaysrc . "\" border=\"0\" align=\"left\" class=\"postimg\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
-				}
-				$dimensions = "{$w}x{$h}";
-				$dat .= "<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">" . $truncname . "</a> (" . $size . "B, " . $dimensions . ")</span>" . $imgsrc;
-			}
+            // Picture file name
+            $img    = $path . $tim . $ext;
+            $src    = IMG_DIR . $tim . $ext;
+            // img tag creation
+            $imgsrc = "";
+            if ($ext) {
+                $size  = $fsize; //file size displayed in alt text
+                $ksize = round($size / 1024);
+                if ($w && $h) { //when there is size...
+                    if (@is_file(THUMB_DIR . $tim . 's.jpg')) {
+                        $imgsrc = "    <span class=\"thumbnailmsg\">" . S_THUMB . "</span><br /><a href=\"" . $src . "\" target=_blank><img src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" border=\"0\" align=\"left\" class=\"postimg\" width=\"$w\" height=\"$h\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
+                    } else {
+                        $imgsrc = "<a href=\"" . $src . "\" target=_blank><img src=\"" . $src . "\" border=\"0\" align=\"left\" class=\"postimg\" width=\"$w\" height=\"$h\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
+                    }
+                } else {
+                    $imgsrc = "<a href=\"" . $src . "\"><img src=\"" . $src . "\" border=\"0\" align=\"left\" class=\"postimg\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
+                }
+                $dat .= "<span class=\"filesize\">" . S_PICNAME . "<a href=\"$src\">$tim$ext</a>-($ksize KB)</span>$imgsrc";
+                
+            }
             
             
             // word filters
@@ -314,7 +300,7 @@ function updatelog($resno = 0)
                     $s--;
                     continue;
                 }
-				list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked ) = $resrow;
+                list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize, ) = $resrow;
                 if (!$no) {
                     break;
                 }
@@ -344,37 +330,25 @@ function updatelog($resno = 0)
                 $dat .= "<input type=\"checkbox\" name=\"$no\" value=\"delete\" /><span class=\"replytitle\">$sub</span> \n";
                 $dat .= "<span class=\"postername\"><b>$name</b></span> $now " . "<a id=\"$no\" href=\"$threadurl#$no\" class=\"qu\" title=\"Permalink thread\" $onclick>No.</a>" . "<a href=\"$quote\" title=\"Quote\" class=\"qu\">$no</a> &nbsp; \n";
                 
-			// Picture file name
-			$img        = $path . $tim . $ext;
-			$displaysrc = IMG_DIR . $tim . $ext;
-			if ( strlen( $fname ) > 40 ) {
-				$truncname = substr( $fname, 0, 40 ) . "...." . $ext;
-			} else {
-				$truncname = $fname;
-			}
-			// img tag creation
-			$imgsrc = "";
-			if ( $ext ) {
-				//Filesize calculated
-				$shortmd5 = base64_encode( pack( "H*", $md5 ) );
-				if ( $fsize >= 1048576 ) {
-					$size = round( ( $fsize / 1048576 ), 2 ) . " M";
-				} else if ( $fsize >= 1024 ) {
-					$size = round( $fsize / 1024 ) . " K";
-				} else {
-					$size = $fsize . " ";
-				}
-					if ( $w && $h ) { //when there is size...
-						if ( @is_file( THUMB_DIR . $img . 's.jpg' ) ) {
-							$imgsrc = "    <br /><span class=\"thumbnailmsg\">" . S_THUMB . "</span><br /><a href=\"" . $img . "\" target=_blank><img src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" border=\"0\" align=\"left\" class=\"postimg\" width=\"$w\" height=\"$h\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
-						} else {
-							$imgsrc = "<a href=\"" . $img . "\"><br><img src=\"" . $displaysrc . "\" border=\"0\" align=\"left\" class=\"postimg\" width=\"$w\" height=\"$h\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
-						}
-					} else {
-						$imgsrc = "<a href=\"" . $img . "\"><img src=\"" . $displaysrc . "\" border=\"0\" align=\"left\" class=\"postimg\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
-					}
-					$dat .= "<br / ><span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\">" . $truncname . "</a> (" . $size . "B, " . $dimensions . ")" . $imgsrc. "</span>";
-				}
+                // Picture file name
+                $img    = $path . $tim . $ext;
+                $src    = IMG_DIR . $tim . $ext;
+                // img tag creation
+                $imgsrc = "";
+                if ($ext) {
+                    $size  = $fsize; //file size displayed in alt text
+                    $ksize = round($size / 1024);
+                    if ($w && $h) { //when there is size...
+                        if (@is_file(THUMB_DIR . $tim . 's.jpg')) {
+                            $imgsrc = "    <br /><span class=\"thumbnailmsg\">" . S_THUMB . "</span><br /><a href=\"" . $src . "\" target=_blank><img src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" border=\"0\" align=\"left\" class=\"postimg\" width=\"$w\" height=\"$h\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
+                        } else {
+                            $imgsrc = "<a href=\"" . $src . "\"><img src=\"" . $src . "\" border=\"0\" align=\"left\" class=\"postimg\" width=\"$w\" height=\"$h\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
+                        }
+                    } else {
+                        $imgsrc = "<a href=\"" . $src . "\"><img src=\"" . $src . "\" border=\"0\" align=\"left\" class=\"postimg\" hspace=\"20\" alt=\"" . $size . " B\" /></a><br />";
+                    }
+                    $dat .= "<br /><span class=\"filesize\">" . S_PICNAME . "<a href=\"$src\">$tim$ext</a>-($ksize KB)</span>$imgsrc";
+                }
                 
                 // word filters
                 $com_parts = explode(" ", $com);
@@ -1609,59 +1583,42 @@ function admindel($pass)
         echo S_SQLFAIL;
     }
     $j = 0;
-	while ( $row = mysql_fetch_row( $result ) ) {
-		$j++;
-		$img_flag = FALSE;
-		list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
-		// Format
-		$now = ereg_replace( '.{2}/(.*)$', '\1', $now );
-		$now = ereg_replace( '\(.*\)', ' ', $now );
-		if ( strlen( $name ) > 10 )
-			$name = substr( $name, 0, 9 ) . ".";
-		if ( strlen( $sub ) > 10 )
-			$sub = substr( $sub, 0, 9 ) . ".";
-		if ( $email )
-			$name = "<a href=\"mailto:$email\">$name</a>";
-		$com = str_replace( "<br />", " ", $com );
-		$com = htmlspecialchars( $com );
-		if ( strlen( $com ) > 20 )
-			$com = substr( $com, 0, 18 ) . ".";
-		// Link to the picture
-		if ( $ext && is_file( $path . $tim . $ext ) ) {
-			$img_flag = TRUE;
-			$clip     = "<a class=\"thumbnail\" target=\"_blank\" href=\"" . IMG_DIR . $tim . $ext . "\">" . $tim . $ext . "<span><img src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" width=\"100\" height=\"100\" /></span></a><br />";
-			if ( $fsize >= 1048576 ) {
-					$size = round( ( $fsize / 1048576 ), 2 ) . " M";
-					$fsize = $asize;
-				} else if ( $fsize >= 1024 ) {
-					$size = round( $fsize / 1024 ) . " K";
-					$fsize = $asize;
-				} else {
-					$size = $fsize . " ";
-					$fsize = $asize;
-				}
-			$all += $asize; //total calculation
-			$md5 = substr( $md5, 0, 10 );
-		} else {
-			$clip = "";
-			$size = 0;
-			$md5  = "";
-		}
-		$class = ( $j % 2 ) ? "row1" : "row2"; //BG color
-		
-		if ($resto == '0') {
-			$resto = 'Orig. post';
-		}
-		if ($sticky == '1') {
-			$warnSticky = "<b><font color=\"FF101A\">(Sticky)</font></b>";
-		} else {
-			$warnSticky = '';
-		}
-		echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
-		echo "<td>$no</td><td>$resto</td><td>$now</td><td>$sub</td>";
-		echo "<td>$name</b></td><td>$com</td>";
-		echo "<td>$host</td><td>$clip($size)</td><td>$md5</td><td>$fname</td><td>" . calculate_age( $time ) . "</td>\n";
-		echo "</tr>\n";
+    while ($row = mysql_fetch_row($result)) {
+        $j++;
+        $img_flag = FALSE;
+        list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize, $root, $resto) = $row;
+        // Format
+        $now = ereg_replace('.{2}/(.*)$', '\1', $now);
+        $now = ereg_replace('\(.*\)', ' ', $now);
+        if (strlen($name) > 10)
+            $name = substr($name, 0, 9) . ".";
+        if (strlen($sub) > 10)
+            $sub = substr($sub, 0, 9) . ".";
+        if ($email)
+            $name = "<a href=\"mailto:$email\">$name</a>";
+        $com = str_replace("<br />", " ", $com);
+        $com = htmlspecialchars($com);
+        if (strlen($com) > 20)
+            $com = substr($com, 0, 18) . ".";
+        // Link to the picture
+        if ($ext && is_file($path . $tim . $ext)) {
+            $img_flag = TRUE;
+            $clip     = "<a class=\"thumbnail\" target=\"_blank\" href=\"" . IMG_DIR . $tim . $ext . "\">" . $tim . $ext . "<span><img src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" width=\"100\" height=\"100\" /></span></a><br />";
+            $size     = $fsize;
+            $all += $size; //total calculation
+            $md5 = substr($md5, 0, 10);
+        } else {
+            $clip = "";
+            $size = 0;
+            $md5  = "";
+        }
+        $class = ($j % 2) ? "row1" : "row2"; //BG color
+	   
+        echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete></td>";
+        echo "<td>$no</td><td>$now</td><td>$sub</td>";
+        echo "<td>$name</b></td><td>$com</td>";
+        echo "<td>$host</td><td>$clip($size)</td><td>$md5</td><td>$tim</td><td>" . calculate_age($time) . "</td>\n";
+        echo "</tr>\n";
     }
     mysql_free_result($result);
     

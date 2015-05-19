@@ -20,7 +20,7 @@ define(S_RULES, '<ul><li>Supported file types are: GIF, JPG, PNG</li>
 </ul>');				//Prints rules under posting section
 define(S_REPORTERR, 'Error: Cannot find reply.');							//Returns error when a reply (res) cannot be found
 define(S_THUMB, '');					//Prints instructions for viewing real source
-define(S_PICNAME, 'File:');										//Prints text before upload name/link
+define(S_PICNAME, 'File : ');										//Prints text before upload name/link
 define(S_REPLY, 'Reply');										//Prints text for reply link
 define(S_OLD, 'Marked for deletion (old).');								//Prints text to be displayed before post is marked for deletion, see: retention
 define(S_RESU, '');											//Prints post?
@@ -81,8 +81,8 @@ define(S_DELLIST, 'Management Panel');									//Prints sub-heading of Managemen
 define(S_ITDELETES, 'Delete');										//Defines for deletion button in Management Panel
 define(S_MDRESET, 'Reset');										//Defines name for field reset button in Management Panel
 define(S_MDONLYPIC, 'File Only');									//Sets whether or not to delete only file, or entire post/thread
-define(S_MDTABLE1, '<th>Delete?</th><th>Post No.</th><th>Reply to</th><th>Time</th><th>Subject</th>');			//Explains field names for Management Panel (Delete?->Subject)
-define(S_MDTABLE2, '<th>Name</th><th>Comment</th><th>Host</th><th>Size<br /></th><th>md5</th><th>Local filename</th><th>Age</th>');	//Explains names for Management Panel (Name->md5)
+define(S_MDTABLE1, '<th>Delete?</th><th>Post No.</th><th>Time</th><th>Subject</th>');			//Explains field names for Management Panel (Delete?->Subject)
+define(S_MDTABLE2, '<th>Name</th><th>Comment</th><th>Host</th><th>Size<br />(Bytes)</th><th>md5</th><th>Local filename</th><th>Age</th>');	//Explains names for Management Panel (Name->md5)
 define(S_RESET, 'Reset');										//Sets name for field reset button (global)
 define(S_IMGSPACEUSAGE, 'Space used :');						//Prints space used KB by the board under Management Panel
 define(S_CANNOTWRITE, 'Error: Cannot write to directory.<br />');						//Returns error when the script cannot write to the directory, this is used on initial setup--check your chmod (777)
