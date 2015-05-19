@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?
 $S_HOME = 'Inicio';											//Forwards to home page
 $S_ADMIN = 'Administracion';										//Forwards to Management Panel
@@ -100,4 +101,6 @@ $S_RESNUM = 'Respuesta para enhebrar:';
 $S_BANS = 'Prohibicion';
 $S_BANS_EXTRA = '';
 $S_CAPFAIL = 'Usted parece tener mistyped la verificación.';
+$S_THREADLOCKED = 'Responder prohibido';
+
 ?>

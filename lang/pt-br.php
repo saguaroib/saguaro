@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?
 $S_HOME = 'In&#237;cio';											//Forwards to home page
 $S_ADMIN = 'Gerenciar';										//Forwards to Management Panel
@@ -100,4 +101,6 @@ $S_RESNUM = 'Responder &#224; thread:';
 $S_BANS = 'Ban';
 $S_BANS_EXTRA = '';
 $S_CAPFAIL = 'Voc&#234; parece ter errado a verifica&#231;&#227;o.';
+$S_THREADLOCKED = 'Responder proibido';
+
 ?>

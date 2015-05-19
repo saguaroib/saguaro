@@ -4,7 +4,7 @@ session_start();
 =================================
 ===Saguaro Imageboard Software===
 =================================
->>0.98.3b1
+>>0.99.0
 http://saguaroimgboard.tk/download/
 the above link will have the latest version.
 
@@ -21,6 +21,12 @@ Remember to look through older threads and see if your problem wasn't solved alr
 */
 include "config.php";
 include "lang/" . LANGUAGE . ".php"; //Language file.
+
+if(DEBUG_MODE) {
+    ini_set('display_errors', 1);
+} else {
+    ini_set('display_errors', 0);
+}
 
 $num     = $_REQUEST['num'];
 $capkeyx = substr($_SESSION['capkey'], 0, 5);
@@ -59,7 +65,7 @@ $badfile   = array(
     "dummy2"
 ); //Refused files (md5 hashes)
 
-$badip= mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' ");
+$badip= mysql_call("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' ");
 
 if (!table_exist(SQLLOG)) {
     echo (S_TCREATE . SQLLOG . "<br />");
@@ -78,7 +84,11 @@ if (!table_exist(SQLLOG)) {
     tim   text,
     time  int,
     md5   text,
+    fname text,
     fsize int,
+    sticky int,
+    permasage int,
+    locked int,
     root  timestamp,
     resto int)");
     
@@ -94,7 +104,8 @@ if (!table_exist(SQLBANLOG)) {
     pubreason  VARCHAR(250),
     staffreason  VARCHAR(250),
     banlength  VARCHAR(250),
-    placedOn timestamp)");
+    placedOn VARCHAR(50),
+    board VARCHAR(50))");
    
    if (!$result) {
         echo S_TCREATEF . SQLBANLOG . "<br />";
@@ -247,8 +258,22 @@ function updatelog($resno = 0)
             
             $dat .= "<input type=\"checkbox\" name=\"$no\" value=\"delete\" /><span class=\"filetitle\">$sub</span>   \n";
             $dat .= "<span class=\"postername\"><b>$name</b></span> $now " . "<a id=\"$no\" href=\"$threadurl#$no\" class=\"qu\" title=\"" . S_PERMALINK . "\" $onclick>No.</a>" . "<a href=$quote title=\"" . S_QUOTE . "\" class=\"qu\">$no</a> &nbsp; \n";
-            if (!$resno)
-                $dat .= "[<a href=\"" . PHP_SELF . "?res=$no\">" . S_REPLY . "</a>]";
+            if (!$resno) {
+			$query = mysql_call("SELECT sticky, locked FROM " . SQLLOG . " WHERE no=" . $no);  
+			while ($row = mysql_fetch_array($query)) {
+			    global $issticky, $issaged, $islocked;
+				$issticky = $row["sticky"];
+				$islocked = $row["locked"];				    
+			}
+			if ($issticky) {
+				$dat .= "<img src='css/sticky.gif' /> "; 
+			 }
+			if ($islocked) {
+				$dat .= "<img src='css/locked.gif' /> "; 
+			}
+			mysql_free_result($query);
+			 $dat .= "[<a href=\"" . PHP_SELF . "?res=$no\">" . S_REPLY . "</a>]";
+		  }
             $dat .= "\n<blockquote>$com</blockquote></span>";
             
             // Deletion pending
@@ -350,11 +375,6 @@ function updatelog($resno = 0)
                 $dat .= "</td></tr></table>\n";
             }
             
-            
-            
-            
-            
-            
             /*possibility for ads after each post*/
             $dat .= "</span><br clear=\"left\" /><hr />\n";
             
@@ -455,9 +475,12 @@ function mysql_call($query)
 {
     $ret = mysql_query($query);
     if (!$ret) {
-        #echo "error!!<br />";
-        echo $query . "<br />";
-        #    echo mysql_errno().": ".mysql_error()."<br />";
+        if (DEBUG_MODE) {
+            echo "Error on query: " . $query . "<br />";
+            echo mysql_error() ."<br />";
+        } else {
+            echo "MySQL error!<br />";
+        }
     }
     return $ret;
 }
@@ -493,7 +516,7 @@ function head(&$dat)
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . STYLESHEET_2 . '" href="' . CSSFILE2 . '" />
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . STYLESHEET_3 . '" href="' . CSSFILE3 . '" />
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . STYLESHEET_4 . '" href="' . CSSFILE4 . '" />
-<script src="' . PLUG_PATH . '/' . JS_PATH . '/styleswitch.js" type="text/javascript">
+<script src="' . JS_PATH . '/styleswitch.js" type="text/javascript">
 /***********************************************
 * Style Sheet Switcher v1.1- c Dynamic Drive DHTML code library (www.dynamicdrive.com)
 * This notice MUST stay intact for legal use
@@ -569,9 +592,6 @@ function insert(text)
         }
         unset($path);
     }
-    
-    
-    //if(USE_IMG_HOVER || USE_IMG_TOOLBAR || USE_IMG_EXP || USE_UTIL_QUOTE || USE_INF_SCROLL || USE_FORCE_WRAP || USE_UPDATER || USE_THREAD_STATS){$dat.='<script src="'.JS_PATH.'/suite_settings.js" type="text/javascript"></script>';}
     
     $dat .= '
 ' . EXTRA_SHIT . '
@@ -662,6 +682,9 @@ function form(&$dat, $resno, $admin = "")
 ';
     }
     /*}*/
+     if ($admin) {
+    $dat .= '<tr><td align="left" class="postblock" align="left">Options</td><td align="left">Sticky: <input type="checkbox" name="isSticky" value="isSticky" />Lock:<input type="checkbox" name="isLocked" value="isLocked" />';
+    }
     
     $dat .= '<tr><td align="left" class="postblock" align="left">' . S_DELPASS . '</td><td align="left"><input type="password" name="pwd" size="8" maxlength="8" value="" />' . S_DELEXPL . '</td></tr>
 <tr><td colspan="2">
@@ -727,6 +750,20 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
         $time = time();
         $tim  = $time . substr(microtime(), 2, 3);
         
+	   //Inserting sticky value
+	   if (isset($_POST['isSticky']) && $pwd == PANEL_PASS) {
+		   $stickied = 1;
+	   } else {
+		   $stickied = 0;
+	   }
+	   
+	   //Inserting locked value
+	   if (isset($_POST['isLocked']) && $pwd == PANEL_PASS) {
+		   $locked = 1;
+	   } else {
+		   $locked = 0;
+	   }
+	   
         // upload processing
         if ($upfile && file_exists($upfile)) {
             $dest = $path . $tim . '.tmp';
@@ -764,9 +801,9 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
                     break;
                 //case 4 : $ext=".swf";break;
                 //case 5 : $ext=".psd";break;
-                case 6:
+                /*case 6:
                     $ext = ".bmp";
-                    break;
+                    break;*/
                 //case 7 : $ext=".tiff";break;
                 //case 8 : $ext=".tiff";break;
                 //case 9 : $ext=".jpc";break;
@@ -892,14 +929,20 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
         
         //host check
         $host = $_SERVER["REMOTE_ADDR"];
-
-	   //Check if user IP is in bans table
-	if (mysql_num_rows($badip) == 0) {
-		// Not Banned
-	} else {
-		//NOW YOU FUCKED UP
-		error(S_BADHOST, $dest);
-	}
+        
+        $query = mysql_call("SELECT * FROM " . SQLLOG . " WHERE no=" . $resto);
+        $result = mysql_fetch_assoc($query);
+        if ($result["locked"] == '1') {
+                error(S_THREADLOCKED, $dest);
+        }
+        
+           //Check if user IP is in bans table
+        if (mysql_num_rows($badip) == 0) {
+            // Not Banned
+        } else {
+            //NOW YOU FUCKED UP
+            error(S_BADHOST, $dest);
+        }
 	   
         if (eregi("^mail", $host) || eregi("^ns", $host) || eregi("^dns", $host) || eregi("^ftp", $host) || eregi("^prox", $host) || eregi("^pc", $host) || eregi("^[^\.]\.[^\.]$", $host)) {
             $pxck = "on";
@@ -941,12 +984,12 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
             S_SAT
         );
         $yd     = $youbi[gmdate("w", $time + 9 * 60 * 60)];
-        $now    = gmdate("y/m/d", $time + 9 * 60 * 60) . "(" . (string) $yd . ")" . gmdate("H:i", $time + 9 * 60 * 60);
+        $now    = gmdate(' '.DATE_FORMAT.' ', $time + 9 * 60 * 60) . "(" . (string) $yd . ")" . gmdate("H:i", $time + 9 * 60 * 60);
         if (DISP_ID) {
             if ($email && DISP_ID == 1) {
                 $now .= " ID:???";
             } else {
-                $now .= " ID:" . substr(crypt(md5($_SERVER["REMOTE_ADDR"] . 'id' . gmdate("Ymd", $time + 9 * 60 * 60)), 'id'), -8);
+                $now .= " ID:" . substr(crypt(md5($_SERVER["REMOTE_ADDR"] . 'id' . gmdate(' '. DATE_FORMAT . ' ', $time + 9 * 60 * 60)), 'id'), -8);
             }
         }
         //Text plastic surgery (rorororor)
@@ -1006,6 +1049,15 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
             }*/
             
         }
+            
+        if ($email == 'noko') {
+            $noko = 1;
+            $email = '';
+        } else if ($email == 'nokosage') {
+            $noko = 1;
+            $email = S_SAGE;
+        }
+        
         
         if (!$name)
             $name = S_ANONAME;
@@ -1059,28 +1111,45 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
             }
             
         }
-        $sage    = S_SAGE;
+        
+	   //Sage check
+	    $sage    = S_SAGE;	   
         $restoqu = (int) $resto;
-        if ($resto) { //res,root processing
-            $rootqu = "0";
+	   //Bump processing
+        if ($resto) { 
+	   $query = mysql_call("SELECT sticky, permasage FROM " . SQLLOG . " WHERE no=" . $resto);  
+			while ($row = mysql_fetch_array($query)) {
+			    global $issticky, $issaged, $islocked;
+				$issticky = $row["sticky"];	
+				$issaged = $row["permasage"];					
+			}
+		$rootqu = "0";
             if (!$resline = mysql_call("select * from " . SQLLOG . " where resto=" . $resto)) {
                 echo S_SQLFAIL;
             }
             $countres = mysql_num_rows($resline);
             mysql_free_result($resline);
             if (!stristr($email, $sage) && $countres < MAX_RES) {
-                $query = "update " . SQLLOG . " set root=now() where no=$resto"; //age
-                if (!$result = mysql_call($query)) {
-                    echo S_SQLFAIL;
-                }
+                if($issticky == 0 and $issaged != 1) {
+                    mysql_call("update " . SQLLOG . " set root=now() where no=$resto"); //bumps to top if not permasaged or stickied
+                } 
+                /*if (!$result = mysql_call($query)) {
+                        #echo S_SQLFAIL . " " . mysql_error();
+                        echo $result;
+                }*/
             }
         } else {
-            $rootqu = "now()";
+			if ($stickied and !$issaged) {
+				$rootqu = '20270707190707';
+			} else if ($issaged) {
+                $rootqu = "";
+            } else {
+				$rootqu = "now()";
+			}
         } //now it is root
-        
-        $query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tim,time,md5,fsize,root,resto) values (" . "'" . $now . "'," . "'" . mysql_escape_string($name) . "'," . "'" . mysql_escape_string($email) . "'," . "'" . mysql_escape_string($sub) . "'," . "'" . mysql_escape_string($com) . "'," . "'" . mysql_escape_string($host) . "'," . "'" . mysql_escape_string($pass) . "'," . "'" . $ext . "'," . (int) $W . "," . (int) $H . "," . "'" . $tim . "'," . (int) $time . "," . "'" . $md5 . "'," . (int) $fsize . "," . $rootqu . "," . (int) $resto . ")";
+        $query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tim,time,md5,fsize,sticky, permasage, locked, root,resto) values (" . "'" . $now . "'," . "'" . mysql_escape_string($name) . "'," . "'" . mysql_escape_string($email) . "'," . "'" . mysql_escape_string($sub) . "'," . "'" . mysql_escape_string($com) . "'," . "'" . mysql_escape_string($host) . "'," . "'" . mysql_escape_string($pass) . "'," . "'" . $ext . "'," . (int) $W . "," . (int) $H . "," . "'" . $tim . "'," . (int) $time . "," . "'" . $md5 . "'," . (int) $fsize . "," . (int) $stickied . "," . (int) $permasage . "," . (int) $locked . "," . $rootqu . "," . (int) $resto . ")";
         if (!$result = mysql_call($query)) {
-            echo S_SQLFAIL;
+            echo S_SQLFAIL . mysql_error();
         } //post registration
         
         //Cookies
@@ -1112,14 +1181,46 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
         }
         updatelog();
         
-        echo "<html><head><meta http-equiv=\"refresh\" content=\"0;URL=" . PHP_SELF2 . "\" /></head>";
+        $nokolastno = $lastno + 1;
+        if (!$resto && $noko == 1) {
+		   //Noko'd OP
+            $redirect = PHP_SELF . '?res=' . $nokolastno;
+        } else if ($noko == 1) {
+		   //noko'd reply
+            $redirect = PHP_SELF . '?res=' . $resto;
+        } else {
+		   //No noko
+            $redirect = PHP_SELF;
+        }
+        
+        if (DEBUG_MODE) {
+            echo "<html><head><meta http-equiv=\"refresh\" content=\"4;URL=" . $redirect . "\" /></head>";
+        } else {        
+            echo "<html><head><meta http-equiv=\"refresh\" content=\"0;URL=" . $redirect . "\" /></head>";
+        }
         echo "<body>$mes " . S_SCRCHANGE . "</body></html>";
     } else {
         error(S_CAPFAIL, $dest);
     }
 }
 
-//thumbnails
+function sticky_this($no)
+{
+	$rootnum="202707070000";
+	mysql_call('UPDATE ' . SQLLOG . " SET sticky='1' , root='".$rootnum." WHERE no='".mysql_real_escape_string($no)."'");
+}
+
+function autosage_this($no)
+{
+	mysql_call('UPDATE ' . SQLLOG . " SET permasage='1' WHERE no='".mysql_real_escape_string($no)."'");
+}
+
+function lock_this($no)
+{
+	mysql_call('UPDATE ' . SQLLOG . " SET locked='1' WHERE no='".mysql_real_escape_string($no)."'");
+}
+
+//OP thumbnail creation
 function thumb($path, $tim, $ext)
 {
     if (!function_exists("ImageCreate") || !function_exists("ImageCreateFromJPEG"))
@@ -1288,6 +1389,11 @@ function usrdel($no, $pwd)
                             echo S_SQLFAIL;
                         } //sql is broke
                     }
+                    $findchildren = mysql_call("SELECT * FROM " . SQLLOG . " where  resto=" . $dno);
+                    if (mysql_num_rows($findchildren) > 0) {
+                       $eatchildren = mysql_call("DELETE FROM " . SQLLOG . " where resto=" . $dno);
+                       mysql_call($eatchildren);
+                    }
                     if (is_file($delfile))
                         unlink($delfile); //Deletion
                     if (is_file(THUMB_DIR . $dtim . 's.jpg'))
@@ -1326,7 +1432,8 @@ function valid($pass)
 
 function ban($ip, $pubreason, $staffreason, $banlength)
 {
-	$query = mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip'");
+    $placedOn = time();
+	$query = mysql_call("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip'");
 	switch ($banlength) {
 	     case 'warn':
 		   $banset = '100';
@@ -1351,9 +1458,9 @@ function ban($ip, $pubreason, $staffreason, $banlength)
 		   $banset = '9001';
 	}
 	if(mysql_num_rows($query) == 0) {
-		$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength) VALUES ('$ip', '$pubreason', '$staffreason', '$banset')";
+		$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength, placedOn) VALUES ('$ip', '$pubreason', '$staffreason', '$banset', '$placedOn')";
 
-		if(mysql_query($sql)){
+		if(mysql_call($sql)){
 			if ($banset == '100') { 
 				echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason ." </b><br />";
 				echo "Logged private reason: <br /><b> " . $staffreason ." </b>";
@@ -1410,7 +1517,7 @@ function admindel($pass)
                     $findchildren = mysql_call("SELECT * FROM " . SQLLOG . " where  resto=" . $no);
                     if (mysql_num_rows($findchildren) > 0) {
                        $eatchildren = mysql_call("DELETE FROM " . SQLLOG . " where resto=" . $no);
-                       mysql_query($eatchildren);
+                       mysql_call($eatchildren);
                     }
                     $delfile = $path . $tim . $ext; //Delete file
                     if (is_file($delfile))
@@ -1505,11 +1612,11 @@ function admindel($pass)
             $md5  = "";
         }
         $class = ($j % 2) ? "row1" : "row2"; //BG color
-        
+	   
         echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete></td>";
         echo "<td>$no</td><td>$now</td><td>$sub</td>";
         echo "<td>$name</b></td><td>$com</td>";
-        echo "<td>$host</td><td>$clip($size)</td><td>$md5</td><td>$resto</td><td>$tim</td><td>" . calculate_age($time) . "</td>\n";
+        echo "<td>$host</td><td>$clip($size)</td><td>$md5</td><td>$tim</td><td>" . calculate_age($time) . "</td>\n";
         echo "</tr>\n";
     }
     mysql_free_result($result);
