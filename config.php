@@ -1,4 +1,5 @@
 <?php
+
 //Essentials - You NEED to change these, or at least make sure they're good
 define(SQLDB, 'CHANGEME');									//Database used by image board
 define(SQLHOST, 'CHANGEME');							//MySQL server address, usually localhost
@@ -16,6 +17,7 @@ define(SHOWTITLETXT, '1');								//Show TITLE at top (1: yes  0: no)
 define(SHOWTITLEIMG, '0');								//Show image at top (0: no, 1: single, 2: rotating)
 define(TITLEIMG, '');									//Title image (point to php file if rotating)
 define(LANGUAGE, 'en-us');								//Language file to use from "lang" folder.
+define(DATE_FORMAT, 'm/d/y');                      //Formatting for the date in each post, see http://php.net/manual/en/function.date.php for different options
 
 //From here down all these settings are optional.
 
@@ -59,14 +61,18 @@ define(USE_EXTRAS, '1');       	 						//Automatically include all .js files in 
 //CSS stuff.
 //These are required, but you can change them.
 //TO-DO: Make scalable. - RePod
-define(CSSFILE, 'css/futaba.css');							//location of the css file, also the default
-define(STYLESHEET_1, 'Futaba');							//Name of the first stylesheet.
-define(CSSFILE2, 'css/burichan.css');						//location of the second stylesheet.
-define(STYLESHEET_2, 'Burichan');						//Name of the second stylesheet.
-define(CSSFILE3, 'css/kusaba.css');						//location of the third stylesheet.
+define(CSSFILE, 'css/saguaba.css');							//location of the css file, also the default
+define(STYLESHEET_1, 'Saguaba');							//Name of the first stylesheet.
+define(CSSFILE2, 'css/sagurichan.css');						//location of the second stylesheet.
+define(STYLESHEET_2, 'Sagurichan');						//Name of the second stylesheet.
+define(CSSFILE3, 'css/futaba.css');						//location of the third stylesheet.
+define(STYLESHEET_3, 'Futaba');						//Name of the third stylesheet.
+define(CSSFILE4, 'css/burichan.css');						//location of the fourth stylesheet.
+define(STYLESHEET_4, 'Burichan');						//Name of the fourth stylesheet.
+/*define(CSSFILE3, 'css/kusaba.css');						//location of the third stylesheet.
 define(STYLESHEET_3, 'Kusaba');						//Name of the third stylesheet.
 define(CSSFILE4, 'css/monotone.css');						//location of the fourth stylesheet.
-define(STYLESHEET_4, 'Monotone');						//Name of the fourth stylesheet.
+define(STYLESHEET_4, 'Monotone');						//Name of the fourth stylesheet.*/
 
 
 //Capcodes - show 'em who's boss (put it as your trip. IE: "name#CHANGEME" would result as "name## Admin ##!09EKYZv3TU")
@@ -105,4 +111,8 @@ define(ADS2, '<center>ads ads ads</center>');		//advertisement code (below post 
 
 define(USE_ADS3, 0);		//Use advertisements (bottom) (1: yes  0: no)
 define(ADS3, '<center>ads ads ads</center>');		//advertisement code (bottom)			
+
+//BEWARE: Debug mode can display sensitive data that could be exploited. Use with caution
+define(DEBUG_MODE, 0);                              //0: off, 1: on. Enabling this will display any SQL errors as well as making redirects between posting/log updates slower.
+
 ?>
