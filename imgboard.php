@@ -65,7 +65,7 @@ $badfile   = array(
     "dummy2"
 ); //Refused files (md5 hashes)
 
-$badip= mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' ");
+$badip= mysql_call("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' ");
 
 if (!table_exist(SQLLOG)) {
     echo (S_TCREATE . SQLLOG . "<br />");
@@ -84,6 +84,7 @@ if (!table_exist(SQLLOG)) {
     tim   text,
     time  int,
     md5   text,
+    fname text,
     fsize int,
     sticky int,
     permasage int,
@@ -103,7 +104,8 @@ if (!table_exist(SQLBANLOG)) {
     pubreason  VARCHAR(250),
     staffreason  VARCHAR(250),
     banlength  VARCHAR(250),
-    placedOn VARCHAR(50))");
+    placedOn VARCHAR(50),
+    board VARCHAR(50))");
    
    if (!$result) {
         echo S_TCREATEF . SQLBANLOG . "<br />";
@@ -257,7 +259,7 @@ function updatelog($resno = 0)
             $dat .= "<input type=\"checkbox\" name=\"$no\" value=\"delete\" /><span class=\"filetitle\">$sub</span>   \n";
             $dat .= "<span class=\"postername\"><b>$name</b></span> $now " . "<a id=\"$no\" href=\"$threadurl#$no\" class=\"qu\" title=\"" . S_PERMALINK . "\" $onclick>No.</a>" . "<a href=$quote title=\"" . S_QUOTE . "\" class=\"qu\">$no</a> &nbsp; \n";
             if (!$resno) {
-			$query = mysql_query("SELECT sticky, locked FROM " . SQLLOG . " WHERE no=" . $no);  
+			$query = mysql_call("SELECT sticky, locked FROM " . SQLLOG . " WHERE no=" . $no);  
 			while ($row = mysql_fetch_array($query)) {
 			    global $issticky, $issaged, $islocked;
 				$issticky = $row["sticky"];
@@ -591,9 +593,6 @@ function insert(text)
         unset($path);
     }
     
-    
-    //if(USE_IMG_HOVER || USE_IMG_TOOLBAR || USE_IMG_EXP || USE_UTIL_QUOTE || USE_INF_SCROLL || USE_FORCE_WRAP || USE_UPDATER || USE_THREAD_STATS){$dat.='<script src="'.JS_PATH.'/suite_settings.js" type="text/javascript"></script>';}
-    
     $dat .= '
 ' . EXTRA_SHIT . '
 </head>
@@ -865,7 +864,7 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
         } else {
             while ($resrow = mysql_fetch_row($result)) {
                 list($dno, $dext, $dtim) = $resrow;
-                if (!mysql_query("delete from " . SQLLOG . " where no=" . $dno)) {
+                if (!mysql_call("delete from " . SQLLOG . " where no=" . $dno)) {
                     echo S_SQLFAIL;
                 }
                 if ($dext) {
@@ -931,7 +930,7 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
         //host check
         $host = $_SERVER["REMOTE_ADDR"];
         
-        $query = mysql_query("SELECT * FROM " . SQLLOG . " WHERE no=" . $resto);
+        $query = mysql_call("SELECT * FROM " . SQLLOG . " WHERE no=" . $resto);
         $result = mysql_fetch_assoc($query);
         if ($result["locked"] == '1') {
                 error(S_THREADLOCKED, $dest);
@@ -1118,23 +1117,23 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
         $restoqu = (int) $resto;
 	   //Bump processing
         if ($resto) { 
-	   $query = mysql_query("SELECT sticky, permasage FROM " . SQLLOG . " WHERE no=" . $resto);  
+	   $query = mysql_call("SELECT sticky, permasage FROM " . SQLLOG . " WHERE no=" . $resto);  
 			while ($row = mysql_fetch_array($query)) {
 			    global $issticky, $issaged, $islocked;
 				$issticky = $row["sticky"];	
 				$issaged = $row["permasage"];					
 			}
 		$rootqu = "0";
-            if (!$resline = mysql_query("select * from " . SQLLOG . " where resto=" . $resto)) {
+            if (!$resline = mysql_call("select * from " . SQLLOG . " where resto=" . $resto)) {
                 echo S_SQLFAIL;
             }
             $countres = mysql_num_rows($resline);
             mysql_free_result($resline);
             if (!stristr($email, $sage) && $countres < MAX_RES) {
                 if($issticky == 0 and $issaged != 1) {
-                    mysql_query("update " . SQLLOG . " set root=now() where no=$resto"); //bumps to top if not permasaged or stickied
+                    mysql_call("update " . SQLLOG . " set root=now() where no=$resto"); //bumps to top if not permasaged or stickied
                 } 
-                /*if (!$result = mysql_query($query)) {
+                /*if (!$result = mysql_call($query)) {
                         #echo S_SQLFAIL . " " . mysql_error();
                         echo $result;
                 }*/
@@ -1208,17 +1207,17 @@ function regist($name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $r
 function sticky_this($no)
 {
 	$rootnum="202707070000";
-	mysql_query('UPDATE ' . SQLLOG . " SET sticky='1' , root='".$rootnum." WHERE no='".mysql_real_escape_string($no)."'");
+	mysql_call('UPDATE ' . SQLLOG . " SET sticky='1' , root='".$rootnum." WHERE no='".mysql_real_escape_string($no)."'");
 }
 
 function autosage_this($no)
 {
-	mysql_query('UPDATE ' . SQLLOG . " SET permasage='1' WHERE no='".mysql_real_escape_string($no)."'");
+	mysql_call('UPDATE ' . SQLLOG . " SET permasage='1' WHERE no='".mysql_real_escape_string($no)."'");
 }
 
 function lock_this($no)
 {
-	mysql_query('UPDATE ' . SQLLOG . " SET locked='1' WHERE no='".mysql_real_escape_string($no)."'");
+	mysql_call('UPDATE ' . SQLLOG . " SET locked='1' WHERE no='".mysql_real_escape_string($no)."'");
 }
 
 //OP thumbnail creation
@@ -1390,10 +1389,10 @@ function usrdel($no, $pwd)
                             echo S_SQLFAIL;
                         } //sql is broke
                     }
-                    $findchildren = mysql_query("SELECT * FROM " . SQLLOG . " where  resto=" . $dno);
+                    $findchildren = mysql_call("SELECT * FROM " . SQLLOG . " where  resto=" . $dno);
                     if (mysql_num_rows($findchildren) > 0) {
                        $eatchildren = mysql_call("DELETE FROM " . SQLLOG . " where resto=" . $dno);
-                       mysql_query($eatchildren);
+                       mysql_call($eatchildren);
                     }
                     if (is_file($delfile))
                         unlink($delfile); //Deletion
@@ -1434,7 +1433,7 @@ function valid($pass)
 function ban($ip, $pubreason, $staffreason, $banlength)
 {
     $placedOn = time();
-	$query = mysql_query("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip'");
+	$query = mysql_call("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip'");
 	switch ($banlength) {
 	     case 'warn':
 		   $banset = '100';
@@ -1461,7 +1460,7 @@ function ban($ip, $pubreason, $staffreason, $banlength)
 	if(mysql_num_rows($query) == 0) {
 		$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength, placedOn) VALUES ('$ip', '$pubreason', '$staffreason', '$banset', '$placedOn')";
 
-		if(mysql_query($sql)){
+		if(mysql_call($sql)){
 			if ($banset == '100') { 
 				echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason ." </b><br />";
 				echo "Logged private reason: <br /><b> " . $staffreason ." </b>";
@@ -1518,7 +1517,7 @@ function admindel($pass)
                     $findchildren = mysql_call("SELECT * FROM " . SQLLOG . " where  resto=" . $no);
                     if (mysql_num_rows($findchildren) > 0) {
                        $eatchildren = mysql_call("DELETE FROM " . SQLLOG . " where resto=" . $no);
-                       mysql_query($eatchildren);
+                       mysql_call($eatchildren);
                     }
                     $delfile = $path . $tim . $ext; //Delete file
                     if (is_file($delfile))
