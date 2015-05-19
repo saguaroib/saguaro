@@ -20,7 +20,7 @@ define(S_RULES, '<ul><li>Los tipos de archivo apoyados son: GIF, JPG, PNG</li>
 </ul>');				//Prints rules under posting section
 define(S_REPORTERR, 'Error: no Puede encontrar la respuesta.');							//Returns error when a reply (res) cannot be found
 define(S_THUMB, 'Una del pulgar mostrada, imagen de chasquido para tamano natural.');					//Prints instructions for viewing real source
-define(S_PICNAME, 'Archivo : ');										//Prints text before upload name/link
+define(S_PICNAME, 'Archivo:');										//Prints text before upload name/link
 define(S_REPLY, 'Responder');										//Prints text for reply link
 define(S_OLD, 'Marcado para eliminación (vieja).');								//Prints text to be displayed before post is marked for deletion, see: retention
 define(S_RESU, '');											//Prints post?
@@ -81,7 +81,7 @@ define(S_DELLIST, 'Panel de administracion');									//Prints sub-heading of Ma
 define(S_ITDELETES, 'Suprimir');										//Defines for deletion button in Management Panel
 define(S_MDRESET, 'Reinicializado');										//Defines name for field reset button in Management Panel
 define(S_MDONLYPIC, 'Archivo Sólo');									//Sets whether or not to delete only file, or entire post/thread
-define(S_MDTABLE1, '<th>Suprimir?</th><th>Poste No.</th><th>Tiempo</th><th>Sujeto</th>');			//Explains field names for Management Panel (Delete?->Subject)
+define(S_MDTABLE1, '<th>Suprimir?</th><th>Poste No.</th><th>Res</th><th>Tiempo</th><th>Sujeto</th>');			//Explains field names for Management Panel (Delete?->Subject)
 define(S_MDTABLE2, '<th>Nombre</th><th>Comentario</th><th>Anfitrion</th><th>Tamano<br>(Bytes)</th><th>md5</th><th>Respuesta #</th><th>Nombre del archivo Local</th><th>Edad</th>');	//Explains names for Management Panel (Name->md5)
 define(S_RESET, 'Reinicializado');										//Sets name for field reset button (global)
 define(S_IMGSPACEUSAGE, 'Espacio usado :');						//Prints space used KB by the board under Management Panel
