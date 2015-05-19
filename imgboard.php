@@ -20,7 +20,7 @@ Remember to look through older threads and see if your problem wasn't solved alr
 
 */
 include "config.php";
-include "lang/language.php"; //Language file.
+include "lang/" . LANGUAGE . ".php"; //Language file.
 
 if(DEBUG_MODE) {
     ini_set('display_errors', 1);
