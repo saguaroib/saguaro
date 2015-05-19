@@ -115,19 +115,19 @@ a:hover {
         text-decoration: none;
 }
 .filesize {
-	font-size:10pt;
-	font-family: Arial, Helvetica, sans-serif;
-	text-decoration:none;
+        font-size:10pt;
+        font-family: Arial, Helvetica, sans-serif;
+        text-decoration:none;
 }
 
 span.filesize {
     padding: 20px;    
 }
 .filetitle {
-	background:inherit;
-	font-size:16px;
-	font-family: Arial, Helvetica, sans-serif;
-	color:#CC1105;
+        background:inherit;
+        font-size: 16px;
+        font-family: Arial, Helvetica, sans-serif;
+        color:#0F0C5D;
 }
 .postername {
         background:inherit;
