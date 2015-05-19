@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 //Essentials - You NEED to change these, or at least make sure they're good
@@ -116,3 +117,11 @@ define(ADS3, '<center>ads ads ads</center>');		//advertisement code (bottom)
 define(DEBUG_MODE, 0);                              //0: off, 1: on. Enabling this will display any SQL errors as well as making redirects between posting/log updates slower.
 
 ?>
+=======
+<?
+    //Name of the configuration file.
+    $CONFIG_FILE_NAME = "sample";
+    
+    require("configs/" . $CONFIG_FILE_NAME . ".php");
+?>
+>>>>>>> e95e46fd057fdc5e5ffd043bc34a6a5ce23672f2

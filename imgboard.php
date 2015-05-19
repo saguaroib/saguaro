@@ -730,6 +730,7 @@ function foot( &$dat )
 
 function error( $mes, $dest = '' )
 {
+<<<<<<< HEAD
 	global $upfile_name, $path;
 	if ( is_file( $dest ) )
 		unlink( $dest );
@@ -739,6 +740,17 @@ function error( $mes, $dest = '' )
 		die( "<html><head><meta http-equiv=\"refresh\" content=\"0; url=banned.php\"></head></html>" );
 	} else {
 		echo "<br /><br /><hr size=1><br /><br />
+=======
+    global $upfile_name, $path;
+    if (is_file($dest))
+        unlink($dest);
+    head($dat);
+    echo $dat;
+    if ($mes == S_BADHOST) { 
+    die("<html><head><meta http-equiv=\"refresh\" content=\"0; url=banned.php\"></head></html>");
+    } else {
+	    echo "<br /><br /><hr size=1><br /><br />
+>>>>>>> e95e46fd057fdc5e5ffd043bc34a6a5ce23672f2
 		   <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2 . ">" . S_RELOAD . "</a></b></font></center>
 		   <br /><br /><hr size=1>";
 		die( "</body></html>" );
