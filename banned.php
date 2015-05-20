@@ -1,10 +1,5 @@
 <?php
 session_start();
-////////////////////////////////////////////////////////////////////////////////
-//  I dont give a FRICK if this is bad practice,            
-//  I'll revisit this after later updates, at least it works  
-//  and is out of the way.          - <3 Halcyon            
-//////////////////////////////////////////////////////////////////////////////
 include("config.php");
 
 $con = mysql_connect(SQLHOST, SQLUSER, SQLPASS);
