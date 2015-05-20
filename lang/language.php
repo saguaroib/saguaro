@@ -1,7 +1,6 @@
 <?php
     //Require base translation.
     require("en-us.php");
-
     //Get defined language and include it, overwriting en-us as needed.
     include("../config.php");
     if (LANGUAGE && LANGUAGE !== "en-us") {

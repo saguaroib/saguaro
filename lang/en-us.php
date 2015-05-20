@@ -1,5 +1,8 @@
 <?php
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/master
 $S_HOME = 'Home';                                               //Forwards to home page
 $S_ADMIN = 'Manage';                                            //Forwards to Management Panel
 $S_RETURN = 'Return';                                           //Returns to image board
@@ -101,6 +104,10 @@ $S_RESNUM = 'Reply to thread:';
 $S_BANS = 'Ban';
 $S_BANS_EXTRA = '';
 $S_CAPFAIL = 'You seem to have mistyped the verification.';
+<<<<<<< HEAD
 $S_THREADLOCKED = 'You cannot reply to a locked thread.';
 
 ?>
+=======
+?>
+>>>>>>> origin/master

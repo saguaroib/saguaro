@@ -116,8 +116,12 @@ a:hover {
 }
 .filesize {
         font-size:10pt;
-        font-family: inherit;
-        padding-left: 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        text-decoration:none;
+}
+
+span.filesize {
+    padding: 20px;    
 }
 .filetitle {
         background:inherit;
