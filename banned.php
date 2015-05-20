@@ -33,11 +33,12 @@ if ($ip == $host) {
     global $expires;
     $now = time();
     $calcPlaced = date('F d, Y', $placedOn);
+    $timeserved = mysql_query("UPDATE " . SQLBANLOG . " SET banlength='0' WHERE ip='$host'");
     switch ($banlength) {
         case '100':
             $status = 'have been warned';
             $type   = 1;
-            mysql_query("DELETE FROM " . SQLBANLOG . " WHERE ip='$host'");
+            $timeserved;
             break;
         case '1':
             $status    = 'have been banned';
@@ -45,7 +46,7 @@ if ($ip == $host) {
             $expiresOn = strtotime('+3 hour', $placedOn);
             $expires   = date('F d, Y', $placedOn);
             if ($expiresOn <= $now) {
-                mysql_query("DELETE FROM " . SQLBANLOG . " WHERE ip='$host'");
+                $timeserved;
             }
             $type = 2;
             break;
@@ -55,7 +56,7 @@ if ($ip == $host) {
             $expiresOn = strtotime('+3 day', $placedOn);
             $expires   = date('F d, Y', $expiresOn);
             if ($expiresOn <= $now) {
-                mysql_query("DELETE FROM " . SQLBANLOG . " WHERE ip='$host'");
+                $timeserved;
             }
             $type = 2;
             break;
@@ -65,7 +66,7 @@ if ($ip == $host) {
             $expiresOn = strtotime('+1 week', $placedOn);
             $expires   = date('F d, Y', $expiresOn);
             if ($expiresOn <= $now) {
-                mysql_query("DELETE FROM " . SQLBANLOG . " WHERE ip='$host'");
+                $timeserved;
             }
             $type = 2;
             break;
@@ -75,7 +76,7 @@ if ($ip == $host) {
             $expiresOn = strtotime('+1 month', $placedOn);
             $expires   = date('F d, Y', $expiresOn);
             if ($expiresOn <= $now) {
-                mysql_query("DELETE FROM " . SQLBANLOG . " WHERE ip='$host'");
+                $timeserved;
             }
             $type = 2;
             break;
@@ -84,6 +85,10 @@ if ($ip == $host) {
             $blength = '<b>forever</b>';
             $type    = 2;
             $expires = 'forever';
+            break;
+        case '0':
+            //They aren't banned...but the record reflects they have been before.
+            $type = 0;
             break;
         default:
             $type = 0;
