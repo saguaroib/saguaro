@@ -86,7 +86,7 @@ if ( !table_exist( SQLLOG ) ) {
     time  int,
     md5   text,
     fsize int,
-    fname txt,
+    fname text,
     sticky int,
     permasage int,
     locked int,
