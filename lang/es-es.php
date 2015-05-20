@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/master
-<?
+<?php
 $S_HOME = 'Inicio';											//Forwards to home page
 $S_ADMIN = 'Administracion';										//Forwards to Management Panel
 $S_RETURN = 'Regresar';										//Returns to image board
@@ -104,10 +100,6 @@ $S_RESNUM = 'Respuesta para enhebrar:';
 $S_BANS = 'Prohibicion';
 $S_BANS_EXTRA = '';
 $S_CAPFAIL = 'Usted parece tener mistyped la verificación.';
-<<<<<<< HEAD
 $S_THREADLOCKED = 'Responder prohibido';
 
 ?>
-=======
-?>
->>>>>>> origin/master
