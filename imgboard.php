@@ -66,7 +66,7 @@ $badfile   = array(
 	"dummy2" 
 ); //Refused files (md5 hashes)
 
-$badip = mysql_query( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' " );
+$badip = mysql_call( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' and banlength!='0' " );
 
 if ( !table_exist( SQLLOG ) ) {
 	echo ( S_TCREATE . SQLLOG . "<br />" );
