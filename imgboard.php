@@ -66,8 +66,6 @@ $badfile   = array(
 	"dummy2" 
 ); //Refused files (md5 hashes)
 
-$badip = mysql_call( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' and banlength!='0' " );
-
 if ( !table_exist( SQLLOG ) ) {
 	echo ( S_TCREATE . SQLLOG . "<br />" );
 	$result = mysql_call( "create table " . SQLLOG . " (primary key(no),
@@ -113,6 +111,30 @@ if ( !table_exist( SQLBANLOG ) ) {
 		echo S_TCREATEF . SQLBANLOG . "<br />";
 	}
 }
+
+function prune_old()
+{
+	//This prunes old posts that are pushed off the bottom of last page, called once after each post is made in regist()
+	if (PAGE_MAX >= 1) {
+		
+		$maxposts   = LOG_MAX;
+		$maxthreads = (PAGE_MAX > 0) ? (PAGE_MAX * PAGE_DEF) : 0;
+		//number of pages x how many threads per page
+		
+		if ($maxthreads) {
+			$result          = mysql_call("SELECT no FROM " . SQLLOG . " WHERE sticky=0 AND resto=0 ORDER BY root ASC");
+			$threadcount = mysql_num_rows($result);
+			while ($row = mysql_fetch_array($result) and $threadcount >= $maxthreads) {
+				//This does the pruning
+				mysql_call( "delete from " . SQLLOG . " where no=" . $row['no'] . " or resto=" . $row['no'] . "");
+				$threadcount--;
+			}
+			mysql_free_result($result);
+		}
+			updatelog();
+	}
+}
+
 
 function updatelog( $resno = 0 )
 {
@@ -949,7 +971,8 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 			error( S_UNUSUAL, $dest );
 		
 		//host check
-		$host = $_SERVER["REMOTE_ADDR"];
+		$host = $_SERVER["REMOTE_ADDR"];	
+		$badip = mysql_call("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' and banlength <> 0 ");
 		
 		$query  = mysql_query( "SELECT * FROM " . SQLLOG . " WHERE no=" . $resto );
 		$result = mysql_fetch_assoc( $query );
@@ -1194,6 +1217,9 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 				/* 1 week cookie expiration */
 			}
 		}
+		
+		if ( !$resto )
+			prune_old();
 		
 		if ( $dest && file_exists( $dest ) ) {
 			rename( $dest, $path . $tim . $ext );

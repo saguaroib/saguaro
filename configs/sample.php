@@ -35,11 +35,12 @@ define(MAXR_W,  '125');                                 //Image replies exceedin
 define(MAXR_H,  '125');                                 //Image replies exceeding this height will be thumbnailed
 define(MIN_W, '30');                                    //minimum image dimensions - width
 define(MIN_H, '30');                                    //minimum image dimensions - height
-define(PAGE_DEF, '10');                                 //Images per page
+define(PAGE_DEF, '10');                                 //Threads per page
+define(PAGE_MAX, 10);						//Maximum number of pages, posts that are pushed past the last page are deleted. Do not put quotes around this value. Set to 0 for unlimited pages
 define(RENZOKU, '10');                                  //Seconds between posts (floodcheck)
 define(RENZOKU2, '13');                                 //Seconds between image posts (floodcheck)
 define(S_POSTLENGTH, '3000');                           //Maximum character length of posts
-define(MAX_RES, '500');                                 //Maximum topic bumps
+define(MAX_RES, '500');                                 //Maximum thread bumps
 define(USE_THUMB, 1);                                   //Use thumbnails (1: yes  0: no)
 define(PROXY_CHECK, 0);                                 //Enable proxy check (1: yes  0: no)
 define(DISP_ID, 0);                                     //Display user IDs (1: yes  0: no)
