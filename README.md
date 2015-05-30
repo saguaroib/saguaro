@@ -19,4 +19,4 @@ Speaking of the <a href="https://github.com/RePod/Saguaro-jquery">jquery suite</
 If you'd like to contact me, shoot me an email, otherwise if you have general support questions that you'd like a semi-live response to, feel free to try the IRC channel which is #saguaroimgboard @ irc.rizon.net		
 No guarantees that I'll be online or helpful, though.
 
-Last updated: 05/28/2014
+This readme last updated: 05/28/2014
