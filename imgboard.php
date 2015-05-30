@@ -1061,7 +1061,7 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 		$names = $name;
 		$name  = CleanStr( $name );
 		
-		
+		include( PLUG_PATH . '/trip.php' );
 		if ( ereg( "(#|#・(.*))", $names, $regs ) ) {
 			$name = str_replace( "&#", "&%%%%%%", $name ); # otherwise HTML numeric entities screw up explode()!
 			list( $name, $regtrip, $sectrip ) = str_replace( "&%%%%%%", "&#", explode( "#", $name ) );
@@ -1075,9 +1075,8 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 				$salt = ereg_replace( "[^\.-z]", ".", $salt );
 				$salt = strtr( $salt, ":;<=>?@[\\]^_`", "ABCDEFGabcdef" );
 				$trip = substr( crypt( $regtrip, $salt ), -10 );
-				include( PLUG_PATH . '/trip.php' );
+				
 			}
-			include( PLUG_PATH . '/trip2.php' );
 			if ( $regtrip == "" ) {
 			}
 			// Otherwise convert to tripcode
