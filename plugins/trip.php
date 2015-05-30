@@ -28,7 +28,7 @@ The first changeme is what the tripcode you want to modify outputs. For example,
 You would paste 6kgJ33pzx (without the leading !) in the first changeme, and whatever you want to display in the second changeme
 */
 
-//$trip=ereg_replace("Ep8pui8Vw2","<font color=#FF0000>Raging Homo</font>",$trip);
+$trip=ereg_replace("Ep8pui8Vw2","<font color=#FF0000>Raging Homo</font>",$trip);
 //$trip=ereg_replace("CHANGEME","CHANGEME2",$trip);
 //$trip=ereg_replace("CHANGEME","CHANGEME2",$trip);
 //$trip=ereg_replace("CHANGEME","CHANGEME2",$trip);

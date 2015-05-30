@@ -264,7 +264,7 @@ function updatelog( $resno = 0 )
 			$key       = ( "" );
 			$part      = ( "" );
 			
-			include( PLUG_PATH . '/word.php' );
+			include( PLUG_PATH . '/wordfilter.php' );
 			if ( USE_BBCODE ) {
 				include( PLUG_PATH . '/bbcode.php' );
 			}
@@ -406,7 +406,7 @@ function updatelog( $resno = 0 )
 				$key       = ( "" );
 				$part      = ( "" );
 				
-				include( PLUG_PATH . '/word.php' );
+				include( PLUG_PATH . '/wordfilter.php' );
 				if ( USE_BBCODE ) {
 					include( PLUG_PATH . '/bbcode.php' );
 				}
