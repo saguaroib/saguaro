@@ -20,6 +20,15 @@ file), just go and try it out... you'll get a nice surprise xD
 	else if ($sectrip == 'triforcetripomg')
 	{ $name     .= ' &nbsp;&nbsp;&#9650;&#11;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9650;&nbsp;&#9650; ';}
 
-?>nbsp;&#9650; ';}
+/*Setting up custom tripcodes
+
+uncomment lines below and change the text to the desired output. 
+The first changeme is what the tripcode you want to modify outputs. For example, a tripcode with the password #example outputs !6kgJ33pzx.
+You would paste 6kgJ33pzx (without the leading !) in the first changeme, and whatever you want to display in the second changeme
+
+
+ 	$trip=ereg_replace("Ep8pui8Vw2","<font color=#FF0000>Raging Homo</font>",$trip);
+ 	$trip=ereg_replace("Ep8pui8Vw2","<font color=#FF0000>Raging Homo</font>",$trip);
+ 	$trip=ereg_replace("Ep8pui8Vw2","<font color=#FF0000>Raging Homo</font>",$trip);
 
 ?>
