@@ -109,7 +109,7 @@ define(PLUG_PATH, 'plugins');                               //Plugins folder pat
 
 define(DUPE_CHECK, 0);                                //whether or not to check for duplicate images
 define(NAV_TXT, 'boardlist.txt');       //the file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
-                                        //You have to set this yourself (for now)
+                                        //You have to set the contents of this file yourself (for now)
 define(S_DESCR, 'An imageboard powered by saguaro');    //meta description for this board
 define(EXTRA_SHIT, '');                                 //Any extra javascripts you want to include inside the <head>
 
