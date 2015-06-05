@@ -641,7 +641,7 @@ function insert(text)
 </head>
 <body>
  ' . $titlebar . '
-<span class="boardlist">' . S_BOARDLIST . ' </span>
+<span class="boardlist">' . get_file_contents(NAV_TXT) . ' </span>
 <span class="adminbar">
 [<a href="' . HOME . '" target="_top">' . S_HOME . '</a>]
 [<a href="' . PHP_SELF . '?mode=admin">' . S_ADMIN . '</a>]
@@ -743,7 +743,7 @@ function form( &$dat, $resno, $admin = "" )
 function foot( &$dat )
 {
 	$dat .= '
-<span class="boardlist">' . S_BOARDLIST . '</span>
+<span class="boardlist">' . get_file_contents(NAV_TXT) . '</span>
 <div class="footer">' . S_FOOT . '</div>
  
 </body></html>';
