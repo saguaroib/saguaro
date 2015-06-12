@@ -1056,42 +1056,52 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 		}
 		$com = str_replace( "\n", "", $com ); //\n is erased
 		
-		//$name=ereg_replace(TRIPKEY,"",$name);  //erase tripkeys in name
-		$name  = ereg_replace( "[\r\n]", "", $name );
-		$names = $name;
-		$name  = CleanStr( $name );
+	list( $name ) = explode( "#", $name );
+	$name = CleanStr( $name );
+	
+	if ( preg_match( "/\#+$/", $names ) ) {
+		$names = preg_replace( "/\#+$/", "", $names );
+	}
+	if ( preg_match( "/\#/", $names ) ) {
+		$names = str_replace( "&#", "&&", htmlspecialchars( $names ) ); # otherwise HTML numeric entities screw up explode()!
+		list( $nametemp, $trip, $sectrip ) = str_replace( "&&", "&#", explode( "#", $names, 3 ) );
+		$names = $nametemp;
+		$name .= "</span>";
 		
-		include( PLUG_PATH . '/trip.php' );
-		if ( ereg( "(#|#・(.*))", $names, $regs ) ) {
-			$name = str_replace( "&#", "&%%%%%%", $name ); # otherwise HTML numeric entities screw up explode()!
-			list( $name, $regtrip, $sectrip ) = str_replace( "&%%%%%%", "&#", explode( "#", $name ) );
-			$name = $name;
-			if ( $regtrip != "" ) {
-				$cap  = $regs[2];
-				$cap  = strtr( $cap, "&amp;", "&" );
-				$cap  = strtr( $cap, "&#44;", "," );
-				$name = ereg_replace( "(#| )(.*)", "", $name );
-				$salt = substr( $cap . "H.", 1, 2 );
-				$salt = ereg_replace( "[^\.-z]", ".", $salt );
-				$salt = strtr( $salt, ":;<=>?@[\\]^_`", "ABCDEFGabcdef" );
-				$trip = substr( crypt( $regtrip, $salt ), -10 );
+		if ( $trip != "" ) {
+			if ( $sectrip == "" ) {
+					if ( $name == "</span>" && $sectrip == "" )
+						$name = S_ANONAME;
+					else
+						$name = str_replace( "</span>", "", $name );
 				
+			} else {
+				
+				$salt = strtr( preg_replace( "/[^\.-z]/", ".", substr( $trip . "H.", 1, 2 ) ), ":;<=>?@[\\]^_`", "ABCDEFGabcdef" );
+				$trip = substr( crypt( $trip, $salt ), -10 );
+				$name .= " <span class=\"postertrip\">!" . $trip;
 			}
-			if ( $regtrip == "" ) {
-			}
-			// Otherwise convert to tripcode
-			else {
-				$name .= "</b>" . TRIPKEY . $trip . "";
-			}
-			
-			/*	if ($sectrip != "") {
-			$sha = base64_encode(pack("H*",sha1($sectrip.$salt)));
-			$sha = substr($sha,0,15);
-			$trip .= "!!".$sha;
-			include('sectrip.php');
-			}*/
-			
 		}
+		
+		
+		if ( $sectrip != "" ) {
+			$salt = RAWSALT;
+			if ( file_exists( SALTFILE ) ) { //salt already generated
+				$salt = file_get_contents( SALTFILE );
+			} else {
+				system( "openssl rand 448 > '" . SALTFILE . "'", $err );
+				if ( $err === 0 ) {
+					chmod( SALTFILE, 0400 );
+					$salt = file_get_contents( SALTFILE );
+				}
+			}
+			$sha = base64_encode( pack( "H*", sha1( $sectrip . $salt ) ) );
+			$sha = substr( $sha, 0, 11 );
+			if ( $trip == "" )
+				$name .= " <span class=\"postertrip\">";
+			$name .= "!!" . $sha;
+		}
+	}
 		
 		if ( $email == 'noko' ) {
 			$noko  = 1;
