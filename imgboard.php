@@ -1477,8 +1477,7 @@ function valid( $pass )
 	echo "<p><form action=\"" . PHP_SELF . "\" method=\"post\">\n";
 	// Mana login form
 	if ( !$pass ) {
-		echo "<div class=\passvalid\"><input type=radio name=admin value=del checked>" . S_MANAREPDEL;
-		echo "<input type=radio name=admin value=post>" . S_MANAPOST . "<p>";
+		echo "<div class=\passvalid\">";
 		echo "<input type=hidden name=mode value=admin>\n";
 		echo "<input type=password name=pass size=8>";
 		echo "<input type=submit value=\"" . S_MANASUB . "\"></form></div>\n";
