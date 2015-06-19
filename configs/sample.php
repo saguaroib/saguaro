@@ -46,6 +46,7 @@ define(PAGE_DEF, 10);                                 	//Threads per page
 define(PAGE_MAX, 0);							//Maximum number of pages, posts that are pushed past the last page are deleted. Do not put quotes around this value. Set to 0 for unlimited pages
 
 //Posting & thread
+define(FORCED_ANON, 0);                              //Force anonymous posting.
 define(RENZOKU, 10);                                	//Seconds between posts (floodcheck)
 define(RENZOKU2, 13);                               	//Seconds between image posts (floodcheck)
 define(S_POSTLENGTH, 3000);                        //Maximum character length of posts
