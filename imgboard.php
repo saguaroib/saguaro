@@ -677,62 +677,48 @@ function form( &$dat, $resno, $admin = "" )
 <form action="' . PHP_SELF . '" method="post" name="contrib" enctype="multipart/form-data">
 <input type="hidden" name="mode" value="regist" />
 ' . $hidden . '
-<input type="hidden" name="MAX_FILE_SIZE" value="' . $maxbyte . '" />
-';
+<input type="hidden" name="MAX_FILE_SIZE" value="' . $maxbyte . '" />';
 	if ( $no ) {
-		$dat .= '<input type="hidden" name="resto" value="' . $no . '" />
-';
-	}
-	if ( !$admin && BOTCHECK ) {
-		$dat .= '<table>
-<tr><td class="postblock" align="left">' . S_NAME . '</td><td align="left"><input type="text" name="name" size="28" /></td></tr>
-<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /></td></tr>
-<tr><td class="postblock" align="left">' . S_SUBJECT . '</td><td align="left"><input type="text" name="sub" size="35" />
-<input type="submit" value="' . S_SUBMIT . '" /></td></tr>
-<tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>
-<tr><td class="postblock" align="left"><img src="' . PLUG_PATH . '/php_captcha.php" /></td><td align="left"><input type="text" name="num" size="28" /></td></tr>
-';
-	} elseif ( !$admin && BOTCHECK == 0 ) {
-		$dat .= '<table>
-<tr><td class="postblock" align="left">' . S_NAME . '</td><td align="left"><input type="text" name="name" size="28" /></td></tr>
-<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /></td></tr>
-<tr><td class="postblock" align="left">' . S_SUBJECT . '</td><td align="left"><input type="text" name="sub" size="35" />
-<input type="submit" value="' . S_SUBMIT . '" /></td></tr>
-<tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>
-';
-	} else {
-		$dat .= '<table>
-<tr><td class="postblock" align="left">' . S_NAME . '</td><td align="left"><input type="text" name="name" size="28" /></td></tr>
-<tr><td class="postblock" align="left">' . S_RESNUM . '</td><td align="left"><input type="text" name="resto" size="28" /></td></tr>
-<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /></td></tr>
-<tr><td class="postblock" align="left">' . S_SUBJECT . '</td><td align="left"><input type="text" name="sub" size="35" />
-<input type="submit" value="' . S_SUBMIT . '" /></td></tr>
-<tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>
-';
+		$dat .= '<input type="hidden" name="resto" value="' . $no . '" />';
 	}
 	
-	/*if(!$resno){*/
+	$dat .= '<table>';
+	if ( !FORCED_ANON )
+		$dat .= '<tr><td class="postblock" align="left">' . S_NAME . '</td><td align="left"><input type="text" name="name" size="28" /></td></tr>';
+	
+	$dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /></td></tr>
+                    <tr><td class="postblock" align="left">' . S_SUBJECT . '</td><td align="left"><input type="text" name="sub" size="35" />
+                    <input type="submit" value="' . S_SUBMIT . '" /></td></tr>
+                    <tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>';
+	
+	if ( BOTCHECK ) {
+		if ( !$admin )
+			$dat .= '<tr><td class="postblock" align="left"><img src="' . PLUG_PATH . '/php_captcha.php" /></td><td align="left"><input type="text" name="num" size="28" /></td></tr>';
+	}
 	
 	if ( NOPICBOX && !$resno ) {
 		$dat .= '<tr><td class="postblock" align="left">' . S_UPLOADFILE . '</td>
-<td><input type="file" name="upfile" size="35" />
-[<label><input type="checkbox" name="textonly" value="on" />' . S_NOFILE . '</label>]</td></tr>
-';
+    <td><input type="file" name="upfile" size="35" />
+    [<label><input type="checkbox" name="textonly" value="on" />' . S_NOFILE . '</label>]</td></tr>';
 	} else {
 		$dat .= '<tr><td class="postblock" align="left">' . S_UPLOADFILE . '</td>
-<td><input type="file" name="upfile" size="35" />
-<input type="checkbox" name="textonly" value="on" style="display:none;" /></td></tr>
-';
-	}
-	/*}*/
-	if ( $admin ) {
-		$dat .= '<tr><td align="left" class="postblock" align="left">Options</td><td align="left">Sticky: <input type="checkbox" name="isSticky" value="isSticky" />Lock:<input type="checkbox" name="isLocked" value="isLocked" />';
+    <td><input type="file" name="upfile" size="35" />
+    <input type="checkbox" name="textonly" value="on" style="display:none;" /></td></tr>';
 	}
 	
-	$dat .= '<tr><td align="left" class="postblock" align="left">' . S_DELPASS . '</td><td align="left"><input type="password" name="pwd" size="8" maxlength="8" value="" />' . S_DELEXPL . '</td></tr>
-<tr><td colspan="2">
-<div align="left" class="rules">' . S_RULES . '</div></td></tr></table></form></div></div><hr />
-';
+	if ( $admin ) { // Options and reply no. box moved
+		$dat .= '<tr><td align="left" class="postblock" align="left">
+        Options</td><td align="left">Sticky: <input type="checkbox" name="isSticky" value="isSticky" />
+        Lock:<input type="checkbox" name="isLocked" value="isLocked" />';
+		$dat .= '<tr><td class="postblock" align="left">' . S_RESNUM . '</td><td align="left"><input type="text" name="resto" size="28" /></td></tr>';
+	}
+	$dat .= '<tr><td align="left" class="postblock" align="left">' . S_DELPASS . '</td><td align="left"><input type="password" name="pwd" size="8" maxlength="8" value="" />' . S_DELEXPL . '</td></tr>';
+	
+	if ( !$admin ) // Admins don't need rules displayed
+		$dat .= '<tr><td colspan="2"><div align="left" class="rules">' . S_RULES . '</div></td></tr></table></form></div></div><hr />';
+	else
+		$dat .= '</table></form></div></div><hr />';
+	
 	if ( USE_ADS2 ) {
 		$dat .= '' . ADS2 . '<hr />';
 	}
@@ -1102,7 +1088,7 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 		}
 		
 		
-		if ( !$name )
+		if ( !$name || FORCED_ANON )
 			$name = S_ANONAME;
 		if ( !$com )
 			$com = S_ANOTEXT;
@@ -1745,6 +1731,14 @@ switch ( $mode ) {
 		break;
 	case 'admin':
 		valid( $pass );
+		form( $post, $res, 1 );
+		echo $post;
+		echo "<form action=\"" . PHP_SELF . "\" method=\"post\">
+        	<input type=hidden name=admin value=del checked>";
+		admindel( $pass );
+		die( "</body></html>" );
+		break;
+		/*valid( $pass );
 		if ( $admin == "del" )
 			admindel( $pass );
 		if ( $admin == "post" ) {
@@ -1752,7 +1746,7 @@ switch ( $mode ) {
 			form( $post, $res, 1 );
 			echo $post;
 			die( "</body></html>" );
-		}
+		}*/
 		break;
 	case 'banish':
 		$ip          = $_POST['ip_to_ban'];
