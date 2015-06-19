@@ -1088,7 +1088,7 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 		}
 		
 		
-		if ( !$name )
+		if ( !$name || FORCED_ANON )
 			$name = S_ANONAME;
 		if ( !$com )
 			$com = S_ANOTEXT;
