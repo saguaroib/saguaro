@@ -1731,6 +1731,14 @@ switch ( $mode ) {
 		break;
 	case 'admin':
 		valid( $pass );
+		form( $post, $res, 1 );
+		echo $post;
+		echo "<form action=\"" . PHP_SELF . "\" method=\"post\">
+        	<input type=hidden name=admin value=del checked>";
+		admindel( $pass );
+		die( "</body></html>" );
+		break;
+		/*valid( $pass );
 		if ( $admin == "del" )
 			admindel( $pass );
 		if ( $admin == "post" ) {
@@ -1738,7 +1746,7 @@ switch ( $mode ) {
 			form( $post, $res, 1 );
 			echo $post;
 			die( "</body></html>" );
-		}
+		}*/
 		break;
 	case 'banish':
 		$ip          = $_POST['ip_to_ban'];
