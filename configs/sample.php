@@ -67,7 +67,7 @@ define(DATE_FORMAT, 'm/d/y');                           //Formatting for the dat
 Extra settings - No need to change these for a basic installation, but you may want these options*/
 
 //Images
-define(MAX_KB, 5048);                                 	//Maximum upload size in KB
+define(MAX_KB, 2500);                                 	//Maximum upload size in KB
 define(MAX_W,  250);                                  	//OP images exceeding this width will be thumbnailed
 define(MAX_H,  250);                                  	//OP images exceeding this height will be thumbnailed
 define(MAXR_W,  125);                                 	//Image replies exceeding this width will be thumbnailed
