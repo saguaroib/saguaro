@@ -23,7 +23,7 @@ define(PANEL_PASS, 'CHANGEME'); //Janitor password  (CHANGE THIS YO)
 define(PHP_SELF_ABS, 'CHANGEME'); // Absolute path from the site to the imgboard.php, ex: http://yoursite.com/boardDir/imgboard.php
 define(PHP_SELF2_ABS, 'CHANGEME');  // Absolute path from the site to the INDEX.html, ex: http://yoursite.com/boardDir/index.html
 define(DATA_SERVER, 'CHANGEME'); //Your site's root html path, WITH a trailing slash, ex: http://yoursite.com/
-define(CSS_PATH, 'CHANGEME'); //absolute html path to the css folder
+define(CSS_PATH, 'CHANGEME'); //absolute html path to the css folder with the trailing slash
 define(SITE_ROOT, 'CHANGEME'); //simplified site domain ONLY, EX: saguaro.org
 define(SITE_SUFFIX, 'CHANGEME'); //Domain suffix, ex: org, com, info, net. NO DOTS, ONLY LETTERS
 define(JS_PATH, 'CHANGEME');                          //relative path from imgboard.php of the jquery folder without a trailing slash
@@ -111,14 +111,10 @@ define(USE_EXTRAS, 1);                               //Automatically include all
 //CSS stuff.
 //These are required, but you can change them.
 //TO-DO: Make scalable. - RePod
-define(CSSFILE, 'css/saguaba.css'); 				//location of the css file, also the default
-define(STYLESHEET_1, 'Saguaba'); 				//Name of the first stylesheet.
-define(CSSFILE2, 'css/sagurichan.css'); 			//location of the second stylesheet.
-define(STYLESHEET_2, 'Sagurichan'); 			//Name of the second stylesheet.
-define(CSSFILE3, 'css/tomorrow.css'); 				//location of the third stylesheet.
-define(STYLESHEET_3, 'Tomorrow');					 //Name of the third stylesheet.
-define(CSSFILE4, 'css/burichan.css');			 //location of the fourth stylesheet.
-define(STYLESHEET_4, 'Burichan'); 				//Name of the fourth stylesheet.*/
+define(CSS1, 'saguaba.css'); 			//location of the first stylesheet.
+define(CSS2, 'sagurichan.css'); 			//location of the second stylesheet.
+define(CSS3, 'tomorrow.css'); 				//location of the third stylesheet.
+define(CSS4, 'burichan.css');			 //location of the fourth stylesheet.
 
 
 //Advanced Settings
