@@ -2388,7 +2388,7 @@ function ban( $ip, $pubreason, $staffreason, $banlength )
 {
     if (valid('moderator')) {
         $placedOn = time();
-        $query    = mysql_query( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip'" );
+        $query    = mysql_query( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip' AND banlength != 0" );
         switch ( $banlength ) {
             case 'warn':
                 $banset = '100';
