@@ -16,7 +16,7 @@ SQLBANLOG should be the same value for all boards to ensure board-based banning 
 Many thanks to <a href="https://github.com/repod">RePod</a> in particular for sticking around and later providing the <a href="https://github.com/RePod/Saguaro-jquery">jquery suite</a> for the board.		
 Speaking of the <a href="https://github.com/RePod/Saguaro-jquery">jquery suite</a>, that's the part of the board that will/should be updated the most often, so head over to that repo and get your real updates.<hr>		
 #Support
-If you'd like to contact me, shoot me an email, otherwise if you have general support questions that you'd like a semi-live response to, feel free to try the IRC channel which is #saguaroimgboard @ irc.rizon.net		
+If you'd like to contact us, shoot us an email, otherwise if you have general support questions that you'd like a semi-live response to, feel free to try the IRC channel which is #saguaroimgboard @ irc.rizon.net		
 No guarantees that I'll be online or helpful, though.
 
-This readme last updated: 05/28/2015
+This readme last updated: July/06/2015
