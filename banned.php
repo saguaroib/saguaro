@@ -88,6 +88,7 @@ if ($ip == $host) {
             break;
         case '0':
             //They aren't banned...but the record reflects they have been before.
+            $status = 'are not banned';
             $type = 0;
             break;
         default:
