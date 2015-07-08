@@ -2384,6 +2384,7 @@ function oldvalid( $pass )
 	}
 }
 
+
 function ban( $ip, $pubreason, $staffreason, $banlength )
 {
     if (valid('moderator')) {
