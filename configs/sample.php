@@ -36,7 +36,7 @@ define(BLOTTER_PATH, 'CHANGEME'); // Absolute html path to your blotter file, th
 ////NEW TO SAGUARO 1.0
 define(RES_DIR, 'res/'); //Directory 
 define(UPDATE_THROTTLING, 0); //Leave this as 0 unless you recieve /a lot/ of traffic
-define(CAHCE_TTL, 1); // Thread caching 
+define(CACHE_TTL, 1); // Thread caching 
 define(EXPIRE_NEGLECTED, 1); // Bump old posts off the last page
 define(FORTUNE_TRIP, 1); //Allows users to recieve a #fortune in the namefield
 define(SALTFILE, 'salt'); //Name of the salt file, do not add a file extension for security
