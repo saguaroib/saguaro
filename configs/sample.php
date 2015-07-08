@@ -1,13 +1,14 @@
 <?php
--/*
--    Before proceeding, it is recommend you work on a copy of this file.
+/*
+    Before proceeding, it is recommend you work on a copy of this file.
  
--    After making the desired changes, save that file into the same directory
--    as this sample config.
--
--    To switch between configs, modify config.php in the parent directory to
--    include your config's file name (excluding extension).
--*/
+    After making the desired changes, save that file into the same directory
+    as this sample config.
+
+    To switch between configs, modify config.php in the parent directory to
+    include your config's file name (excluding extension).
+*/
+
 //Essentials - You NEED to change these, or at least make sure they're good
 define(SQLDB, 'CHANGEME'); //Database used by image board
 define(SQLHOST, 'CHANGEME'); //MySQL server address, usually localhost
