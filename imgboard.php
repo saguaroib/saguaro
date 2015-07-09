@@ -83,6 +83,8 @@ if ( !table_exist( SQLLOG ) ) {
     ext   text,
     w     int,
     h     int,
+    tn_w     int,
+    th_h     int,
     tim   text,
     time  int,
     md5   text,
@@ -692,9 +694,9 @@ function updatelog( $resno = 0, $rebuild = 0 )
 								if ($spoiler) {
 										$size   = "Spoiler Image, $size";
 										$imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img src=\"" . SPOILER_THUMB . "\" border=0 align=left hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
-								} elseif ($w && $h) { //when there is size...
+								} elseif ($tn_w && $tn_h) { //when there is size...
 										if (@is_file(THUMB_DIR . $tim . 's.jpg')) {
-												$imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img class=\"postimg\" src=" . $thumbdir . $tim . 's.jpg' . " border=0 align=left width=$w height=$h hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
+												$imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img class=\"postimg\" src=" . $thumbdir . $tim . 's.jpg' . " border=0 align=left width=$tn_w height=$tn_h hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
 										} else {
 												$imgsrc = "<a href=\"" . $displaysrc . "\" target=_blank><span class=\"tn_thread\" title=\"" . $size . "B\">Thumbnail unavailable</span></a>";
 										}
@@ -844,9 +846,9 @@ function updatelog( $resno = 0, $rebuild = 0 )
 										if ($spoiler) {
 												$size     = "Spoiler Image, $size";
 												$r_imgsrc = "<br><a href=\"" . $r_displaysrc . "\" target=_blank><img src=\"" . SPOILER_THUMB . "\" border=0 align=left hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
-										} elseif ($w && $h) { //when there is size...
+										} elseif ($tn_w && $tn_h) { //when there is size...
 												if (@is_file(THUMB_DIR . $tim . 's.jpg')) {
-														$r_imgsrc = "<br><a href=\"" . $r_displaysrc . "\" target=_blank><img class='postimg'  src=" . $thumbdir . $tim . 's.jpg' . " border=0 align=left width=$w height=$h hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
+														$r_imgsrc = "<br><a href=\"" . $r_displaysrc . "\" target=_blank><img class='postimg'  src=" . $thumbdir . $tim . 's.jpg' . " border=0 align=left width=$tn_w height=$tn_h hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
 												} else {
 														$r_imgsrc = "<a href=\"" . $r_displaysrc . "\" target=_blank><span class=\"tn_reply\" title=\"" . $size . "B\">Thumbnail unavailable</span></a>";
 												}
@@ -1523,8 +1525,8 @@ if ( $has_image ) {
 			$W2 = $maxw / $W;
 			$H2 = $maxh / $H;
 			( $W2 < $H2 ) ? $key = $W2 : $key = $H2;
-			$W = ceil( $W * $key );
-			$H = ceil( $H * $key );
+			$TN_W = ceil( $W * $key );
+			$TN_H = ceil( $H * $key );
 		}
 		$mes = $upfile_name . ' ' . S_UPGOOD;
 	}
@@ -1948,7 +1950,7 @@ if ( $has_image ) {
 	}
     
 	//Main insert
-	$query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) values (" . "'" . $now . "',"
+	$query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) values (" . "'" . $now . "',"
     . "'" . mysql_real_escape_string( $name ) . 
     "'," . "'" . mysql_real_escape_string( $email ) . 
     "'," . "'" . mysql_real_escape_string( $sub ) . 
@@ -1958,6 +1960,8 @@ if ( $has_image ) {
     "'," . "'" . $ext . 
     "'," . (int) $W . 
     "," . (int) $H . 
+    "," . (int) $TN_W . 
+    "," . (int) $TN_H . 
     "," . "'" . $tim . 
     "'," . (int) $time . 
     "," . "'" . $md5 . 
