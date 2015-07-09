@@ -495,6 +495,44 @@ function valid( $action = 'moderator', $no = 0 )
 	}
 }
 
+function spoiler_parse( $com )
+{
+	if ( !find_match_and_prefix( "/\[spoiler\]/", $com, 0, $m ) )
+		return $com;
+	
+	$bl  = strlen( "[spoiler]" );
+	$el  = $bl + 1;
+	//$st  = '<span class="spoiler" onmouseover="this.style.color=\'#FFF\';" onmouseout="this.style.color=this.style.backgroundColor=\'#000\'" style="color:#000;background:#000">';
+    $st  = '<span class="spoiler">';
+
+	$et  = '</span>';
+	$ret = $m[0] . $st;
+	$lev = 1;
+	$off = strlen( $m[0] ) + $bl;
+	
+	while ( 1 ) {
+		if ( !find_match_and_prefix( "@\[/?spoiler\]@", $com, $off, $m ) )
+			break;
+		list( $txt, $tag ) = $m;
+		
+		$ret .= $txt;
+		$off += strlen( $txt ) + strlen( $tag );
+		
+		if ( $tag == "[spoiler]" ) {
+			$ret .= $st;
+			$lev++;
+		} else if ( $lev ) {
+			$ret .= $et;
+			$lev--;
+		}
+	}
+	
+	$ret .= substr( $com, $off, strlen( $com ) - $off );
+	$ret .= str_repeat( $et, $lev );
+	
+	return $ret;
+}
+
 function updatelog( $resno = 0, $rebuild = 0 )
 {
 	global $log, $path;
@@ -1306,6 +1344,10 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
         if (valid('manager'))
             $moderator = 3;
 	}
+    
+    if ( SPOILERS == 1 ) {
+		$com = spoiler_parse( $com );
+	}
 	
     if ( isset($_POST['isSticky']) || isset($_POST['isLocked']) && valid('moderator') )  {
         if (isset($_POST['isSticky']))
@@ -1626,14 +1668,34 @@ if ( $has_image ) {
 	} else {
 		$now = date( "m/d/y", $time ) . "(" . (string) $yd . ")" . date( "H:i", $time );
 	}
-	if ( DISP_ID ) {
-		if ( $email && DISP_ID == 1 ) {
-			$now .= " ID:???";
+	
+    if ( DISP_ID ) {
+        //$rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
+        //$color = '#'.$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)];
+		$color = "inherit"; // Until unique IDs between threads get sorted out
+        $idhtml = "<span id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
+        mysql_real_escape_string($idhtml);
+        
+        if ( $email && DISP_ID == 1 ) {
+			$now .= " (ID:" .$idhtml . " Heaven </span>)" ;
 		} else {
-			$now .= " ID:" . substr( crypt( md5( $_SERVER["REMOTE_ADDR"] . 'id' . date( "Ymd", $time ) ), 'id' ), +3 );
+           /* if ( !$resto) {
+                //holy hell there has to be a better way to do this. i swear ill think of it soon
+                $idsalt = mysql_result( mysql_call( "select max(no) from " . SQLLOG ), 0, 0 ) + 1; //In the year 2054 A.D., your op number is known before you even post it
+            } else {
+                $idsalt = $resto;
+            }*/
+            $idsalt = 'id';
+			$now .= " (ID:" . $idhtml . substr( crypt( md5( $_SERVER["REMOTE_ADDR"] . 'id' . date( "Ymd", $time ) ), $idsalt ), +3 ) . "</span>)";
 		}
 	}
-	
+    
+    if (COUNTRY_FLAGS) {
+		include("geoiploc.php");
+		$country = getCountryFromIP($host, "CTRY");
+		$now .= " <img src=" . CSSPATH . "flags/" . strtolower($country) . ".png /> ";
+	}
+    
 	$c_name  = $name;
 	$c_email = $email;
 	

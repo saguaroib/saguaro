@@ -1,5 +1,5 @@
 body {
-    background: #FFFFEE url(/css/fade.png) top center repeat-x;
+    background: #FFFFEE url(/global/css/fade.png) top center repeat-x;
     font-size: 10pt;
     color: #800000;
     font-family: Arial, Helvetica, sans-serif;
@@ -66,10 +66,11 @@ hr {
 }
 }
 .theader {
-    background: #0010E0;
-    color: #FFFFFF;
-    width: 100%;
-    text-align: center;
+  text-align: center;
+  background-color: orange;
+  color: white;
+  font-weight: 700;
+  width: 100%;
 }
 .postertrip {
     color: #117743;
@@ -103,6 +104,16 @@ hr {
     border: 1px solid #800000;
     padding: 4px;
 }
+
+.spoiler { 
+    color: #000; 
+    background: #000; 
+}
+
+.spoiler:hover { 
+    color: #FFF; 
+}
+
 .footer {
     text-align: center;
     font-size: 12px;
