@@ -6,10 +6,10 @@ This has been cobbled together from stuff I myself have written and the contribu
 <i>"Special thanks to !KNs1o0VDv6, Glas, Anonymous from vchan, RePod, and anyone who actually uses this."</i>		
 
 #Installing & Requirements
-Reqired:
+Required:
 * PHP 4.x.x 
 * MySQL Version 4.0 or newer.
-* Imagick libary
+* Imagick (PHP) libary
 
 Extract everything from the zip and put it in the directory of your choosing. Edit config.php and visit imgboard.php once to generate the page. If the config file is set up correctly, Saguaro should do the rest for you.
 
