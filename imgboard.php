@@ -2040,6 +2040,9 @@ function thumb( $path, $tim, $ext )
 					break;
 				}
 			}
+			/*
+			//Legacy gif processing, requires gif2png to be present in the board dir. You can find the file here: http://freecode.com/projects/gif2png
+			
 			if ( !is_executable( realpath( "gif2png" ) ) || !function_exists( "ImageCreateFromPNG" ) )
 				return;
 			@exec( realpath( "gif2png" ) . " $fname", $a );
@@ -2049,7 +2052,7 @@ function thumb( $path, $tim, $ext )
 			unlink( $path . $tim . '.png' );
 			if ( !$im_in )
 				return;
-			break;
+			break;*/
 		case 2:
 			$im_in = ImageCreateFromJPEG( $fname );
 			if ( !$im_in ) {
