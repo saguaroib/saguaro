@@ -6,7 +6,11 @@ This has been cobbled together from stuff I myself have written and the contribu
 <i>"Special thanks to !KNs1o0VDv6, Glas, Anonymous from vchan, RePod, and anyone who actually uses this."</i>		
 
 #Installing & Requirements
-You will need PHP 4.x.x and MySQL Version 4.0 or higher installed. Extract everything from the zip and put it in the directory of your choosing. Edit config.php and visit imgboard.php once to generate the page. If the config file is set up correctly, Saguaro should do the rest for you.
+Reqired:
+* PHP 4.x.x 
+* MySQL Version 4.0 or newer.
+* Imagick for PHP
+Extract everything from the zip and put it in the directory of your choosing. Edit config.php and visit imgboard.php once to generate the page. If the config file is set up correctly, Saguaro should do the rest for you.
 
 #Setting up multiple boards
 Set up multiple boards by creating new directories and placing the files in it. Boards can share the same SQL database (SQLDB), but not the same table (SQLLOG). 
@@ -19,4 +23,4 @@ Speaking of the <a href="https://github.com/RePod/Saguaro-jquery">jquery suite</
 If you need help, check the wiki. If that doesn't help and you'd like to contact us, shoot us an email, otherwise if you have general support questions that you'd like a semi-live response to, feel free to try the IRC channel which is #saguaroimgboard @ irc.rizon.net		
 No guarantees that I'll be online or helpful, though.
 
-This readme last updated: July/06/2015
+This readme last updated: July/08/2015
