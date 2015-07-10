@@ -9,7 +9,6 @@ This has been cobbled together from stuff I myself have written and the contribu
 *"Special thanks to !KNs1o0VDv6, Glas, Anonymous from vchan, RePod, and anyone who actually uses this."*
 
 #Installation Requirements
-Required:
 * PHP 4.x.x 
 * MySQL Version 4.0 or newer.
 * Imagick (PHP) libary
