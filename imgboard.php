@@ -2074,20 +2074,30 @@ function wordwrap2( $str, $cols, $cut )
 	return $str;
 }
 
-function sticky_this( $no )
+function modify_post ( $no, $action = 'none')
 {
-	$rootnum = "202707070000";
-	mysql_query( 'UPDATE ' . SQLLOG . " SET sticky='1' , root='" . $rootnum . " WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-}
-
-function autosage_this( $no )
-{
-	mysql_query( 'UPDATE ' . SQLLOG . " SET permasage='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-}
-
-function lock_this( $no )
-{
-	mysql_query( 'UPDATE ' . SQLLOG . " SET locked='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+if (!valid('moderator'))
+	die('Action on post ' . $no .' failed...');
+	
+    switch ($action) {
+        case 'lock':
+            mysql_call( 'UPDATE ' . SQLLOG . " SET locked='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+            break;
+        case 'permasage':
+            mysql_call( 'UPDATE ' . SQLLOG . " SET permasage='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+            break;
+        case 'sticky':
+            $rootnum = "202707070000";
+            mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='1' , root='" . $rootnum . " WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+            break;
+        case 'unlock':
+            mysql_call( 'UPDATE ' . SQLLOG . " SET locked='0' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+            break;
+        case 'unsticky':
+            $rootnum = "now()";
+            mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='0' , root='" . $rootnum . " WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+            break;
+    }
 }
 
 //OP thumbnail creation
