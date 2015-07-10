@@ -11,7 +11,6 @@ This has been cobbled together from stuff I myself have written and the contribu
 #Installation Requirements
 - PHP 4.x.x 
 - MySQL Version 4.0 or newer.
-- Imagick (PHP) libary
 
 **Additional installation resources:**
 - [Installing](//github.com/spootTheLousy/saguaro/wiki/Installing)
