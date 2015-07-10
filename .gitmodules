@@ -1,0 +1,3 @@
+[submodule "plugins/jquery"]
+	path = plugins/jquery
+	url = https://github.com/RePod/saguaro-jquery
