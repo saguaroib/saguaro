@@ -21,4 +21,4 @@ This has been cobbled together from stuff I myself have written and the contribu
 - [The Wiki](//github.com/spootTheLousy/saguaro/wiki)
 - #saguaroimgboard @ irc.rizon.net
 
-This readme last updated: July/08/2015
+Last updated: July 9th, 2015
