@@ -660,7 +660,7 @@ function updatelog( $resno = 0, $rebuild = 0 )
 			
 		  $imgdir   = IMG_DIR;
             $thumbdir = DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR;
-            $cssimg = DATA_SERVER . CSS_PATH;
+            $cssimg = CSS_PATH;
             
 // Picture file name
 						$img        = $path . $tim . $ext;
@@ -725,12 +725,12 @@ function updatelog( $resno = 0, $rebuild = 0 )
 			$dat .= "<span class=\"postername\">$name</span> $now <span id=\"nothread$no\">";
 
 			if ($sticky == 1) 
-				$stickyicon = ' <img src="' . DATA_SERVER . CSS_PATH . '/sticky.gif" alt="sticky"> ';
+				$stickyicon = ' <img src="' . CSS_PATH . '/sticky.gif" alt="sticky"> ';
             else 
                 $stickyicon = '';
 			
             if ($locked == 1) 
-				$stickyicon .= ' <img src="' . DATA_SERVER . CSS_PATH . '/locked.gif" alt="closed"> ';
+				$stickyicon .= ' <img src="' . CSS_PATH . '/locked.gif" alt="closed"> ';
 			
             if ($resno) {
 				$dat .= "<a href=\"#$no\" class=\"quotejs\">No.</a><a href=\"javascript:quote('$no')\" class=\"quotejs\">$no</a> $stickyicon &nbsp; ";
@@ -1035,10 +1035,10 @@ function head( &$dat )
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- meta HTTP-EQUIV="pragma" CONTENT="no-cache" -->
 <link REL="SHORTCUT ICON" HREF="/favicon.ico">
-<link rel="stylesheet" type="text/css" href="' . DATA_SERVER . CSS_PATH . CSS1 . '" title="Standard Saguaro" />
-<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS2 . '" href="'  . DATA_SERVER . CSS_PATH . CSS2 . '" />
-<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS3 . '" href="' . DATA_SERVER . CSS_PATH . CSS3 . '" />
-<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS4 . '" href="' . DATA_SERVER . CSS_PATH . CSS4 . '" />
+<link rel="stylesheet" type="text/css" href="' . CSS_PATH . CSS1 . '" title="Standard Saguaro" />
+<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS2 . '" href="'  . CSS_PATH . CSS2 . '" />
+<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS3 . '" href="' .CSS_PATH . CSS3 . '" />
+<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS4 . '" href="' . CSS_PATH . CSS4 . '" />
 <script src="' . JS_PATH . '/styleswitch.js" type="text/javascript">
 /***********************************************
 * Style Sheet Switcher v1.1- c Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -1709,7 +1709,7 @@ if ( $has_image ) {
     if (COUNTRY_FLAGS) {
 		include("geoiploc.php");
 		$country = getCountryFromIP($host, "CTRY");
-		$now .= " <img src=" . CSSPATH . "flags/" . strtolower($country) . ".png /> ";
+		$now .= " <img src=" . CSS_PATH . "flags/" . strtolower($country) . ".png /> ";
 	}
     
 	$c_name  = $name;
