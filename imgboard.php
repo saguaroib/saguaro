@@ -1039,13 +1039,8 @@ function head( &$dat )
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS2 . '" href="'  . CSS_PATH . CSS2 . '" />
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS3 . '" href="' .CSS_PATH . CSS3 . '" />
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS4 . '" href="' . CSS_PATH . CSS4 . '" />
-<script src="' . JS_PATH . '/styleswitch.js" type="text/javascript">
-/***********************************************
-* Style Sheet Switcher v1.1- c Dynamic Drive DHTML code library (www.dynamicdrive.com)
-* This notice MUST stay intact for legal use
-* Visit Dynamic Drive at http://www.dynamicdrive.com/ for this script and 100s more
-***********************************************/
-</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="' . JS_PATH . '/styleswitch.js" type="text/javascript"></script>
 <title>' . TITLE . '</title>
 <script src="' . JS_PATH . 'main.js" type="text/javascript"></script>
 <title>' . TITLE . '</title>';
