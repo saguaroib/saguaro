@@ -24,8 +24,8 @@ function insert(text)
 }
 
 function l(e) {
-    var P = getCookie("4chan_pass"),
-        N = getCookie("4chan_name"),
+    var P = getCookie("saguaro_pass"),
+        N = getCookie("saguaro_name"),
         i;
     with(document) {
         for (i = 0; i < forms.length; i++) {
@@ -55,3 +55,23 @@ function getCookie(key, tmp1, tmp2, xx1, xx2, xx3) {
     }
     return ("");
 }
+
+function reppop(a) {
+	day=new Date();
+	id=day.getTime();
+	window.open(a,id,"toolbar=0,scrollbars=0,location=0,status=1,menubar=0,resizable=1,width=685,height=200");
+	return false;
+}
+
+function set_cookie(name,value,days) {
+	if(days) {
+		var date=new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires="; expires="+date.toGMTString();
+	} else expires="";
+	document.cookie=name+"="+value+expires+"; path=/";
+}
+
+function del_cookie(name) {
+	document.cookie = name +'=; expires=Thu, 01-Jan-70 00:00:01 GMT; path=/';
+} 
