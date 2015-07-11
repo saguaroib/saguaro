@@ -1,4 +1,4 @@
-Execute somewhere in *imgboard.php*: (preferabbly an empty page)
+Execute somewhere in *imgboard.php*: (preferably an empty page)
 
 ```PHP
 updatelog();
