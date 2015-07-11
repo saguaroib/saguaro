@@ -1032,10 +1032,10 @@ function head( &$dat ) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- meta HTTP-EQUIV="pragma" CONTENT="no-cache" -->
 <link REL="SHORTCUT ICON" HREF="/favicon.ico">
-<link rel="stylesheet" type="text/css" href="' . CSS_PATH . CSS1 . '" title="Standard Saguaro" />
-<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS2 . '" href="' . CSS_PATH . CSS2 . '" />
-<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS3 . '" href="' . CSS_PATH . CSS3 . '" />
-<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS4 . '" href="' . CSS_PATH . CSS4 . '" />
+<link rel="stylesheet" type="text/css" href="' . CSS_PATH . CSS1 . '" title="Saguaba" />
+<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS2 . '" href="' . CSS_PATH . CSS2 . '" title="Sagurichan"/>
+<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS3 . '" href="' . CSS_PATH . CSS3 . '" title="Tomorrow" />
+<link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS4 . '" href="' . CSS_PATH . CSS4 . '" title="Burichan"/>
 <script src="' . JS_PATH . '/jquery.min.js" type="text/javascript"></script>
 <script src="' . JS_PATH . '/styleswitch.js" type="text/javascript"></script>
 <script src="' . JS_PATH . '/main.js" type="text/javascript"></script>
