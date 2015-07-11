@@ -902,7 +902,7 @@ function updatelog( $resno = 0, $rebuild = 0 ) {
 				$dat .= '' . ADS3 . '<hr />';
 			
 			if ( $resno )
-				$dat .= "[<a href=\"" . PHP_SELF2_ABS . "\">" . S_RETURN . "</a>] [<a href=\"" . $resto . PHP_EXT . "#top\"/>Top</a>]\n";
+				$dat .= "[<a href=\"" . PHP_SELF2_ABS . "\">" . S_RETURN . "</a>] [<a href=\"" . $resto . PHP_EXT . "#top\"/>Top</a>]\n<hr />";
 			
 			clearstatcache(); //clear stat cache of a file
 			//mysql_free_result( $resline );
@@ -1093,7 +1093,7 @@ function head( &$dat ) {
 [<a href="' . PHP_SELF_ABS . '?mode=admin">' . S_ADMIN . '</a>]
 </span>
 <div class="logo">' . $titlepart . '</div>
-<a href="#top" /></a><hr />
+<a href="#top" /></a>
 <div class="headsub">' . S_HEADSUB . '</div><hr />';
 	if ( USE_ADS1 ) {
 		$dat .= '' . ADS1 . '<hr />';
