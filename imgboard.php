@@ -671,11 +671,7 @@ function updatelog( $resno = 0, $rebuild = 0 ) {
 			if ( $fname == 'image')
 				$fname = time();
 			$longname = $fname;
-			if ( strlen( $fname ) > 40 ) {
-				$shortname = substr( $fname, 0, 40 ) . "(...)" . $ext;
-			} else {
-				$shortname = $longname;
-			}
+			$shortname = (strlen( $fname ) > 40) ? substr( $fname, 0, 40 ) . "(...)" . $ext : $longname;
 			// img tag creation
 			$imgsrc = "";
 			if ( $ext ) {
@@ -825,11 +821,7 @@ function updatelog( $resno = 0, $rebuild = 0 ) {
 				if ( $fname == 'image')
 					$fname = time();
 				$longname = $fname;
-				if ( strlen( $fname ) > 30 ) {
-					$shortname = substr( $fname, 0, 30 ) . "(...)" . $ext;
-				} else {
-					$shortname = $longname;
-				}
+				$shortname = (strlen( $fname ) > 40) ? substr( $fname, 0, 40 ) . "(...)" . $ext : $longname;
 				// img tag creation
 				$r_imgsrc = "";
 				if ( $ext ) {
