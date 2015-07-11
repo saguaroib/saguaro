@@ -1039,7 +1039,7 @@ function head( &$dat )
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS2 . '" href="'  . CSS_PATH . CSS2 . '" />
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS3 . '" href="' .CSS_PATH . CSS3 . '" />
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS4 . '" href="' . CSS_PATH . CSS4 . '" />
-<script src="' . JS_PATH . '/jquery.min.js"" type="text/javascript"></script>
+<script src="' . JS_PATH . '/jquery.min.js" type="text/javascript"></script>
 <script src="' . JS_PATH . '/styleswitch.js" type="text/javascript"></script>
 <script src="' . JS_PATH . '/main.js" type="text/javascript"></script>
 <title>' . TITLE . '</title>';
