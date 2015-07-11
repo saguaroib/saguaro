@@ -425,9 +425,9 @@ function valid( $action = 'moderator', $no = 0 )
 	);
 	if ( !isset( $valid_cache ) ) {
 		$valid_cache = $access_level['none'];
-		if ( isset( $_COOKIE['saguaro_auser'] ) && isset( $_COOKIE['saguaro__apass'] ) ) {
+		if ( isset( $_COOKIE['saguaro_auser'] ) && isset( $_COOKIE['saguaro_apass'] ) ) {
 			$user = mysql_real_escape_string( $_COOKIE['saguaro_auser'] );
-			$pass = mysql_real_escape_string( $_COOKIE[saguaro_apass'] );
+			$pass = mysql_real_escape_string( $_COOKIE['saguaro_apass'] );
 		}
 		if ( $user && $pass ) {
 			$result = mysql_call( "SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'" );
@@ -2443,8 +2443,8 @@ function login($usernm, $passwd)
 	$usernm = $hacky[0];
     $passwd = $hacky[1];
     
-    setcookie('saguaro__auser', $usernm, 0);
-    setcookie('saguaro__apass', $passwd, 0);
+    setcookie('saguaro_auser', $usernm, 0);
+    setcookie('saguaro_apass', $passwd, 0);
     
     echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "?mode=admin" . "\">";
 }
