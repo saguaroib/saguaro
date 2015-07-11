@@ -1047,7 +1047,7 @@ function head( &$dat )
 ***********************************************/
 </script>
 <title>' . TITLE . '</title>
-<script src="' . JS_PATH . 'main.js" type="text/javascript">
+<script src="' . JS_PATH . 'main.js" type="text/javascript"></script>
 <title>' . TITLE . '</title>';
 	
 	if ( USE_IMG_HOVER || USE_IMG_TOOLBAR || USE_IMG_EXP || USE_UTIL_QUOTE || USE_INF_SCROLL || USE_FORCE_WRAP || USE_UPDATER || USE_THREAD_STATS || USE_JS_SETTINGS || USE_EXTRAS ) {
