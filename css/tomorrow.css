@@ -134,7 +134,7 @@ hr {
     padding-bottom: 4px;
 }
 .managehead {
-    background: #626569;
+    background: #595959;
     color: #FFFFEE;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
@@ -148,16 +148,16 @@ hr {
 
 th {}
 .row1 {
-    background: #BDBDBD;
+    background: #A6A6A6;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 10pt;
     color: #000000;
 }
 .row2 {
-    background: #FFFFFF;
+    background: #F9F9F9;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 10pt;
-    color: #FC0303;
+    color: #000000;
 }
 .unkfunc {
     color: #789922;
