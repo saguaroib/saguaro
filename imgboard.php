@@ -425,9 +425,9 @@ function valid( $action = 'moderator', $no = 0 )
 	);
 	if ( !isset( $valid_cache ) ) {
 		$valid_cache = $access_level['none'];
-		if ( isset( $_COOKIE['' . SITE_ROOT . '_auser'] ) && isset( $_COOKIE['' . SITE_ROOT . '_apass'] ) ) {
-			$user = mysql_real_escape_string( $_COOKIE['' . SITE_ROOT . '_auser'] );
-			$pass = mysql_real_escape_string( $_COOKIE['' . SITE_ROOT . '_apass'] );
+		if ( isset( $_COOKIE['saguaro_auser'] ) && isset( $_COOKIE['saguaro__apass'] ) ) {
+			$user = mysql_real_escape_string( $_COOKIE['saguaro_auser'] );
+			$pass = mysql_real_escape_string( $_COOKIE[saguaro_apass'] );
 		}
 		if ( $user && $pass ) {
 			$result = mysql_call( "SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'" );
@@ -2308,7 +2308,7 @@ function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, 
 		}
 		
 		if (isset($admindel) && $admindel) { // extra actions for admin user
-				$auser   = mysql_real_escape_string($_COOKIE['' . SITE_ROOT . '_auser']);
+				$auser   = mysql_real_escape_string($_COOKIE['saguaro_auser']);
 				$adfsize = ($row['fsize'] > 0) ? 1 : 0;
 				$adname  = str_replace('</span> <span class="postertrip">!', '#', $row['name']);
 				if ($imgonly) {
@@ -2443,8 +2443,8 @@ function login($usernm, $passwd)
 	$usernm = $hacky[0];
     $passwd = $hacky[1];
     
-    setcookie('' . SITE_ROOT .'_auser', $usernm, 0);
-    setcookie('' . SITE_ROOT .'_apass', $passwd, 0);
+    setcookie('saguaro__auser', $usernm, 0);
+    setcookie('saguaro__apass', $passwd, 0);
     
     echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "?mode=admin" . "\">";
 }
@@ -2866,8 +2866,8 @@ switch ( $mode ) {
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF . "?mode=admin\">";
         break;*/
     case 'logout':
-        setcookie('' . SITE_ROOT . '_apass', '0', 1);
-        setcookie('' . SITE_ROOT . '_auser', '0', 1);
+        setcookie('saguaro_apass', '0', 1);
+        setcookie('saguaro_auser', '0', 1);
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
         break;
     case 'zmdlog':
