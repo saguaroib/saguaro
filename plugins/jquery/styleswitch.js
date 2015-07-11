@@ -1,90 +1,115 @@
-//Style Sheet Switcher version 1.1 Oct 10th, 2006
-//Author: Dynamic Drive: http://www.dynamicdrive.com
-//Usage terms: http://www.dynamicdrive.com/notice.htm
+$(document).ready(function() { repod.styleswitch.init(); });
+try { repod; } catch(e) { repod = {}; }
 
-var manual_or_random="manual" //"manual" or "random"
-var randomsetting="3 days" //"eachtime", "sessiononly", or "x days (replace x with desired integer)". Only applicable if mode is random.
+repod.styleswitch = {
+    init: function() {
+        this.stylesheet_cache = $("link[rel$=stylesheet]"); //Eventually change to a safer selector.
 
-//////No need to edit beyond here//////////////
+        //$("#switchform").remove(); //Literally removing the competition
 
-function getCookie(Name) { 
-var re=new RegExp(Name+"=[^;]+", "i"); //construct RE to search for target name/value pair
-if (document.cookie.match(re)) //if cookie found
-return document.cookie.match(re)[0].split("=")[1] //return its value
-return null
-}
+        this.ready();
+    },
+    ready: function() {
+        this.injectSelector();
+        this.enableSheet(this.readSaved());
+    },
+    disableAllSheets: function() {
+        $.each(this.stylesheet_cache, function(i,obj) {
+            $(obj).prop("disabled", true);
+        })
+    },
+    enableSheet: function(input) {
+        var that = this;
 
-function setCookie(name, value, days) {
-var expireDate = new Date()
-//set "expstring" to either future or past date, to set or delete cookie, respectively
-var expstring=(typeof days!="undefined")? expireDate.setDate(expireDate.getDate()+parseInt(days)) : expireDate.setDate(expireDate.getDate()-5)
-document.cookie = name+"="+value+"; expires="+expireDate.toGMTString()+"; path=/";
-}
+        $.each(this.stylesheet_cache, function(index,obj) {
+            if ($(obj).attr("title") === input) {
+                that.enable(obj);
+            }
+        });
+    },
+    enable: function(input) {
+        if (input) {
+            this.disableAllSheets();
 
-function deleteCookie(name){
-setCookie(name, "moot")
-}
+            $(input).prop("disabled", false);
 
+            this.saveCurrent();
+        }
+    },
+    getCurrentSheet: function() {
+        var t;
 
-function setStylesheet(title, randomize){ //Main stylesheet switcher function. Second parameter if defined causes a random alternate stylesheet (including none) to be enabled
-var i, cacheobj, altsheets=[""]
-for(i=0; (cacheobj=document.getElementsByTagName("link")[i]); i++) {
-if(cacheobj.getAttribute("rel").toLowerCase()=="alternate stylesheet" && cacheobj.getAttribute("title")) { //if this is an alternate stylesheet with title
-cacheobj.disabled = true
-altsheets.push(cacheobj) //store reference to alt stylesheets inside array
-if(cacheobj.getAttribute("title") == title) //enable alternate stylesheet with title that matches parameter
-cacheobj.disabled = false //enable chosen style sheet
-}
-}
-if (typeof randomize!="undefined"){ //if second paramter is defined, randomly enable an alt style sheet (includes non)
-var randomnumber=Math.floor(Math.random()*altsheets.length)
-altsheets[randomnumber].disabled=false
-}
-return (typeof randomize!="undefined" && altsheets[randomnumber]!="")? altsheets[randomnumber].getAttribute("title") : "" //if in "random" mode, return "title" of randomly enabled alt stylesheet
-}
+        $.each(this.stylesheet_cache, function(i,obj) {
+            if ($(obj).prop("disabled") === false) {
+                t = $(obj).attr("title");
+            }
+        });
 
-function chooseStyle(styletitle, days){ //Interface function to switch style sheets plus save "title" attr of selected stylesheet to cookie
-if (document.getElementById){
-setStylesheet(styletitle)
-setCookie("mysheet", styletitle, days)
-}
-}
+        return t;
+    },
+    setRandomSheet: function() {
+        var r = Math.floor(Math.random() * this.stylesheet_cache.length),
+            o = $(this.stylesheet_cache[r]).attr("title"); //Ehhhh.
 
-function indicateSelected(element){ //Optional function that shows which style sheet is currently selected within group of radio buttons or select menu
-if (selectedtitle!=null && (element.type==undefined || element.type=="select-one")){ //if element is a radio button or select menu
-var element=(element.type=="select-one") ? element.options : element
-for (var i=0; i<element.length; i++){
-if (element[i].value==selectedtitle){ //if match found between form element value and cookie value
-if (element[i].tagName=="OPTION") //if this is a select menu
-element[i].selected=true
-else //else if it's a radio button
-element[i].checked=true
-break
-}
-}
-}
-}
+        this.enableSheet(o);
+    },
+    generateSelector: function() {
+        var box = $("<select />", {class: "styleswitcher"}),
+            that = this;
 
-if (manual_or_random=="manual"){ //IF MANUAL MODE
-var selectedtitle=getCookie("mysheet")
-if (document.getElementById && selectedtitle!=null) //load user chosen style sheet from cookie if there is one stored
-setStylesheet(selectedtitle)
-}
-else if (manual_or_random=="random"){ //IF AUTO RANDOM MODE
-if (randomsetting=="eachtime")
-setStylesheet("", "random")
-else if (randomsetting=="sessiononly"){ //if "sessiononly" setting
-if (getCookie("mysheet_s")==null) //if "mysheet_s" session cookie is empty
-document.cookie="mysheet_s="+setStylesheet("", "random")+"; path=/" //activate random alt stylesheet while remembering its "title" value
-else
-setStylesheet(getCookie("mysheet_s")) //just activate random alt stylesheet stored in cookie
-}
-else if (randomsetting.search(/^[1-9]+ days/i)!=-1){ //if "x days" setting
-if (getCookie("mysheet_r")==null || parseInt(getCookie("mysheet_r_days"))!=parseInt(randomsetting)){ //if "mysheet_r" cookie is empty or admin has changed number of days to persist in "x days" variable
-setCookie("mysheet_r", setStylesheet("", "random"), parseInt(randomsetting)) //activate random alt stylesheet while remembering its "title" value
-setCookie("mysheet_r_days", randomsetting, parseInt(randomsetting)) //Also remember the number of days to persist per the "x days" variable
-}
-else
-setStylesheet(getCookie("mysheet_r")) //just activate random alt stylesheet stored in cookie
-} 
-}
+        $.each(this.stylesheet_cache, function(i,obj) {
+            var title = $(obj).attr("title"),
+                slctd = (title === that.getCurrentSheet()),
+                child = $("<option />", {text: title, selected: slctd});
+
+            box.append(child);
+        });
+
+        box = $("<div />").append(box);
+
+        return $(box)[0];
+    },
+    injectSelector: function() {
+        var selector = this.generateSelector();
+
+        $(".adminbar").append(selector);
+        this.bindSelector(selector);
+    },
+    bindSelector: function(selector) {
+        var that = this;
+
+        $(selector).find("select").change(function() {
+            that.enableSheet(this.value);
+        });
+    },
+    saveCurrent: function() {
+        var c_name = "repod_switch_cur",
+            value = this.getCurrentSheet(),
+            exdays = 3,
+            exdate = new Date();
+
+        exdate.setDate(exdate.getDate() + exdays);
+
+        var c_value = escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+
+        document.cookie = c_name + "=" + c_value;
+    },
+    readSaved: function() {
+        var c_name = "repod_switch_cur",
+            c_value = document.cookie,
+            c_start = c_value.indexOf(" " + c_name + "=");
+
+        if (c_start == -1) { c_start = c_value.indexOf(c_name + "="); }
+        if (c_start == -1) { c_value = null; }
+        else {
+            c_start = c_value.indexOf("=", c_start) + 1;
+            var c_end = c_value.indexOf(";", c_start);
+            if (c_end == -1) {
+                c_end = c_value.length;
+            }
+            c_value = unescape(c_value.substring(c_start,c_end));
+        }
+
+        return c_value;
+    }
+};
