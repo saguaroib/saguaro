@@ -1588,8 +1588,8 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 	$host  = $_SERVER["REMOTE_ADDR"];
 	$badip = mysql_call( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' and banlength <> 0 " );
 	
-	if ( $moderator )
-		$host = '###.###.###.###'; // Don't store mod/admin ips
+/*	if ( $moderator )
+		$host = '###.###.###.###'; // Don't store mod/admin ips*/
 	
 	$query  = mysql_query( "SELECT * FROM " . SQLLOG . " WHERE no=" . $resto );
 	$result = mysql_fetch_assoc( $query );
