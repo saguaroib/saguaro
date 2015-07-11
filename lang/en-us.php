@@ -101,5 +101,6 @@ $S_BANS = 'Ban';
 $S_BANS_EXTRA = '';
 $S_CAPFAIL = 'You seem to have mistyped the verification.';
 $S_THREADLOCKED = 'You cannot reply to a locked thread.';
+$S_LOGOUT = 'Logout';
 
 ?>
