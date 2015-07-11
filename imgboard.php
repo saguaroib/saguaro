@@ -668,9 +668,11 @@ function updatelog( $resno = 0, $rebuild = 0 ) {
 			if ( defined( 'INTERSTITIAL_LINK' ) )
 				$linksrc = str_replace( INTERSTITIAL_LINK, "", $linksrc );
 			$src      = IMG_DIR . $tim . $ext;
-			$longname = $filename . $ext;
-			if ( strlen( $filename ) > 40 ) {
-				$shortname = substr( $filename, 0, 40 ) . "(...)" . $ext;
+			if ( $fname == 'image')
+				$fname = time();
+			$longname = $fname;
+			if ( strlen( $fname ) > 40 ) {
+				$shortname = substr( $fname, 0, 40 ) . "(...)" . $ext;
 			} else {
 				$shortname = $longname;
 			}
@@ -732,7 +734,7 @@ function updatelog( $resno = 0, $rebuild = 0 ) {
 				$stickyicon .= ' <img src="' . CSS_PATH . '/locked.gif" alt="closed"> ';
 			
 			if ( $resno ) {
-				$dat .= "<a href=\"#$no\" class=\"quotejs\">No.</a><a href=\"javascript:quote('$no')\" class=\"quotejs\">$no</a> $stickyicon &nbsp; ";
+				$dat .= "<a href=\"#$no\" class=\"quotejs\">No.</a><a href=\"javascript:insert('$no')\" class=\"quotejs\">$no</a> $stickyicon &nbsp; ";
 			} else {
 				$dat .= "<a href=\"" . RES_DIR . $no . PHP_EXT . "#" . $no . "\" class=\"quotejs\">No.</a><a href=\"" . RES_DIR . $no . PHP_EXT . "#q" . $no . "\" class=\"quotejs\">$no</a> $stickyicon &nbsp; [<a href=\"" . RES_DIR . $no . PHP_EXT . "\">" . S_REPLY . "</a>]";
 			}
@@ -820,7 +822,9 @@ function updatelog( $resno = 0, $rebuild = 0 ) {
 				if ( defined( 'INTERSTITIAL_LINK' ) )
 					$r_linksrc = str_replace( INTERSTITIAL_LINK, "", $r_linksrc );
 				$r_src    = DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext;
-				$longname = $fname . $ext;
+				if ( $fname == 'image')
+					$fname = time();
+				$longname = $fname;
 				if ( strlen( $fname ) > 30 ) {
 					$shortname = substr( $fname, 0, 30 ) . "(...)" . $ext;
 				} else {
@@ -879,7 +883,7 @@ function updatelog( $resno = 0, $rebuild = 0 ) {
 				$dat .= "<input type=checkbox name=\"$no\" value=delete><span class=\"replytitle\">$sub</span> \n";
 				$dat .= "<span class=\"commentpostername\">$name</span> $now <span id=\"norep$no\">";
 				if ( $resno ) {
-					$dat .= "<a href=\"#$no\" class=\"quotejs\">No.</a><a href=\"javascript:quote('$no')\" class=\"quotejs\">$no</a></span>";
+					$dat .= "<a href=\"#$no\" class=\"quotejs\">No.</a><a href=\"javascript:insert('$no')\" class=\"quotejs\">$no</a></span>";
 				} else {
 					$dat .= "<a href=\"" . RES_DIR . $resto . PHP_EXT . "#$no\" class=\"quotejs\">No.</a><a href=\"" . RES_DIR . $resto . PHP_EXT . "#q$no\" class=\"quotejs\">$no</a></span>";
 				}
@@ -1089,7 +1093,7 @@ function head( &$dat ) {
 [<a href="' . PHP_SELF_ABS . '?mode=admin">' . S_ADMIN . '</a>]
 </span>
 <div class="logo">' . $titlepart . '</div>
-<a href="#top" /></a>
+<a href="#top" /></a><hr />
 <div class="headsub">' . S_HEADSUB . '</div><hr />';
 	if ( USE_ADS1 ) {
 		$dat .= '' . ADS1 . '<hr />';
@@ -1588,9 +1592,6 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 	$host  = $_SERVER["REMOTE_ADDR"];
 	$badip = mysql_call( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' and banlength <> 0 " );
 	
-/*	if ( $moderator )
-		$host = '###.###.###.###'; // Don't store mod/admin ips*/
-	
 	$query  = mysql_query( "SELECT * FROM " . SQLLOG . " WHERE no=" . $resto );
 	$result = mysql_fetch_assoc( $query );
 	if ( $result["locked"] == '1' ) {
@@ -1799,12 +1800,17 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 		}
 	}
 	
-	if ( $email == 'noko' ) {
-		$noko  = 1;
+	if ( $email == 'sage' ) {
+		$noko  = 0;
 		$email = '';
-	} else if ( $email == 'nokosage' ) {
+	} elseif ( $email == 'nokosage' ) {
 		$noko  = 1;
 		$email = 'sage';
+	} elseif ( $email == 'nonoko' ) {
+		$noko = 0;
+		$email = '';
+	} else {
+		$noko = 1;
 	}
 	
 	if ( $moderator ) {
@@ -1897,6 +1903,10 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
 			mysql_free_result( $result );
 		}
 	}
+	
+	if ( $moderator )
+		$host = '###.###.###.###'; // Don't store mod/admin ips
+	
 	
 	$rootqu = $resto ? "0" : "now()";
 	if ( $stickied )
@@ -2541,8 +2551,8 @@ function admindel( $pass ) {
 		$age_current_unit = abs( $comparison - $timestamp );
 		foreach ( $units as $unit => $max_current_unit ) {
 			$age_next_unit = $age_current_unit / $max_current_unit;
-			if ( $age_next_unit < 1 ) // are there enough of the current unit to make one of the next unit?
-				{
+			if ( $age_next_unit < 1 ) {
+				// are there enough of the current unit to make one of the next unit?
 				$age_current_unit = floor( $age_current_unit );
 				$formatted_age    = $age_current_unit . ' ' . $unit;
 				return $formatted_age . ( $age_current_unit == 1 ? '' : 's' );
