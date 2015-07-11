@@ -28,8 +28,18 @@ if ( BOARD_DIR == 'test' ) {
 	ini_set( 'display_errors', 0 );
 }
 
-if (!is_dir(RES_DIR))
+if (!is_dir(RES_DIR) && defined(RES_DIR)) {
 	mkdir(RES_DIR, 0777, true);
+	echo "Creating thread cache directory " . RES_DIR;
+}
+if (!is_dir(THUMB_DIR) && defined(THUMB_DIR)) {
+	mkdir(THUMB_DIR, 0777, true);
+	echo "Creating thumbnail directory " . THUMB_DIR;
+}
+if (!is_dir(IMG_DIR) && defined(IMG_DIR)) {
+	mkdir(IMG_DIR, 0777, true);
+	echo "Creating image directory " . IMG_DIR;
+}
 
 $num     = $_REQUEST['num'];
 $capkeyx = substr( $_SESSION['capkey'], 0, 5 );
