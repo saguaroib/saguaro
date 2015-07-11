@@ -94,7 +94,7 @@ if ( !table_exist( SQLLOG ) ) {
     w     int,
     h     int,
     tn_w     int,
-    th_h     int,
+    tn_h     int,
     tim   text,
     time  int,
     md5   text,
@@ -2483,7 +2483,7 @@ function admindel( $pass ) {
         $find = FALSE;
         
         while ( $row = mysql_fetch_row( $result ) ) {
-            list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize,  ) = $row;
+            list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h $tim, $time, $md5, $fsize,  ) = $row;
             if ( $onlyimgdel == on ) {
                 /*if ( array_search( $no, $delno ) ) { //only a picture is deleted
                 $delfile = $path . $tim . $ext; //only a picture is deleted
@@ -2572,7 +2572,7 @@ function admindel( $pass ) {
     while ( $row = mysql_fetch_row( $result ) ) {
         $j++;
         $img_flag = FALSE;
-        list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
+        list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
         // Format
         $now = ereg_replace( '.{2}/(.*)$', '\1', $now );
         $now = ereg_replace( '\(.*\)', ' ', $now );
@@ -2619,7 +2619,6 @@ function admindel( $pass ) {
         }
         $class = ( $j % 2 ) ? "row1" : "row2"; //BG color
         
-        $resdo = '';
         if ( $resto == '0' )
             $resdo = '<b>Orig. post(<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . '#' . $no . '" target="_blank" />' . $no . '</a>)</b>';
         else
@@ -2630,11 +2629,6 @@ function admindel( $pass ) {
         if ( valid( 'janitor_board' ) && !valid( 'moderator' ) ) //Hide IPs from janitors
             $host = '###.###.###.###';
         
-        /*echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
-        echo "<td>$no</td><td>$resdo</td><td>$now</td><td>$truncsub</td>";
-        echo "<td>$truncname</b></td><td>$trunccom</td>";
-        echo "<td>$host</td><td>$clip($size)</td><td>$md5</td><td>$truncfname</td><td>" . calculate_age( $time ) . "</td>\n";
-        echo "</tr>\n";*/
         echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
         echo "<td>$no</td><td>$resdo</td><td>$now</td><td>$truncsub</td>";
         echo "<td>$truncname</b></td><td>$trunccom</td>";
