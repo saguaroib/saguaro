@@ -1041,12 +1041,8 @@ function head( &$dat )
 <link rel="alternate stylesheet" type="text/css" media="screen" title="' . CSS4 . '" href="' . CSS_PATH . CSS4 . '" />
 <script src="' . JS_PATH . '/jquery.min.js"" type="text/javascript"></script>
 <script src="' . JS_PATH . '/styleswitch.js" type="text/javascript"></script>
-<script src="' . JS_PATH . 'main.js" type="text/javascript"></script>
+<script src="' . JS_PATH . '/main.js" type="text/javascript"></script>
 <title>' . TITLE . '</title>';
-	
-	if ( USE_IMG_HOVER || USE_IMG_TOOLBAR || USE_IMG_EXP || USE_UTIL_QUOTE || USE_INF_SCROLL || USE_FORCE_WRAP || USE_UPDATER || USE_THREAD_STATS || USE_JS_SETTINGS || USE_EXTRAS ) {
-		$dat .= '<script src="' . JS_PATH . '/jquery.min.js" type="text/javascript"></script>';
-	}
 	
 	if ( USE_JS_SETTINGS ) {
 		$dat .= '<script src="' . JS_PATH . '/suite_settings.js" type="text/javascript"></script>';
@@ -1094,14 +1090,6 @@ function head( &$dat )
 <span class="adminbar">
 [<a href="' . HOME . '" target="_top">' . S_HOME . '</a>]
 [<a href="' .  PHP_SELF_ABS . '?mode=admin">' . S_ADMIN . '</a>]
-<form id="switchform">
-		<select name="switchcontrol" size="1" onChange="chooseStyle(this.options[this.selectedIndex].value, 60)">
-			<option value="none" selected="selected">' . STYLESHEET_1 . '</option>
-			<option value="' . STYLESHEET_2 . '">' . STYLESHEET_2 . '</option>
-			<option value="' . STYLESHEET_3 . '">' . STYLESHEET_3 . '</option>
-			<option value="' . STYLESHEET_4 . '">' . STYLESHEET_4 . '</option>
-		</select>
-	</form>
 </span>
 <div class="logo">' . $titlepart . '</div>
 <a href="#top" /></a>
