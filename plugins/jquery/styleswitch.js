@@ -72,7 +72,7 @@ repod.styleswitch = {
     injectSelector: function() {
         var selector = this.generateSelector();
 
-        $(".adminbar").append(selector);
+        $(".delsettings").after(selector);
         this.bindSelector(selector);
     },
     bindSelector: function(selector) {
