@@ -10,8 +10,8 @@ repod.styleswitch = {
         this.ready();
     },
     ready: function() {
-        this.injectSelector();
         this.enableSheet(this.readSaved());
+        this.injectSelector();
     },
     disableAllSheets: function() {
         $.each(this.stylesheet_cache, function(i,obj) {
