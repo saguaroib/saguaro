@@ -1037,36 +1037,16 @@ function head( &$dat ) {
 <script src="' . JS_PATH . '/main.js" type="text/javascript"></script>
 <title>' . TITLE . '</title>';
 	
-	if ( USE_JS_SETTINGS ) {
-		$dat .= '<script src="' . JS_PATH . '/suite_settings.js" type="text/javascript"></script>';
-	}
-	if ( USE_IMG_HOVER ) {
-		$dat .= '<script src="' . JS_PATH . '/image_hover.js" type="text/javascript"></script>';
-	}
-	if ( USE_IMG_TOOLBAR ) {
-		$dat .= '<script src="' . JS_PATH . '/image_toolbar.js" type="text/javascript"></script>';
-	}
-	if ( USE_IMG_EXP ) {
-		$dat .= '<script src="' . JS_PATH . '/image_expansion.js" type="text/javascript"></script>';
-	}
-	if ( USE_UTIL_QUOTE ) {
-		$dat .= '<script src="' . JS_PATH . '/utility_quotes.js" type="text/javascript"></script>';
-	}
-	if ( USE_INF_SCROLL ) {
-		$dat .= '<script src="' . JS_PATH . '/infinite_scroll.js" type="text/javascript"></script>';
-	}
-	if ( USE_FORCE_WRAP ) {
-		$dat .= '<script src="' . JS_PATH . '/force_post_wrap.js" type="text/javascript"></script>';
-	}
-	if ( USE_UPDATER ) {
-		$dat .= '<script src="' . JS_PATH . '/thread_updater.js" type="text/javascript"></script>';
-	}
-	if ( USE_THREAD_STATS ) {
-		$dat .= '<script src="' . JS_PATH . '/thread_stats.js" type="text/javascript"></script>';
-	}
-	if ( REPOD_EXTRA ) {
-		$dat .= '<script src="' . JS_PATH . '/extra/bgmod.js" type="text/javascript"></script>';
-	}
+	if ( USE_JS_SETTINGS ) 	$dat .= '<script src="' . JS_PATH . '/suite_settings.js" type="text/javascript"></script>';
+	if ( USE_IMG_HOVER ) 	$dat .= '<script src="' . JS_PATH . '/image_hover.js" type="text/javascript"></script>';
+	if ( USE_IMG_TOOLBAR ) 	$dat .= '<script src="' . JS_PATH . '/image_toolbar.js" type="text/javascript"></script>';
+	if ( USE_IMG_EXP ) 		$dat .= '<script src="' . JS_PATH . '/image_expansion.js" type="text/javascript"></script>';
+	if ( USE_UTIL_QUOTE ) 	$dat .= '<script src="' . JS_PATH . '/utility_quotes.js" type="text/javascript"></script>';
+	if ( USE_INF_SCROLL ) 	$dat .= '<script src="' . JS_PATH . '/infinite_scroll.js" type="text/javascript"></script>';
+	if ( USE_FORCE_WRAP ) 	$dat .= '<script src="' . JS_PATH . '/force_post_wrap.js" type="text/javascript"></script>';
+	if ( USE_UPDATER ) 		$dat .= '<script src="' . JS_PATH . '/thread_updater.js" type="text/javascript"></script>';
+	if ( USE_THREAD_STATS ) 	$dat .= '<script src="' . JS_PATH . '/thread_stats.js" type="text/javascript"></script>';
+	if ( REPOD_EXTRA ) 		$dat .= '<script src="' . JS_PATH . '/extra/bgmod.js" type="text/javascript"></script>';
 	if ( USE_EXTRAS ) {
 		foreach ( glob( JS_PATH . "/extra/*.js" ) as $path ) {
 			$dat .= '<script src="' . $path . '" type="text/javascript"></script>';
