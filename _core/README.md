@@ -3,7 +3,7 @@ Execute somewhere in *imgboard.php*: (preferably an empty page, also change PATH
 ```PHP
 updatelog();
 echo '<link rel="stylesheet" type="text/css" media="screen"  href="PATHTO/css/saguaba.css"/>';
-include("_core/classes/thread.php");
+include("_core/thread/thread.php");
 
 $thread = new Thread();
 $thread->format(1);
@@ -18,7 +18,7 @@ case 'test':
         updatelog();
         
         echo '<link rel="stylesheet" type="text/css" media="screen"  href="PATHTO/css/saguaba.css"/>';
-        include("_core/classes/thread.php");
+        include("_core/thread/thread.php");
 
         $a = new Thread();
         $n = ($r) ? $r : 1;
