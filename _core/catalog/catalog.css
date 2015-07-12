@@ -1,6 +1,21 @@
-.catalog_item { width:150px; display:inline-block; margin: 0px 5px; text-align:center; }
-.catalog_item .stats { font-size:0.7em; }
-.catalog_item .subject { font-weight:bold; font-size:0.9em; line-height: 1em; }
+.catalog_item {
+    width:150px;
+    display:inline-block;
+    margin: 0px 5px;
+    text-align:center;
+    vertical-align: top;
+}
+
+.catalog_item .stats {
+    font-size:0.7em;
+}
+
+.catalog_item .subject {
+    font-weight:bold;
+    font-size:0.9em;
+    line-height: 1em;
+}
+
 .catalog_item .comment {
     overflow:hidden;
     display:inline-block;
@@ -10,4 +25,10 @@
     min-height: 1.3em;
     max-height:4em;
 }
-.postimg { max-width:150px;max-height:150px;height:auto;width:auto; }
+
+.postimg {
+    max-width:150px;
+    max-height:150px;
+    height:auto;
+    width:auto;
+}
