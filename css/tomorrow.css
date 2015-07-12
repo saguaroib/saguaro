@@ -66,11 +66,11 @@ hr {
 }
 }
 .theader {
-  text-align: center;
-  background-color: orange;
-  color: white;
-  font-weight: 700;
-  width: 100%;
+    text-align: center;
+    background-color: orange;
+    color: white;
+    font-weight: 700;
+    width: 100%;
 }
 .postertrip {
     color: #117743;
@@ -104,16 +104,13 @@ hr {
     border: 1px solid #ECECEC;
     padding: 4px;
 }
-
-.spoiler { 
-    color: #000; 
-    background: #000; 
+.spoiler {
+    color: #000;
+    background: #000;
 }
-
-.spoiler:hover { 
-    color: #FFF; 
+.spoiler:hover {
+    color: #FFF;
 }
-
 .footer {
     text-align: center;
     font-size: 12px;
@@ -145,9 +142,7 @@ hr {
     width: 100%;
     padding: 0px;
 }
-
-th {}
-.row1 {
+th {} .row1 {
     background: #A6A6A6;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 10pt;
@@ -233,4 +228,51 @@ th {}
     color: black;
     background-color: #818181;
     padding: 5px;
+}
+/*Credits: Dynamic Drive CSS Library */
+/*URL: http://www.dynamicdrive.com/style/ */
+
+.gallerycontainer {
+    position: relative;
+    /*Add a height attribute and set to largest image's height to prevent overlaying*/
+}
+.thumbnail img {
+    border: 1px solid white;
+    margin: 0 5px 5px 0;
+}
+.thumbnail:hover {
+    background-color: transparent;
+}
+.thumbnail:hover img {
+    border: 1px solid blue;
+}
+.thumbnail span {
+    /*CSS for enlarged image*/
+    
+    position: absolute;
+    background-color: lightyellow;
+    padding: 5px;
+    /*right: -1000px;*/
+    
+    border: 1px dashed gray;
+    visibility: hidden;
+    color: black;
+    text-decoration: none;
+}
+.thumbnail span img {
+    /*CSS for enlarged image*/
+    
+    border-width: 0;
+    padding: 2px;
+}
+.thumbnail:hover span {
+    /*CSS for enlarged image*/
+    
+    visibility: visible;
+    /*top: 0;*/
+    
+    right: 230px;
+    /*position where enlarged image should offset horizontally */
+    
+    z-index: 50;
 }

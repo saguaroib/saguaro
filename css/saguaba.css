@@ -65,11 +65,11 @@ hr {
     color: #AF0A0F;
 }
 .theader {
-  text-align: center;
-  background-color: orange;
-  color: white;
-  font-weight: 700;
-  width: 100%;
+    text-align: center;
+    background-color: orange;
+    color: white;
+    font-weight: 700;
+    width: 100%;
 }
 .postertrip {
     color: #117743;
@@ -103,16 +103,13 @@ hr {
     border: 1px solid #800000;
     padding: 4px;
 }
-
-.spoiler { 
-    color: #000; 
-    background: #000; 
+.spoiler {
+    color: #000;
+    background: #000;
 }
-
-.spoiler:hover { 
-    color: #FFF; 
+.spoiler:hover {
+    color: #FFF;
 }
-
 .footer {
     text-align: center;
     font-size: 12px;
@@ -182,19 +179,15 @@ hr {
 }
 }
 .omittedposts {
-    font-size:11px;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
-    color:#666666;
-    font-weight:800;
+    font-size: 11px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #666666;
+    font-weight: 800;
 }
 .reply {
-    background:#F0E0D6;
-    color:#800000;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
+    background: #F0E0D6;
+    color: #800000;
+    font-family: Arial, Helvetica, sans-serif;
 }
 .doubledash {
     color: #B7C5D9;
@@ -204,25 +197,19 @@ hr {
     margin-left: 2px;
 }
 .replytitle {
-    font-size:18px;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
-    color:#CC1105;
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #CC1105;
 }
 .commentpostername {
-    font-size:14px;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
-    color:#117743;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #117743;
 }
 .thumbnailmsg {
-    font-size:9px;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
-    color:#800000;
+    font-size: 9px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #800000;
     padding-left: 20px;
 }
 .pages {
@@ -230,4 +217,51 @@ hr {
     color: black;
     background-color: #EEAA88;
     padding: 5px;
+}
+/*Credits: Dynamic Drive CSS Library */
+/*URL: http://www.dynamicdrive.com/style/ */
+
+.gallerycontainer {
+    position: relative;
+    /*Add a height attribute and set to largest image's height to prevent overlaying*/
+}
+.thumbnail img {
+    border: 1px solid white;
+    margin: 0 5px 5px 0;
+}
+.thumbnail:hover {
+    background-color: transparent;
+}
+.thumbnail:hover img {
+    border: 1px solid blue;
+}
+.thumbnail span {
+    /*CSS for enlarged image*/
+    
+    position: absolute;
+    background-color: lightyellow;
+    padding: 5px;
+    /*right: -1000px;*/
+    
+    border: 1px dashed gray;
+    visibility: hidden;
+    color: black;
+    text-decoration: none;
+}
+.thumbnail span img {
+    /*CSS for enlarged image*/
+    
+    border-width: 0;
+    padding: 2px;
+}
+.thumbnail:hover span {
+    /*CSS for enlarged image*/
+    
+    visibility: visible;
+    /*top: 0;*/
+    
+    right: 230px;
+    /*position where enlarged image should offset horizontally */
+    
+    z-index: 50;
 }
