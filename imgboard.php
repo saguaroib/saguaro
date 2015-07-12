@@ -2483,7 +2483,7 @@ function admindel( $pass ) {
         $find = FALSE;
         
         while ( $row = mysql_fetch_row( $result ) ) {
-            list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h $tim, $time, $md5, $fsize,  ) = $row;
+            list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize,  ) = $row;
             if ( $onlyimgdel == on ) {
                 /*if ( array_search( $no, $delno ) ) { //only a picture is deleted
                 $delfile = $path . $tim . $ext; //only a picture is deleted
