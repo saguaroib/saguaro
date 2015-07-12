@@ -14,7 +14,7 @@
 
 class PostForm {
     function format($resno, $admin) {
-        $maxbye = MAX_KB * 1024;
+        $maxbyte = MAX_KB * 1024;
         $no = $resno;
         $temp = "";
 
