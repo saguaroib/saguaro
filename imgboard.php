@@ -2803,6 +2803,13 @@ switch ( $mode ) {
     case 'debug':
         echo $_SERVER['DOCUMENT_ROOT'];
         break;
+    case 'catalog':
+	updatelog();
+	include_once("_core/catalog/catalog.php");
+	echo '<link rel="stylesheet" type="text/css" href="_core/catalog/catalog.css" title="Saguaba" />';
+	$a = new Catalog();
+	echo $a->format();
+	break;
     case 'banish':
         $ip          = $_POST['ip_to_ban'];
         $pubreason   = mysql_real_escape_string( $_POST['pubreason'] );
