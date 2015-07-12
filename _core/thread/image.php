@@ -2,7 +2,7 @@
 /*
 
     Formats images for OPs and replies.
-    
+
     Shouldn't be used without a parent (post.php).
 
 */
@@ -10,7 +10,7 @@
 class Image {
     function format($input) {
         extract($input);
-        
+
         $imgdir   = IMG_DIR;
         $thumbdir = DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR;
         $cssimg   = CSS_PATH;
@@ -47,13 +47,13 @@ class Image {
                 $imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img src=\"" . SPOILER_THUMB . "\" border=0 align=left hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
             } elseif ( $tn_w && $tn_h ) { //when there is size...
                 if ( @is_file( THUMB_DIR . $tim . 's.jpg' ) ) {
-                    $imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img class=\"postimg\" src=" . $thumbdir . $tim . 's.jpg' . " border=0 align=left width=$tn_w height=$tn_h hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
+                    $imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img class=\"postimg\" src=\"" . $thumbdir . $tim . 's.jpg' . "\" border=0 align=left width=$tn_w height=$tn_h hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
                 } else {
                     $imgsrc = "<a href=\"" . $displaysrc . "\" target=_blank><span class=\"tn_thread\" title=\"" . $size . "B\">Thumbnail unavailable</span></a>";
                 }
             } else {
                 if ( @is_file( THUMB_DIR . $tim . 's.jpg' ) ) {
-                    $imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img class=\"postimg\" src=" . $thumbdir . $tim . 's.jpg' . " border=0 align=left hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
+                    $imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img class=\"postimg\" src=\"" . $thumbdir . $tim . 's.jpg' . "\" border=0 align=left hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
                 } else {
                     $imgsrc = "<a href=\"" . $displaysrc . "\" target=_blank><span class=\"tn_thread\" title=\"" . $size . "B\">Thumbnail unavailable</span></a>";
                 }
@@ -63,12 +63,12 @@ class Image {
             } else {
                 $dimensions = ( $ext == '.pdf' ) ? 'PDF' : "{$w}x{$h}";
                 if ( 1 ) {
-                    return "<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a>-(" . $size . "B, " . $dimensions . ", <span title=\"" . $longname . "\">" . $shortname . "</span>)</span>" . $imgsrc;
+                    return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a>-(" . $size . "B, " . $dimensions . ", <span title=\"" . $longname . "\">" . $shortname . "</span>)</span>" . $imgsrc;
                 } else {
-                    return "<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a>-(" . $size . "B, " . $dimensions . ")</span>" . $imgsrc;
+                    return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a>-(" . $size . "B, " . $dimensions . ")</span>" . $imgsrc;
                 }
             }
-            
+
             return undefined;
         }
     }
