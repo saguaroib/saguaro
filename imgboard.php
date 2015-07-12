@@ -167,7 +167,7 @@ if ( !table_exist( SQLMODSLOG ) ) {
     }
     
     mysql_call( "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('admin', 'guest', 'janitor_board,moderator,admin,manager', 'none') " );
-    echo "Default account inserted. Username: admin, Passwor: guest.";
+    echo "Default account inserted. Username: admin, Password: guest.";
 }
 
 if ( !table_exist( SQLDELLOG ) ) {
@@ -443,8 +443,8 @@ function valid( $action = 'moderator', $no = 0 ) {
                 foreach ( $allows as $token ) {
                     if ( $token == 'janitor' )
                         $seen_janitor_token = true;
-                    else if ( $token == 'manager' && $valid_cache < $access_level['manager'] )
-                        $valid_cache = $access_level['manager'];
+                  /*  else if ( $token == 'manager' && $valid_cache < $access_level['manager'] )
+                        $valid_cache = $access_level['manager'];*/
                     else if ( $token == 'admin' && $valid_cache < $access_level['admin'] )
                         $valid_cache = $access_level['admin'];
                     else if ( ( $token == BOARD_DIR || $token == 'all' ) && $valid_cache < $access_level['janitor_this_board'] )
@@ -476,8 +476,8 @@ function valid( $action = 'moderator', $no = 0 ) {
             return $valid_cache >= $access_level['moderator'];
         case 'janitor_board':
             return $valid_cache >= $access_level['janitor'];
-        case 'manager':
-            return $valid_cache >= $access_level['manager'];
+        /*case 'manager':
+            return $valid_cache >= $access_level['manager'];*/
         case 'delete':
             if ( $valid_cache >= $access_level['janitor_this_board'] ) {
                 return true;
@@ -709,9 +709,9 @@ function updatelog( $resno = 0, $rebuild = 0 ) {
                 } else {
                     $dimensions = ( $ext == '.pdf' ) ? 'PDF' : "{$w}x{$h}";
                     if ( $resno ) {
-                        $dat .= "<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a>-(" . $size . "B, " . $dimensions . ", <span title=\"" . $longname . "\">" . $shortname . "</span>)</span>" . $imgsrc;
+                        $dat .= "<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a> (" . $size . "B, " . $dimensions . ", <span title=\"" . $longname . "\">" . $shortname . "</span>)</span>" . $imgsrc;
                     } else {
-                        $dat .= "<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a>-(" . $size . "B, " . $dimensions . ")</span>" . $imgsrc;
+                        $dat .= "<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a> (" . $size . "B, " . $dimensions . ")</span>" . $imgsrc;
                     }
                 }
             }
@@ -1084,6 +1084,7 @@ function head( &$dat ) {
         $dat .= '' . ADS1 . '<hr />';
     }
 }
+
 /* Contribution form */
 function form( &$dat, $resno, $admin = "" ) {
     $maxbyte = MAX_KB * 1024;
@@ -1092,8 +1093,16 @@ function form( &$dat, $resno, $admin = "" ) {
         $msg .= "<div class=\"theader\">" . S_POSTING . "</div>\n";
     }
     if ( $admin ) {
+		if ( valid( 'moderator' ) ) {
+			$name = '<b><font color="770099">Anonymous ## Mod </font></b>';
+        if ( valid( 'admin' ) )
+            $name = '<b><font color="FF101A">Anonymous ## Admin  </font></b>';
+        if ( valid( 'manager' ) )
+            $name = '<b><font color="2E2EFE">Anonymous ## Manager  </font></b>';	
+    }
+		
         $hidden = "<input type=hidden name=admin value=\"" . PANEL_PASS . "\">";
-        $msg    = "<em>" . S_NOTAGS . "</em>";
+        $msg    = "<em>" . S_NOTAGS . ", posting as</em>: " . $name;
     }
     $dat .= $msg . '<div align="center"><div class="postarea">';
     /*if ($mobileClient) {
@@ -1890,7 +1899,7 @@ function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $
     }
     
     if ( $moderator )
-        $host = '###.###.###.###'; // Don't store mod/admin ips
+        $host = '[Staff]'; // Don't store mod/admin ips
     
     
     $rootqu = $resto ? "0" : "now()";
@@ -2011,31 +2020,6 @@ function wordwrap2( $str, $cols, $cut ) {
         }
     }
     return $str;
-}
-
-function modify_post( $no, $action = 'none' ) {
-    if ( !valid( 'moderator' ) )
-        die( 'Action on post ' . $no . ' failed...' );
-    
-    switch ( $action ) {
-        case 'lock':
-            mysql_call( 'UPDATE ' . SQLLOG . " SET locked='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            break;
-        case 'permasage':
-            mysql_call( 'UPDATE ' . SQLLOG . " SET permasage='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            break;
-        case 'sticky':
-            $rootnum = "202707070000";
-            mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='1' , root='" . $rootnum . " WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            break;
-        case 'unlock':
-            mysql_call( 'UPDATE ' . SQLLOG . " SET locked='0' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            break;
-        case 'unsticky':
-            $rootnum = "now()";
-            mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='0' , root='" . $rootnum . " WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            break;
-    }
 }
 
 //OP thumbnail creation
@@ -2411,57 +2395,6 @@ function oldvalid( $pass ) {
     }
 }
 
-
-function ban( $ip, $pubreason, $staffreason, $banlength ) {
-    if ( valid( 'moderator' ) ) {
-        $placedOn = time();
-        $query    = mysql_query( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip' AND banlength != 0" );
-        switch ( $banlength ) {
-            case 'warn':
-                $banset = '100';
-                break;
-            case '3hr':
-                $banset = '1';
-                break;
-            case '3day':
-                $banset = '2';
-                break;
-            case '1wk':
-                $banset = '3';
-                break;
-            case '1mon':
-                $banset = '4';
-                break;
-            case 'perma':
-                $banset = '-1';
-                break;
-            default:
-                //Sure is 2007 around here
-                $banset = '9001';
-        }
-        if ( mysql_num_rows( $query ) == 0 ) {
-            $sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength, placedOn, board) VALUES ('$ip', '$pubreason', '$staffreason', '$banset', '$placedOn', '" . BOARD_DIR . "')";
-            
-            if ( mysql_query( $sql ) ) {
-                if ( $banset == '100' ) {
-                    echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-                    echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-                } else {
-                    echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-                    echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-                }
-            } else {
-                echo "ERROR: Could not execute $sql. " . mysql_error();
-            }
-        } else {
-            echo "This IP is already banned!";
-        }
-        mysql_free_result( $query );
-    } else {
-        die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . " logged." );
-    }
-}
-
 /* Admin deletion */
 function admindel( $pass ) {
     global $path, $onlyimgdel;
@@ -2483,7 +2416,7 @@ function admindel( $pass ) {
         $find = FALSE;
         
         while ( $row = mysql_fetch_row( $result ) ) {
-            list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize,  ) = $row;
+            list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize,  ) = $row;
             if ( $onlyimgdel == on ) {
                 /*if ( array_search( $no, $delno ) ) { //only a picture is deleted
                 $delfile = $path . $tim . $ext; //only a picture is deleted
@@ -2599,7 +2532,7 @@ function admindel( $pass ) {
         // Link to the picture
         if ( $ext && is_file( $path . $tim . $ext ) ) {
             $img_flag = TRUE;
-            $clip     = "<a class=\"thumbnail\" target=\"_blank\" href=\"" . IMG_DIR . $tim . $ext . "\">" /*. $tim . $ext . "<span><img src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" width=\"100\" height=\"100\" />"*/ . "</span></a><br />";
+			$clip = "<a class=\"thumbnail\" target=\"_blank\" href=\"".IMG_DIR.$tim.$ext."\">".$tim.$ext."<span><img class='postimg' src=\"".THUMB_DIR.$tim.'s.jpg'."\" width=\"100\" height=\"100\" /></span></a><br />";
             if ( $fsize >= 1048576 ) {
                 $size  = round( ( $fsize / 1048576 ), 2 ) . " M";
                 $fsize = $asize;
@@ -2613,55 +2546,32 @@ function admindel( $pass ) {
             $all += $asize; //total calculation
             $md5 = substr( $md5, 0, 10 );
         } else {
-            $clip = "";
+            $clip = "[No file]";
             $size = 0;
             $md5  = "";
         }
         $class = ( $j % 2 ) ? "row1" : "row2"; //BG color
         
-        if ( $resto == '0' )
-            $resdo = '<b>Orig. post(<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . '#' . $no . '" target="_blank" />' . $no . '</a>)</b>';
-        else
+        if ( $resto == '0' ) 
+            $resdo = '<b>OP(<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . '#' . $no . '" target="_blank" />' . $no . '</a>)</b>';
+		else
             $resdo = '<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $resto . PHP_EXT . '#' . $no . '" target="_blank" />' . $resto . '</a>';
         $warnSticky = '';
         if ( $sticky == '1' )
             $warnSticky = "<b><font color=\"FF101A\">(Sticky)</font></b>";
         if ( valid( 'janitor_board' ) && !valid( 'moderator' ) ) //Hide IPs from janitors
             $host = '###.###.###.###';
-        
         echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
         echo "<td>$no</td><td>$resdo</td><td>$now</td><td>$truncsub</td>";
         echo "<td>$truncname</b></td><td>$trunccom</td>";
-        echo "<td>$host</td><td>" . calculate_age( $time ) . "</td>\n";
+        echo "<td class='postimg' >$clip</td><td>" . calculate_age( $time ) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_SELF_ABS . "?mode=ban&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
         echo "</tr>\n";
-        
+
     }
     mysql_free_result( $result );
-    
-    echo "</table><input type=submit value=\"" . S_ITDELETES . "$msg\">";
-    echo "<input type=reset value=\"" . S_RESET . "\"></form>";
-    echo "<br /><hr /><br /><form method=\"post\" action=\"" . PHP_SELF . "?mode=banish\" >
-    <table><tr><th>IP</th><td><input required type='text' name='ip_to_ban' /></td></tr>
-    <tr><th>Public Reason</th>
-    <td><input required type='text' name='pubreason' /></td></tr>
-    <tr><th>Staff Reason</th>
-    <td><input required type='text' name='staffreason' /></td></tr>
-    <tr><th>Length</th>
-    <td><select name =\"timebannedfor\" value=\"timebannedfor\">
-    <option value=\"warn\">Warn</option>
-    <option value=\"3hr\">3 hours</option>
-    <option value=\"3day\">3 days</option>
-    <option value=\"1wk\">1 week</option>
-    <option value=\"1mon\">1 month</option>
-    <option value=\"perma\">Permanent</option>
-    </select></td><tr><th>Ban from:</th><td><select name =\"bannedFrom\" value=\"bannedFrom\">
-    <option value=\"thisBoard\">This board</option>
-    <option value=\"allBoards\">All boards</option>
-    </select></td></tr></table>
-    <input type=hidden name=pass value=\"$pass\">
-    <input type=\"submit\" value=\"" . S_BANS . "\"/></form>" . S_BANS_EXTRA . "";
-    echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/img.css\" />";
-    
+	
+    echo "<br /><br /><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/img.css' />";
+    foot($dat);
     $all = (int) ( $all / 1024 );
     echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";
     die( "</body></html>" );
@@ -2777,12 +2687,6 @@ switch ( $mode ) {
     case 'rebuild':
         rebuild();
         break;
-    /*case 'bake':
-    /*login($_POST['usernm'],$_POST['passwd']);
-    setcookie('' . SITE_ROOT . '_auser', 'admin', 0);
-    setcookie('' . SITE_ROOT . '_apass', 'guest', 0);
-    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF . "?mode=admin\">";
-    break;*/
     case 'logout':
         setcookie( 'saguaro_apass', '0', 1 );
         setcookie( 'saguaro_auser', '0', 1 );
@@ -2791,32 +2695,15 @@ switch ( $mode ) {
     case 'zmdlog':
         login( $_POST['usernm'], $_POST['passwd'] );
         break;
-    /*    case 'users':
-    if (!valid('manager'))
-    die('"PLS AUTOBAN ME" - you');
-    adduser($_POST['addusername'], $_POST['adduserpass']);
-    remuser($_POST['remusername'], $_POST['remuserpass']);
-    break;*/
+	case 'ban':
+		require('admin.php');
+		postinfo($no);
+		break;
     case 'rebuildall':
         rebuild( 1 );
         break;
     case 'debug':
         echo $_SERVER['DOCUMENT_ROOT'];
-        break;
-    case 'catalog':
-	updatelog();
-	include_once("_core/catalog/catalog.php");
-	echo '<link rel="stylesheet" type="text/css" href="_core/catalog/catalog.css" title="Saguaba" />';
-	$a = new Catalog();
-	echo $a->format();
-	break;
-    case 'banish':
-        $ip          = $_POST['ip_to_ban'];
-        $pubreason   = mysql_real_escape_string( $_POST['pubreason'] );
-        $staffreason = mysql_real_escape_string( $_POST['staffreason'] );
-        $banlength   = mysql_real_escape_string( $_POST['timebannedfor'] );
-        ban( $ip, $pubreason, $staffreason, $banlength );
-        echo '<br/ > <a href="' . PHP_SELF . '?mode=admin" />Return</a>';
         break;
     case 'usrdel':
         usrdel( $no, $pwd );
