@@ -94,7 +94,7 @@ if ( !table_exist( SQLLOG ) ) {
     w     int,
     h     int,
     tn_w     int,
-    th_h     int,
+    tn_h     int,
     tim   text,
     time  int,
     md5   text,
