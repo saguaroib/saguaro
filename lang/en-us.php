@@ -20,7 +20,7 @@ $S_RULES = '<ul><li>Supported file types are: GIF, JPG, PNG</li>
             </ul>';                                             //Prints rules under posting section
 $S_REPORTERR = 'Error: Cannot find reply.';                     //Returns error when a reply (res) cannot be found
 $S_THUMB = '';                                                  //Prints instructions for viewing real source
-$S_PICNAME = 'File : ';                                         //Prints text before upload name/link
+$S_PICNAME = 'File: ';                                         //Prints text before upload name/link
 $S_REPLY = 'Reply';                                             //Prints text for reply link
 $S_OLD = 'Marked for deletion (old).';                          //Prints text to be displayed before post is marked for deletion, see: retention
 $S_RESU = '';                                                   //Prints post?
