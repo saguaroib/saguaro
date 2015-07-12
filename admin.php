@@ -1,8 +1,8 @@
 <?php
 
-require( 'config.php' );
+require('config.php');
 
-$con = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
+$con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
 
 if ( !$con ) {
     echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
@@ -56,12 +56,12 @@ function postinfo( $no ) {
     
     $dat .= "<table border='solid black 2px' border-collapse='collapse' />";
     /*if ( $resto == 0) {
-    
-    $dat .= "<tr><td>Post number:</td><td><b>OP POST(<a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "'/>$no</a>)</b></td></tr>";
+        
+		$dat .= "<tr><td>Post number:</td><td><b>OP POST(<a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "'/>$no</a>)</b></td></tr>";
     } else {
-    $dat .= "<tr><td>Post number:</td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "'/>$no</a></td></tr>
-    ";
-    }*/
+        $dat .= "<tr><td>Post number:</td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "'/>$no</a></td></tr>
+		";
+	}*/
     $dat .= "<tr><td>Name:</td><td>$name</td></tr>
   <tr><td>Date:</td><td>$now</td></tr>
   <tr><td>IP</td><td>$host</td></tr>
@@ -69,11 +69,11 @@ function postinfo( $no ) {
   <tr><td>MD5:</td><td>$md5</td></tr>
   <tr><td>File</td>";
     
-    $dat .= "";
-    
-    if ( isset( $_REQUEST['test'] ) )
-        echo 'fuark';
-    
+	$dat .= "";
+	
+	if (isset($_REQUEST['test']))
+		echo 'fuark';
+	
     if ( $w && $h ) {
         $hasimg = 1;
         $dat .= "<td><img width='" . MAX_W . "' height='" . MAX_H . "' src='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "'/></td></tr>
@@ -82,15 +82,15 @@ function postinfo( $no ) {
     } else
         $dat .= "<td>No file</td></tr>";
     
-    //<form action='admin.php'/><input type='submit' name='mode' value='test' /></form>
-    
-    $dat .= "<tr><form action='admin.php' <td>Delete:</td><td><br />
+	//<form action='admin.php'/><input type='submit' name='mode' value='test' /></form>
+	
+	$dat .= "<tr><form action='admin.php' /><td>Delete:</td><td><br />
 	<input type='hidden' name='mode' value='delete' />
 	<input type='hidden' name='no' value='$no' />
     <input type='submit' name='action' value='This post' /><br />
     <input type='submit' name='action' value='Image only' /><br />
     <input type='submit' name='action' value='All by IP' /><br /></td></tr></table></form>";
-    
+	
     $dat .= "<br /><br /><table><form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
 	<tr><td>Action</td><td><td><select name='mode' />
     <option value='sticky' />Sticky</option>
@@ -98,109 +98,109 @@ function postinfo( $no ) {
     <option value='permasage' />Permasage</option>
     <option value='unsticky' />Unsticky</option>
     <option value='unlock' />Unlock</option>
-    </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></tr></table></form>";
-    
+    </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'><td> *[Stickying/locking a reply does nothing!]</td></tr></table></form>";
+
     Echo $dat;
     echo '<br/ > [<a href="' . PHP_SELF . '?mode=admin" />Return</a>]';
-    
+	
 }
 
 if ( !function_exists( valid ) ) {
-    // check whether the current user can perform $action (on $no, for some actions)
-    // board-level access is cached in $valid_cache.
-    function valid( $action = 'moderator', $no = 0 ) {
-        static $valid_cache; // the access level of the user
-        $access_level = array(
-             'none' => 0,
-            'janitor' => 1,
-            'janitor_this_board' => 2,
-            'moderator' => 5,
-            'manager' => 10,
-            'admin' => 20 
-        );
-        if ( !isset( $valid_cache ) ) {
-            $valid_cache = $access_level['none'];
-            if ( isset( $_COOKIE['saguaro_auser'] ) && isset( $_COOKIE['saguaro_apass'] ) ) {
-                $user = mysql_real_escape_string( $_COOKIE['saguaro_auser'] );
-                $pass = mysql_real_escape_string( $_COOKIE['saguaro_apass'] );
-            }
-            if ( $user && $pass ) {
-                $result = mysql_call( "SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'" );
-                list( $allow, $deny ) = mysql_fetch_row( $result );
-                mysql_free_result( $result );
-                if ( $allow ) {
-                    $allows             = explode( ',', $allow );
-                    $seen_janitor_token = false;
-                    // each token can increase the access level,
-                    // except that we only know that they're a moderator or a janitor for another board
-                    // AFTER we read all the tokens
-                    foreach ( $allows as $token ) {
-                        if ( $token == 'janitor' )
-                            $seen_janitor_token = true;
-                        /*  else if ( $token == 'manager' && $valid_cache < $access_level['manager'] )
-                        $valid_cache = $access_level['manager'];*/
-                        else if ( $token == 'admin' && $valid_cache < $access_level['admin'] )
-                            $valid_cache = $access_level['admin'];
-                        else if ( ( $token == BOARD_DIR || $token == 'all' ) && $valid_cache < $access_level['janitor_this_board'] )
-                            $valid_cache = $access_level['janitor_this_board']; // or could be moderator, will be increased in next step
-                    }
-                    // now we can set moderator or janitor status 
-                    if ( !$seen_janitor_token ) {
-                        if ( $valid_cache < $access_level['moderator'] )
-                            $valid_cache = $access_level['moderator'];
-                    } else {
-                        if ( $valid_cache < $access_level['janitor'] )
-                            $valid_cache = $access_level['janitor'];
-                    }
-                    if ( $deny ) {
-                        $denies = explode( ',', $deny );
-                        if ( in_array( BOARD_DIR, $denies ) ) {
-                            $valid_cache = $access_level['none'];
-                        }
-                    }
-                }
-            }
-        }
-        switch ( $action ) {
-            case 'moderator':
-                return $valid_cache >= $access_level['moderator'];
-            case 'admin':
-                return $valid_cache >= $access_level['admin'];
-            case 'textonly':
-                return $valid_cache >= $access_level['moderator'];
-            case 'janitor_board':
-                return $valid_cache >= $access_level['janitor'];
-            /*case 'manager':
-            return $valid_cache >= $access_level['manager'];*/
-            case 'delete':
-                if ( $valid_cache >= $access_level['janitor_this_board'] ) {
-                    return true;
-                }
-                // if they're a janitor on another board, check for illegal post unlock			
-                else if ( $valid_cache >= $access_level['janitor'] ) {
-                    $query         = mysql_call( "SELECT COUNT(*) from reports WHERE board='" . BOARD_DIR . "' AND no=$no AND cat=2" );
-                    $illegal_count = mysql_result( $query, 0, 0 );
-                    mysql_free_result( $query );
-                    return $illegal_count >= 3;
-                }
-            case 'reportflood':
-                return $valid_cache >= $access_level['janitor'];
-            case 'floodbypass':
-                return $valid_cache >= $access_level['moderator'];
-            default: // unsupported action
-                return false;
-        }
-    }
+	// check whether the current user can perform $action (on $no, for some actions)
+	// board-level access is cached in $valid_cache.
+	function valid( $action = 'moderator', $no = 0 ) {
+		static $valid_cache; // the access level of the user
+		$access_level = array(
+			 'none' => 0,
+			'janitor' => 1,
+			'janitor_this_board' => 2,
+			'moderator' => 5,
+			'manager' => 10,
+			'admin' => 20 
+		);
+		if ( !isset( $valid_cache ) ) {
+			$valid_cache = $access_level['none'];
+			if ( isset( $_COOKIE['saguaro_auser'] ) && isset( $_COOKIE['saguaro_apass'] ) ) {
+				$user = mysql_real_escape_string( $_COOKIE['saguaro_auser'] );
+				$pass = mysql_real_escape_string( $_COOKIE['saguaro_apass'] );
+			}
+			if ( $user && $pass ) {
+				$result = mysql_call( "SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'" );
+				list( $allow, $deny ) = mysql_fetch_row( $result );
+				mysql_free_result( $result );
+				if ( $allow ) {
+					$allows             = explode( ',', $allow );
+					$seen_janitor_token = false;
+					// each token can increase the access level,
+					// except that we only know that they're a moderator or a janitor for another board
+					// AFTER we read all the tokens
+					foreach ( $allows as $token ) {
+						if ( $token == 'janitor' )
+							$seen_janitor_token = true;
+					  /*  else if ( $token == 'manager' && $valid_cache < $access_level['manager'] )
+							$valid_cache = $access_level['manager'];*/
+						else if ( $token == 'admin' && $valid_cache < $access_level['admin'] )
+							$valid_cache = $access_level['admin'];
+						else if ( ( $token == BOARD_DIR || $token == 'all' ) && $valid_cache < $access_level['janitor_this_board'] )
+							$valid_cache = $access_level['janitor_this_board']; // or could be moderator, will be increased in next step
+					}
+					// now we can set moderator or janitor status 
+					if ( !$seen_janitor_token ) {
+						if ( $valid_cache < $access_level['moderator'] )
+							$valid_cache = $access_level['moderator'];
+					} else {
+						if ( $valid_cache < $access_level['janitor'] )
+							$valid_cache = $access_level['janitor'];
+					}
+					if ( $deny ) {
+						$denies = explode( ',', $deny );
+						if ( in_array( BOARD_DIR, $denies ) ) {
+							$valid_cache = $access_level['none'];
+						}
+					}
+				}
+			}
+		}
+		switch ( $action ) {
+			case 'moderator':
+				return $valid_cache >= $access_level['moderator'];
+			case 'admin':
+				return $valid_cache >= $access_level['admin'];
+			case 'textonly':
+				return $valid_cache >= $access_level['moderator'];
+			case 'janitor_board':
+				return $valid_cache >= $access_level['janitor'];
+			/*case 'manager':
+				return $valid_cache >= $access_level['manager'];*/
+			case 'delete':
+				if ( $valid_cache >= $access_level['janitor_this_board'] ) {
+					return true;
+				}
+				// if they're a janitor on another board, check for illegal post unlock			
+				else if ( $valid_cache >= $access_level['janitor'] ) {
+					$query         = mysql_call( "SELECT COUNT(*) from reports WHERE board='" . BOARD_DIR . "' AND no=$no AND cat=2" );
+					$illegal_count = mysql_result( $query, 0, 0 );
+					mysql_free_result( $query );
+					return $illegal_count >= 3;
+				}
+			case 'reportflood':
+				return $valid_cache >= $access_level['janitor'];
+			case 'floodbypass':
+				return $valid_cache >= $access_level['moderator'];
+			default: // unsupported action
+				return false;
+		}
+	}
 }
-if ( !function_exists( mysql_call ) ) {
-    function mysql_call( $query ) {
-        $ret = mysql_query( $query );
-        if ( !$ret ) {
-            echo "Error on query: " . $query . "<br />";
-            echo mysql_error() . "<br />";
-        }
-        return $ret;
-    }
+if (!function_exists(mysql_call)) {
+	function mysql_call( $query ) {
+		$ret = mysql_query( $query );
+		if ( !$ret ) {
+			echo "Error on query: " . $query . "<br />";
+			echo mysql_error() . "<br />";
+		}
+		return $ret;
+	}
 }
 
 
@@ -256,53 +256,53 @@ die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . "
 */
 
 /* Main switch */
-if ( valid( 'moderator' ) ) {
-    switch ( $_GET['mode'] ) {
+if (valid('moderator')) {
+switch ( $_GET['mode'] ) {
         case 'lock':
-            $no = $_GET['no'];
+			$no = $_GET['no'];
             mysql_call( 'UPDATE ' . SQLLOG . " SET locked='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
             echo "Locking thread $no";
-            echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
-            break;
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			break;
         case 'permasage':
-            $no = $_GET['no'];
+			$no = $_GET['no'];
             mysql_call( 'UPDATE ' . SQLLOG . " SET permasage='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            echo "Permasaging $no";
-            echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			echo "Permasaging $no";
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
             break;
         case 'sticky':
-            $no      = $_GET['no'];
+			$no = $_GET['no'];
             $rootnum = "2027-07-07 00:00:00";
             mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='1' , root='" . $rootnum . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            echo "Stickying thread " . $no;
-            echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
-            break;
+			echo "Stickying thread " . $no;
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			break;
         case 'unlock':
-            $no = $_GET['no'];
+			$no = $_GET['no'];
             mysql_call( 'UPDATE ' . SQLLOG . " SET locked='0' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
             echo "Unlocking thread $no";
-            echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
-            break;
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			break;
         case 'unsticky':
-            $no      = $_GET['no'];
-            $rootnum = date( 'Y-m-d G:i:s' );
+			$no = $_GET['no'];
+            $rootnum = date('Y-m-d G:i:s');
             mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='0' , root='" . $rootnum . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
             echo "Unstickying thread $no";
-            echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
-            break;
-        case 'delete':
-            include( 'imgboard.php' );
-            $no     = $_GET['no'];
-            $action = $_GET['action'];
-            if ( $action = 'This+post' )
-                $imgonly = 0;
-            else
-                $imgonly = 1;
-            delete_post( $no, $pwd, $imgonly, 0, 1, 1 );
-            updatelog( $no, $rebuild = 0 );
-        default:
-            break;
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			break;
+		case 'delete':
+			include('imgboard.php');
+			$no = $_GET['no'];
+			$action = $_GET['action'];
+			if ( $action = 'This+post') 
+				$imgonly = 0;
+			else 
+				$imgonly = 1;
+			delete_post($no, $pwd, $imgonly, 0, 1, 1);
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+		default:
+			break;
     }
-} else
-    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
+} else 
+	echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">"
 ?>
