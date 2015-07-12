@@ -1,8 +1,11 @@
+.catalog_container {
+    text-align:center;
+}
+
 .catalog_item {
     width:150px;
     display:inline-block;
     margin: 0px 5px;
-    text-align:center;
     vertical-align: top;
 }
 

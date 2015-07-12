@@ -47,6 +47,8 @@ class Catalog {
             $temp .= $this->generateOP($log[$entry["no"]],$entry);
         }
         
+        $temp = "<div class='catalog_container'>" . $temp . "</div>";
+        
         return $temp;
     }
     
