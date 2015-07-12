@@ -25,7 +25,7 @@ class Thread {
         $temp .= $this->generateOP($log[$op]);
 
         foreach ($log as $entry) {
-            if ($entry["resto"] === $op) {
+            if ($entry["resto"] == $op) {
                 $temp .= $this->generateReply($entry);
             }
         }
