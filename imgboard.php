@@ -1019,23 +1019,21 @@ function head( &$dat ) {
         $titlepart .= '/' . BOARD_DIR . '/ - ' . TITLE . '';
     }
     /* begin page content */
-    $dat .= '
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-	"http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="jp"><head>
-<meta name="description" content="' . S_DESCR . '"/>
-<meta http-equiv="content-type"  content="text/html;charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- meta HTTP-EQUIV="pragma" CONTENT="no-cache" -->
-<link REL="SHORTCUT ICON" HREF="/favicon.ico">
-<link rel="stylesheet" type="text/css" href="' . CSS_PATH . CSS1 . '" title="Saguaba" />
-<link rel="alternate stylesheet" type="text/css" media="screen"  href="' . CSS_PATH . CSS2 . '" title="Sagurichan"/>
-<link rel="alternate stylesheet" type="text/css" media="screen"  href="' . CSS_PATH . CSS3 . '" title="Tomorrow" />
-<link rel="alternate stylesheet" type="text/css" media="screen"  href="' . CSS_PATH . CSS4 . '" title="Burichan"/>
-<script src="' . JS_PATH . '/jquery.min.js" type="text/javascript"></script>
-<script src="' . JS_PATH . '/styleswitch.js" type="text/javascript"></script>
-<script src="' . JS_PATH . '/main.js" type="text/javascript"></script>
-<title>' . TITLE . '</title>';
+    $dat .= "
+<!DOCTYPE html><head>
+<meta name='description' content='" . S_DESCR . "'/></meta>
+<meta http-equiv='content-type'  content='text/html;charset=utf-8' /></meta>
+<meta name='viewport' content='width=device-width, initial-scale=1'></meta>
+<meta http-equiv='pragma' content='no-cache'></meta>
+<link href='" . CSS_PATH . "favicon.ico'>
+<title>" . $titlepart . "</title>
+<link rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
+<link rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan'/>
+<link rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />
+<link rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS4 . "' title='Burichan'/>
+<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
+<script src='" . JS_PATH . "/styleswitch.js' type='text/javascript'></script>
+<script src='" . JS_PATH . "/main.js' type='text/javascript'></script>";
     
     if ( USE_JS_SETTINGS )
         $dat .= '<script src="' . JS_PATH . '/suite_settings.js" type="text/javascript"></script>';
