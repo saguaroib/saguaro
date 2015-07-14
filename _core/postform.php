@@ -15,7 +15,6 @@
 class PostForm {
     function format($resno, $admin) {
         $maxbyte = MAX_KB * 1024;
-        $no = $resno;
         $temp = "";
 
         if ($resno)
@@ -30,19 +29,20 @@ class PostForm {
 
         $temp .= "<input type='hidden' name='mode' value='regist' />" . $hidden . "<input type='hidden' name='MAX_FILE_SIZE' value='" . $maxbyte . "'>";
 
-        if ($no)
-            $temp .= "<input type='hidden' name='resto' value='" . $no . "'>";
+        if ($resno)
+            $temp .= "<input type='hidden' name='resto' value='" . $resno . "'>";
 
         $temp .= "<table>";
 
         if (!FORCED_ANON) //Name
             $temp .= "<tr><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28'></td></tr>";
+            
+        $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'></td></tr>";
+        
+        if (!$resno) //Subject if a new thread.
+             $temp .= "<tr><td class='postblock' align='left'>" . S_SUBJECT . "</td><td align='left'><input type='text' name='sub' size='35'>";
 
-        if (!$resno) //E-Mail and Subject (new thread)
-            $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'></td></tr>
-                      <tr><td class='postblock' align='left'>" . S_SUBJECT . "</td><td align='left'><input type='text' name='sub' size='35'><input type='submit' value='" . S_SUBMIT . "'></td></tr>";
-        else //Just E-Mail (in thread)
-            $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28' ><input type='submit' value='" . S_SUBMIT . "'></td></tr>";
+        $temp .= "<input type='submit' value='" . S_SUBMIT . "'></td></tr>";
 
         $temp .= "<tr><td class='postblock' align='left'>" . S_COMMENT . "</td><td align='left'><textarea name='com' cols='48' rows='4'></textarea></td></tr>";
 
@@ -84,7 +84,7 @@ class PostForm {
 
 
         if ($resno) //Navigation bar above thread.
-            $temp .= "<div class='threadnav' /> [<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='" . $no . PHP_EXT . "#bottom'/>Bottom</a>] </div>\n<hr>";
+            $temp .= "<div class='threadnav' /> [<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='" . $resno . PHP_EXT . "#bottom'/>Bottom</a>] </div>\n<hr>";
         if (USE_ADS2) // <--
             $temp .= ADS2 . "<hr>";
 
