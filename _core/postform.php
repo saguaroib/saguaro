@@ -14,14 +14,20 @@
 
 class PostForm {
     function format($resno, $admin) {
+        //echo debug_backtrace()[1]['function'];
+
+        $resno = (is_numeric($resno)) ? $resno : null;
+        $admin = (!!$admin) ? !!$admin : false; //Should probably move validation to something more secure.
+    
         $maxbyte = MAX_KB * 1024;
         $temp = "";
 
-        if ($resno)
-            $temp .= "<div class='theader'>" . S_POSTING . "</div>\n";
-        if ($admin)
+        if ($resno) $temp .= "<div class='theader'>" . S_POSTING . "</div>\n";
+        
+        if ($admin) {
             $hidden = "<input type='hidden' name='admin' value='" . PANEL_PASS . "'>";
             $temp .= "<em>" . S_NOTAGS . "</em>";
+        }
 
         $temp .= "<div align='center'><div class='postarea'>";
 
@@ -78,15 +84,14 @@ class PostForm {
             $temp .= '</table></form></div></div>';
 
         if (!$resno && !$admin)
-            $news = file_get_contents( GLOBAL_NEWS );
+            $news = file_get_contents(GLOBAL_NEWS) || "no news is good news";
         if ($news !== "") //Could this be invalidated if file_get_contents doesn't return anything? if ($news)?
             $temp .= "<div class='globalnews'>" . file_get_contents( GLOBAL_NEWS ) . "</div><br><hr>";
 
 
         if ($resno) //Navigation bar above thread.
             $temp .= "<div class='threadnav' /> [<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='" . $resno . PHP_EXT . "#bottom'/>Bottom</a>] </div>\n<hr>";
-        if (USE_ADS2) // <--
-            $temp .= ADS2 . "<hr>";
+        if (USE_ADS2) $temp .= ADS2 . "<hr>";
 
         return $temp;
     }
