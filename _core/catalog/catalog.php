@@ -33,7 +33,10 @@ class Catalog {
         return $temp;
     }
     function sortOPs($method) {
-        /* Might not need this later if we change to a cached jQuery environment. */
+        /*
+            Might not need this later if we change to a cached jQuery environment.
+            Does not sage/autosage into consideration.
+        */
 
         $method = ($method) ? $method : "last"; //Default to "last".
 
