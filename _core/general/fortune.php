@@ -35,12 +35,13 @@ class Fortune {
 
     private function format() {
         //My eyes.
-        $fnum = rand(0, sizeof($this->fortunes) - 1);
+        $size = sizeof($this->fortunes);
+        $fnum = rand(0, $size - 1);
         $fortune = $this->fortunes[$fnum];
         $color = "#" . sprintf("%02x%02x%02x",
-                127 + 127 * sin(2 * M_PI * $fnum / sizeof($this->fortunes)),
-                127 + 127 * sin(2 * M_PI * $fnum / sizeof($this->fortunes) + 2 / 3 * M_PI),
-                127 + 127 * sin(2 * M_PI * $fnum / sizeof($this->fortunes) + 4 / 3 * M_PI));
+                127 + 127 * sin(2 * M_PI * $fnum / $size),
+                127 + 127 * sin(2 * M_PI * $fnum / $size + 2 / 3 * M_PI),
+                127 + 127 * sin(2 * M_PI * $fnum / $size) + 4 / 3 * M_PI));
 
         $out = "<span class='fortune' style='color:$color; font-weight:bold;'>
                     $fortune
