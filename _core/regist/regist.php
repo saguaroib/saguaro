@@ -194,7 +194,7 @@ if ( $has_image ) {
 
 if ( $_FILES["upfile"]["error"] > 0 ) {
     if ( $_FILES["upfile"]["error"] == UPLOAD_ERR_INI_SIZE )
-        error("aye". S_TOOBIG, $dest );
+        error( S_TOOBIG, $dest );
     if ( $_FILES["upfile"]["error"] == UPLOAD_ERR_FORM_SIZE )
         error( S_TOOBIG, $dest );
     if ( $_FILES["upfile"]["error"] == UPLOAD_ERR_PARTIAL )
