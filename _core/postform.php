@@ -84,9 +84,9 @@ class PostForm {
             $temp .= '</table></form></div></div>';
 
         if (!$resno && !$admin)
-            $news = file_get_contents(GLOBAL_NEWS) || "no news is good news";
+            $news = file_get_contents(GLOBAL_NEWS);
         if ($news !== "") //Could this be invalidated if file_get_contents doesn't return anything? if ($news)?
-            $temp .= "<div class='globalnews'>" . file_get_contents( GLOBAL_NEWS ) . "</div><br><hr>";
+            $temp .= "<div class='globalnews'>" . file_get_contents( GLOBAL_NEWS ) . "</div><hr>";
 
 
         if ($resno) //Navigation bar above thread.
