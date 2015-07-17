@@ -18,12 +18,12 @@ class PostForm {
 
         $resno = (is_numeric($resno)) ? $resno : null;
         $admin = (!!$admin) ? !!$admin : false; //Should probably move validation to something more secure.
-    
+
         $maxbyte = MAX_KB * 1024;
         $temp = "";
 
         if ($resno) $temp .= "<div class='theader'>" . S_POSTING . "</div>\n";
-        
+
         if ($admin) {
             $hidden = "<input type='hidden' name='admin' value='" . PANEL_PASS . "'>";
             $temp .= "<em>" . S_NOTAGS . "</em>";
@@ -42,11 +42,11 @@ class PostForm {
 
         if (!FORCED_ANON) //Name
             $temp .= "<tr><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28'></td></tr>";
-            
-        $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'></td></tr>";
-        
+
+        $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'>";
+
         if (!$resno) //Subject if a new thread.
-             $temp .= "<tr><td class='postblock' align='left'>" . S_SUBJECT . "</td><td align='left'><input type='text' name='sub' size='35'>";
+             $temp .= "</td></tr><tr><td class='postblock' align='left'>" . S_SUBJECT . "</td><td align='left'><input type='text' name='sub' size='35'>";
 
         $temp .= "<input type='submit' value='" . S_SUBMIT . "'></td></tr>";
 
