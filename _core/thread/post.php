@@ -36,7 +36,7 @@ class Post {
 
         $temp .= "<br>";
 
-        $image = new Image();
+        $image = new Image;
         $temp .= $image->format($this->data);
 
         $temp .= "<blockquote>$com</blockquote>";

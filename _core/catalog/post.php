@@ -15,7 +15,7 @@ class Post {
         
         $temp = "<div class='catalog_item'>"; 
         
-        $image = new Image();
+        $image = new Image;
         $temp .= $image->format($input);
         
         $temp .= "<br>";

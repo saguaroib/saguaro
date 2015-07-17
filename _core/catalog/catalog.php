@@ -57,7 +57,7 @@ class Catalog {
         usort($this->data, $method . "_compare");
     }
     function generateOP($input,$stats) {
-        $post = new Post();
+        $post = new Post;
 
         return $post->format($input,$stats);
     }
