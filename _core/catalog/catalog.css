@@ -7,6 +7,8 @@
     display:inline-block;
     margin: 0px 5px;
     vertical-align: top;
+    max-height:250px;
+    overflow:hidden;
 }
 
 .catalog_item .stats {
@@ -22,11 +24,9 @@
 .catalog_item .comment {
     overflow:hidden;
     display:inline-block;
-    
     font-size:0.8em;
     line-height:1em;
     min-height: 1.3em;
-    max-height:4em;
 }
 
 .postimg {
