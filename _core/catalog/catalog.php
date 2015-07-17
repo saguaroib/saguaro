@@ -18,9 +18,9 @@ class Catalog {
 
         $temp = "";
 
-        self::parseOPs();
-        self::parseReplies();
-        self::sortOPs();
+        $this->parseOPs();
+        $this->parseReplies();
+        $this->sortOPs();
 
         $this->data = array_reverse($this->data); //Eh.
 
