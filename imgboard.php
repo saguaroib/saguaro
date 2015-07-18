@@ -173,8 +173,8 @@ if ( !table_exist( SQLMODSLOG ) ) {
 if ( !table_exist( SQLDELLOG ) ) {
     echo ( S_TCREATE . SQLDELLOG . "<br />" );
     $result = mysql_call( "create table " . SQLDELLOG . " (		
-    imgonly   VARCHAR(25) PRIMARY KEY,		
-    postno  VARCHAR(250),		
+    postno  VARCHAR(250) PRIMARY KEY,
+    imgonly   VARCHAR(25),	
     board  VARCHAR(250),		
     name  VARCHAR(250),		
     sub  VARCHAR(50),		
