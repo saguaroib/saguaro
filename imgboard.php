@@ -1410,7 +1410,7 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
         $row['sub']      = mysql_real_escape_string( $row['sub'] );
         $row['com']      = mysql_real_escape_string( $row['com'] );
         $row['filename'] = mysql_real_escape_string( $row['filename'] );
-        mysql_call( "INSERT INTO " . SQLDELLOG . " (imgonly,postno,board,name,sub,com,img,filename,admin) values('$imgonly','$resno','" . SQLLOG . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')" );
+        mysql_call( "INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . SQLLOG . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')" );
     }
     
     if ( $row['resto'] == 0 && $children && !$imgonly ) // select thread and children
