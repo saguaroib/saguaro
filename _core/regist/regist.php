@@ -553,6 +553,7 @@ setcookie( "" . SITE_ROOT . "_pass", $c_pass, time() + 7 * 24 * 3600, '/', $cook
 
 
 if ( !$resto )
+    require_once('prune_old.php');
     prune_old();
 
 // thumbnail
