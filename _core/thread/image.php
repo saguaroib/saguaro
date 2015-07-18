@@ -8,6 +8,8 @@
 */
 
 class Image {
+    public $inIndex = false; //Really want to start extending as of 30 years ago.
+
     function format($input) {
         global $spoiler;
         extract($input);
@@ -39,34 +41,37 @@ class Image {
             } else {
                 $size = $fsize . " ";
             }
+
             if ( !$tn_w && !$tn_h && $ext == ".gif" ) {
                 $tn_w = $w;
                 $tn_h = $h;
             }
+
             if ( $spoiler ) {
                 $size   = "Spoiler Image, $size";
-                $imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img src=\"" . SPOILER_THUMB . "\" border=0 align=left hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
+                $imgsrc = "<br><a href='" . $displaysrc . "' target='_blank'><img src='" . SPOILER_THUMB . "' border='0' align='left' hspace='20' alt='" . $size . "B' md5='$shortmd5'></a>";
             } elseif ( $tn_w && $tn_h ) { //when there is size...
                 if ( @is_file( THUMB_DIR . $tim . 's.jpg' ) ) {
-                    $imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img class=\"postimg\" src=\"" . $thumbdir . $tim . 's.jpg' . "\" border=0 align=left width=$tn_w height=$tn_h hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
+                    $imgsrc = "<br><a href='" . $displaysrc . "' target='_blank'><img class='postimg' src='" . $thumbdir . $tim . 's.jpg' . "' border='0' align='left' width='$tn_w' height='$tn_h' hspace='20' alt='" . $size . "B' md5='$shortmd5'></a>";
                 } else {
-                    $imgsrc = "<a href=\"" . $displaysrc . "\" target=_blank><span class=\"tn_thread\" title=\"" . $size . "B\">Thumbnail unavailable</span></a>";
+                    $imgsrc = "<a href='" . $displaysrc . "' target='_blank'><span class='tn_thread' title='" . $size . "B'>Thumbnail unavailable</span></a>";
                 }
             } else {
                 if ( @is_file( THUMB_DIR . $tim . 's.jpg' ) ) {
-                    $imgsrc = "<br><a href=\"" . $displaysrc . "\" target=_blank><img class=\"postimg\" src=\"" . $thumbdir . $tim . 's.jpg' . "\" border=0 align=left hspace=20 alt=\"" . $size . "B\" md5=\"$shortmd5\"></a>";
+                    $imgsrc = "<br><a href='" . $displaysrc . "' target='_blank'><img class='postimg' src='" . $thumbdir . $tim . 's.jpg' . "' border='0' align='left' hspace='20' alt='" . $size . "B' md5='$shortmd5'></a>";
                 } else {
-                    $imgsrc = "<a href=\"" . $displaysrc . "\" target=_blank><span class=\"tn_thread\" title=\"" . $size . "B\">Thumbnail unavailable</span></a>";
+                    $imgsrc = "<a href='" . $displaysrc . "' target='_blank'><span class='tn_thread' title='" . $size . "B'>Thumbnail unavailable</span></a>";
                 }
             }
+
             if ( !is_file( $src ) ) {
-                $return .= '<img src="' . $cssimg . 'filedeleted.gif" alt="File deleted.">';
+                $return .= "<img src='" . $cssimg . "filedeleted.gif' alt='File deleted.'>";
             } else {
-                $dimensions = ( $ext == '.pdf' ) ? 'PDF' : "{$w}x{$h}";
-                if ( 1 ) {
-                    return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a>-(" . $size . "B, " . $dimensions . ", <span title=\"" . $longname . "\">" . $shortname . "</span>)</span>" . $imgsrc;
+                $dimensions = ( $ext == ".pdf" ) ? "PDF" : "{$w}x{$h}";
+                if (!$this->inIndex) {
+                    return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='filesize'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$time$ext</a>-(" . $size . "B, " . $dimensions . ", <span title='" . $longname . "'>" . $shortname . "</span>)</span>" . $imgsrc;
                 } else {
-                    return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"filesize\">" . S_PICNAME . "<a href=\"$linksrc\" target=\"_blank\">$time$ext</a>-(" . $size . "B, " . $dimensions . ")</span>" . $imgsrc;
+                    return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='filesize'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$time$ext</a>-(" . $size . "B, " . $dimensions . ")</span>" . $imgsrc;
                 }
             }
 

@@ -11,6 +11,7 @@ include("image.php");
 
 class Post {
     public $data = [];
+    public $inIndex = false; //Until I feel like extending.
 
     function format() {
         extract($this->data);
@@ -29,7 +30,7 @@ class Post {
         $temp .= "<span class='commentpostername'>$name</span> $now <span id='norep$no'>";
 
         if ( $resno ) {
-            $temp .= '<a href="#$no" class="quotejs">No.</a><a href="javascript:insert(\"$no\")" class="quotejs">$no</a></span>';
+            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert('$no')' class='quotejs'>$no</a></span>";
         } else {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' class='quotejs'>No.</a><a href='" . RES_DIR . $resto . PHP_EXT . "#q$no' class='quotejs'>$no</a></span>";
         }
@@ -37,6 +38,7 @@ class Post {
         $temp .= "<br>";
 
         $image = new Image;
+        $image->inIndex = $this->inIndex;
         $temp .= $image->format($this->data);
 
         $temp .= "<blockquote>$com</blockquote>";
@@ -48,8 +50,9 @@ class Post {
 
     function formatOP() {
         extract($this->data);
-        
-        $image = new Image();
+
+        $image = new Image;
+        $image->inIndex = $this->inIndex;
         $temp = $image->format($this->data);
 
         $temp .= "<a name='$resno'></a>\n<input type=checkbox name='$no' value=delete><span class='filetitle'>$sub</span> \n";
@@ -59,7 +62,7 @@ class Post {
 
         if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/locked.gif" alt="closed"> ';
 
-        if ($resno) {
+        if (!$this->inIndex) {
             $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert('$no')' class='quotejs'>$no</a> $stickyicon &nbsp; ";
         } else {
             $temp .= "<a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='quotejs'>No.</a><a href='" . RES_DIR . $no . PHP_EXT . "#q" . $no . "' class='quotejs'>$no</a> $stickyicon &nbsp; [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]";

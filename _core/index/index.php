@@ -3,9 +3,9 @@
 /*
 
     Generate an index page.
-    
+
     Need to do something about the parsing and sorting functions from Catalog.
-    
+
     $sample = new Catalog;
     $sample->format(); //Will default to 1 and generate the first page index.
     $sample->format(2); //Will generate the second page index.
@@ -16,7 +16,7 @@ require_once("_core/thread/thread.php"); //PHP_SELF is imgboard.php so we can't 
 
 class Index {
     private $data = [];
-    
+
     public function format($page_no) {
         global $log;
         $page_no = (is_numeric($page_no) && $page_no > 0) ? $page_no : 1; //Short circuits when.
@@ -26,9 +26,10 @@ class Index {
         $this->formatRange($page_no);
 
         foreach ($this->data as $resno) {
-            $temp .= "<div style='display:table'>" . $this->generateThread($resno["no"]) . "</div><hr>";
+            //Eventually remove display:table, disgusting.
+            $temp .= "<div style='display:table;clear:both;width:100%;'>" . $this->generateThread($resno["no"]) . "</div><hr>";
         }
-        
+
         return $temp;
     }
     private function formatRange($page_no) {
@@ -39,12 +40,12 @@ class Index {
 
         $this->parseOPs();
         $this->parseReplies();
-        
+
         function last_compare($a, $b) {
             if ($a['last'] == $b['last']) { return 0; }
             return ($a['last'] > $b['last']) ? -1 : 1;
         }
-        
+
         usort($this->data, "last_compare");
 
         $this->data = array_slice($this->data, $min, $max);
