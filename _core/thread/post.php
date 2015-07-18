@@ -30,7 +30,7 @@ class Post {
         $temp .= "<span class='commentpostername'>$name</span> $now <span id='norep$no'>";
 
         if ( $resno ) {
-            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert('$no')' class='quotejs'>$no</a></span>";
+            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\"$no\")' class='quotejs'>$no</a></span>";
         } else {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' class='quotejs'>No.</a><a href='" . RES_DIR . $resto . PHP_EXT . "#q$no' class='quotejs'>$no</a></span>";
         }
@@ -63,7 +63,7 @@ class Post {
         if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/locked.gif" alt="closed"> ';
 
         if (!$this->inIndex) {
-            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert('$no')' class='quotejs'>$no</a> $stickyicon &nbsp; ";
+            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\"$no\")' class='quotejs'>$no</a> $stickyicon &nbsp; ";
         } else {
             $temp .= "<a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='quotejs'>No.</a><a href='" . RES_DIR . $no . PHP_EXT . "#q" . $no . "' class='quotejs'>$no</a> $stickyicon &nbsp; [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]";
         }
