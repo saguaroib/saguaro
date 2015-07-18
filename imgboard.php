@@ -167,7 +167,7 @@ if ( !table_exist( SQLMODSLOG ) ) {
     }
     
     mysql_call( "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('admin', 'guest', 'janitor_board,moderator,admin,manager', 'none') " );
-    echo "Default account inserted. Username: admin, Password: guest.";
+    echo "Default account inserted. Username: admin <br> Password: guest.";
 }
 
 if ( !table_exist( SQLDELLOG ) ) {
