@@ -9,6 +9,7 @@
 
 class Image {
     function format($input) {
+        global $spoiler;
         extract($input);
 
         $imgdir   = IMG_DIR;

@@ -24,7 +24,7 @@ class Post {
         }
 
         $temp = "<a name='$no'></a>\n";
-        $temp .= "<table><tr><td nowrap class='doubledash'>&gt;&gt;</td><td id='p$no' class='reply'>\n";
+        $temp .= "<table><tr><td nowrap class='doubledash'>&gt;&gt;</td><td id='$no' class='reply'>\n";
         $temp .= "<input type=checkbox name='$no' value=delete><span class='replytitle'>$sub</span> \n";
         $temp .= "<span class='commentpostername'>$name</span> $now <span id='norep$no'>";
 
@@ -48,21 +48,21 @@ class Post {
 
     function formatOP() {
         extract($this->data);
-
+        
         $image = new Image();
         $temp = $image->format($this->data);
 
-        $temp .= "<a name=\"$resno\"></a>\n<input type=checkbox name=\"$no\" value=delete><span class=\"filetitle\">$sub</span> \n";
-        $temp .= "<span class=\"postername\">$name</span> $now <span id=\"nothread$no\">";
+        $temp .= "<a name='$resno'></a>\n<input type=checkbox name='$no' value=delete><span class='filetitle'>$sub</span> \n";
+        $temp .= "<span class='postername'>$name</span> $now <span id='nothread$no'>";
 
         $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/sticky.gif" alt="sticky"> ' : "";
 
         if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/locked.gif" alt="closed"> ';
 
-        if ( $resno ) {
-            $temp .= "<a href=\"#$no\" class=\"quotejs\">No.</a><a href=\"javascript:insert('$no')\" class=\"quotejs\">$no</a> $stickyicon &nbsp; ";
+        if ($resno) {
+            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert('$no')' class='quotejs'>$no</a> $stickyicon &nbsp; ";
         } else {
-            $temp .= "<a href=\"" . RES_DIR . $no . PHP_EXT . "#" . $no . "\" class=\"quotejs\">No.</a><a href=\"" . RES_DIR . $no . PHP_EXT . "#q" . $no . "\" class=\"quotejs\">$no</a> $stickyicon &nbsp; [<a href=\"" . RES_DIR . $no . PHP_EXT . "\">" . S_REPLY . "</a>]";
+            $temp .= "<a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='quotejs'>No.</a><a href='" . RES_DIR . $no . PHP_EXT . "#q" . $no . "' class='quotejs'>$no</a> $stickyicon &nbsp; [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]";
         }
 
         $temp .= "<br>";
