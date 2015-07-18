@@ -559,6 +559,7 @@ if ( !$resto )
 if ( $has_image ) {
     rename( $dest, $path . $tim . $ext );
     if ( USE_THUMB ) {
+        require_once("thumb.php");
         $tn_name = thumb( $path, $tim, $ext, $resto );
         if ( !$tn_name && $ext != ".pdf" ) {
             error( S_UNUSUAL );
