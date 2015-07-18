@@ -9,7 +9,7 @@ This has been cobbled together from stuff I myself have written and the contribu
 *"Special thanks to !KNs1o0VDv6, Glas, Anonymous from vchan, RePod, and anyone who actually uses this."*
 
 #Installation Requirements
-- PHP 4.x.x 
+- PHP >= 4.2.x (PHP 5 or newer is also recommended)
 - MySQL Version 4.0 or newer.
 
 **Additional installation resources:**
