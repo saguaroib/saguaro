@@ -2,5 +2,6 @@ RewriteEngine on
 Options +FollowSymLinks
 #RewriteRule friendly_pcre target
 RewriteRule ^res/(\d+)/?$ res/$1.html [NC,L]
-RewriteRule ^(admin|catalog)/?$ imgboard.php?mode=$1
+RewriteRule ^(admin|catalog)/?$ imgboard.php?mode=$1 [L]
+RewriteRule ^(?:page/)(\d+)/?$ $1.html [L]
 RewriteRule banned banned.php [NC]

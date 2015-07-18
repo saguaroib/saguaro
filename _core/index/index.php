@@ -19,7 +19,8 @@ class Index {
     
     public function format($page_no) {
         global $log;
-        $page_no = ($page_no) ? $page_no : 1; //Short circuits when.
+        $page_no = (is_numeric($page_no) && $page_no > 0) ? $page_no : 1; //Short circuits when.
+        if ($page_no > PAGE_MAX) $page_no = PAGE_MAX;
         $temp = "";
 
         $this->formatRange($page_no);
