@@ -552,9 +552,10 @@ if ( ( $c_email != "sage" ) && ( $c_email != "age" ) ) {
 setcookie( "" . SITE_ROOT . "_pass", $c_pass, time() + 7 * 24 * 3600, '/', $cookie_domain ); // 1 week cookie expiration
 
 
-if ( !$resto )
+if ( !$resto ) {
     require_once('prune_old.php');
     prune_old();
+}
 
 // thumbnail
 if ( $has_image ) {
