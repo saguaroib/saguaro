@@ -15,8 +15,8 @@ $tests["PHP Version"] =
 //Return true if GD is at or above $min_gd, false otherwise.
 $tests["GD Version"] =
     [
-        "current" => gd_info()["GD Version"],
-        "valid" => version_compare(gd_info()["GD Version"], $min_gd, '>='),
+        "current" => (function_exists("gd_info")) ? gd_info()["GD Version"] : 0,
+        "valid" => (function_exists("gd_info")) ? version_compare(gd_info()["GD Version"], $min_gd, '>=') : 0,
         "min" => $min_gd
     ];
 
