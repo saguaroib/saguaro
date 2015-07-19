@@ -4,7 +4,7 @@ $min_gd = '2.0.0';
 
 $tests = [];
 
-//Return true if PHP is at or above 4.2.0, false otherwise.
+//Return true if PHP is at or above $min_php, false otherwise.
 $tests["PHP Version"] =
     [
         "current" => phpversion(),
@@ -12,7 +12,7 @@ $tests["PHP Version"] =
         "min" => $min_php
     ];
 
-//Return true if GD is at or above 2.0.0, false otherwise.
+//Return true if GD is at or above $min_gd, false otherwise.
 $tests["GD Version"] =
     [
         "current" => gd_info()["GD Version"],
