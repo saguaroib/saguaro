@@ -17,7 +17,7 @@ $tests["GD Version"] =
     [
         "current" => gd_info()["GD Version"],
         "valid" => version_compare(gd_info()["GD Version"], $min_gd, '>='),
-        "min" => $min_php
+        "min" => $min_gd
     ];
 
 echo "Saguaro testing utility:<br><br>";
