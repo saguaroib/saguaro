@@ -24,20 +24,28 @@ $tests["GD version"] =
         "min" => $min_gd
     ];
 
-$mysqli = new mysqli(SQLHOST, SQLUSER, SQLPASS);
-if (mysqli_connect_errno()) {
-    $tests["MySQL version"] = ["current" => 0, "valid" => 0, "min" => $min_mysql];
-} else {
-    $mver = mysqli_get_server_info($mysqli);
+$out = ["current" => 0, "valid" => 0, "min" => $min_mysql];
+if (class_exists('mysqli')) {
+    $mysqli = new mysqli(SQLHOST, SQLUSER, SQLPASS);
     
-    $tests["MySQL version"] =
-        [
-            "current" => $mver,
-            "valid" => version_compare($mver, $min_mysql, '>='),
-            "min" => $min_mysql
-        ];
+    if (mysqli_connect_errno()) {
+        mysqli_close($mysqli);
+    } else {
+        $mver = mysqli_get_server_info($mysqli);
+
+        $out =
+            [
+                "current" => $mver,
+                "valid" => version_compare($mver, $min_mysql, '>='),
+                "min" => $min_mysql
+            ];
+
+        mysqli_close($mysqli);
+    }
 }
-mysqli_close($mysqli);
+$tests["MySQL version"] = $out;
+
+
 
 echo "Saguaro testing utility:<br><br>";
 
@@ -45,11 +53,11 @@ foreach ($tests as $key => $results) {
     $temp = "<strong>$key:</strong> ";
     $color = ($results['valid']) ? "green" : "red";
     $msg = ($results['valid']) ? "PASS" : "FAIL";
-    
+
     $debug = $results['current'] . (($results['valid']) ? " >= " : " < ") . $results['min'];
-    
+
     $temp .= "<span style='color:$color;font-weight:bold;'>$msg</span> ($debug)<br>";
-    
+
     echo $temp;
 }
 
