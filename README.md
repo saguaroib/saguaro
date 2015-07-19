@@ -16,6 +16,9 @@ This has been cobbled together from stuff I myself have written and the contribu
 - [Installing](//github.com/spootTheLousy/saguaro/wiki/Installing)
 - [Setting up multiple boards](//github.com/spootTheLousy/saguaro/wiki/Adding-multiple-boards)
 
+#Testing and Development
+- [Devlopment Environment](//github.com/spootTheLousy/saguaro/wiki/Development-Environment)
+
 #Additional support
 - [The Wiki](//github.com/spootTheLousy/saguaro/wiki)
 - #saguaroimgboard @ irc.rizon.net
