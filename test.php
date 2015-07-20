@@ -139,7 +139,7 @@ if (is_file($lockout)) {
                 mysqli_select_db($mysqli, $db);
 
                 //Create tables.
-                //mysql_call( "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('admin', 'guest', 'janitor_board,moderator,admin,manager', 'none') " );
+                //mysql_call(  );
 
                 $tables = [
                     SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, sticky int, permasage int, locked int, root  timestamp, resto int, board text",
@@ -166,6 +166,10 @@ if (is_file($lockout)) {
 
                     mysqli_free_result($exists2);
                 }
+                
+                echo "Adding default account, <strong>admin : guest</strong>... ";
+                $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('admin', 'guest', 'janitor_board,moderator,admin,manager', 'none')");
+                echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $fail;
             }
         }
 
