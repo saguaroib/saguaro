@@ -5,7 +5,7 @@
 /*
 
     Tests if the server meets basic minimum requirements.
-    
+
     Might want to make the autolock user-selectable.
         Redirect back to page with a get to call it?
 */
@@ -14,7 +14,7 @@ $autolock = true;
 $lockout = ".test_lockout";
 
 if (is_file($lockout)) {
-    die();
+    exit("Nobody here but us chickens.");
 } else {
     //These should be the only things that should be changed without knowing what you're doing, everything that uses them is automated.
     $config = "config.php";
@@ -34,12 +34,14 @@ if (is_file($lockout)) {
     $config_good = false;
     $mysql_good = false;
     $mydir = "(" . dirname(__FILE__) . ")";
+    $user = get_current_user();
+    $log = "This script is running as user <strong>$user</strong>.<br>";
     include($config);
 
     $tests = [];
 
     echo "<div class='box' id='title'>Saguaro Testing and Installation Utility</div>";
-    
+
     //Lock out.
     if ($autolock) {
         touch($lockout);
