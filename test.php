@@ -5,7 +5,9 @@
 /*
 
     Tests if the server meets basic minimum requirements.
-
+    
+    Might want to make the autolock user-selectable.
+        Redirect back to page with a get to call it?
 */
 
 $autolock = true;
@@ -31,17 +33,25 @@ if (is_file($lockout)) {
 
     $config_good = false;
     $mysql_good = false;
+    $mydir = "(" . dirname(__FILE__) . ")";
     include($config);
 
     $tests = [];
 
     echo "<div class='box' id='title'>Saguaro Testing and Installation Utility</div>";
+    
+    //Lock out.
+    if ($autolock) {
+        touch($lockout);
+        $log = "For security purposes, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br>";
+    }
 
     //Check to see if $config was included properly.
-    $log = "<strong>\"$config\"</strong> from the same directory failed to be included properly, some tests may fail.<br>";
+    $loga = "<strong>\"$config\"</strong> from the same directory $mydir failed to be included properly, some tests may fail.<br>";
     foreach (get_included_files() as $val) {
-        if (strrpos($val, $config)) { $log = "Successfully loaded <strong>\"$config\"</strong> from the same directory.<br>"; $config_good = true; }
+        if (strrpos($val, $config)) { $loga = "Successfully loaded <strong>\"$config\"</strong> from the same directory. $mydir<br>"; $config_good = true; }
     }
+    $log .= $loga;
 
     //Return true if PHP is at or above $min_php, false otherwise.
     $tests["PHP version"] =
@@ -191,11 +201,5 @@ if (is_file($lockout)) {
     }
 
     echo "</div>";
-
-    //Lock out.
-    if ($autolock) {
-        touch($lockout);
-        echo "<div class='box' id='autolock'>For security purposes, <strong>$lockout</strong> has been created in the same directory (" . dirname(__FILE__) .") and this script will not function again until it is deleted.</div>";
-    }
 }
 ?>
