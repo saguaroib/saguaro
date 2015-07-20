@@ -14,7 +14,7 @@ $autolock = true;
 $lockout = ".test_lockout";
 
 if (is_file($lockout)) {
-    exit("Nobody here but us chickens.");
+    exit();
 } else {
     //These should be the only things that should be changed without knowing what you're doing, everything that uses them is automated.
     $config = "config.php";
@@ -45,7 +45,7 @@ if (is_file($lockout)) {
     //Lock out.
     if ($autolock) {
         touch($lockout);
-        $log = "For security purposes, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br>";
+        $log .= "For security purposes, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br>";
     }
 
     //Check to see if $config was included properly.
