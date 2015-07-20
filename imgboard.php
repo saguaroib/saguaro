@@ -28,38 +28,13 @@ if ( BOARD_DIR == 'test' ) {
     ini_set( 'display_errors', 0 );
 }
 
-if ( !is_dir( RES_DIR ) && defined( RES_DIR ) ) {
-    mkdir( RES_DIR, 0777, true );
-    echo "Creating thread cache directory " . RES_DIR;
-}
-if ( !is_dir( THUMB_DIR ) && defined( THUMB_DIR ) ) {
-    mkdir( THUMB_DIR, 0777, true );
-    echo "Creating thumbnail directory " . THUMB_DIR;
-}
-if ( !is_dir( IMG_DIR ) && defined( IMG_DIR ) ) {
-    mkdir( IMG_DIR, 0777, true );
-    echo "Creating image directory " . IMG_DIR;
-}
-
+$host = $_SERVER['REMOTE_ADDR'];
 $num     = $_REQUEST['num'];
 $capkeyx = substr( $_SESSION['capkey'], 0, 5 );
 
 extract( $_POST );
 extract( $_GET );
 extract( $_COOKIE );
-
-$host = $_SERVER['REMOTE_ADDR'];
-$con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
-
-if ( !$con ) {
-    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
-    exit;
-}
-
-$db_id = mysql_select_db( SQLDB, $con );
-if ( !$db_id ) {
-    echo S_SQLDBSF;
-}
 
 if ( $num == $capkeyx ) {
     $auth = 1;
@@ -78,6 +53,42 @@ $badfile   = array(
     "dummy2" 
 ); //Refused files (md5 hashes)
 
+
+function mysql_call( $query ) {
+    $ret = mysql_query( $query );
+    if ( !$ret ) {
+	if ( DEBUG_MODE ) {
+	        echo "Error on query: " . $query . "<br />";
+	        echo mysql_error() . "<br />";
+    	} else {
+	        echo "MySQL error!<br />";
+    	}
+    }
+    return $ret;
+}
+
+//check for SQL table existance
+function table_exist( $table ) {
+    $result = mysql_call( "show tables like '$table'" );
+    if ( !$result ) {
+        return 0;
+    }
+    $a = mysql_fetch_row( $result );
+    mysql_free_result( $result );
+    return $a;
+}
+
+$con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
+
+if ( !$con ) {
+    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
+    exit;
+}
+
+$db_id = mysql_select_db( SQLDB, $con );
+if ( !$db_id ) {
+    echo S_SQLDBSF;
+}
 
 if ( !table_exist( SQLLOG ) ) {
     echo ( S_TCREATE . SQLLOG . "<br />" );
@@ -937,20 +948,6 @@ function updatelog( $resno = 0, $rebuild = 0 ) {
     return false;
 }
 
-
-function mysql_call( $query ) {
-    $ret = mysql_query( $query );
-    if ( !$ret ) {
-        //	if ( DEBUG_MODE ) {
-        echo "Error on query: " . $query . "<br />";
-        echo mysql_error() . "<br />";
-        //	} else {
-        //	echo "MySQL error!<br />";
-    }
-    //}
-    return $ret;
-}
-
 /* head */
 function head( &$dat ) {
     $titlepart = '';
@@ -1346,17 +1343,6 @@ function CleanStr( $str ) {
         $str = str_replace( "&amp;", "&", $str ); //remove ampersands
     }
     return str_replace( ",", "&#44;", $str ); //remove commas
-}
-
-//check for table existance
-function table_exist( $table ) {
-    $result = mysql_call( "show tables like '$table'" );
-    if ( !$result ) {
-        return 0;
-    }
-    $a = mysql_fetch_row( $result );
-    mysql_free_result( $result );
-    return $a;
 }
 
 // deletes a post from the database
