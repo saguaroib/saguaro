@@ -99,7 +99,7 @@ if (!$config_good) {
             echo ($status) ? $success : $fail;
 
             if (!$status) {
-                echo "Unable to create <strong>$db</strong> database, cannot proceed to initialize MySQL data.";
+                echo "Unable to create <strong>$db</strong> database (" . mysqli_errno($mysqli) . "), cannot proceed to initialize MySQL data.";
             } else {
                 $has_db = true;
             }
@@ -133,7 +133,7 @@ if (!$config_good) {
                 } else {
                     echo "<strong>$table</strong> table does not exist, creating... ";
                     $status = mysqli_query($mysqli, "CREATE TABLE $table ($query)");
-                    echo ($status) ? $success : $fail;
+                    echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $fail;
                 }
 
                 mysqli_free_result($mysqli, $exists2);
