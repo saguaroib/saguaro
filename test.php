@@ -107,7 +107,7 @@ if (is_file($lockout)) {
         echo $temp;
     }
 
-    echo "</div><div class='box extra' id='mysql'>";
+    echo "</div><div class='box extra' id='mysql'>Numbers next to " . str_replace("<br>", "", $fail) ." are MySQL error codes. Error codes: <a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999) / <a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)<br>";
 
     if (!$config_good) {
         echo "Config was not loaded, cannot initialize MySQL data.";
