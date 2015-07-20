@@ -8,17 +8,22 @@
 
 $config = "config.php";
 include($config);
+$config_good = false;
 
 $min_php = '4.2.0';
 $min_gd = '2.0.0';
 $min_mysql = '4.0.0';
+$mysql_good = false;
+
+$success = "<span style='color:green;font-weight:bold;'>SUCCESS</span><br>";
+$fail = "<span style='color:red;font-weight:bold;'>FAIL</span><br>";
 
 $tests = [];
 
 //Check to see if $config was included properly.
 $out = "<strong>\"$config\"</strong> from the same directory failed to be included properly, some tests may fail.<br>";
 foreach (get_included_files() as $val) {
-    if (strrpos($val, $config, -10)) { $out = ""; }
+    if (strrpos($val, $config)) { $out = "Successfully loaded <strong>\"$config\"</strong> from the same directory.<br>"; $config_good = true; }
 }
 echo $out;
 
@@ -45,6 +50,7 @@ if (class_exists('mysqli')) {
         echo "Failed to connect to the MySQL server, version cannot be obtained. <strong>mysql_connect_errno:</strong> " . mysqli_connect_errno() . " <a href='//dev.mysql.com/doc/refman/5.6/en/error-messages-client.html'>(Client)</a> <a href='//dev.mysql.com/doc/refman/5.6/en/error-messages-server.html'>(Server)</a><br>";
         mysqli_close($mysqli);
     } else {
+        $mysql_good = true;
         $mver = mysqli_get_server_info($mysqli);
 
         $out =
@@ -59,7 +65,7 @@ if (class_exists('mysqli')) {
 }
 $tests["MySQL version"] = $out;
 
-echo "<br><hr><br>Saguaro testing utility:<br><br>";
+echo "<br><hr><br>Saguaro testing & installation utility:<br><br>";
 
 foreach ($tests as $key => $results) {
     $temp = "<strong>$key:</strong> ";
@@ -71,6 +77,46 @@ foreach ($tests as $key => $results) {
     $temp .= "<span style='color:$color;font-weight:bold;'>$msg</span> ($debug)<br>";
 
     echo $temp;
+}
+
+echo "<br><hr><br>";
+
+if (!$config_good) {
+    echo "Config was not loaded, cannot initialize MySQL data.";
+} else {
+    //MySQL stuff;
+    //$mysql_good
+    echo "MySQL Stuff";
+}
+
+echo "<br><br><hr><br>";
+
+if (!$config_good) {
+    echo "Config was not loaded, cannot validate install files.";
+} else {
+    $folders = [RES_DIR, IMG_DIR, THUMB_DIR];
+
+    foreach ($folders as $dir) {
+        if (!is_dir($dir)) {
+            echo "<strong>$dir</strong> does not exist, creating... ";
+            $status = mkdir($dir);
+            echo ($status) ? $success : $fail;
+        } else {
+            echo "<strong>$dir</strong> already exists.<br>";
+        }
+        
+        $perms = substr(sprintf('%o', fileperms($dir)), -4);
+        
+        if ($perms !== "0777") {
+            echo "Changing <strong>$dir</strong> permissions from $perms to 0777... ";
+            $status = chmod($dir, 0777);
+            echo ($status) ? $success : $fail;
+        } else {
+            echo "<strong>$dir</strong> has the right permissions (0777).<br>";
+        }
+        
+        clearstatcache();
+    }
 }
 
 //print_r($tests);
