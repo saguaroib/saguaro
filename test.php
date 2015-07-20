@@ -34,8 +34,9 @@ if (is_file($lockout)) {
     $config_good = false;
     $mysql_good = false;
     $mydir = "(" . dirname(__FILE__) . ")";
-    $user = get_current_user();
-    $log = "This script is running as user <strong>$user</strong>.<br>";
+    $owner = get_current_user();
+    $user = posix_getpwuid(posix_geteuid())['name'];
+    $log = "This script is owned by <strong>$owner</strong> and running as user <strong>$user</strong>. Any files/folders created should be owned by <strong>$user</strong>.<br>";
     include($config);
 
     $tests = [];
