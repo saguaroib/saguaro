@@ -11,7 +11,7 @@
 */
 
 $autolock = true;
-$lockout = ".test_lockout";
+$lockout = "." . basename(__FILE__, ".php") . "_lockout";
 
 if (is_file($lockout)) {
     exit();
@@ -36,7 +36,7 @@ if (is_file($lockout)) {
     $mydir = "(" . dirname(__FILE__) . ")";
     $owner = get_current_user();
     $user = posix_getpwuid(posix_geteuid())['name'];
-    $log = "This script is owned by <strong>$owner</strong> and running as user <strong>$user</strong>. Any files/folders created should be owned by <strong>$user</strong>.<br>";
+    $log = "This file (" . basename(__FILE__) . ") is owned by <strong>$owner</strong> and running as user <strong>$user</strong>. Any files/folders created should be owned by <strong>$user</strong>.<br>";
     include($config);
 
     $tests = [];
@@ -46,7 +46,7 @@ if (is_file($lockout)) {
     //Lock out.
     if ($autolock) {
         touch($lockout);
-        $log .= "For security purposes, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br>";
+        $log .= "For security, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br>";
     }
 
     //Check to see if $config was included properly.
@@ -107,7 +107,7 @@ if (is_file($lockout)) {
         echo $temp;
     }
 
-    echo "</div><div class='box extra' id='mysql'>Numbers next to " . str_replace("<br>", "", $fail) ." are MySQL error codes. Error codes: <a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999) / <a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)<br>";
+    echo "</div><div class='box extra' id='mysql'>These SQL queries are executed as <strong>" . SQLUSER . "</strong> on the SQL server <strong>" . SQLHOST . "</strong>.<br>Numbers next to " . str_replace("<br>", "", $fail) ." are MySQL error codes. Error codes: <a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999) / <a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)<br>";
 
     if (!$config_good) {
         echo "Config was not loaded, cannot initialize MySQL data.";
