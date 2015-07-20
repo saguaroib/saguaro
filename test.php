@@ -1,5 +1,7 @@
 <?php
 
+//ini_set('display_errors',1);
+
 /*
 
     Tests if the server meets basic minimum requirements.
@@ -45,7 +47,7 @@ $tests["GD version"] =
 $out = ["current" => 0, "valid" => 0, "min" => $min_mysql];
 if (class_exists('mysqli')) {
     $mysqli = new mysqli(SQLHOST, SQLUSER, SQLPASS);
-    
+
     if (mysqli_connect_errno()) {
         echo "Failed to connect to the MySQL server, version cannot be obtained. <strong>mysql_connect_errno:</strong> " . mysqli_connect_errno() . " <a href='//dev.mysql.com/doc/refman/5.6/en/error-messages-client.html'>(Client)</a> <a href='//dev.mysql.com/doc/refman/5.6/en/error-messages-server.html'>(Server)</a><br>";
         mysqli_close($mysqli);
@@ -59,8 +61,6 @@ if (class_exists('mysqli')) {
                 "valid" => version_compare($mver, $min_mysql, '>='),
                 "min" => $min_mysql
             ];
-
-        mysqli_close($mysqli);
     }
 }
 $tests["MySQL version"] = $out;
@@ -84,12 +84,67 @@ echo "<br><hr><br>";
 if (!$config_good) {
     echo "Config was not loaded, cannot initialize MySQL data.";
 } else {
-    //MySQL stuff;
-    //$mysql_good
-    echo "MySQL Stuff";
+    if (!$mysql_good) {
+        echo "There was a problem with MySQL, cannot initialize MySQL data.";
+    } else {
+        $db = SQLDB;
+        //mysqli_query($mysqli, "DROP DATABASE `$db`");
+        $has_db = mysqli_select_db($mysqli, $db);
+
+        if (!$has_db) {
+            //Create database.
+
+            echo "<strong>$db</strong> database does not exist, creating... ";
+            $status = mysqli_query($mysqli, "CREATE DATABASE $db");
+            echo ($status) ? $success : $fail;
+
+            if (!$status) {
+                echo "Unable to create <strong>$db</strong> database, cannot proceed to initialize MySQL data.";
+            } else {
+                $has_db = true;
+            }
+        } else {
+            echo "<strong>$db</strong> database already exists.<br>";
+        }
+
+        if ($has_db) {
+            mysqli_select_db($mysqli, $db);
+
+            //Create tables.
+            //mysql_call( "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('admin', 'guest', 'janitor_board,moderator,admin,manager', 'none') " );
+
+            $tables = [
+                SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, sticky int, permasage int, locked int, root  timestamp, resto int, board text",
+                SQLBANLOG => "ip VARCHAR(25) PRIMARY KEY, pubreason VARCHAR(250), staffreason VARCHAR(250), banlength VARCHAR(250), placedOn VARCHAR(50), board VARCHAR(50)",
+                SQLMODSLOG => "user VARCHAR(25) PRIMARY KEY, password  VARCHAR(250), allowed  VARCHAR(250), denied  VARCHAR(250)",
+                SQLDELLOG => "imgonly VARCHAR(25) PRIMARY KEY, postno VARCHAR(250), board VARCHAR(250), name VARCHAR(250), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . "), img VARCHAR(250), filename VARCHAR(250), admin VARCHAR(100)", //Why does S_POSTLENGTH start with S_?
+                "reports" => "no VARCHAR(25) PRIMARY KEY, reason  VARCHAR(250), ip VARCHAR(250), board VARCHAR(250)",
+                "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)"
+            ];
+
+            foreach ($tables as $table => $query) {
+                //$exists = mysqli_query($mysqli, "SELECT count(*) FROM information_schema.tables WHERE table_schema = '$db' AND table_name = '$table'");
+                $sql = "SHOW TABLES LIKE \"$table\"";
+                $exists2 = mysqli_query($mysqli, $sql);// = mysqli_query($mysqli, $sql);
+                $exists = (mysqli_num_rows($exists2) > 0) ? true : false;
+
+                if ($exists) {
+                    echo "<strong>$table</strong> table already exists.<br>";
+                } else {
+                    echo "<strong>$table</strong> table does not exist, creating... ";
+                    $status = mysqli_query($mysqli, "CREATE TABLE $table ($query)");
+                    echo ($status) ? $success : $fail;
+                }
+
+                mysqli_free_result($mysqli, $exists2);
+            }
+        }
+    }
+
+    mysqli_close($mysqli);
 }
 
-echo "<br><br><hr><br>";
+echo "<br><hr><br>";
 
 if (!$config_good) {
     echo "Config was not loaded, cannot validate install files.";
@@ -104,9 +159,9 @@ if (!$config_good) {
         } else {
             echo "<strong>$dir</strong> already exists.<br>";
         }
-        
+
         $perms = substr(sprintf('%o', fileperms($dir)), -4);
-        
+
         if ($perms !== "0777") {
             echo "Changing <strong>$dir</strong> permissions from $perms to 0777... ";
             $status = chmod($dir, 0777);
@@ -114,7 +169,7 @@ if (!$config_good) {
         } else {
             echo "<strong>$dir</strong> has the right permissions (0777).<br>";
         }
-        
+
         clearstatcache();
     }
 }
