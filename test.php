@@ -139,8 +139,6 @@ if (is_file($lockout)) {
                 mysqli_select_db($mysqli, $db);
 
                 //Create tables.
-                //mysql_call(  );
-
                 $tables = [
                     SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, sticky int, permasage int, locked int, root  timestamp, resto int, board text",
                     SQLBANLOG => "ip VARCHAR(25) PRIMARY KEY, pubreason VARCHAR(250), staffreason VARCHAR(250), banlength VARCHAR(250), placedOn VARCHAR(50), board VARCHAR(50)",
@@ -151,9 +149,8 @@ if (is_file($lockout)) {
                 ];
 
                 foreach ($tables as $table => $query) {
-                    //$exists = mysqli_query($mysqli, "SELECT count(*) FROM information_schema.tables WHERE table_schema = '$db' AND table_name = '$table'");
                     $sql = "SHOW TABLES LIKE \"$table\"";
-                    $exists2 = mysqli_query($mysqli, $sql);// = mysqli_query($mysqli, $sql);
+                    $exists2 = mysqli_query($mysqli, $sql);
                     $exists = (mysqli_num_rows($exists2) > 0) ? true : false;
 
                     if ($exists) {
@@ -166,7 +163,7 @@ if (is_file($lockout)) {
 
                     mysqli_free_result($exists2);
                 }
-                
+
                 echo "Adding default account, <strong>admin : guest</strong>... ";
                 $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('admin', 'guest', 'janitor_board,moderator,admin,manager', 'none')");
                 echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $fail;
