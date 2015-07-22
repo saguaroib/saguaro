@@ -149,9 +149,8 @@ if (is_file($lockout)) {
                 ];
 
                 foreach ($tables as $table => $query) {
-                    $sql = "SHOW TABLES LIKE \"$table\"";
-                    $exists2 = mysqli_query($mysqli, $sql);
-                    $exists = (mysqli_num_rows($exists2) > 0) ? true : false;
+                    $sql = "SHOW TABLES LIKE '$table'";
+                    $exists = (mysqli_num_rows(mysqli_query($mysqli, $sql)) > 0) ? true : false;
 
                     if ($exists) {
                         echo "<strong>$table</strong> table already exists.<br>";
