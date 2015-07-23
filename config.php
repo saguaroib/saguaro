@@ -58,7 +58,7 @@ define(S_ANONAME, "Anonymous"); //Default name of all users who do not use a nam
 //Basic settings
 define(TITLE, 'Saguaro beta!');                    //Name of this image board
 define(S_HEADSUB, 'No artificial sweeteners!');             //subtitle underneath title
-define(SHOWTITLETXT, 1);                              //Show TITLE at top (1: yes  0: no)
+define(SHOWTITLETXT, 1);                              //Show TITLE at top (0: None 1: Shows plain title, 2: Shows /directory/ - Title
 define(SHOWTITLEIMG, 0);                              //Show image at top (0: no, 1: single, 2: rotating)
 define(TITLEIMG, '');                                   //Title image (point to php file if rotating)
 define(LANGUAGE, 'en-us');                              //Language file to use from "lang" folder.
