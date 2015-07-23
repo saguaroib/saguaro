@@ -45,7 +45,6 @@ define(SALTFILE, 'salt'); //Name of the salt file, do not add a file extension f
 
 define(MAX_LINES_SHOWN, 20); // Maximum number of user lines shown before they are abbreviated
 define(DICE_ROLL, 0); // Allow users to roll /dice in the name field
-define(COUNTRY_FLAGS, 0); // Display poster's country flag with each post
 define(SHOW_BLOTTER, 0);
 
 // added to the top of each board, ex: ex: http://yoursite.com/resources/globalnews.txt
