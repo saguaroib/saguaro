@@ -160,7 +160,7 @@ if (is_file($lockout)) {
                         echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $fail;
                     }
 
-                    mysqli_free_result($exists2);
+                    //mysqli_free_result($exists2);
                 }
 
                 echo "Adding default account, <strong>admin : guest</strong>... ";
