@@ -64,10 +64,12 @@ if (is_file($lockout)) {
             "min" => $min_php
         ];
 
+    $gd_ver = preg_match("/(?:\d\.?)+/", gd_info()["GD Version"], $match);
+    $gd_ver = $match[0];
     $tests["GD version"] =
         [
-            "current" => (function_exists("gd_info")) ? gd_info()["GD Version"] : 0,
-            "valid" => (function_exists("gd_info")) ? version_compare(gd_info()["GD Version"], $min_gd, '>=') : 0,
+            "current" => (function_exists("gd_info")) ? $gd_ver : 0,
+            "valid" => (function_exists("gd_info")) ? version_compare($gd_ver, $min_gd, '>=') : 0,
             "min" => $min_gd
         ];
 
@@ -160,7 +162,7 @@ if (is_file($lockout)) {
                         echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $fail;
                     }
 
-                    //mysqli_free_result($exists2);
+                    mysqli_free_result($exists);
                 }
 
                 echo "Adding default account, <strong>admin : guest</strong>... ";
