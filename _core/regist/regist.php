@@ -364,11 +364,11 @@ if ( DISP_ID ) {
     }
 }
 
-if ( COUNTRY_FLAGS ) {
+/*if ( COUNTRY_FLAGS ) {
     include( "geoiploc.php" );
     $country = getCountryFromIP( $host, "CTRY" );
     $now .= " <img src=" . CSS_PATH . "flags/" . strtolower( $country ) . ".png /> ";
-}
+}*/
 
 $c_name  = $name;
 $c_email = $email;
