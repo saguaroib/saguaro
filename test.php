@@ -26,7 +26,8 @@ if (is_file($lockout)) {
     $fail = "<span style='color:red;font-weight:bold;'>FAIL</span><br>";
 
     $css = "body { background-color:#EEF2FF; } #title { font-size:xx-large; text-align:center; font-weight:bold; font-style: italic; }
-            .extra { /*width:49%; display:inline-block;*/ } .box { background-color:#D6DAF0; padding:10px; border-radius:10px; margin: 2%; }";
+            .extra { /*width:49%; display:inline-block;*/ } .box { background-color:#D6DAF0; padding:10px; border-radius:10px; margin: 2%; }
+            ul { margin: 5px 0px; }";
 
     //Point of no return.
     echo "<style>$css</style>";
@@ -42,7 +43,7 @@ if (is_file($lockout)) {
     $mydir = "(" . dirname(__FILE__) . ")";
     $owner = "<strong>" . get_current_user() ."</strong>";
     $user = "<strong>" . posix_getpwuid(posix_geteuid())['name'] . "</strong>";
-    $log .= "This file (" . basename(__FILE__) . ") is owned by $owner and running as user $user. Any files/folders created should be owned by $user.<br>";
+    $log .= "This file (<strong>" . basename(__FILE__) . "</strong>) is owned by $owner and running as user $user. Any files/folders created should be owned by $user.<br>";
     include($config);
 
     $tests = [];
@@ -215,7 +216,7 @@ if (is_file($lockout)) {
     }
 
     echo "</div><div class='box'>" .
-        "<strong>Additional Resources:</strong><br>MySQL error codes: <a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999) / <a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)" .
+        "<strong>Additional Resources:</strong><br>MySQL error codes: <ul><li><a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999)</li><li><a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)</li></ul>" .
         "</div>";
 }
 ?>
