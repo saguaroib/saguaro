@@ -1,6 +1,7 @@
 <?php
 
 require('config.php');
+include_once("imgboard.php");
 
 $con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
 
@@ -105,6 +106,223 @@ function postinfo( $no ) {
 	
 }
 
+
+/*password validation */
+function oldvalid( $pass ) {
+    
+    /*    if ( $pass && $pass != PANEL_PASS )
+    error( S_WRONGPASS );*/
+    
+    if ( valid( 'janitor_board' ) ) {
+        head( $dat );
+        echo $dat;
+        echo "[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]\n";
+        echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]\n";
+        if ( valid( 'moderator' ) ) {
+            echo "[<a href=\"" . PHP_SELF . "?mode=rebuild\">Rebuild</a>]\n";
+            echo "[<a href=\"" . PHP_SELF . "?mode=rebuildall\">Rebuild all</a>]\n";
+        }
+        echo "[<a href=\"" . PHP_SELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
+        echo "<div class=\"passvalid\">" . S_MANAMODE . "</div>\n";
+    }
+    echo "<p><form action=\"" . PHP_SELF . "\" method=\"post\">\n";
+    // Mana login form
+    if ( !valid( 'janitor_board' ) ) {
+        echo "<div class=\passvalid\" align=\"center\" vertical-align=\"middle\" >";
+        echo "<input type=hidden name=mode value=admin>\n";
+        echo "<input type=text name=usernm size=20><br />";
+        echo "<input type=password name=passwd size=20><br />";
+        echo "<input type=submit value=\"" . S_MANASUB . "\"></form></div>\n";
+        if ( isset( $_POST['usernm'] ) && isset( $_POST['passwd'] ) )
+            login( $_POST['usernm'], $_POST['passwd'] );
+        die( "</body></html>" );
+    }
+}
+
+/* Admin deletion */
+function admindel( $pass ) {
+    global $path, $onlyimgdel;
+    $delno   = array(
+         dummy 
+    );
+    $delflag = FALSE;
+    reset( $_POST );
+    while ( $item = each( $_POST ) ) {
+        if ( $item[1] == 'delete' ) {
+            array_push( $delno, $item[0] );
+            $delflag = TRUE;
+        }
+    }
+    if ( $delflag ) {
+        if ( !$result = mysql_call( "select * from " . SQLLOG . "" ) ) {
+            echo S_SQLFAIL;
+        }
+        $find = FALSE;
+        
+        while ( $row = mysql_fetch_row( $result ) ) {
+            list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize,  ) = $row;
+            if ( $onlyimgdel == on ) {
+                /*if ( array_search( $no, $delno ) ) { //only a picture is deleted
+                $delfile = $path . $tim . $ext; //only a picture is deleted
+                if ( is_file( $delfile ) )
+                unlink( $delfile ); //delete
+                if ( is_file( THUMB_DIR . $tim . 's.jpg' ) )
+                unlink( THUMB_DIR . $tim . 's.jpg' ); //delete
+                }*/
+                delete_post( $no, $pwd, 1, 1, 1, 0 );
+            } else {
+                if ( array_search( $no, $delno ) ) { //It is empty when deleting
+                    delete_post( $no, $pwd, 0, 1, 1, 0 );
+                    
+                    /*$find = TRUE;
+                    if ( !mysql_call( "delete from " . SQLLOG . " where no=" . $no ) ) {
+                    echo S_SQLFAIL;
+                    }
+                    //eat the baby posts too if we kill the parent (OP) post
+                    $findchildren = mysql_call( "SELECT * FROM " . SQLLOG . " where  resto=" . $no );
+                    if ( mysql_num_rows( $findchildren ) > 0 ) {
+                    $eatchildren = mysql_call( "DELETE FROM " . SQLLOG . " where resto=" . $no );
+                    mysql_query( $eatchildren );
+                    }
+                    $delfile = $path . $tim . $ext; //Delete file
+                    if ( is_file( $delfile ) )
+                    unlink( $delfile ); //Delete
+                    if ( is_file( THUMB_DIR . $tim . 's.jpg' ) )
+                    unlink( THUMB_DIR . $tim . 's.jpg' ); //Delete*/
+                }
+            }
+        }
+        /*		mysql_free_result( $result );
+        if ( $find ) { //log renewal
+        }*/
+    }
+    
+    function calculate_age( $timestamp, $comparison = '' ) {
+        $units = array(
+             'second' => 60,
+            'minute' => 60,
+            'hour' => 24,
+            'day' => 7,
+            'week' => 4.25, // FUCK YOU GREGORIAN CALENDAR
+            'month' => 12 
+        );
+        
+        if ( empty( $comparison ) ) {
+            $comparison = $_SERVER['REQUEST_TIME'];
+        }
+        $age_current_unit = abs( $comparison - $timestamp );
+        foreach ( $units as $unit => $max_current_unit ) {
+            $age_next_unit = $age_current_unit / $max_current_unit;
+            if ( $age_next_unit < 1 ) {
+                // are there enough of the current unit to make one of the next unit?
+                $age_current_unit = floor( $age_current_unit );
+                $formatted_age    = $age_current_unit . ' ' . $unit;
+                return $formatted_age . ( $age_current_unit == 1 ? '' : 's' );
+            }
+            $age_current_unit = $age_next_unit;
+        }
+        
+        $age_current_unit = round( $age_current_unit, 1 );
+        $formatted_age    = $age_current_unit . ' year';
+        return $formatted_age . ( floor( $age_current_unit ) == 1 ? '' : 's' );
+        
+    }
+    
+    
+    // Deletion screen display
+    echo "<input type=hidden name=mode value=admin>\n";
+    echo "<input type=hidden name=admin value=del>\n";
+    echo "<input type=hidden name=pass value=\"$pass\">\n";
+    echo "<div class=\"dellist\">" . S_DELLIST . "</div>\n";
+    echo "<div class=\"delbuttons\"><input type=submit value=\"" . S_ITDELETES . "\">";
+    echo "<input type=reset value=\"" . S_MDRESET . "\">";
+    echo "[<input type=checkbox name=onlyimgdel value=on><!--checked-->" . S_MDONLYPIC . "]</div>";
+    echo "<table class=\"postlists\">\n";
+    echo "<tr class=\"managehead\">" . S_MDTABLE1;
+    echo S_MDTABLE2;
+    echo "</tr>\n";
+    
+    if ( !$result = mysql_call( "select * from " . SQLLOG . " order by no desc" ) ) {
+        echo S_SQLFAIL;
+    }
+    $j = 0;
+    while ( $row = mysql_fetch_row( $result ) ) {
+        $j++;
+        $img_flag = FALSE;
+        list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
+        // Format
+        $now = ereg_replace( '.{2}/(.*)$', '\1', $now );
+        $now = ereg_replace( '\(.*\)', ' ', $now );
+        if ( strlen( $name ) > 10 )
+            $truncname = substr( $name, 0, 9 ) . "...";
+        else
+            $truncname = $name;
+        if ( strlen( $sub ) > 10 )
+            $truncsub = substr( $sub, 0, 9 ) . "...";
+        else
+            $truncsub = $sub;
+        if ( $email )
+            $name = "<a href=\"mailto:$email\">$name</a>";
+        $com = str_replace( "<br />", " ", $com );
+        $com = htmlspecialchars( $com );
+        if ( strlen( $com ) > 20 )
+            $trunccom = substr( $com, 0, 18 ) . "...";
+        else
+            $trunccom = $com;
+        if ( strlen( $fname ) > 10 )
+            $truncfname = substr( $fname, 0, 40 ) . "..." . $ext;
+        else
+            $truncfname = $fname;
+        // Link to the picture
+        if ( $ext && is_file( $path . $tim . $ext ) ) {
+            $img_flag = TRUE;
+			$clip = "<a class=\"thumbnail\" target=\"_blank\" href=\"".IMG_DIR.$tim.$ext."\">".$tim.$ext."<span><img class='postimg' src=\"".THUMB_DIR.$tim.'s.jpg'."\" width=\"100\" height=\"100\" /></span></a><br />";
+            if ( $fsize >= 1048576 ) {
+                $size  = round( ( $fsize / 1048576 ), 2 ) . " M";
+                $fsize = $asize;
+            } else if ( $fsize >= 1024 ) {
+                $size  = round( $fsize / 1024 ) . " K";
+                $fsize = $asize;
+            } else {
+                $size  = $fsize . " ";
+                $fsize = $asize;
+            }
+            $all += $asize; //total calculation
+            $md5 = substr( $md5, 0, 10 );
+        } else {
+            $clip = "[No file]";
+            $size = 0;
+            $md5  = "";
+        }
+        $class = ( $j % 2 ) ? "row1" : "row2"; //BG color
+        
+        if ( $resto == '0' ) 
+            $resdo = '<b>OP(<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . '#' . $no . '" target="_blank" />' . $no . '</a>)</b>';
+		else
+            $resdo = '<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $resto . PHP_EXT . '#' . $no . '" target="_blank" />' . $resto . '</a>';
+        $warnSticky = '';
+        if ( $sticky == '1' )
+            $warnSticky = "<b><font color=\"FF101A\">(Sticky)</font></b>";
+        if ( valid( 'janitor_board' ) && !valid( 'moderator' ) ) //Hide IPs from janitors
+            $host = '###.###.###.###';
+        echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
+        echo "<td>$no</td><td>$resdo</td><td>$now</td><td>$truncsub</td>";
+        echo "<td>$truncname</b></td><td>$trunccom</td>";
+        echo "<td class='postimg' >$clip</td><td>" . calculate_age( $time ) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_SELF_ABS . "?mode=ban&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
+        echo "</tr>\n";
+
+    }
+    mysql_free_result( $result );
+	
+    echo "<br /><br /><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/img.css' />";
+    foot($dat);
+    $all = (int) ( $all / 1024 );
+    echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";
+    die( "</body></html>" );
+}
+
+
+
 if ( !function_exists( valid ) ) {
 	// check whether the current user can perform $action (on $no, for some actions)
 	// board-level access is cached in $valid_cache.
@@ -192,6 +410,7 @@ if ( !function_exists( valid ) ) {
 		}
 	}
 }
+
 if (!function_exists(mysql_call)) {
 	function mysql_call( $query ) {
 		$ret = mysql_query( $query );
@@ -203,6 +422,47 @@ if (!function_exists(mysql_call)) {
 	}
 }
 
+function rebuild( $all = 0 ) {
+    if ( !valid( 'moderator' ) )
+        die( 'Update failed...' );
+    
+    header( "Pragma: no-cache" );
+    echo "Rebuilding ";
+    if ( $all ) {
+        echo "all";
+    } else {
+        echo "missing";
+    }
+    echo " replies and pages... <a href=\"" . PHP_SELF2_ABS . "\">Go back</a><br><br>\n";
+    ob_end_flush();
+    $starttime = microtime( true );
+    if ( !$treeline = mysql_call( "select no,resto from " . SQLLOG . " where root>0 order by root desc" ) ) {
+        echo S_SQLFAIL;
+    }
+    log_cache();
+    echo "Writing...\n";
+    if ( $all || !defined( 'CACHE_TTL' ) ) {
+        while ( list( $no, $resto ) = mysql_fetch_row( $treeline ) ) {
+            if ( !$resto ) {
+                updatelog( $no, 1 );
+                echo "No.$no created.<br>\n";
+            }
+        }
+        updatelog();
+        echo "Index pages created.<br>\n";
+    } else {
+        $posts = rebuildqueue_take_all();
+        foreach ( $posts as $no ) {
+            $deferred = ( updatelog( $no, 1 ) ? ' (deferred)' : '' );
+            if ( $no )
+                echo "No.$no created.$deferred<br>\n";
+            else
+                echo "Index pages created.$deferred<br>\n";
+        }
+    }
+    $totaltime = microtime( true ) - $starttime;
+    echo "<br>Time elapsed (lock excluded): $totaltime seconds", "<br>Pages created.<br><br>\nRedirecting back to board.\n<META HTTP-EQUIV=\"refresh\" content=\"10;URL=" . PHP_SELF2 . "\">";
+}
 
 /*
 function ban($no) {
@@ -256,8 +516,30 @@ die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . "
 */
 
 /* Main switch */
-if (valid('moderator')) {
 switch ( $_GET['mode'] ) {
+        case 'admin':
+            oldvalid( $pass );
+            form( $post, $res, 1 );
+            echo $post;
+            echo "<form action=\"" . PHP_SELF . "\" method=\"post\">
+            <input type=hidden name=admin value=del checked>";
+            admindel( $pass );
+            die( "</body></html>" );
+            break;
+        case 'ban':
+            postinfo($no);
+            break;
+        case 'logout':
+            setcookie( 'saguaro_apass', '0', 1 );
+            setcookie( 'saguaro_auser', '0', 1 );
+            echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
+            break;
+        case 'zmdlog':
+            login( $_POST['usernm'], $_POST['passwd'] );
+            break;
+        case 'rebuild':
+            rebuild();
+            break;
         case 'lock':
 			$no = $_GET['no'];
             mysql_call( 'UPDATE ' . SQLLOG . " SET locked='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
@@ -303,6 +585,4 @@ switch ( $_GET['mode'] ) {
 		default:
 			break;
     }
-} else 
-	echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">"
 ?>
