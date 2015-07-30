@@ -112,7 +112,7 @@ if (is_file($lockout)) {
         echo $temp;
     }
 
-    echo "</div><div class='box extra' id='mysql'>These SQL queries are executed as <strong>" . SQLUSER . "</strong> on the SQL server <strong>" . SQLHOST . "</strong>.<br>";
+    echo "</div><div class='box extra' id='mysql'>";
 
     //Create MySQL database and tables.
     if (!$config_good) {
@@ -121,6 +121,8 @@ if (is_file($lockout)) {
         if (!$mysql_good) {
             echo "There was a problem with MySQL, cannot initialize MySQL data.";
         } else {
+            echo "These SQL queries are executed as <strong>" . SQLUSER . "</strong> on the SQL server <strong>" . SQLHOST . "</strong>.<br>";
+
             $db = SQLDB;
             //mysqli_query($mysqli, "DROP DATABASE `$db`");
             $has_db = mysqli_select_db($mysqli, $db);
