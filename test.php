@@ -31,23 +31,23 @@ if (is_file($lockout)) {
     //Point of no return.
     echo "<style>$css</style>";
 
+    //Lock out.
+    if ($autolock) {
+        touch($lockout);
+        $log .= "For security, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br><br>";
+    }
+
     $config_good = false;
     $mysql_good = false;
     $mydir = "(" . dirname(__FILE__) . ")";
-    $owner = get_current_user();
-    $user = posix_getpwuid(posix_geteuid())['name'];
-    $log = "This file (" . basename(__FILE__) . ") is owned by <strong>$owner</strong> and running as user <strong>$user</strong>. Any files/folders created should be owned by <strong>$user</strong>.<br>";
+    $owner = "<strong>" . get_current_user() ."</strong>";
+    $user = "<strong>" . posix_getpwuid(posix_geteuid())['name'] . "</strong>";
+    $log .= "This file (" . basename(__FILE__) . ") is owned by $owner and running as user $user. Any files/folders created should be owned by $user.<br>";
     include($config);
 
     $tests = [];
 
     echo "<div class='box' id='title'>Saguaro Testing and Installation Utility</div>";
-
-    //Lock out.
-    if ($autolock) {
-        touch($lockout);
-        $log .= "For security, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br>";
-    }
 
     //Check to see if $config was included properly.
     $loga = "<strong>\"$config\"</strong> from the same directory $mydir failed to be included properly, some tests may fail.<br>";
@@ -56,7 +56,7 @@ if (is_file($lockout)) {
     }
     $log .= $loga;
 
-    //Return true if PHP is at or above $min_php, false otherwise.
+    //Check PHP version.
     $tests["PHP version"] =
         [
             "current" => phpversion(),
@@ -64,6 +64,7 @@ if (is_file($lockout)) {
             "min" => $min_php
         ];
 
+    //Check GD version.
     $gd_ver = preg_match("/(?:\d\.?)+/", gd_info()["GD Version"], $match);
     $gd_ver = $match[0];
     $tests["GD version"] =
@@ -73,12 +74,13 @@ if (is_file($lockout)) {
             "min" => $min_gd
         ];
 
+    //Check MySQL version.
     $out = ["current" => 0, "valid" => 0, "min" => $min_mysql];
     if (class_exists('mysqli')) {
         $mysqli = new mysqli(SQLHOST, SQLUSER, SQLPASS);
 
         if (mysqli_connect_errno()) {
-            $log .= "Failed to connect to the MySQL server, version cannot be obtained. <strong>mysql_connect_errno:</strong> " . mysqli_connect_errno() . " <a href='//dev.mysql.com/doc/refman/5.6/en/error-messages-client.html'>(Client)</a> <a href='//dev.mysql.com/doc/refman/5.6/en/error-messages-server.html'>(Server)</a><br>";
+            $log .= "Failed to connect to the MySQL server, version cannot be obtained. <strong>Error:</strong> " . mysqli_connect_errno() . "<br>";
             mysqli_close($mysqli);
         } else {
             $mysql_good = true;
@@ -94,6 +96,7 @@ if (is_file($lockout)) {
     }
     $tests["MySQL version"] = $out;
 
+    //Output results of tests.
     echo "<div class='box' id='log'>$log</div>";
     echo "<div class='box extra' id='tests'>";
 
@@ -109,8 +112,9 @@ if (is_file($lockout)) {
         echo $temp;
     }
 
-    echo "</div><div class='box extra' id='mysql'>These SQL queries are executed as <strong>" . SQLUSER . "</strong> on the SQL server <strong>" . SQLHOST . "</strong>.<br>Numbers next to " . str_replace("<br>", "", $fail) ." are MySQL error codes. Error codes: <a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999) / <a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)<br>";
+    echo "</div><div class='box extra' id='mysql'>These SQL queries are executed as <strong>" . SQLUSER . "</strong> on the SQL server <strong>" . SQLHOST . "</strong>.<br>";
 
+    //Create MySQL database and tables.
     if (!$config_good) {
         echo "Config was not loaded, cannot initialize MySQL data.";
     } else {
@@ -129,7 +133,7 @@ if (is_file($lockout)) {
                 echo ($status) ? $success : $fail;
 
                 if (!$status) {
-                    echo "Unable to create <strong>$db</strong> database (" . mysqli_errno($mysqli) . "), cannot proceed to initialize MySQL data.";
+                    echo "Unable to create <strong>$db</strong> database (error: " . mysqli_errno($mysqli) . "), cannot proceed to initialize MySQL data.";
                 } else {
                     $has_db = true;
                 }
@@ -177,34 +181,39 @@ if (is_file($lockout)) {
     echo "</div>";
     echo "<div class='box extra' id='dirs'>";
 
+    //Create working directories.
     if (!$config_good) {
         echo "Config was not loaded, cannot validate install files.";
     } else {
         $folders = [RES_DIR, IMG_DIR, THUMB_DIR];
 
         foreach ($folders as $dir) {
+            $fdir = "<strong>$dir</strong>";
+
             if (!is_dir($dir)) {
-                echo "<strong>$dir</strong> does not exist, creating... ";
+                echo "$fdir does not exist, creating... ";
                 $status = mkdir($dir);
                 echo ($status) ? $success : $fail;
             } else {
-                echo "<strong>$dir</strong> already exists.<br>";
+                echo "$fdir already exists.<br>";
             }
 
             $perms = substr(sprintf('%o', fileperms($dir)), -4);
 
             if ($perms !== "0777") {
-                echo "Changing <strong>$dir</strong> permissions from $perms to 0777... ";
+                echo "Changing $fdir permissions from $perms to 0777... ";
                 $status = chmod($dir, 0777);
                 echo ($status) ? $success : $fail;
             } else {
-                echo "<strong>$dir</strong> has the right permissions (0777).<br>";
+                echo "$fdir has the right permissions (0777).<br>";
             }
 
             clearstatcache();
         }
     }
 
-    echo "</div>";
+    echo "</div><div class='box'>" .
+        "<strong>Additional Resources:</strong><br>MySQL error codes: <a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999) / <a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)" .
+        "</div>";
 }
 ?>
