@@ -33,6 +33,8 @@ if (is_file($lockout)) {
     echo "<style>$css</style>";
 
     //Lock out.
+    $mydir = "(" . dirname(__FILE__) . ")";
+    
     if ($autolock) {
         touch($lockout);
         $log .= "For security, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br><br>";
@@ -40,7 +42,6 @@ if (is_file($lockout)) {
 
     $config_good = false;
     $mysql_good = false;
-    $mydir = "(" . dirname(__FILE__) . ")";
     $owner = "<strong>" . get_current_user() ."</strong>";
     $user = "<strong>" . posix_getpwuid(posix_geteuid())['name'] . "</strong>";
     $log .= "This file (<strong>" . basename(__FILE__) . "</strong>) is owned by $owner and running as user $user. Any files/folders created should be owned by $user.<br>";
