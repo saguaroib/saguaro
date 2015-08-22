@@ -3,7 +3,7 @@
 require('config.php');
 include(__DIR__.'/lang/language.php');
 define(PHP_ASELF, 'admin.php');
-define(PHP_ASELF_ABS, SITE_ROOT."/admin.php");
+define(PHP_ASELF_ABS, "http://x4chninf.site.nfoservers.com/saguaro/admin.php");
 
 
 $con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
@@ -53,7 +53,6 @@ function head( $no ) {
 <div class='headsub' >" . S_HEADSUB . "</div><hr />";
     
     Echo $dat;
-    echo '<br/ > [<a href="' . PHP_ASELF . '" />Return</a>]';
 	
 }
 
@@ -99,15 +98,16 @@ function postinfo( $no ) {
     <input type='submit' name='action' value='Image only' /><br />
     <input type='submit' name='action' value='All by IP' /><br /></td></tr></table></form>";
 	
-    $dat .= "<br /><br /><table><form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
-	<tr><td>Action</td><td><td><select name='mode' />
-    <option value='sticky' />Sticky</option>
-    <option value='lock' />Lock</option>
-    <option value='permasage' />Permasage</option>
-    <option value='unsticky' />Unsticky</option>
-    <option value='unlock' />Unlock</option>
-    </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'><td> *[Stickying/locking a reply does nothing!]</td></tr></table></form>";
-
+    if ($resto) {
+        $dat .= "<br /><br /><table><form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
+        <tr><td>Action</td><td><td><select name='mode' />
+        <option value='sticky' />Sticky</option>
+        <option value='lock' />Lock</option>
+        <option value='permasage' />Permasage</option>
+        <option value='unsticky' />Unsticky</option>
+        <option value='unlock' />Unlock</option>
+        </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'><td> *[Stickying/locking a reply does nothing!]</td></tr></table></form>";
+    }
     echo $dat;
 
 }
@@ -166,16 +166,6 @@ function aform( &$dat, $resno, $admin = "" ) {
     
     $dat .= '<tr><td align="left" class="postblock" align="left">' . S_DELPASS . '</td><td align="left"><input type="password" name="pwd" size="8" maxlength="8" value="" />' . S_DELEXPL . '</td></tr></table></form></div></div>';
 
-    if ( !$resno && !$admin )
-        $news = file_get_contents( GLOBAL_NEWS );
-    if ( $news != '' )
-        $dat .= "<div class=\"globalnews\"/>" . file_get_contents( GLOBAL_NEWS ) . "</div><br /><hr />";
-    
-    //Top thread navigation bar
-    if ( $resno ) {
-        $dat .= "<div class=\"threadnav\" /> [<a href=\"" . PHP_SELF2_ABS . "\">" . S_RETURN . "</a>] [<a href=\"" . $no . PHP_EXT . "#bottom\"/>Bottom</a>] </div> \n<hr />";
-    }
-
 }
 
 function login( $usernm, $passwd ) {
@@ -197,7 +187,7 @@ function login( $usernm, $passwd ) {
     setcookie( 'saguaro_auser', $usernm, 0 );
     setcookie( 'saguaro_apass', $passwd, 0 );
     
-    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "?mode=admin" . "\">";
+    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . " \">";
 }
 
 /*password validation */
@@ -210,7 +200,7 @@ function oldvalid( $pass ) {
         head( $dat );
         echo $dat;
         echo "[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]\n";
-        echo "[<a href=\"" . PHP_ASELF . "\">" . S_LOGUPD . "</a>]\n";
+        echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]\n";
         if ( valid( 'moderator' ) ) {
             echo "[<a href=\"" . PHP_ASELF . "?mode=rebuild\">Rebuild</a>]\n";
             echo "[<a href=\"" . PHP_ASELF . "?mode=rebuildall\">Rebuild all</a>]\n";
@@ -613,6 +603,7 @@ die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . "
 /* Main switch */
 switch ( $_GET['mode'] ) {
         case 'admin':
+            echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
             break;
         case 'more':
             $no = mysql_real_escape_string($_GET['no']);
@@ -627,7 +618,12 @@ switch ( $_GET['mode'] ) {
             login( $_POST['usernm'], $_POST['passwd'] );
             break;
         case 'rebuild':
+            include(PHP_SELF);
             rebuild();
+            break;
+        case 'rebuildall':
+            include(PHP_SELF);
+            rebuild( 1 );
             break;
         case 'lock':
 			$no = $_GET['no'];
