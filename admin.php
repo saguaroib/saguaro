@@ -1,7 +1,10 @@
 <?php
 
 require('config.php');
-include_once("imgboard.php");
+include(__DIR__.'/lang/language.php');
+define(PHP_ASELF, 'admin.php');
+define(PHP_ASELF_ABS, SITE_ROOT."/admin.php");
+
 
 $con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
 
@@ -15,7 +18,7 @@ if ( !$db_id ) {
     echo S_SQLDBSF;
 }
 
-function postinfo( $no ) {
+function head( $no ) {
     if ( !valid( 'moderator' ) )
         die( 'AUTOBANMENOW - you' );
     
@@ -40,21 +43,30 @@ function postinfo( $no ) {
     
     $dat .= "</head>
 <body>" . $titlebar . "
-<span class='boardlist'>" . file_get_contents( BOARDLIST ) . " </span>
+<span class='boardlist'>" /*. /file_get_contents( BOARDLIST )*/ . " </span>
 <span class='adminbar'>
 [<a href='" . HOME . "' target='_top'>" . S_HOME . "</a>]
-[<a href='" . PHP_SELF_ABS . "?mode=admin' >" . S_ADMIN . "</a>]
+[<a href='" . PHP_ASELF_ABS . "' >" . S_ADMIN . "</a>]
 </span><span class='delsettings' style='float:right;'/></span>
 <div class='logo'>" . $titlepart . "</div>
 <a href='#top' /></a>
 <div class='headsub' >" . S_HEADSUB . "</div><hr />";
     
-    if ( !$result = mysql_query( "SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'" ) )
+    Echo $dat;
+    echo '<br/ > [<a href="' . PHP_ASELF . '" />Return</a>]';
+	
+}
+
+function postinfo( $no ) {
+
+    
+        if ( !$result = mysql_query( "SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'" ) )
         echo S_SQLFAIL;
     $row = mysql_fetch_row( $result );
     
     list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $resto, $board,  ) = $row;
     
+    head( $dat );
     $dat .= "<table border='solid black 2px' border-collapse='collapse' />";
     /*if ( $resto == 0) {
         
@@ -69,12 +81,7 @@ function postinfo( $no ) {
   <tr><td>Comment:</td><td>$com</td></tr>
   <tr><td>MD5:</td><td>$md5</td></tr>
   <tr><td>File</td>";
-    
-	$dat .= "";
-	
-	if (isset($_REQUEST['test']))
-		echo 'fuark';
-	
+
     if ( $w && $h ) {
         $hasimg = 1;
         $dat .= "<td><img width='" . MAX_W . "' height='" . MAX_H . "' src='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "'/></td></tr>
@@ -101,11 +108,97 @@ function postinfo( $no ) {
     <option value='unlock' />Unlock</option>
     </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'><td> *[Stickying/locking a reply does nothing!]</td></tr></table></form>";
 
-    Echo $dat;
-    echo '<br/ > [<a href="' . PHP_SELF . '?mode=admin" />Return</a>]';
-	
+    echo $dat;
+
 }
 
+function aform( &$dat, $resno, $admin = "" ) {
+    $maxbyte = MAX_KB * 1024;
+
+		if ( valid( 'moderator' ) ) {
+			$name = '<b><font color="770099">Anonymous ## Mod </font></b>';
+            if ( valid( 'admin' ) )
+                $name = '<b><font color="FF101A">Anonymous ## Admin  </font></b>';
+            if ( valid( 'manager' ) )
+                $name = '<b><font color="2E2EFE">Anonymous ## Manager  </font></b>';	
+        }
+        
+        $msg    = "<em>" . S_NOTAGS . ", posting as</em>: " . $name;
+
+    $dat .= $msg . '<div align="center"><div class="postarea">';
+    //$dat .= '<form id="contribform" action="' . PHP_SELF_ABS . '" method="post" name="contrib" enctype="multipart/form-data">';
+
+    
+    //$dat .= "<form action='" . PHP_SELF ."' id='memer' >";
+    $dat .= '<input type="hidden" name="mode" value="regist" />' . $hidden . '<input type="hidden" name="MAX_FILE_SIZE" value="' . $maxbyte . '" />';
+    if ( $no ) {
+        $dat .= '<input type="hidden" name="resto" value="' . $no . '" />';
+    }
+    
+    $dat .= '<table>';
+    if ( !FORCED_ANON )
+        $dat .= '<tr><td class="postblock" align="left">' . S_NAME . '</td><td align="left"><input type="text" name="name" size="28" /></td></tr>';
+    
+    if ( !$resno ) {
+        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /></td></tr>
+                        <tr><td class="postblock" align="left">' . S_SUBJECT . '</td><td align="left"><input type="text" name="sub" size="35" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
+    } else {
+        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
+    }
+    
+    $dat .= '<tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>';
+    
+    $dat .= '<tr><td class="postblock" align="left">' . S_UPLOADFILE . '</td><td><input type="file" name="upfile" accept="image/*" size="35" />';
+
+    
+    if ( SPOILERS ) {
+        $dat .= '[<label><input type=checkbox name=spoiler value=on>' . S_SPOILERS . '</label>]</td></tr>';
+    } else {
+        $dat .= '</td></tr>';
+    }
+    
+        $dat .= '<tr><td align="left" class="postblock" align="left">
+            Options</td><td align="left">
+            Sticky: <input type="checkbox" name="isSticky" value="isSticky" />
+            Lock:<input type="checkbox" name="isLocked" value="isLocked" />
+            Capcode:<input type="checkbox" name="showCap" value="showCap" />
+            <tr><td class="postblock" align="left">' . S_RESNUM . '</td><td align="left"><input type="text" name="resto" size="28" /></td></tr>';
+    
+    $dat .= '<tr><td align="left" class="postblock" align="left">' . S_DELPASS . '</td><td align="left"><input type="password" name="pwd" size="8" maxlength="8" value="" />' . S_DELEXPL . '</td></tr></table></form></div></div>';
+
+    if ( !$resno && !$admin )
+        $news = file_get_contents( GLOBAL_NEWS );
+    if ( $news != '' )
+        $dat .= "<div class=\"globalnews\"/>" . file_get_contents( GLOBAL_NEWS ) . "</div><br /><hr />";
+    
+    //Top thread navigation bar
+    if ( $resno ) {
+        $dat .= "<div class=\"threadnav\" /> [<a href=\"" . PHP_SELF2_ABS . "\">" . S_RETURN . "</a>] [<a href=\"" . $no . PHP_EXT . "#bottom\"/>Bottom</a>] </div> \n<hr />";
+    }
+
+}
+
+function login( $usernm, $passwd ) {
+    $ip     = $_SERVER['REMOTE_ADDR'];
+    $usernm = mysql_real_escape_string( $usernm );
+    $passwd = mysql_real_escape_string( $passwd );
+    
+    $query = mysql_call( "SELECT user,password FROM " . SQLMODSLOG . " WHERE user='$usernm' and password='$passwd'" );
+    
+    if ( $query == 0 or $query == FALSE ) {
+        mysql_call( "INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$usernm','$passwd','" . BOARD_DIR . "','$ip','1')" );
+        error( S_WRONGPASS );
+    }
+    
+    $hacky  = mysql_fetch_array( $query );
+    $usernm = $hacky[0];
+    $passwd = $hacky[1];
+    
+    setcookie( 'saguaro_auser', $usernm, 0 );
+    setcookie( 'saguaro_apass', $passwd, 0 );
+    
+    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "?mode=admin" . "\">";
+}
 
 /*password validation */
 function oldvalid( $pass ) {
@@ -117,17 +210,19 @@ function oldvalid( $pass ) {
         head( $dat );
         echo $dat;
         echo "[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]\n";
-        echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]\n";
+        echo "[<a href=\"" . PHP_ASELF . "\">" . S_LOGUPD . "</a>]\n";
         if ( valid( 'moderator' ) ) {
-            echo "[<a href=\"" . PHP_SELF . "?mode=rebuild\">Rebuild</a>]\n";
-            echo "[<a href=\"" . PHP_SELF . "?mode=rebuildall\">Rebuild all</a>]\n";
+            echo "[<a href=\"" . PHP_ASELF . "?mode=rebuild\">Rebuild</a>]\n";
+            echo "[<a href=\"" . PHP_ASELF . "?mode=rebuildall\">Rebuild all</a>]\n";
         }
-        echo "[<a href=\"" . PHP_SELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
+        echo "[<a href=\"" . PHP_ASELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
         echo "<div class=\"passvalid\">" . S_MANAMODE . "</div>\n";
+        echo "<form action='" . PHP_SELF . "' method='post' id='contrib' >";
     }
-    echo "<p><form action=\"" . PHP_SELF . "\" method=\"post\">\n";
+
     // Mana login form
     if ( !valid( 'janitor_board' ) ) {
+        echo "<p><form action=\"" . PHP_ASELF . "\" method=\"post\">\n";
         echo "<div class=\passvalid\" align=\"center\" vertical-align=\"middle\" >";
         echo "<input type=hidden name=mode value=admin>\n";
         echo "<input type=text name=usernm size=20><br />";
@@ -308,14 +403,14 @@ function admindel( $pass ) {
         echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
         echo "<td>$no</td><td>$resdo</td><td>$now</td><td>$truncsub</td>";
         echo "<td>$truncname</b></td><td>$trunccom</td>";
-        echo "<td class='postimg' >$clip</td><td>" . calculate_age( $time ) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_SELF_ABS . "?mode=ban&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
+        echo "<td class='postimg' >$clip</td><td>" . calculate_age( $time ) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
         echo "</tr>\n";
 
     }
     mysql_free_result( $result );
 	
     echo "<br /><br /><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/img.css' />";
-    foot($dat);
+    //foot($dat);
     $all = (int) ( $all / 1024 );
     echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";
     die( "</body></html>" );
@@ -518,15 +613,9 @@ die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . "
 /* Main switch */
 switch ( $_GET['mode'] ) {
         case 'admin':
-            oldvalid( $pass );
-            form( $post, $res, 1 );
-            echo $post;
-            echo "<form action=\"" . PHP_SELF . "\" method=\"post\">
-            <input type=hidden name=admin value=del checked>";
-            admindel( $pass );
-            die( "</body></html>" );
             break;
-        case 'ban':
+        case 'more':
+            $no = mysql_real_escape_string($_GET['no']);
             postinfo($no);
             break;
         case 'logout':
@@ -544,33 +633,33 @@ switch ( $_GET['mode'] ) {
 			$no = $_GET['no'];
             mysql_call( 'UPDATE ' . SQLLOG . " SET locked='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
             echo "Locking thread $no";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 			break;
         case 'permasage':
 			$no = $_GET['no'];
             mysql_call( 'UPDATE ' . SQLLOG . " SET permasage='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
 			echo "Permasaging $no";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
             break;
         case 'sticky':
 			$no = $_GET['no'];
             $rootnum = "2027-07-07 00:00:00";
             mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='1' , root='" . $rootnum . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-			echo "Stickying thread " . $no;
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			echo "Stickying thread $no";
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 			break;
         case 'unlock':
 			$no = $_GET['no'];
             mysql_call( 'UPDATE ' . SQLLOG . " SET locked='0' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
             echo "Unlocking thread $no";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 			break;
         case 'unsticky':
 			$no = $_GET['no'];
             $rootnum = date('Y-m-d G:i:s');
             mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='0' , root='" . $rootnum . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
             echo "Unstickying thread $no";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 			break;
 		case 'delete':
 			include('imgboard.php');
@@ -581,8 +670,15 @@ switch ( $_GET['mode'] ) {
 			else 
 				$imgonly = 1;
 			delete_post($no, $pwd, $imgonly, 0, 1, 1);
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 		default:
-			break;
+            oldvalid( $pass );
+            aform( $post, $res, 1 );
+            echo $post;
+            echo "<form action=\"" . PHP_ASELF . "\" method=\"post\">
+            <input type=hidden name=admin value=del checked>";
+            admindel( $pass );
+            die( "</body></html>" );
+            break;
     }
 ?>
