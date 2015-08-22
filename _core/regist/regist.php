@@ -258,9 +258,9 @@ if ( !$com || ereg( "^[ |&#12288;|\t]*$", $com ) )
 if ( !$sub || ereg( "^[ |&#12288;|]*$", $sub ) )
     $sub = "";
 
-if ( !$resto && !$textonly && !is_file( $dest ) )
+if ( !$resto && !$textonly && !is_file( $dest ) && !valid( 'moderator' ) )
     error( S_NOPIC, $dest );
-if ( !$com && !is_file( $dest ) )
+if ( !$com && !is_file( $dest ) && !valid( 'moderator' ) )
     error( S_NOTEXT, $dest );
 
 $name = ereg_replace( S_MANAGEMENT, "\"" . S_MANAGEMENT . "\"", $name );
