@@ -2,9 +2,6 @@
 
 require('config.php');
 include(__DIR__.'/lang/language.php');
-define(PHP_ASELF, 'admin.php');
-define(PHP_ASELF_ABS, "http://x4chninf.site.nfoservers.com/saguaro/admin.php");
-
 
 $con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
 
@@ -115,6 +112,9 @@ function postinfo( $no ) {
 function aform( &$dat, $resno, $admin = "" ) {
     $maxbyte = MAX_KB * 1024;
 
+	$upfile_name = $_FILES["upfile"]["name"];
+	$upfile      = $_FILES["upfile"]["tmp_name"];
+	
 		if ( valid( 'moderator' ) ) {
 			$name = '<b><font color="770099">Anonymous ## Mod </font></b>';
             if ( valid( 'admin' ) )
@@ -148,7 +148,7 @@ function aform( &$dat, $resno, $admin = "" ) {
     
     $dat .= '<tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>';
     
-    $dat .= '<tr><td class="postblock" align="left">' . S_UPLOADFILE . '</td><td><input type="file" name="upfile" accept="image/*" size="35" />';
+    $dat .= '<tr><td class="postblock" align="left">' . S_UPLOADFILE . '</td><td><input type="file" name="upfile" accept="image/*" />';
 
     
     if ( SPOILERS ) {
