@@ -14,9 +14,9 @@ $autolock = true;
 $lockout = "." . basename(__FILE__, ".php") . "_lockout";
 
 if (is_file($lockout)) {
-    exit();
+    exit(); //If the lockout file exists, terminate the script. Disregards autolock status.
 } else {
-    //These should be the only things that should be changed without knowing what you're doing, everything that uses them is automated.
+    //These should be the only things changed without knowing what you're doing, everything that uses them is automated.
     $defaults = [ //Default accounts.
                     ['name' => 'admin', 'pass' => 'guest', 'priv' => 'janitor_board,moderator,admin,manager', 'deny' => 'none']
                 ];
@@ -25,6 +25,7 @@ if (is_file($lockout)) {
     $min_gd = '2.0.0';
     $min_mysql = '4.0.0';
 
+    //Point of no return. Casual users shouldn't go past here.
     $success = "<span class='success'>SUCCESS</span><br>";
     $fail = "<span class='fail'>FAIL</span><br>";
 
@@ -37,7 +38,6 @@ if (is_file($lockout)) {
             .fail { color:red;font-weight:bold; }
             .info { border-bottom: 1px dotted; } ";
 
-    //Point of no return.
     echo "<style>$css</style>";
 
     //Lock out.
@@ -45,8 +45,12 @@ if (is_file($lockout)) {
 
     if ($autolock) {
         touch($lockout);
-        $log .= "For security, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br><br>";
+        $log .= "For security, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br>";
+    } else {
+        $log .= "Auto-lock is <strong>disabled</strong>. Default account passwords will not be diplayed during creation.<br>";
     }
+
+    $log .= "<br>";
 
     $config_good = false;
     $mysql_good = false;
@@ -181,7 +185,7 @@ if (is_file($lockout)) {
                     mysqli_free_result($exists);
                 }
 
-                echo "<br>Adding default accounts:<br>";
+                echo "<br>Creating default accounts:<br>";
 
                 foreach ($defaults as $account) {
                     $pass = ($autolock === true) ? "<span class='spoiler'>" . $account['pass'] . "</span>" : "";
