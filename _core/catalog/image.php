@@ -4,6 +4,7 @@
     Formats images for OPs and replies.
 
     Shouldn't be used without a parent (post.php).
+    Also needs to be cleaned up.
 
 */
 
@@ -26,11 +27,15 @@ class Image {
         $longname  = $fname;
         $shortname = ( strlen( $fname ) > 40 ) ? substr( $fname, 0, 40 ) . "(...)" . $ext : $longname;
         // img tag creation
-        $imgsrc    = "";
-        if ( $ext ) {
-            // turn the 32-byte ascii md5 into a 24-byte base64 md5
-            $shortmd5 = base64_encode( pack( "H*", $md5 ) );
-            
+        $imgsrc    = "$no";
+        
+        // if ($ext) ?
+
+        if (is_file(THUMB_DIR . $tim . 's.jpg')) {
+            //Start by determing if the file actually exists, if so continue here.
+
+            $shortmd5 = base64_encode(pack("H*", $md5)); // turn the 32-byte ascii md5 into a 24-byte base64 md5
+
             if ($fsize >= 1048576)
                 $size = round(($fsize / 1048576), 2) . " M";
             else if ($fsize >= 1024)
@@ -38,12 +43,13 @@ class Image {
             else
                 $size = $fsize . " ";
 
-            if ( !$tn_w && !$tn_h && $ext == ".gif" ) {
+            if (!$tn_w && !$tn_h && $ext == ".gif") {
                 $tn_w = $w;
                 $tn_h = $h;
             }
-            if ( $spoiler ) {
-                $imgsrc = "<img src=\"" . SPOILER_THUMB . "\" border=0   alt=\"" . $size . "B\" md5=\"$shortmd5\">";
+
+            if ($spoiler) {
+                $imgsrc = "<img src='" . SPOILER_THUMB . "' border='0'   alt='" . $size . "B' md5='$shortmd5'>";
             } elseif ( $tn_w && $tn_h ) { //when there is size...
                 if ( @is_file( THUMB_DIR . $tim . 's.jpg' ) ) {
                     $imgsrc = "<img class='postimg hi' src='" . $thumbdir . $tim . 's.jpg' . "' border='0'  width='$tn_w' height='$tn_h'  alt='" . $size . "B' md5='$shortmd5'>";
@@ -57,9 +63,12 @@ class Image {
                     $imgsrc = "<span class='tn_thread' title=''" . $size . "B'>Thumbnail unavailable</span>";
                 }
             }
-            
-            return "<a href='" . RES_DIR . $no /* . PHP_EXT  */ . "#" . $no . "'>" . $imgsrc . "</a>";
+        } else {
+            //Thumbnail does not exist, continue here.
+            $imgsrc = "<div>File deleted/unavailable.</div>";
         }
+
+        return "<a href='" . RES_DIR . $no /* . PHP_EXT  */ . "#" . $no . "'>" . $imgsrc . "</a>";
     }
 }
 
