@@ -166,8 +166,8 @@ if (is_file($lockout)) {
                     SQLBANLOG => "ip VARCHAR(25) PRIMARY KEY, pubreason VARCHAR(250), staffreason VARCHAR(250), banlength VARCHAR(250), placedOn VARCHAR(50), board VARCHAR(50)",
                     SQLMODSLOG => "user VARCHAR(25) PRIMARY KEY, password  VARCHAR(250), allowed  VARCHAR(250), denied  VARCHAR(250)",
                     SQLDELLOG => "postno VARCHAR(250) PRIMARY KEY, imgonly VARCHAR(25), board VARCHAR(250), name VARCHAR(250), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . "), img VARCHAR(250), filename VARCHAR(250), admin VARCHAR(100)", //Why does S_POSTLENGTH start with S_?
-                    SQLREPORT => "no VARCHAR(25) PRIMARY KEY, reason  VARCHAR(250), ip VARCHAR(250), board VARCHAR(250)",
-                    SQLLOGINS => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)"
+                    "reports" => "no VARCHAR(25) PRIMARY KEY, reason  VARCHAR(250), ip VARCHAR(250), board VARCHAR(250)",
+                    "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)"
                 ];
 
                 foreach ($tables as $table => $query) {
@@ -246,9 +246,4 @@ if (is_file($lockout)) {
         "<strong>Additional Resources:</strong><br>MySQL error codes: <ul><li><a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999)</li><li><a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)</li></ul>" .
         "</div>";
 }
-
-function remove() {
-    
-}
-
 ?>
