@@ -3,6 +3,7 @@
 require('config.php');
 include(__DIR__.'/lang/language.php');
 
+
 $con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
 
 if ( !$con ) {
@@ -109,65 +110,6 @@ function postinfo( $no ) {
 
 }
 
-function aform( &$dat, $resno, $admin = "" ) {
-    $maxbyte = MAX_KB * 1024;
-
-	$upfile_name = $_FILES["upfile"]["name"];
-	$upfile      = $_FILES["upfile"]["tmp_name"];
-	
-		if ( valid( 'moderator' ) ) {
-			$name = '<b><font color="770099">Anonymous ## Mod </font></b>';
-            if ( valid( 'admin' ) )
-                $name = '<b><font color="FF101A">Anonymous ## Admin  </font></b>';
-            if ( valid( 'manager' ) )
-                $name = '<b><font color="2E2EFE">Anonymous ## Manager  </font></b>';	
-        }
-        
-        $msg    = "<em>" . S_NOTAGS . ", posting as</em>: " . $name;
-
-    $dat .= $msg . '<div align="center"><div class="postarea">';
-    //$dat .= '<form id="contribform" action="' . PHP_SELF_ABS . '" method="post" name="contrib" enctype="multipart/form-data">';
-
-    
-    //$dat .= "<form action='" . PHP_SELF ."' id='memer' >";
-    $dat .= '<input type="hidden" name="mode" value="regist" />' . $hidden . '<input type="hidden" name="MAX_FILE_SIZE" value="' . $maxbyte . '" />';
-    if ( $no ) {
-        $dat .= '<input type="hidden" name="resto" value="' . $no . '" />';
-    }
-    
-    $dat .= '<table>';
-    if ( !FORCED_ANON )
-        $dat .= '<tr><td class="postblock" align="left">' . S_NAME . '</td><td align="left"><input type="text" name="name" size="28" /></td></tr>';
-    
-    if ( !$resno ) {
-        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /></td></tr>
-                        <tr><td class="postblock" align="left">' . S_SUBJECT . '</td><td align="left"><input type="text" name="sub" size="35" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
-    } else {
-        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
-    }
-    
-    $dat .= '<tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>';
-    
-    $dat .= '<tr><td class="postblock" align="left">' . S_UPLOADFILE . '</td><td><input type="file" name="upfile" accept="image/*" />';
-
-    
-    if ( SPOILERS ) {
-        $dat .= '[<label><input type=checkbox name=spoiler value=on>' . S_SPOILERS . '</label>]</td></tr>';
-    } else {
-        $dat .= '</td></tr>';
-    }
-    
-        $dat .= '<tr><td align="left" class="postblock" align="left">
-            Options</td><td align="left">
-            Sticky: <input type="checkbox" name="isSticky" value="isSticky" />
-            Lock:<input type="checkbox" name="isLocked" value="isLocked" />
-            Capcode:<input type="checkbox" name="showCap" value="showCap" />
-            <tr><td class="postblock" align="left">' . S_RESNUM . '</td><td align="left"><input type="text" name="resto" size="28" /></td></tr>';
-    
-    $dat .= '<tr><td align="left" class="postblock" align="left">' . S_DELPASS . '</td><td align="left"><input type="password" name="pwd" size="8" maxlength="8" value="" />' . S_DELEXPL . '</td></tr></table></form></div></div>';
-
-}
-
 function login( $usernm, $passwd ) {
     $ip     = $_SERVER['REMOTE_ADDR'];
     $usernm = mysql_real_escape_string( $usernm );
@@ -245,6 +187,7 @@ function admindel( $pass ) {
         $find = FALSE;
         
         while ( $row = mysql_fetch_row( $result ) ) {
+            require_once(PHP_SELF);
             list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize,  ) = $row;
             if ( $onlyimgdel == on ) {
                 /*if ( array_search( $no, $delno ) ) { //only a picture is deleted
@@ -276,6 +219,7 @@ function admindel( $pass ) {
                     unlink( THUMB_DIR . $tim . 's.jpg' ); //Delete*/
                 }
             }
+            echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF_ABS . "\">";
         }
         /*		mysql_free_result( $result );
         if ( $find ) { //log renewal
@@ -400,9 +344,9 @@ function admindel( $pass ) {
     mysql_free_result( $result );
 	
     echo "<br /><br /><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/img.css' />";
-    //foot($dat);
+/*    //foot($dat);
     $all = (int) ( $all / 1024 );
-    echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";
+    echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";*/
     die( "</body></html>" );
 }
 
@@ -507,48 +451,6 @@ if (!function_exists(mysql_call)) {
 	}
 }
 
-function rebuild( $all = 0 ) {
-    if ( !valid( 'moderator' ) )
-        die( 'Update failed...' );
-    
-    header( "Pragma: no-cache" );
-    echo "Rebuilding ";
-    if ( $all ) {
-        echo "all";
-    } else {
-        echo "missing";
-    }
-    echo " replies and pages... <a href=\"" . PHP_SELF2_ABS . "\">Go back</a><br><br>\n";
-    ob_end_flush();
-    $starttime = microtime( true );
-    if ( !$treeline = mysql_call( "select no,resto from " . SQLLOG . " where root>0 order by root desc" ) ) {
-        echo S_SQLFAIL;
-    }
-    log_cache();
-    echo "Writing...\n";
-    if ( $all || !defined( 'CACHE_TTL' ) ) {
-        while ( list( $no, $resto ) = mysql_fetch_row( $treeline ) ) {
-            if ( !$resto ) {
-                updatelog( $no, 1 );
-                echo "No.$no created.<br>\n";
-            }
-        }
-        updatelog();
-        echo "Index pages created.<br>\n";
-    } else {
-        $posts = rebuildqueue_take_all();
-        foreach ( $posts as $no ) {
-            $deferred = ( updatelog( $no, 1 ) ? ' (deferred)' : '' );
-            if ( $no )
-                echo "No.$no created.$deferred<br>\n";
-            else
-                echo "Index pages created.$deferred<br>\n";
-        }
-    }
-    $totaltime = microtime( true ) - $starttime;
-    echo "<br>Time elapsed (lock excluded): $totaltime seconds", "<br>Pages created.<br><br>\nRedirecting back to board.\n<META HTTP-EQUIV=\"refresh\" content=\"10;URL=" . PHP_SELF2 . "\">";
-}
-
 /*
 function ban($no) {
 
@@ -617,14 +519,6 @@ switch ( $_GET['mode'] ) {
         case 'zmdlog':
             login( $_POST['usernm'], $_POST['passwd'] );
             break;
-        case 'rebuild':
-            include(PHP_SELF);
-            rebuild();
-            break;
-        case 'rebuildall':
-            include(PHP_SELF);
-            rebuild( 1 );
-            break;
         case 'lock':
 			$no = $_GET['no'];
             mysql_call( 'UPDATE ' . SQLLOG . " SET locked='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
@@ -658,19 +552,17 @@ switch ( $_GET['mode'] ) {
 			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 			break;
 		case 'delete':
-			include('imgboard.php');
+/*			include('imgboard.php');
 			$no = $_GET['no'];
 			$action = $_GET['action'];
 			if ( $action = 'This+post') 
 				$imgonly = 0;
 			else 
-				$imgonly = 1;
+				$imgonly = 1;*/
 			delete_post($no, $pwd, $imgonly, 0, 1, 1);
 			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 		default:
             oldvalid( $pass );
-            aform( $post, $res, 1 );
-            echo $post;
             echo "<form action=\"" . PHP_ASELF . "\" method=\"post\">
             <input type=hidden name=admin value=del checked>";
             admindel( $pass );
