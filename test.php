@@ -17,6 +17,9 @@ if (is_file($lockout)) {
     exit();
 } else {
     //These should be the only things that should be changed without knowing what you're doing, everything that uses them is automated.
+    $defaults = [ //Default accounts.
+                    ['name' => 'admin', 'pass' => 'guest', 'priv' => 'janitor_board,moderator,admin,manager', 'deny' => 'none']
+                ];
     $config = "config.php";
     $min_php = '4.2.0';
     $min_gd = '2.0.0';
@@ -180,12 +183,9 @@ if (is_file($lockout)) {
 
                 echo "<br>Adding default accounts:<br>";
 
-                $defaults = [
-                    ['name' => 'admin', 'pass' => 'guest', 'priv' => 'janitor_board,moderator,admin,manager', 'deny' => 'none']
-                ];
-
                 foreach ($defaults as $account) {
-                    echo "<strong>" . $account['name'] . "</strong> <span class='spoiler'>" . $account['pass'] . "</span> (<span class='info' title='Privileges'>" . $account['priv'] . "</span> / <span class='info' title='Denied'>" . $account['deny'] . "</span>) ";
+                    $pass = ($autolock === true) ? "<span class='spoiler'>" . $account['pass'] . "</span>" : "";
+                    echo "<strong>" . $account['name'] . "</strong> $pass (<span class='info' title='Privileges'>" . $account['priv'] . "</span> / <span class='info' title='Denied'>" . $account['deny'] . "</span>) ";
                     $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('" . $account['name'] . "', '" . $account['pass'] . "', '" . $account['priv'] . "', '" . $account['deny'] . "')");
 
                     $unfail = (mysqli_errno($mysqli) == 1062) ? "<span class='fail'>ALREADY EXISTS</span><br>" : $fail;
