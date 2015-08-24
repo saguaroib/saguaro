@@ -50,7 +50,7 @@ class Fortune {
         return $out;
     }
 
-    function giveFortune($mod) {
+    function giveFortune(/*$mod*/) {
         //Integrate shell fortune/fortune-mod?
 
         return $this->format();
