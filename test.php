@@ -35,7 +35,7 @@ if (is_file($lockout)) {
             .spoiler { color:#000; background-color:#000; border-radius:8px; padding: 0 5px; }
             .spoiler:hover { color:#fff; }
             .success { color:green;font-weight:bold; }
-            .fail { color:red;font-weight:bold; }
+            .fail { color:#B20;font-weight:bold; }
             .info { border-bottom: 1px dotted; } ";
 
     echo "<style>$css</style>";
