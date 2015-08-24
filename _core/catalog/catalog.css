@@ -14,7 +14,7 @@
 .catalog_item > a {
     min-height: 50px;
     border: 1px solid #A1A1A1;
-    display:block;
+    display:inline-block;
 }
 
 .catalog_item .stats {
