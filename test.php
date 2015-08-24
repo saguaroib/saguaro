@@ -209,6 +209,12 @@ if (is_file($lockout)) {
     if (!$config_good) {
         echo "Config was not loaded, cannot validate install files.";
     } else {
+        if (!is_dir(CORE_DIR)) {
+            echo "<strong>" . CORE_DIR . "</strong> does not exist or could not be located relative to $mydir. $fail";
+        } else {
+            echo "<strong>" . CORE_DIR . "</strong> exists.<br>";
+        }
+
         $folders = [RES_DIR, IMG_DIR, THUMB_DIR];
 
         foreach ($folders as $dir) {
