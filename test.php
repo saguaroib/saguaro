@@ -22,19 +22,24 @@ if (is_file($lockout)) {
     $min_gd = '2.0.0';
     $min_mysql = '4.0.0';
 
-    $success = "<span style='color:green;font-weight:bold;'>SUCCESS</span><br>";
-    $fail = "<span style='color:red;font-weight:bold;'>FAIL</span><br>";
+    $success = "<span class='success'>SUCCESS</span><br>";
+    $fail = "<span class='fail'>FAIL</span><br>";
 
     $css = "body { background-color:#EEF2FF; } #title { font-size:xx-large; text-align:center; font-weight:bold; font-style: italic; }
             .extra { /*width:49%; display:inline-block;*/ } .box { background-color:#D6DAF0; padding:10px; border-radius:10px; margin: 2%; }
-            ul { margin: 5px 0px; }";
+            ul { margin: 5px 0px; }
+            .spoiler { color:#000; background-color:#000; border-radius:8px; padding: 0 5px; }
+            .spoiler:hover { color:#fff; }
+            .success { color:green;font-weight:bold; }
+            .fail { color:red;font-weight:bold; }
+            .info { border-bottom: 1px dotted; } ";
 
     //Point of no return.
     echo "<style>$css</style>";
 
     //Lock out.
     $mydir = "(" . dirname(__FILE__) . ")";
-    
+
     if ($autolock) {
         touch($lockout);
         $log .= "For security, <strong>\"$lockout\"</strong> has been created in the same directory $mydir and this script <strong>will not function again until it is deleted.</strong><br><br>";
@@ -173,9 +178,20 @@ if (is_file($lockout)) {
                     mysqli_free_result($exists);
                 }
 
-                echo "Adding default account, <strong>admin : guest</strong>... ";
-                $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('admin', 'guest', 'janitor_board,moderator,admin,manager', 'none')");
-                echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $fail;
+                echo "<br>Adding default accounts:<br>";
+
+                $defaults = [
+                    ['name' => 'admin', 'pass' => 'guest', 'priv' => 'janitor_board,moderator,admin,manager', 'deny' => 'none']
+                ];
+
+                foreach ($defaults as $account) {
+                    echo "<strong>" . $account['name'] . "</strong> <span class='spoiler'>" . $account['pass'] . "</span> (<span class='info' title='Privileges'>" . $account['priv'] . "</span> / <span class='info' title='Denied'>" . $account['deny'] . "</span>) ";
+                    $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('" . $account['name'] . "', '" . $account['pass'] . "', '" . $account['priv'] . "', '" . $account['deny'] . "')");
+
+                    $unfail = (mysqli_errno($mysqli) == 1062) ? "<span class='fail'>ALREADY EXISTS</span><br>" : $fail;
+                    echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $unfail;
+                }
+
             }
         }
 
