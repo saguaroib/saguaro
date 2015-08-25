@@ -378,7 +378,87 @@ function print_page( $filename, $contents, $force_nogzip = 0 ) {
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
 function valid( $action = 'moderator', $no = 0 ) {
-	require_once("_core/admin/validate.php");
+    static $valid_cache; // the access level of the user
+    $access_level = array(
+         'none' => 0,
+        'janitor' => 1,
+        'janitor_this_board' => 2,
+        'moderator' => 5,
+        'manager' => 10,
+        'admin' => 20 
+    );
+    if ( !isset( $valid_cache ) ) {
+        $valid_cache = $access_level['none'];
+        if ( isset( $_COOKIE['saguaro_auser'] ) && isset( $_COOKIE['saguaro_apass'] ) ) {
+            $user = mysql_real_escape_string( $_COOKIE['saguaro_auser'] );
+            $pass = mysql_real_escape_string( $_COOKIE['saguaro_apass'] );
+        }
+        if ( $user && $pass ) {
+            $result = mysql_call( "SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'" );
+            list( $allow, $deny ) = mysql_fetch_row( $result );
+            mysql_free_result( $result );
+            if ( $allow ) {
+                $allows             = explode( ',', $allow );
+                $seen_janitor_token = false;
+                // each token can increase the access level,
+                // except that we only know that they're a moderator or a janitor for another board
+                // AFTER we read all the tokens
+                foreach ( $allows as $token ) {
+                    if ( $token == 'janitor' )
+                        $seen_janitor_token = true;
+                  /*  else if ( $token == 'manager' && $valid_cache < $access_level['manager'] )
+                        $valid_cache = $access_level['manager'];*/
+                    else if ( $token == 'admin' && $valid_cache < $access_level['admin'] )
+                        $valid_cache = $access_level['admin'];
+                    else if ( ( $token == BOARD_DIR || $token == 'all' ) && $valid_cache < $access_level['janitor_this_board'] )
+                        $valid_cache = $access_level['janitor_this_board']; // or could be moderator, will be increased in next step
+                }
+                // now we can set moderator or janitor status 
+                if ( !$seen_janitor_token ) {
+                    if ( $valid_cache < $access_level['moderator'] )
+                        $valid_cache = $access_level['moderator'];
+                } else {
+                    if ( $valid_cache < $access_level['janitor'] )
+                        $valid_cache = $access_level['janitor'];
+                }
+                if ( $deny ) {
+                    $denies = explode( ',', $deny );
+                    if ( in_array( BOARD_DIR, $denies ) ) {
+                        $valid_cache = $access_level['none'];
+                    }
+                }
+            }
+        }
+    }
+    switch ( $action ) {
+        case 'moderator':
+            return $valid_cache >= $access_level['moderator'];
+        case 'admin':
+            return $valid_cache >= $access_level['admin'];
+        case 'textonly':
+            return $valid_cache >= $access_level['moderator'];
+        case 'janitor_board':
+            return $valid_cache >= $access_level['janitor'];
+        /*case 'manager':
+            return $valid_cache >= $access_level['manager'];*/
+        case 'delete':
+            if ( $valid_cache >= $access_level['janitor_this_board'] ) {
+                return true;
+            }
+            // if they're a janitor on another board, check for illegal post unlock			
+            else if ( $valid_cache >= $access_level['janitor'] ) {
+                $query         = mysql_call( "SELECT COUNT(*) from reports WHERE board='" . BOARD_DIR . "' AND no=$no AND cat=2" );
+                $illegal_count = mysql_result( $query, 0, 0 );
+                mysql_free_result( $query );
+                return $illegal_count >= 3;
+            }
+        case 'reportflood':
+            return $valid_cache >= $access_level['janitor'];
+        case 'floodbypass':
+            return $valid_cache >= $access_level['moderator'];
+        default: // unsupported action
+            return false;
+    }
 }
 
 function spoiler_parse( $com ) {
@@ -1271,92 +1351,7 @@ function CleanStr( $str ) {
 // die: whether to die on error
 // careful, setting children to 0 could leave orphaned posts.
 function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 ) {
-    global $log, $path;
-    log_cache();
-    $resno = intval( $resno );
-    
-    // get post info
-    if ( !isset( $log[$resno] ) ) {
-        if ( $die )
-            error( "Can't find the post $resno." );
-    }
-    $row = $log[$resno];
-    
-    // check password- if not ok, check admin status (and set $admindel if allowed)
-    $delete_ok = ( $automatic || ( substr( md5( $pwd ), 2, 8 ) == $row['pwd'] ) || ( $row['host'] == $_SERVER['REMOTE_ADDR'] ) );
-    if ( valid( 'janitor_board' ) ) {
-        $delete_ok = $admindel = valid( 'delete', $resno );
-    }
-    if ( !$delete_ok )
-        error( S_BADDELPASS );
-    
-    // check ghost bumping
-    if ( !isset( $admindel ) || !$admindel ) {
-        if ( BOARD_DIR == 'a' && (int) $row['time'] > ( time() - 25 ) && $row['email'] != 'sage' ) {
-            $ghostdump = var_export( array(
-                 'server' => $_SERVER,
-                'post' => $_POST,
-                'cookie' => $_COOKIE,
-                'row' => $row 
-            ), true );
-            //file_put_contents('ghostbump.'.time(),$ghostdump);
-        }
-    }
-    
-    if ( isset( $admindel ) && $admindel ) { // extra actions for admin user
-        $auser   = mysql_real_escape_string( $_COOKIE['saguaro_auser'] );
-        $adfsize = ( $row['fsize'] > 0 ) ? 1 : 0;
-        $adname  = str_replace( '</span> <span class="postertrip">!', '#', $row['name'] );
-        if ( $imgonly ) {
-            $imgonly = 1;
-        } else {
-            $imgonly = 0;
-        }
-        $row['sub']      = mysql_real_escape_string( $row['sub'] );
-        $row['com']      = mysql_real_escape_string( $row['com'] );
-        $row['filename'] = mysql_real_escape_string( $row['filename'] );
-        mysql_call( "INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . SQLLOG . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')" );
-    }
-    
-    if ( $row['resto'] == 0 && $children && !$imgonly ) // select thread and children
-        $result = mysql_call( "select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno" );
-    else // just select the post
-        $result = mysql_call( "select no,resto,tim,ext from " . SQLLOG . " where no=$resno" );
-    
-    while ( $delrow = mysql_fetch_array( $result ) ) {
-        // delete
-        $delfile  = $path . $delrow['tim'] . $delrow['ext']; //path to delete
-        $delthumb = THUMB_DIR . $delrow['tim'] . 's.jpg';
-        if ( is_file( $delfile ) )
-            unlink( $delfile ); // delete image
-        if ( is_file( $delthumb ) )
-            unlink( $delthumb ); // delete thumb
-        if ( OEKAKI_BOARD == 1 && is_file( $path . $delrow['tim'] . '.pch' ) )
-            unlink( $path . $delrow['tim'] . '.pch' ); // delete oe animation
-        if ( !$imgonly ) { // delete thread page & log_cache row
-            if ( $delrow['resto'] )
-                unset( $log[$delrow['resto']]['children'][$delrow['no']] );
-            unset( $log[$delrow['no']] );
-            $log['THREADS'] = array_diff( $log['THREADS'], array(
-                 $delrow['no'] 
-            ) ); // remove from THREADS
-            mysql_call( "DELETE FROM reports WHERE no=" . $delrow['no'] ); // clear reports
-            if ( USE_GZIP == 1 ) {
-                @unlink( RES_DIR . $delrow['no'] . PHP_EXT );
-                @unlink( RES_DIR . $delrow['no'] . PHP_EXT . '.gz' );
-            } else {
-                @unlink( RES_DIR . $delrow['no'] . PHP_EXT );
-            }
-        }
-    }
-    
-    //delete from DB
-    if ( $row['resto'] == 0 && $children && !$imgonly ) // delete thread and children
-        $result = mysql_call( "delete from " . SQLLOG . " where no=$resno or resto=$resno" );
-    elseif ( !$imgonly ) // just delete the post
-        $result = mysql_call( "delete from " . SQLLOG . " where no=$resno" );
-    
-    return $row['resto']; // so the caller can know what pages need to be rebuilt
+    require_once("_core/del/deletepost.php");
 }
 
 /* user image deletion */
