@@ -5,6 +5,7 @@
       
 */
 
+if ($_SERVER['SCRIPT_FILENAME'] !== __FILE__) {
 
     static $valid_cache; // the access level of the user
     $access_level = array(
@@ -87,6 +88,7 @@
         default: // unsupported action
             return false;
     }
+    
 }
 
 ?>
