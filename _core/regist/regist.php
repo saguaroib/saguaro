@@ -94,7 +94,7 @@ if ( $has_image ) {
     if ( ENABLE_PDF == 1 && strcasecmp( '.pdf', substr( $upfile_name, -4 ) ) == 0 ) {
         $ext = '.pdf';
         $W   = $H = 1;
-        $md5 = md5_of_file( $dest );
+        $md5 = md5_file( $dest );
         // run through ghostscript to check for validity
         if ( pclose( popen( "/usr/local/bin/gs -q -dSAFER -dNOPAUSE -dBATCH -sDEVICE=nullpage $dest", 'w' ) ) ) {
             error( S_UPFAIL, $dest );
@@ -103,7 +103,7 @@ if ( $has_image ) {
         $size = getimagesize( $dest );
         if ( !is_array( $size ) )
             error( S_NOREC, $dest );
-        $md5 = md5_of_file( $dest );
+        $md5 = md5_file( $dest );
         
         //chmod($dest,0666);
         $W = $size[0];
