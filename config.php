@@ -28,7 +28,6 @@ define(PREFIX, 'imgboard'); //Prefix to automatically use for the database table
 */
 
 define(PANEL_PASS, 'CHANGEME');  //Janitor password  (CHANGE THIS YO)
-define(BOARD_DIR, 'saguaro');    //Folder name of board, EX: /ba/ would be ba
 define(SITE_ROOT, 'MYSITE.COM'); //simplified site domain ONLY, EX: saguaro.org
 define(SITE_SUFFIX, '');         //Domain suffix, ex: org, com, info, net. NO DOTS, ONLY LETTERS
 define(BOARDLIST, 'CHANGEME');   //the file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
@@ -144,6 +143,7 @@ define(SQLMODSLOG, PREFIX.'_mod'); //Table for mod information (authentication).
 define(SQLDELLOG, PREFIX.'_del');  //Table for deleted information.
 
 //URL pathing.
+define(BOARD_DIR, basename(__DIR__)); //Folder name of board, EX: /ba/ would be ba. Defaults to the current folder's name.
 define(PHP_EXT, '.html');           //Extension used for board pages after first
 define(PHP_SELF, 'imgboard.php');   //Name of main script file
 define(PHP_SELF2, 'index'.PHP_EXT); //Name of main htm file
