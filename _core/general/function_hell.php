@@ -2,7 +2,7 @@
 
 /*
 
-    These functions are not ever called, but kept for no reason.
+    These functions are never EVER called, but kept for no reason.
 
 */
 
