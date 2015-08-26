@@ -81,7 +81,7 @@ function thumb( $path, $tim, $ext ) {
         $out_h = $size[1];
     }
     // the thumbnail is created
-    if ( function_exists( "ImageCreateTrueColor" ) && get_gd_ver() == "2" ) {
+    if ( function_exists( "ImageCreateTrueColor" ) ) {
         $im_out = ImageCreateTrueColor( $out_w, $out_h );
     } else {
         $im_out = ImageCreate( $out_w, $out_h );
