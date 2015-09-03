@@ -112,8 +112,7 @@ if (is_file($lockout)) {
             ];
 
         //Check GD version.
-        $gd_ver = preg_match("/(?:\d\.?)+/", gd_info()["GD Version"], $match);
-        $gd_ver = $match[0];
+        $gd_ver = (function_exists('gd_info')) ? preg_match("/(?:\d\.?)+/", gd_info()["GD Version"], $match[0]) : 0;
         $tests["GD version"] =
             [
                 "current" => (function_exists("gd_info")) ? $gd_ver : 0,
