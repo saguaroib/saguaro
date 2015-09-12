@@ -64,13 +64,7 @@ function postinfo( $no ) {
     
     head( $dat );
     $dat .= "<table border='solid black 2px' border-collapse='collapse' />";
-    /*if ( $resto == 0) {
-        
-		$dat .= "<tr><td>Post number:</td><td><b>OP POST(<a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "'/>$no</a>)</b></td></tr>";
-    } else {
-        $dat .= "<tr><td>Post number:</td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "'/>$no</a></td></tr>
-		";
-	}*/
+	$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br>";
     $dat .= "<tr><td>Name:</td><td>$name</td></tr>
   <tr><td>Date:</td><td>$now</td></tr>
   <tr><td>IP</td><td>$host</td></tr>
@@ -95,7 +89,7 @@ function postinfo( $no ) {
     <input type='submit' name='action' value='Image only' /><br />
     <input type='submit' name='action' value='All by IP' /><br /></td></tr></table></form>";
 	
-    if ($resto) {
+    if (!$resto) {
         $dat .= "<br /><br /><table><form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
         <tr><td>Action</td><td><td><select name='mode' />
         <option value='sticky' />Sticky</option>
@@ -103,8 +97,10 @@ function postinfo( $no ) {
         <option value='permasage' />Permasage</option>
         <option value='unsticky' />Unsticky</option>
         <option value='unlock' />Unlock</option>
-        </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'><td> *[Stickying/locking a reply does nothing!]</td></tr></table></form>";
+        </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'><td></td></tr></table></form>";
     }
+		$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br>";
+
     echo $dat;
 
 }
