@@ -261,7 +261,7 @@ function print_page( $filename, $contents, $force_nogzip = 0 ) {
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
 function valid( $action = 'moderator', $no = 0 ) {
-	require_once("_core/del/deletepost.php");
+	require_once("_core/admin/validate.php");
 }
 
 function spoiler_parse( $com ) {
@@ -822,7 +822,7 @@ function head( &$dat ) {
 <span class="boardlist">' . file_get_contents( BOARDLIST ) . ' </span>
 <span class="adminbar">
 [<a href="' . HOME . '" target="_top">' . S_HOME . '</a>]
-[<a href="' . PHP_ASELF_ABS . '?mode=admin">' . S_ADMIN . '</a>]
+[<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
 </span>
 <div class="logo">' . $titlepart . '</div>
 <a href="#top" /></a>
