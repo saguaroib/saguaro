@@ -19,8 +19,11 @@ This has been cobbled together from stuff I myself have written and the contribu
 #Testing and Development
 - Setting up a basic [Development Environment.](//github.com/spootTheLousy/saguaro/wiki/Development-Environment)
 
+#Contributing
+- Check out our [Wiki Page on contributing and standards](//github.com/spootTheLousy/saguaro/wiki/Contributing)
+
 #Additional support
 - [The Wiki](//github.com/spootTheLousy/saguaro/wiki)
 - #saguaroimgboard @ irc.rizon.net
 
-Last updated: July 9th, 2015
+Last updated: September 12th, 2015
