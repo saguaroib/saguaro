@@ -1125,7 +1125,7 @@ function auto_link( $proto, $resno ) {
 }
 
 /* Regist */
-function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $resto, $num ) {
+function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $resto ) {
     require_once("_core/regist/regist.php");
 }
 
@@ -1402,7 +1402,7 @@ function rebuild( $all = 0 ) {
 /*-----------Main-------------*/
 switch ( $mode ) {
     case 'regist':
-        regist( $name, $email, $sub, $com, '', $pwd, $upfile, $upfile_name, $resto, $num );
+        regist( $name, $email, $sub, $com, '', $pwd, $upfile, $upfile_name, $resto );
         break;
     case 'rebuild':
         rebuild();
