@@ -56,7 +56,7 @@ class PostForm {
             $temp .= "<tr><td class='postblock' align='left'><img src='" . PLUG_PATH . "/php_captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
 
         //File selection
-        $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*' size='35'>";
+        $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*|.webm' size='35'>";
 
         if (NOPICBOX && !SPOILERS)
             $temp .= "[<label><input type='checkbox' name='textonly' value='on'>" . S_NOFILE . "</label>]</td></tr>";
