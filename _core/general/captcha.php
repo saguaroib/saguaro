@@ -3,13 +3,13 @@
 /*
 
     CAPTCHA.
-    
-    TO-DO: Not this, at all. Switch to recaptcha or something. - RePod.
-    Increasing difficulty for humans with no real stats for bots.
-    
+
     If accessed directly, the captcha image will be generated and stores the generated code in the session.
     
-    A lot more secure than before as validation is handled by the class entirely (and cannot be modified).
+    $captcha = new Captcha;
+    if ($captcha->isValid()) { }
+    
+    TO-DO: Not this, at all. Switch to recaptcha or something.
 
 */
 
