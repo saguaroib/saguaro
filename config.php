@@ -86,7 +86,7 @@ define(FORTUNE_TRIP, true); //Allows users to recieve a #fortune in the namefiel
 
 //Images
 define(DUPE_CHECK, true); //whether or not to check for duplicate images
-define(MAX_KB, 5048); //Maximum upload size in KB
+define(MAX_KB, 2048); //Maximum upload size in KB
 
 //RePod's JS suite
 define(USE_JS_SETTINGS, 1); //Include the JS suite's settings - enables user side settings
