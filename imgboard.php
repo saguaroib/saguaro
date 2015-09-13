@@ -916,97 +916,10 @@ function head( &$dat ) {
 }
 
 /* Contribution form */
-function form( &$dat, $resno, $admin = "" ) {
-    $maxbyte = MAX_KB * 1024;
-    $no      = $resno;
-    if ( $resno ) {
-        $msg .= "<div class=\"theader\">" . S_POSTING . "</div>\n";
-    }
-    if ( $admin ) {
-		if ( valid( 'moderator' ) ) {
-			$name = '<b><font color="770099">Anonymous ## Mod </font></b>';
-        if ( valid( 'admin' ) )
-            $name = '<b><font color="FF101A">Anonymous ## Admin  </font></b>';
-        if ( valid( 'manager' ) )
-            $name = '<b><font color="2E2EFE">Anonymous ## Manager  </font></b>';	
-    }
-		
-        $hidden = "<input type=hidden name=admin value=\"" . PANEL_PASS . "\">";
-        $msg    = "<em>" . S_NOTAGS . ", posting as</em>: " . $name;
-    }
-    $dat .= $msg . '<div align="center"><div class="postarea">';
-    /*if ($mobileClient) {
-    $dat .= '<form id="contribform" style="display:none;" action="' . PHP_SELF_ABS . '" method="post" name="contrib" enctype="multipart/form-data">';
-    } else {*/
-    $dat .= '<form id="contribform" action="' . PHP_SELF_ABS . '" method="post" name="contrib" enctype="multipart/form-data">';
-    //}
-    $dat .= '<input type="hidden" name="mode" value="regist" />
-' . $hidden . '
-<input type="hidden" name="MAX_FILE_SIZE" value="' . $maxbyte . '" />';
-    if ( $no ) {
-        $dat .= '<input type="hidden" name="resto" value="' . $no . '" />';
-    }
-    
-    $dat .= '<table>';
-    if ( !FORCED_ANON )
-        $dat .= '<tr><td class="postblock" align="left">' . S_NAME . '</td><td align="left"><input type="text" name="name" size="28" /></td></tr>';
-    
-    if ( !$resno ) {
-        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /></td></tr>
-                        <tr><td class="postblock" align="left">' . S_SUBJECT . '</td><td align="left"><input type="text" name="sub" size="35" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
-    } else {
-        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
-    }
-    
-    $dat .= '<tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>';
-    
-    if ( BOTCHECK ) {
-        if ( !$admin )
-            $dat .= '<tr><td class="postblock" align="left"><img src="' . PLUG_PATH . '/php_captcha.php" /></td><td align="left"><input type="text" name="num" size="28" /></td></tr>';
-    }
-    
-    $dat .= '<tr><td class="postblock" align="left">' . S_UPLOADFILE . '</td><td><input type="file" name="upfile" accept="image/*|.webm" size="35" />';
-    
-    if ( NOPICBOX && !SPOILERS ) {
-        $dat .= '[<label><input type="checkbox" name="textonly" value="on" />' . S_NOFILE . '</label>]</td></tr>';
-    }
-    
-    if ( SPOILERS ) {
-        $dat .= '[<label><input type=checkbox name=spoiler value=on>' . S_SPOILERS . '</label>]</td></tr>';
-    } else {
-        $dat .= '</td></tr>';
-    }
-    
-    
-    if ( $admin ) {
-        $dat .= '<tr><td align="left" class="postblock" align="left">
-            Options</td><td align="left">
-            Sticky: <input type="checkbox" name="isSticky" value="isSticky" />
-            Lock:<input type="checkbox" name="isLocked" value="isLocked" />
-            Capcode:<input type="checkbox" name="showCap" value="showCap" />
-            <tr><td class="postblock" align="left">' . S_RESNUM . '</td><td align="left"><input type="text" name="resto" size="28" /></td></tr>';
-    }
-    
-    $dat .= '<tr><td align="left" class="postblock" align="left">' . S_DELPASS . '</td><td align="left"><input type="password" name="pwd" size="8" maxlength="8" value="" />' . S_DELEXPL . '</td></tr>';
-    
-    if ( !$admin )
-        $dat .= '<tr><td colspan="2"><div align="left" class="rules">' . S_RULES . '</div></td></tr></table></form></div></div><hr />';
-    else
-        $dat .= '</table></form></div></div>';
-    
-    if ( !$resno && !$admin )
-        $news = file_get_contents( GLOBAL_NEWS );
-    if ( $news != '' )
-        $dat .= "<div class=\"globalnews\"/>" . file_get_contents( GLOBAL_NEWS ) . "</div><br /><hr />";
-    
-    //Top thread navigation bar
-    if ( $resno ) {
-        $dat .= "<div class=\"threadnav\" /> [<a href=\"" . PHP_SELF2_ABS . "\">" . S_RETURN . "</a>] [<a href=\"" . $no . PHP_EXT . "#bottom\"/>Bottom</a>] </div> \n<hr />";
-    }
-    
-    if ( USE_ADS2 ) {
-        $dat .= '' . ADS2 . '<hr />';
-    }
+function form( &$dat, $resno ) {
+    require_once(CORE_DIR . "/postform.php");
+    $postform = new PostForm;
+    $dat .= $postform->format($resno, $admin);
 }
 
 
@@ -1203,7 +1116,7 @@ function CleanStr( $str ) {
 // die: whether to die on error
 // careful, setting children to 0 could leave orphaned posts.
 function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 ) {
-        require_once("_core/log/log.php");
+    require_once("_core/log/log.php");
 
     global $log, $path;
     log_cache();

@@ -15,7 +15,8 @@
 class PostForm {
     function format($resno, $admin) {
         //echo debug_backtrace()[1]['function'];
-
+        if ( valid( 'moderator' ) ) 
+            $admin = 1;
         $resno = (is_numeric($resno)) ? $resno : null;
         $admin = (!!$admin) ? !!$admin : false; //Should probably move validation to something more secure.
 
@@ -56,7 +57,7 @@ class PostForm {
             $temp .= "<tr><td class='postblock' align='left'><img src='" . PLUG_PATH . "/php_captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
 
         //File selection
-        $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*|.webm' size='35'>";
+        $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*' size='35'>";
 
         if (NOPICBOX && !SPOILERS)
             $temp .= "[<label><input type='checkbox' name='textonly' value='on'>" . S_NOFILE . "</label>]</td></tr>";
@@ -71,8 +72,7 @@ class PostForm {
                 Options</td><td align='left'>
                 Sticky: <input type='checkbox' name='isSticky' value='isSticky'>
                 Lock:<input type='checkbox' name='isLocked' value='isLocked'>
-                Capcode:<input type='checkbox' name='showCap' value='showCap'>
-                <tr><td class='postblock' align='left'>" . S_RESNUM . "</td><td align='left'><input type='text' name='resto' size='28'></td></tr>";
+                Capcode:<input type='checkbox' name='showCap' value='showCap'>";
         }
 
         //Deletion password entry
