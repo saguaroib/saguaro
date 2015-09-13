@@ -258,10 +258,93 @@ function print_page( $filename, $contents, $force_nogzip = 0 ) {
 }
 
 
-// check whether the current user can perform $action (on $no, for some actions)
-// board-level access is cached in $valid_cache.
-function valid( $action = 'moderator', $no = 0 ) {
-	require_once("_core/admin/validate.php");
+if ( !function_exists( valid ) ) {
+	// check whether the current user can perform $action (on $no, for some actions)
+	// board-level access is cached in $valid_cache.
+	function valid( $action = 'moderator', $no = 0 ) {
+		//require_once("_core/admin/validate.php");
+		    static $valid_cache; // the access level of the user
+    $access_level = array(
+         'none' => 0,
+        'janitor' => 1,
+        'janitor_this_board' => 2,
+        'moderator' => 5,
+        'manager' => 10,
+        'admin' => 20 
+    );
+    if ( !isset( $valid_cache ) ) {
+        $valid_cache = $access_level['none'];
+        if ( isset( $_COOKIE['saguaro_auser'] ) && isset( $_COOKIE['saguaro_apass'] ) ) {
+            $user = mysql_real_escape_string( $_COOKIE['saguaro_auser'] );
+            $pass = mysql_real_escape_string( $_COOKIE['saguaro_apass'] );
+        }
+        if ( $user && $pass ) {
+            $result = mysql_call( "SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'" );
+            list( $allow, $deny ) = mysql_fetch_row( $result );
+            mysql_free_result( $result );
+            if ( $allow ) {
+                $allows             = explode( ',', $allow );
+                $seen_janitor_token = false;
+                // each token can increase the access level,
+                // except that we only know that they're a moderator or a janitor for another board
+                // AFTER we read all the tokens
+                foreach ( $allows as $token ) {
+                    if ( $token == 'janitor' )
+                        $seen_janitor_token = true;
+                  /*  else if ( $token == 'manager' && $valid_cache < $access_level['manager'] )
+                        $valid_cache = $access_level['manager'];*/
+                    else if ( $token == 'admin' && $valid_cache < $access_level['admin'] )
+                        $valid_cache = $access_level['admin'];
+                    else if ( ( $token == BOARD_DIR || $token == 'all' ) && $valid_cache < $access_level['janitor_this_board'] )
+                        $valid_cache = $access_level['janitor_this_board']; // or could be moderator, will be increased in next step
+                }
+                // now we can set moderator or janitor status 
+                if ( !$seen_janitor_token ) {
+                    if ( $valid_cache < $access_level['moderator'] )
+                        $valid_cache = $access_level['moderator'];
+                } else {
+                    if ( $valid_cache < $access_level['janitor'] )
+                        $valid_cache = $access_level['janitor'];
+                }
+                if ( $deny ) {
+                    $denies = explode( ',', $deny );
+                    if ( in_array( BOARD_DIR, $denies ) ) {
+                        $valid_cache = $access_level['none'];
+                    }
+                }
+            }
+        }
+    }
+    switch ( $action ) {
+        case 'moderator':
+            return $valid_cache >= $access_level['moderator'];
+        case 'admin':
+            return $valid_cache >= $access_level['admin'];
+        case 'textonly':
+            return $valid_cache >= $access_level['moderator'];
+        case 'janitor_board':
+            return $valid_cache >= $access_level['janitor'];
+        /*case 'manager':
+            return $valid_cache >= $access_level['manager'];*/
+        case 'delete':
+            if ( $valid_cache >= $access_level['janitor_this_board'] ) {
+                return true;
+            }
+            // if they're a janitor on another board, check for illegal post unlock			
+            else if ( $valid_cache >= $access_level['janitor'] ) {
+                $query         = mysql_call( "SELECT COUNT(*) from reports WHERE board='" . BOARD_DIR . "' AND no=$no AND cat=2" );
+                $illegal_count = mysql_result( $query, 0, 0 );
+                mysql_free_result( $query );
+                return $illegal_count >= 3;
+            }
+        case 'reportflood':
+            return $valid_cache >= $access_level['janitor'];
+        case 'floodbypass':
+            return $valid_cache >= $access_level['moderator'];
+        default: // unsupported action
+            return false;
+    }
+	}
 }
 
 function spoiler_parse( $com ) {
@@ -1193,11 +1276,59 @@ function resredir( $res ) {
     }
 }
 
+function rebuild( $all = 0 ) {
+    if ( !valid( 'moderator' ) )
+        die( 'Update failed...' );
+    
+    header( "Pragma: no-cache" );
+    echo "Rebuilding ";
+    if ( $all ) {
+        echo "all";
+    } else {
+        echo "missing";
+    }
+    echo " replies and pages... <a href=\"" . PHP_SELF2_ABS . "\">Go back</a><br><br>\n";
+    ob_end_flush();
+    $starttime = microtime( true );
+    if ( !$treeline = mysql_call( "select no,resto from " . SQLLOG . " where root>0 order by root desc" ) ) {
+        echo S_SQLFAIL;
+    }
+    log_cache();
+    echo "Writing...\n";
+    if ( $all || !defined( 'CACHE_TTL' ) ) {
+        while ( list( $no, $resto ) = mysql_fetch_row( $treeline ) ) {
+            if ( !$resto ) {
+                updatelog( $no, 1 );
+                echo "No.$no created.<br>\n";
+            }
+        }
+        updatelog();
+        echo "Index pages created.<br>\n";
+    } else {
+        $posts = rebuildqueue_take_all();
+        foreach ( $posts as $no ) {
+            $deferred = ( updatelog( $no, 1 ) ? ' (deferred)' : '' );
+            if ( $no )
+                echo "No.$no created.$deferred<br>\n";
+            else
+                echo "Index pages created.$deferred<br>\n";
+        }
+    }
+    $totaltime = microtime( true ) - $starttime;
+    echo "<br>Time elapsed (lock excluded): $totaltime seconds", "<br>Pages created.<br><br>\nRedirecting back to board.\n<META HTTP-EQUIV=\"refresh\" content=\"10;URL=" . PHP_SELF2 . "\">";
+}
+
 /*-----------Main-------------*/
 switch ( $mode ) {
     case 'regist':
         regist( $name, $email, $sub, $com, '', $pwd, $upfile, $upfile_name, $resto, $num );
         break;
+    case 'rebuild':
+        rebuild();
+        break;
+    case 'rebuildall':
+        rebuild( 1 );
+        break;	
     case 'usrdel':
         usrdel( $no, $pwd );
     default:

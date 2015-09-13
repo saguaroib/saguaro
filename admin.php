@@ -198,8 +198,8 @@ function oldvalid( $pass ) {
         echo "[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]\n";
         echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]\n";
         if ( valid( 'moderator' ) ) {
-            echo "[<a href=\"" . PHP_ASELF . "?mode=rebuild\">Rebuild</a>]\n";
-            echo "[<a href=\"" . PHP_ASELF . "?mode=rebuildall\">Rebuild all</a>]\n";
+            echo "[<a href=\"" . PHP_SELF_ABS . "?mode=rebuild\">Rebuild</a>]\n";
+            echo "[<a href=\"" . PHP_SELF_ABS . "?mode=rebuildall\">Rebuild all</a>]\n";
         }
         echo "[<a href=\"" . PHP_ASELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
         echo "<div class=\"passvalid\">" . S_MANAMODE . "</div>\n";
@@ -508,48 +508,6 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
     require_once("_core/del/deletepost.php");
 }
 
-function rebuild( $all = 0 ) {
-    if ( !valid( 'moderator' ) )
-        die( 'Update failed...' );
-    
-    header( "Pragma: no-cache" );
-    echo "Rebuilding ";
-    if ( $all ) {
-        echo "all";
-    } else {
-        echo "missing";
-    }
-    echo " replies and pages... <a href=\"" . PHP_SELF2_ABS . "\">Go back</a><br><br>\n";
-    ob_end_flush();
-    $starttime = microtime( true );
-    if ( !$treeline = mysql_call( "select no,resto from " . SQLLOG . " where root>0 order by root desc" ) ) {
-        echo S_SQLFAIL;
-    }
-    log_cache();
-    echo "Writing...\n";
-    if ( $all || !defined( 'CACHE_TTL' ) ) {
-        while ( list( $no, $resto ) = mysql_fetch_row( $treeline ) ) {
-            if ( !$resto ) {
-                updatelog( $no, 1 );
-                echo "No.$no created.<br>\n";
-            }
-        }
-        updatelog();
-        echo "Index pages created.<br>\n";
-    } else {
-        $posts = rebuildqueue_take_all();
-        foreach ( $posts as $no ) {
-            $deferred = ( updatelog( $no, 1 ) ? ' (deferred)' : '' );
-            if ( $no )
-                echo "No.$no created.$deferred<br>\n";
-            else
-                echo "Index pages created.$deferred<br>\n";
-        }
-    }
-    $totaltime = microtime( true ) - $starttime;
-    echo "<br>Time elapsed (lock excluded): $totaltime seconds", "<br>Pages created.<br><br>\nRedirecting back to board.\n<META HTTP-EQUIV=\"refresh\" content=\"10;URL=" . PHP_SELF2 . "\">";
-}
-
 /*
 function ban($no) {
 
@@ -619,12 +577,10 @@ switch ( $_GET['mode'] ) {
             login( $_POST['usernm'], $_POST['passwd'] );
             break;
         case 'rebuild':
-            include(PHP_SELF);
-            rebuild();
+		    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL='" . PHP_ASELF_ABS . "?mode=rebuild' \">";
             break;
         case 'rebuildall':
-            include(PHP_SELF);
-            rebuild( 1 );
+		    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL='" . PHP_ASELF_ABS . "?mode=rebuildall' \">";
             break;
         case 'lock':
 			$no = $_GET['no'];
