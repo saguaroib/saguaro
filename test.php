@@ -1,7 +1,5 @@
 <?php
 
-//ini_set('display_errors',1);
-
 /*
 
     Tests if the server meets basic minimum requirements.
@@ -20,15 +18,18 @@ if (is_file($lockout)) {
     $defaults = [ //Default accounts.
                     ['name' => 'admin', 'pass' => 'guest', 'priv' => 'janitor_board,moderator,admin,manager', 'deny' => 'none']
                 ];
+
+    //Point of no return. Casual users shouldn't go past here.
+    ini_set('display_errors',1);
+    error_reporting(E_ALL & ~E_NOTICE);
+
     $config = 'config.php';
     $min_php = '4.2.0';
     $min_gd = '2.0.0';
     $min_mysql = '4.0.0';
 
-    //Point of no return. Casual users shouldn't go past here.
     $success = "<span class='success'>SUCCESS</span><br>";
     $fail = "<span class='fail'>FAIL</span><br>";
-
     $css = "body { background-color:#EEF2FF; } #title { font-size:xx-large; text-align:center; font-weight:bold; font-style: italic; }
             .extra { /*width:49%; display:inline-block;*/ } .box { background-color:#D6DAF0; padding:10px; border-radius:10px; margin: 2%; }
             ul { margin: 5px 0px; }
@@ -43,6 +44,7 @@ if (is_file($lockout)) {
 
     //Lock out.
     $mydir = "(" . dirname(__FILE__) . ")";
+    $log = "";
 
     if ($autolock) {
         touch($lockout);
@@ -58,13 +60,13 @@ if (is_file($lockout)) {
     $owner = "<strong>" . get_current_user() ."</strong>";
     $user = "<strong>" . posix_getpwuid(posix_geteuid())['name'] . "</strong>";
     $log .= "This file (<strong>" . basename(__FILE__) . "</strong>) is owned by $owner and running as user $user. Any files/folders created should be owned by $user.<br>";
-    include($config);
 
     $tests = [];
 
     echo "<div class='box' id='title'>Saguaro Testing and Installation Utility</div>";
 
     //Check to see if $config was included properly.
+    include($config);
     $loga = "<strong>\"$config\"</strong> from the same directory $mydir failed to be included properly, some tests may fail.<br>";
     foreach (get_included_files() as $val) {
         if (strrpos($val, $config)) { $loga = "Successfully loaded <strong>\"$config\"</strong> from the same directory. $mydir<br>"; $config_good = true; }
@@ -205,7 +207,8 @@ if (is_file($lockout)) {
 
                     foreach ($tables as $table => $query) {
                         $sql = "SHOW TABLES LIKE '$table'";
-                        $exists = (mysqli_num_rows(mysqli_query($mysqli, $sql)) > 0) ? true : false;
+                        $query = mysqli_query($mysqli, $sql);
+                        $exists = (mysqli_num_rows($query) > 0) ? true : false;
 
                         if ($exists) {
                             echo "<strong>$table</strong> table already exists.<br>";
@@ -215,7 +218,7 @@ if (is_file($lockout)) {
                             echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $fail;
                         }
 
-                        mysqli_free_result($exists);
+                        mysqli_free_result($query);
                     }
 
                     echo "<br>Creating default accounts:<br>";
