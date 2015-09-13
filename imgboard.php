@@ -29,16 +29,10 @@ if ( BOARD_DIR == 'test' ) {
 }
 
 $host = $_SERVER['REMOTE_ADDR'];
-$num     = $_REQUEST['num'];
-$capkeyx = substr( $_SESSION['capkey'], 0, 5 );
 
 extract( $_POST );
 extract( $_GET );
 extract( $_COOKIE );
-
-if ( $num == $capkeyx ) {
-    $auth = 1;
-}
 
 $upfile_name = $_FILES["upfile"]["name"];
 $upfile      = $_FILES["upfile"]["tmp_name"];
