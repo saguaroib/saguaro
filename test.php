@@ -10,7 +10,7 @@
         Redirect back to page with a get to call it?
 */
 
-$autolock = true;
+$autolock = false;
 $lockout = "." . basename(__FILE__, ".php") . "_lockout";
 
 if (is_file($lockout)) {
@@ -36,7 +36,8 @@ if (is_file($lockout)) {
             .spoiler:hover { color:#fff; }
             .success { color:green;font-weight:bold; }
             .fail { color:#B20;font-weight:bold; }
-            .info { border-bottom: 1px dotted; } ";
+            .info { border-bottom: 1px dotted; }
+            td { padding-right: 10px; }";
 
     echo "<style>$css</style>";
 
@@ -273,11 +274,29 @@ if (is_file($lockout)) {
                 clearstatcache();
             }
         }
-
     }
 
+    $extra = ['short_open_tag', 'file_uploads', 'max_file_uploads', 'upload_max_filesize', 'upload_tmp_dir', 'post_max_size', 'memory_limit'];
+
+    //Additional edge-case settings we can't easily change.
     echo "</div><div class='box'>" .
-        "<strong>Additional Resources:</strong><br>MySQL error codes: <ul><li><a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999)</li><li><a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)</li></ul>" .
+        "<center><strong>PHP Core Settings</strong></center><table>";
+
+    foreach ($extra as $val) {
+        $valc = str_replace("_", "-", $val);
+        $right = ini_get("$val");
+
+        if ($val == 'upload_max_filesize') {
+            $right .= " (Config MAX_KB: " . MAX_KB . "KB)";
+        }
+        echo "<tr><td><strong><a href='https://php.net/manual/en/ini.core.php#ini.$valc' target='_blank'>$val</a></strong></td><td>" . $right . "</td></tr>";
+    }
+
+    echo "</table></div>";
+
+    //Additional resources.
+    echo "<div class='box'>" .
+        "<center><strong>Additional Resources</strong></center><br>MySQL error codes: <ul><li><a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999)</li><li><a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)</li></ul>" .
         "</div>";
 
 }
