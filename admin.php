@@ -105,6 +105,65 @@ function postinfo( $no ) {
 
 }
 
+function aform( &$dat, $resno, $admin = "" ) {
+    $maxbyte = MAX_KB * 1024;
+
+	$upfile_name = $_FILES["upfile"]["name"];
+	$upfile      = $_FILES["upfile"]["tmp_name"];
+	
+		if ( valid( 'moderator' ) ) {
+			$name = '<b><font color="770099">Anonymous ## Mod </font></b>';
+            if ( valid( 'admin' ) )
+                $name = '<b><font color="FF101A">Anonymous ## Admin  </font></b>';
+            if ( valid( 'manager' ) )
+                $name = '<b><font color="2E2EFE">Anonymous ## Manager  </font></b>';	
+        }
+        
+        $msg    = "<em>" . S_NOTAGS . ", posting as</em>: " . $name;
+
+    $dat .= $msg . '<div align="center"><div class="postarea">';
+    //$dat .= '<form id="contribform" action="' . PHP_SELF_ABS . '" method="post" name="contrib" enctype="multipart/form-data">';
+
+    
+    //$dat .= "<form action='" . PHP_SELF ."' id='memer' >";
+    $dat .= '<input type="hidden" name="mode" value="regist" />' . $hidden . '<input type="hidden" name="MAX_FILE_SIZE" value="' . $maxbyte . '" />';
+    if ( $no ) {
+        $dat .= '<input type="hidden" name="resto" value="' . $no . '" />';
+    }
+    
+    $dat .= '<table>';
+    if ( !FORCED_ANON )
+        $dat .= '<tr><td class="postblock" align="left">' . S_NAME . '</td><td align="left"><input type="text" name="name" size="28" /></td></tr>';
+    
+    if ( !$resno ) {
+        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /></td></tr>
+                        <tr><td class="postblock" align="left">' . S_SUBJECT . '</td><td align="left"><input type="text" name="sub" size="35" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
+    } else {
+        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
+    }
+    
+    $dat .= '<tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>';
+    
+    $dat .= '<tr><td class="postblock" align="left">' . S_UPLOADFILE . '</td><td><input type="file" name="upfile" accept="image/*" />';
+
+    
+    if ( SPOILERS ) {
+        $dat .= '[<label><input type=checkbox name=spoiler value=on>' . S_SPOILERS . '</label>]</td></tr>';
+    } else {
+        $dat .= '</td></tr>';
+    }
+    
+        $dat .= '<tr><td align="left" class="postblock" align="left">
+            Options</td><td align="left">
+            Sticky: <input type="checkbox" name="isSticky" value="isSticky" />
+            Lock:<input type="checkbox" name="isLocked" value="isLocked" />
+            Capcode:<input type="checkbox" name="showCap" value="showCap" />
+            <tr><td class="postblock" align="left">' . S_RESNUM . '</td><td align="left"><input type="text" name="resto" size="28" /></td></tr>';
+    
+    $dat .= '<tr><td align="left" class="postblock" align="left">' . S_DELPASS . '</td><td align="left"><input type="password" name="pwd" size="8" maxlength="8" value="" />' . S_DELEXPL . '</td></tr></table></form></div></div>';
+
+}
+
 function login( $usernm, $passwd ) {
     $ip     = $_SERVER['REMOTE_ADDR'];
     $usernm = mysql_real_escape_string( $usernm );
@@ -142,9 +201,6 @@ function oldvalid( $pass ) {
             echo "[<a href=\"" . PHP_SELF_ABS . "?mode=rebuild\">Rebuild</a>]\n";
             echo "[<a href=\"" . PHP_SELF_ABS . "?mode=rebuildall\">Rebuild all</a>]\n";
         }
-		if ( valid( 'admin' ) ) {
-			echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=manageusers\">Manage Users</a>]\n";
-		}
         echo "[<a href=\"" . PHP_ASELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
         echo "<div class=\"passvalid\">" . S_MANAMODE . "</div>\n";
         echo "<form action='" . PHP_SELF . "' method='post' id='contrib' >";
@@ -539,53 +595,6 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
     return $row['resto']; // so the caller can know what pages need to be rebuilt
 }
 
-function userManage() {
-	
-	oldvalid( $pass );
-	
-	if ( isset( $_POST['newuser'] ) &&  isset( $_POST['newpass'] ) &&  isset( $_POST['connewpass'] ) ) {
-		
-		if ( $_POST['newpass'] == $_POST['connewpass'] ) {
-			$use = mysql_real_escape_string( $_POST['newuser'] );
-			$pass = mysql_real_escape_string( $_POST['newuser'] );
-			mysql_call( "INSERT INTO " . SQLMODSLOG ." (user,password,allowed,denied) values('$use','$pass', 'test, 'test')" );
-
-		} else 
-			echo "The passwords do not match!";
-
-	}
-	
-    echo "<br><br><table class=\"postlists\">\n";
-    echo "<tr class=\"managehead\"><th>User</th><th>Allowed Permissions</th><th>Denied Permissions</th><th>Modify User</th>";
-    echo "</tr>\n";
-	 
-    if ( !$result = mysql_call( "select * from " . SQLMODSLOG . " order by user desc" ) ) {
-        echo S_SQLFAIL;
-    }
-    $j = 0;
-    while ( $row = mysql_fetch_row( $result ) ) {
-        $j++;
-        list( $user, $password, $allowed, $denied ) = $row;
-        $class = ( $j % 2 ) ? "row1" : "row2"; //BG color
-        echo "<tr class=$class>";
-        echo "<td>$user</td><td>$allowed</td><td>$denied</td>";
-        echo "<td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
-        echo "</tr>\n";
-
-    }
-    mysql_free_result( $result );
-
-	echo "<form action='admin.php?mode=manageusers' method='post' ><table border-collapse='collapse' >
-	<th>Add a user</th>
-	<tr><td>Username</td><td><input name='newuser' type='text'></td></tr>
-	<tr><td>Password</td><td><input name='newpass' type='password'></td></tr>
-	<tr><td>Confirm password</td><td><input name='connewpass' type='password'></td></tr>
-    <td><input type='submit'></td></table></form>";
-    die( "</body></html>" );
-
-}
-
-
 /*
 function ban($no) {
 
@@ -617,25 +626,25 @@ $banset = '9001';
 if ( mysql_num_rows( $query ) == 0 ) {
 $sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength, placedOn, board) VALUES ('$ip', '$pubreason', '$staffreason', '$banset', '$placedOn', '" . BOARD_DIR . "')";
 
-/*if ( mysql_call( $sql ) ) {
-    if ( $banset == '100' ) {
-        echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-        echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-    } else {
-        echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-        echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-    }
+if ( mysql_call( $sql ) ) {
+if ( $banset == '100' ) {
+echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
+echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
 } else {
-        echo "ERROR: Could not execute $sql. " . mysql_error();
-    }
-    } else {
-    echo "This IP is already banned!";
-    }
-    mysql_free_result( $query );
-    } else {
-    die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . " logged." );
-}*/
-
+echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
+echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
+}
+} else {
+echo "ERROR: Could not execute $sql. " . mysql_error();
+}
+} else {
+echo "This IP is already banned!";
+}
+mysql_free_result( $query );
+} else {
+die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . " logged." );
+}
+*/
 
 /* Main switch */
 switch ( $_GET['mode'] ) {
@@ -646,9 +655,6 @@ switch ( $_GET['mode'] ) {
             $no = mysql_real_escape_string($_GET['no']);
             postinfo($no);
             break;
-		case 'manageusers':
-			userManage();
-			break;
         case 'logout':
             setcookie( 'saguaro_apass', '0', 1 );
             setcookie( 'saguaro_auser', '0', 1 );
@@ -707,7 +713,7 @@ switch ( $_GET['mode'] ) {
 			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 		default:
             oldvalid( $pass );
-            //aform( $post, $res, 1 );
+            aform( $post, $res, 1 );
             echo $post;
             echo "<form action=\"" . PHP_ASELF . "\" method=\"post\">
             <input type=hidden name=admin value=del checked>";
