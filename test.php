@@ -276,11 +276,11 @@ if (is_file($lockout)) {
         }
     }
 
+    //Additional edge-case settings we can't easily change.
     $extra = ['short_open_tag', 'file_uploads', 'max_file_uploads', 'upload_max_filesize', 'upload_tmp_dir', 'post_max_size', 'memory_limit'];
 
-    //Additional edge-case settings we can't easily change.
     echo "</div><div class='box'>" .
-        "<center><strong>PHP Core Settings</strong></center><table>";
+        "<center><strong>PHP Core Directives</strong></center><table>";
 
     foreach ($extra as $val) {
         $valc = str_replace("_", "-", $val);
@@ -296,8 +296,11 @@ if (is_file($lockout)) {
 
     //Additional resources.
     echo "<div class='box'>" .
-        "<center><strong>Additional Resources</strong></center><br>MySQL error codes: <ul><li><a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999)</li><li><a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)</li></ul>" .
+        "<center><strong>Additional Resources</strong></center>
+            <a href='https://php.net/manual/en/ini.core.php' target='_blank'>PHP Core Directives</a><br>
+            MySQL error codes: <ul><li>
+                <a href='https://search.oracle.com/search/search?q=Server+Error+codes&group=MySQL' target='_blank'>Server</a> (1000-1999)</li><li>
+                <a href='https://search.oracle.com/search/search?q=Client+Error+Codes&group=MySQL' target='_blank'>Client</a> (2000+)</li></ul>" .
         "</div>";
-
 }
 ?>
