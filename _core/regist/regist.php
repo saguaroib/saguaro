@@ -6,7 +6,15 @@ Eventually rewrite this.
 
 */
 
-global $path, $badstring, $badfile, $badip, $pwdc, $textonly, $auth;
+if (BOTCHECK) {
+    require_once(CORE_DIR . '/general/captcha.php');
+    $captcha = new Captcha;
+
+    if ($captcha->isValid() === false)
+        error(S_CAPFAIL, $dest);
+}
+
+global $path, $badstring, $badfile, $badip, $pwdc, $textonly;
 
 if ( $pwd == PANEL_PASS )
     $admin = $pwd;

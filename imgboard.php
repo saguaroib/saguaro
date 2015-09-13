@@ -29,16 +29,10 @@ if ( BOARD_DIR == 'test' ) {
 }
 
 $host = $_SERVER['REMOTE_ADDR'];
-$num     = $_REQUEST['num'];
-$capkeyx = substr( $_SESSION['capkey'], 0, 5 );
 
 extract( $_POST );
 extract( $_GET );
 extract( $_COOKIE );
-
-if ( $num == $capkeyx ) {
-    $auth = 1;
-}
 
 $upfile_name = $_FILES["upfile"]["name"];
 $upfile      = $_FILES["upfile"]["tmp_name"];
@@ -1044,7 +1038,7 @@ function auto_link( $proto, $resno ) {
 }
 
 /* Regist */
-function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $resto, $num ) {
+function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $resto ) {
     require_once("_core/regist/regist.php");
 }
 
@@ -1321,7 +1315,7 @@ function rebuild( $all = 0 ) {
 /*-----------Main-------------*/
 switch ( $mode ) {
     case 'regist':
-        regist( $name, $email, $sub, $com, '', $pwd, $upfile, $upfile_name, $resto, $num );
+        regist( $name, $email, $sub, $com, '', $pwd, $upfile, $upfile_name, $resto );
         break;
     case 'rebuild':
         rebuild();
