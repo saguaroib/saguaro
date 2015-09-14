@@ -25,6 +25,16 @@ class TextProcessor {
         return str_replace( ",", "&#44;", $out);
     }
 
+    function readableCommands() {
+        $commands = [];
+
+        foreach ($this->processors as $regex => $resub) {
+            array_push($commands, stripslashes($regex));
+        }
+
+        return $commands;
+    }
+
     function format($input) {
         return $this->process($input);
     }
