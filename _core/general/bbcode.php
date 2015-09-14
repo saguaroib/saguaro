@@ -8,7 +8,6 @@
 
     $bbcode = new BBCode();
     echo $bbcode->format("[b]test[/b]");
-
 */
 
 class BBCode {
@@ -19,10 +18,11 @@ class BBCode {
         "/\[spoiler\](.*)\[\/spoiler\]/Usi" => "<span class='spoiler'>\\1</span>", //Spoiler
         "/\[color=(\#[0-9A-F]{6}|[a-z]+)\](.*)\[\/color\]/Usi" => "<span style='color:\\1'>\\2</span>", //Color
         "/\[s\](.*)\[\/s\]/Usi" => "<span style='text-decoration: line-through'>\\1</span>", //Strikethrough.
-        "/\[size=(.*)\](.*)\[\/size\]/Usi" => "<span style='font-size:\\1ex'>\\2</span>", //Size
+        "/\[size=([1-9])\d*?\](.*)\[\/size\]/Usi" => "<span style='font-size:\\1ex'>\\2</span>", //Size
         "/\[aa\](.*)\[\/aa\]/Usi" => "<span style='font-family: Mona,\"MS PGothic\"'>\\1</span>", //ASCII Art
         "/\[youtube\](.*)youtube.com\/watch\?v=(.*)\[\/youtube\]/Usi" => "<object width='425' height='344'><param name='movie' value='http://www.youtube.com/v/\\2&hl=de&fs=1\'</param><param name='allowFullScreen' value='true'></param><embed src='http://www.youtube.com/v/\\2&hl=de&fs=1' type='application/x-shockwave-flash' allowfullscreen='true' width='425' height='344'></embed></object>", //Youtube
-        "/\[nico\](.*)nicovideo.jp\/watch\/(.*)\[\/nico\]/Usi" => "<script src='http://ext.nicovideo.jp/thumb_watch/\\2\' width='255' height='255'></script>" //niconico
+        "/\[nico\](.*)nicovideo.jp\/watch\/(.*)\[\/nico\]/Usi" => "<script src='http://ext.nicovideo.jp/thumb_watch/\\2\' width='255' height='255'></script>", //niconico
+        "/\[spoiler\](.*)\[\/spoiler\]/" => "<span class='spoiler'>\\1</span>" //Spoilers
     ];
 
     private function process($input) {
