@@ -341,43 +341,6 @@ if ( !function_exists( valid ) ) {
 	}
 }
 
-function spoiler_parse( $com ) {
-    if ( !find_match_and_prefix( "/\[spoiler\]/", $com, 0, $m ) )
-        return $com;
-    
-    $bl = strlen( "[spoiler]" );
-    $el = $bl + 1;
-    //$st  = '<span class="spoiler" onmouseover="this.style.color=\'#FFF\';" onmouseout="this.style.color=this.style.backgroundColor=\'#000\'" style="color:#000;background:#000">';
-    $st = '<span class="spoiler">';
-    
-    $et  = '</span>';
-    $ret = $m[0] . $st;
-    $lev = 1;
-    $off = strlen( $m[0] ) + $bl;
-    
-    while ( 1 ) {
-        if ( !find_match_and_prefix( "@\[/?spoiler\]@", $com, $off, $m ) )
-            break;
-        list( $txt, $tag ) = $m;
-        
-        $ret .= $txt;
-        $off += strlen( $txt ) + strlen( $tag );
-        
-        if ( $tag == "[spoiler]" ) {
-            $ret .= $st;
-            $lev++;
-        } else if ( $lev ) {
-            $ret .= $et;
-            $lev--;
-        }
-    }
-    
-    $ret .= substr( $com, $off, strlen( $com ) - $off );
-    $ret .= str_repeat( $et, $lev );
-    
-    return $ret;
-}
-
 function updatelog( $resno = 0, $rebuild = 0 ) {
     global $log, $path;
     log_cache();
