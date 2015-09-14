@@ -144,7 +144,7 @@ define(PHP_SELF, 'imgboard.php');   //Name of main script file
 define(PHP_SELF2, 'index'.PHP_EXT); //Name of main htm file
 define(PHP_ASELF, 'admin.php');    // Name of Admin file
 define(PHP_ASELF_ABS, '//'.SITE_ROOT.'/'.BOARD_DIR.'/'.PHP_ASELF); //Path to admin file
-define(SITE_ROOT_BD, SITE_ROOT.'/'.BOARD_DIR); 
+define(SITE_ROOT_BD, SITE_ROOT.'/'.BOARD_DIR);
 define(PHP_SELF_ABS, '//'.SITE_ROOT_BD.'/'.PHP_SELF);   // Absolute path from the site to the imgboard.php, ex: http://yoursite.com/boardDir/imgboard.php
 define(PHP_SELF2_ABS, '//'.SITE_ROOT_BD.'/'.PHP_SELF2); // Absolute path from the site to the INDEX.html, ex: http://yoursite.com/boardDir/index.html
 define(DATA_SERVER, '//'.SITE_ROOT.'/');                //Your site's root html path, WITH a trailing slash, ex: http://yoursite.com/
@@ -153,11 +153,13 @@ define(HOME,  '..'); //Site home directory (up one level by default)
 
 //Working directories.
 define(CORE_DIR, '_core/');          //Local path to the "_core" directory, which contains the main assets of Saguaro.
+define(CORE_DIR_PUBLIC, '//'.SITE_ROOT_BD.'/'.CORE_DIR); //Public URL path to _core folder.
 define(RES_DIR, 'res/');             //Stores cached threads.
 define(IMG_DIR, 'src/');             //Stores images.
 define(THUMB_DIR,'thumb/');          //Stores thumbnails.
-define(PLUG_PATH, '//'.SITE_ROOT_BD.'/plugins/'); //Plugins folder.
-define(JS_PATH, PLUG_PATH.'jquery'); //jQuery folder. (usually in the plugins folder)
+define(PLUG_PATH, 'plugins/');       //Plugins folder.
+define(PLUG_PATH_PUBLIC, '//'.SITE_ROOT_BD.'/'.PLUG_PATH); //Public URL path to plugins folder.
+define(JS_PATH, PLUG_PATH_PUBLIC.'jquery'); //jQuery folder. (usually in the plugins folder)
 
 //Posting and Threads
 define(CACHE_TTL, true);          //Thread caching
