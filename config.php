@@ -14,7 +14,7 @@ define(S_DESCR, 'An imageboard powered by saguaro'); //meta description for this
     MySQL information.
     The database and tables are created automatically using these values.
 */
-define(SQLUSER, 'user');
+define(SQLUSER, 'username');
 define(SQLPASS, 'password');
 define(SQLHOST, 'localhost');
 
@@ -33,14 +33,6 @@ define(SITE_SUFFIX, '');         //Domain suffix, ex: org, com, info, net. NO DO
 define(BOARDLIST, 'CHANGEME');   //the file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
 define(GLOBAL_NEWS, 'CHANGEME'); //Absolute html path to your global board news file, the contents of this file will be automatically
 define(SALTFILE, 'salt');        //Name of the salt file, do not add a file extension for security
-
-//Directories.
-define(CORE_DIR, '_core/');          //Local path to the "_core" directory, which contains the main assets of Saguaro.
-define(RES_DIR, 'res/');             //Stores cached threads.
-define(IMG_DIR, 'src/');             //Stores images.
-define(THUMB_DIR,'thumb/');          //Stores thumbnails.
-define(PLUG_PATH, 'plugins/');       //Plugins folder.
-define(JS_PATH, PLUG_PATH.'jquery'); //jQuery folder. (usually in the plugins folder)
 
 //Basic settings
 define(SHOWTITLETXT, true);   //Show TITLE at top.
@@ -64,24 +56,27 @@ define(SHOW_BLOTTER, false);      //Added to the top of each board, ex: ex: http
 define(BLOTTER_PATH, 'CHANGEME'); //Absolute html path to your blotter file, this feature is experimental and still is not fully functional.
 
 // Post & Thread
+define(BOTCHECK, false);    //Use CAPTCHAs
+define(USE_BBCODE, false);  //Use BBcode
+define(SPOILERS, false);    //Allow spoiler images/text on the board. This feature is still experimental and might not work fully.
+define(DICE_ROLL, false);   //Allow users to roll /dice in the name field
+define(FORTUNE_TRIP, false); //Allows users to recieve a #fortune in the namefield
+
 define(FORCED_ANON, false); //Force anonymous on this board.
-define(MAX_LINES, 50);      //Max # of lines allowed for a post
-define(RENZOKU, 10);        //Seconds between posts (floodcheck)
-define(RENZOKU2, 15);       //Seconds between image posts (floodcheck)
-define(S_POSTLENGTH, 3000); //Maximum character length of posts
-define(MAX_RES, 500);       //Maximum thread bumps from posts.
-define(MAX_IMGRES, 300);    //Maximum thread bumps from images.
-define(USE_THUMB, true);    //Use thumbnails.
-define(PROXY_CHECK, true);  //Enable proxy check.
 define(DISP_ID, false);     //Display user IDs.
 define(BR_CHECK, 20);       //Max lines per post (0 = no limit)
-define(BOTCHECK, false);    //Use CAPTCHAs
-define(S_OMITT_NUM, 5);     //number of posts to display in each thread on the index.
+define(MAX_LINES, 50);      //Max # of lines allowed for a post
+define(S_POSTLENGTH, 3000); //Maximum character length of posts
 define(NOPICBOX, false);    //Whether or not to have the [No Picture] checkbox.
-define(USE_BBCODE, true);   //Use BBcode
-define(DICE_ROLL, false);   //Allow users to roll /dice in the name field
-define(SPOILERS, false);    //Allow spoiler images/text on the board. This feature is still experimental and might not work fully.
-define(FORTUNE_TRIP, true); //Allows users to recieve a #fortune in the namefield
+
+define(USE_THUMB, true);    //Use thumbnails.
+define(PROXY_CHECK, true);  //Enable proxy check.
+
+define(RENZOKU, 10);        //Seconds between posts (floodcheck)
+define(RENZOKU2, 15);       //Seconds between image posts (floodcheck)
+define(MAX_RES, 500);       //Maximum thread bumps from posts.
+define(MAX_IMGRES, 300);    //Maximum thread bumps from images.
+define(S_OMITT_NUM, 5);     //number of posts to display in each thread on the index.
 //Is this even referenced?! define(MANTHUMBS, '1');                                 //Display thumbnails in manager panel- you may want it off if you have too many images (1: yes  0: no)
 
 //Images
@@ -110,7 +105,7 @@ define(CSS2, 'sagurichan.css'); //location of the second stylesheet.
 define(CSS3, 'tomorrow.css');   //location of the third stylesheet.
 define(CSS4, 'burichan.css');   //location of the fourth stylesheet.
 
-define(EXTRA_SHIT, '');  //Any extra javascripts you want to include inside the <head>
+define(EXTRA_SHIT, ''); //Any extra javascripts you want to include inside the <head>
 
 
 
@@ -155,6 +150,14 @@ define(PHP_SELF2_ABS, '//'.SITE_ROOT_BD.'/'.PHP_SELF2); // Absolute path from th
 define(DATA_SERVER, '//'.SITE_ROOT.'/');                //Your site's root html path, WITH a trailing slash, ex: http://yoursite.com/
 define(CSS_PATH, '//'.SITE_ROOT_BD.'/css/');            //absolute html path to the css folder with the trailing slash
 define(HOME,  '..'); //Site home directory (up one level by default)
+
+//Working directories.
+define(CORE_DIR, '_core/');          //Local path to the "_core" directory, which contains the main assets of Saguaro.
+define(RES_DIR, 'res/');             //Stores cached threads.
+define(IMG_DIR, 'src/');             //Stores images.
+define(THUMB_DIR,'thumb/');          //Stores thumbnails.
+define(PLUG_PATH, '//'.SITE_ROOT_BD.'/plugins/'); //Plugins folder.
+define(JS_PATH, PLUG_PATH.'jquery'); //jQuery folder. (usually in the plugins folder)
 
 //Posting and Threads
 define(CACHE_TTL, true);          //Thread caching
