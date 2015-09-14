@@ -8,9 +8,12 @@
 
     $bbcode = new BBCode();
     echo $bbcode->format("[b]test[/b]");
+
 */
 
-class BBCode {
+require_once("text_process.php");
+
+class BBCode extends TextProcessor {
     public $processors = [
         "/\[b\](.*?)\[\/b\]/Usi" => "<span style='font-weight:bold'>\\1</span>", //Bold
         "/\[u\](.*?)\[\/u\]/Usi" => "<span style='text-decoration: underline'>\\1</span>", //Underline
@@ -23,20 +26,6 @@ class BBCode {
         "/\[nico\](.*?)nicovideo.jp\/watch\/(.*?)\[\/nico\]/Usi" => "<script src='http://ext.nicovideo.jp/thumb_watch/\\2\' width='255' height='255'></script>", //niconico
         "/\[spoiler\](.*?)\[\/spoiler\]/" => "<span class='spoiler'>\\1</span>" //Spoilers
     ];
-
-    private function process($input) {
-        $out = str_replace("&#44;", ",", $input);
-
-        foreach ($this->processors as $regex => $resub) {
-            $out = preg_replace($regex, $resub, $out);
-        }
-
-        return str_replace( ",", "&#44;", $out);
-    }
-
-    function format($input) {
-        return $this->process($input);
-    }
 }
 
 ?>

@@ -389,7 +389,7 @@ $resto = ereg_replace( "[\r\n]", "", $resto );
 $com   = CleanStr( $com, 1 );
 
 if (USE_BBCODE === true) {
-    require_once(CORE_DIR . '/general/bbcode.php');
+    require_once(CORE_DIR . '/general/text_process/bbcode.php');
 
     $bbcode = new BBCode;
     $com = $bbcode->format($com);
