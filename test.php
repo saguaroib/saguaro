@@ -207,8 +207,8 @@ if (is_file($lockout)) {
 
                     foreach ($tables as $table => $query) {
                         $sql = "SHOW TABLES LIKE '$table'";
-                        $query = mysqli_query($mysqli, $sql);
-                        $exists = (mysqli_num_rows($query) > 0) ? true : false;
+                        $q = mysqli_query($mysqli, $sql);
+                        $exists = (mysqli_num_rows($q) > 0) ? true : false;
 
                         if ($exists) {
                             echo "<strong>$table</strong> table already exists.<br>";
@@ -218,7 +218,7 @@ if (is_file($lockout)) {
                             echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $fail;
                         }
 
-                        mysqli_free_result($query);
+                        mysqli_free_result($q);
                     }
 
                     echo "<br>Creating default accounts:<br>";
