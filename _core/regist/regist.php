@@ -6,7 +6,7 @@ Eventually rewrite this.
 
 */
 
-if (BOTCHECK) {
+if (BOTCHECK === true) {
     require_once(CORE_DIR . '/general/captcha.php');
     $captcha = new Captcha;
 
@@ -28,10 +28,6 @@ if ( valid( 'moderator' ) ) {
         $moderator = 2;
     if ( valid( 'manager' ) )
         $moderator = 3;
-}
-
-if ( SPOILERS == 1 ) {
-    $com = spoiler_parse( $com );
 }
 
 if ( isset( $_POST['isSticky'] ) || isset( $_POST['isLocked'] ) && valid( 'moderator' ) ) {
@@ -77,7 +73,7 @@ if ( $has_image ) {
             error( "Max limit of " . MAX_IMGRES . " image replies has been reached.", $upfile );
         mysql_free_result( $result );
     }
-    
+
     //upload processing
     $dest = tempnam( substr( $path, 0, -1 ), "img" );
     //$dest = $path.$tim.'.tmp';
@@ -88,16 +84,16 @@ if ( $has_image ) {
             rename( $pchfile, "$dest.pch" );
     } else
         move_uploaded_file( $upfile, $dest );
-    
+
     clearstatcache(); // otherwise $dest looks like 0 bytes!
-    
+
     $upfile_name = CleanStr( $upfile_name );
     $fsize       = filesize( $dest );
     if ( !is_file( $dest ) )
         error( S_UPFAIL, $dest );
     if ( !$fsize /*|| /*$fsize > MAX_KB * 1024*/ )
         error( S_TOOBIG, $dest );
-    
+
     // PDF processing
     if ( ENABLE_PDF == 1 && strcasecmp( '.pdf', substr( $upfile_name, -4 ) ) == 0 ) {
         $ext = '.pdf';
@@ -112,7 +108,7 @@ if ( $has_image ) {
         if ( !is_array( $size ) )
             error( S_NOREC, $dest );
         $md5 = md5_file( $dest );
-        
+
         //chmod($dest,0666);
         $W = $size[0];
         $H = $size[1];
@@ -170,7 +166,7 @@ if ( $has_image ) {
         if ( GIF_ONLY == 1 && $size[2] != 1 )
             error( S_UPFAIL, $dest );
     } // end processing -else
-    
+
     // Picture reduction
     if ( !$resto ) {
         $maxw = MAX_W;
@@ -342,7 +338,7 @@ $youbi  = array(
     S_WED,
     S_THU,
     S_FRI,
-    S_SAT 
+    S_SAT
 );
 $yd     = $youbi[date( "w", $time )];
 if ( SHOW_SECONDS == 1 ) {
@@ -357,7 +353,7 @@ if ( DISP_ID ) {
     $color  = "inherit"; // Until unique IDs between threads get sorted out
     $idhtml = "<span id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
     mysql_real_escape_string( $idhtml );
-    
+
     if ( $email && DISP_ID == 1 ) {
         $now .= " (ID:" . $idhtml . " Heaven </span>)";
     } else {
@@ -391,6 +387,13 @@ $url   = ereg_replace( "[\r\n]", "", $url );
 $resto = CleanStr( $resto );
 $resto = ereg_replace( "[\r\n]", "", $resto );
 $com   = CleanStr( $com, 1 );
+
+if (USE_BBCODE === true) {
+    require_once(CORE_DIR . '/general/bbcode.php');
+
+    $bbcode = new BBCode;
+    $com = $bbcode->format($com);
+}
 
 if ( SPOILERS == 1 && $spoiler ) {
     $sub = "SPOILER<>$sub";
@@ -471,7 +474,7 @@ if ( !$may_flood ) {
             error( S_RENZOKU, $dest );
         mysql_free_result( $result );
     }
-    
+
     if ( !$has_image ) {
         // Check for flood limit on replies
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ( $time - RENZOKU ) . " " . "and host='" . mysql_real_escape_string( $host ) . "' and resto>0";
@@ -480,7 +483,7 @@ if ( !$may_flood ) {
             error( S_RENZOKU, $dest );
         mysql_free_result( $result );
     }
-    
+
     if ( $is_sage ) {
         // Check flood limit on sage posts
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ( $time - RENZOKU_SAGE ) . " " . "and host='" . mysql_real_escape_string( $host ) . "' and resto>0 and permasage=1";
@@ -489,7 +492,7 @@ if ( !$may_flood ) {
             error( S_RENZOKU, $dest );
         mysql_free_result( $result );
     }
-    
+
     if ( !$resto ) {
         // Check flood limit on new threads
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ( $time - RENZOKU3 ) . " " . "and host='" . mysql_real_escape_string( $host ) . "' and root>0"; //root>0 == non-sticky
@@ -509,7 +512,7 @@ if ( $has_image ) {
             error( S_RENZOKU2, $dest );
         mysql_free_result( $result );
     }
-    
+
     //Duplicate image check
     if ( DUPE_CHECK ) {
         $result = mysql_call( "select no,resto from " . SQLLOG . " where md5='$md5'" );

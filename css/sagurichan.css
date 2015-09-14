@@ -143,6 +143,7 @@ hr {
     color: #117743;
 }
 .spoiler {
+    display:inline-block;
     color: #000;
     background: #000;
 }
