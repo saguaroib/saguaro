@@ -84,6 +84,14 @@ a:hover {
         color:#000000;
         font-weight:800;
 }
+.spoiler {
+    display:inline-block;
+    color: #000;
+    background: #000;
+}
+.spoiler:hover {
+    color: #FFF;
+}
 .footer {
         text-align:center;
         font-size:12px;

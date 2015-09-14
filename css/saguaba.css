@@ -104,6 +104,7 @@ hr {
     padding: 4px;
 }
 .spoiler {
+    display:inline-block;
     color: #000;
     background: #000;
 }
