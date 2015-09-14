@@ -8,7 +8,7 @@
         Redirect back to page with a get to call it?
 */
 
-$autolock = true;
+$autolock = false;
 $lockout = "." . basename(__FILE__, ".php") . "_lockout";
 
 if (is_file($lockout)) {
@@ -296,6 +296,12 @@ if (is_file($lockout)) {
     }
 
     echo "</table></div>";
+
+    //Follow-up links
+    echo "<div class='box'>
+        <center><!-- <strong>some title</strong><br> -->
+        <a href='imgboard.php' target='_blank'>imgboard.php</a> | <a href='admin.php' target='_blank'>admin.php</a>
+        </center></div>";
 
     //Additional resources.
     echo "<div class='box'>" .
