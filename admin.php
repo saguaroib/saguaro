@@ -32,53 +32,36 @@ function postinfo( $no ) {
     list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board,  ) = $row;
     
     head( $dat );
+	
     $dat .= "<table style='border:solid black 2px; border-collapse=:collapse;' />";
 	$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br>";
 	if ( $sticky || $locked || $permasage ) {
 		if ( $sticky )
-			$special .= "<b><font color=\"FF101A\"> | Stickied |</font></b>";
+			$special .= "<b><font color=\"FF101A\"> [Stickied]</font></b>";
 		if ( $locked ) 
-			$special.= "<b><font color=\"770099\">| Locked |</font></b>";
+			$special.= "<b><font color=\"770099\">[Locked]</font></b>";
 		if ( $permasage)
-			$special .= "<b><font color=\"2E2EFE\">| Permasaged |</font></b>";
-		$dat .= "<tr><td>Special:</td><td>This thread is $special</td></tr>"; //lmoa
+			$special .= "<b><font color=\"2E2EFE\">[Permasaged]</font></b>";
+		$dat .= "<tr><td class='postblock'>Special:</td><td class='row2'>This thread is $special</td></tr>"; //lmoa
 	}
-    $dat .= "<tr><td>Name:</td><td>$name</td></tr>
-  <tr><td>Date:</td><td class='row1' />$now</td></tr>
-  <tr><td>IP:</td><td class='row2' /><b>$host</b></td></tr><br>
-  <tr><td>Comment:</td><td class='row1' />$com</td></tr>
-  <tr><td>MD5:</td><td class='row2' />$md5</td></tr>
-  <tr><td>File</td>";
+    $dat .= "<tr><td class='postblock'>Name:</td><td class='row1'>$name</td></tr>
+  <tr><td class='postblock'>Date:</td><td class='row2' />$now</td></tr>
+  <tr><td class='postblock'>IP:</td><td class='row1' /><b>$host</b></td></tr><br>
+  <tr><td class='postblock'>Comment:</td><td class='row2' />$com</td></tr>
+  <tr><td class='postblock'>MD5:</td><td class='row1' />$md5</td></tr>
+  <tr><td class='postblock'>File</td>";
 
     if ( $w && $h ) {
         $hasimg = 1;
         $dat .= "<td><img width='" . MAX_W . "' height='" . MAX_H . "' src='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "'/></td></tr>
-		<tr><td>Thumbnail:</td><td><img width='" . $tn_w . "' height='" . $tn_h . "' src='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg" . "'/></td></tr>
-		<tr><td>Image locations:</td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "' target='_blank' />Image</a> | <a href='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg' target='_blank' />Thumb</a></td></tr>
-		<tr><td></td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "' target='_blank' />View in thread</a></table></form>";
+		<tr><td class='postblock'>Thumbnail:</td><td><img width='" . $tn_w . "' height='" . $tn_h . "' src='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg" . "'/></td></tr>
+		<tr><td class='postblock'>Image locations:</td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "' target='_blank' />Image</a> | <a href='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg' target='_blank' />Thumb</a></td></tr>
+		<tr><td ></td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "' target='_blank' /><center><b>View in thread<b></center></a>";
 		} else
-        $dat .= "<td>No file</td></tr></table></form>";
-    
-	//<form action='admin.php'/><input type='submit' name='mode' value='test' /></form>
-	
-	$result = mysql_call( "SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
-	$wew = mysql_result($result, 0);
-	
-	if ( $wew > 0 )
-		$alert = "<b><font color=\"FF101A\"> $wew ban(s) on record!</font></b>";
-	else 
-		$alert = "No bans on record for IP $host";
-	
-	$dat .= "<br><table style='border:solid black 2px; border-collapse=:collapse;' /><form action='admin.php' />
-	<input type='hidden' name='mode' value='modipost' />
-	<th><b>Moderation info</b></th>
-	<tr><td>IP History: </td><td>$alert</td></tr>
-	<
-	</table></form>";
-	
-    if (!$resto) {
-        $dat .= "<br /><br /><table><form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
-        <tr><td>Action</td><td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
+        $dat .= "<td>No file</td></tr>";
+	if (!$resto) {
+        $dat .= "<form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
+        <tr><td class='postblock'>Action</td><td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
         <option value='sticky' />Sticky</option>
         <option value='unsticky' />Unsticky</option>
         <option value='lock' />Lock</option>
@@ -86,7 +69,55 @@ function postinfo( $no ) {
         <option value='permasage' />Autosage</option>
         <option value='nopermasage' />De-autosage</option>
         </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'><td></td></tr></table></form>";
-    }
+    } else 
+		$dat .= "</table></form>";
+    	
+	$result = mysql_call( "SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
+	$wew = mysql_result($result, 0);
+	
+	if ( $wew > 0 )
+		$alert = "<b><font color=\"FF101A\"> $wew ban(s) on record for $host!</font></b>";
+	else 
+		$alert = "No bans on record for IP $host";
+	
+	$dat .= "<br><table style='border:solid black 2px; border-collapse=:collapse;' /><form action='admin.php' />
+	<input type='hidden' name='mode' value='modipost' />
+	<th><center><b>Moderation info</b></center></th>
+	<tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
+	<tr><th><center><b>Ban<b></center></th></tr>
+	<tr><td class='postblock'>Length:</td><td><input type='text' name='length' placeholder='Number only' /><select name='time' />
+        <option value='' /></option>
+		<option value='minute' />Minutes</option>
+        <option value='hour' />Hours</option>
+        <option value='day' />Days</option>
+        <option value='month' />Months</option>
+        </select>[ Perma<input type='checkbox' value='perma' /> ] [ Warn only <input type='checkbox' value='warn' /> ]
+	</td></tr>
+	<tr><td class='postblock'>Ban type:</td><td>
+		<select name='banType' />
+        <option value='global' />This board  /" . BOARD_DIR . '/ - ' . TITLE . " </option>
+        <option value='localboard' />All boards</option>
+        <option value='globalview' />All boards - Viewban</option>
+        <option value='localview' />This board - Viewban</option>
+        </select>
+	</td></tr>
+	<tr><td class='postblock'>Public reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
+	<tr><td class='postblock'>Staff notes:</td><td><input type='text' name='staffnote' /></td></tr>
+	<tr><td class='postblock'>Append user's comment:</td><td><input type='text' name='custmess' placeholder='(USER WAS BANNED FOR THIS POST)' /> [ Show ban message<input type='checkbox' name='showbanmess' /> ] </td></tr>
+	<tr><td class='postblock'>After-ban options:</td><td>
+		<select name='afterban' />
+        <option value='none' />None</option>
+        <option value='delpost' />Delete this post</option>
+        <option value='delallbyip' />Delete all by this IP</option>
+        <option value='delimgonly' />Delete image only</option>
+        </select>
+	</td></tr>";
+		if ( valid( 'admin' ) )
+			$dat .= "
+		<tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr></table></form>";
+		else 
+			$dat .= "</table></form>";
+		
 		$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br>";
 
     echo $dat;
