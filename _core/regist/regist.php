@@ -272,8 +272,8 @@ if ( !$resto && !$textonly && !is_file( $dest ) && !valid( 'moderator' ) )
 if ( !$com && !is_file( $dest ) && !valid( 'moderator' ) )
     error( S_NOTEXT, $dest );
 
-$name = preg_replace( S_MANAGEMENT, "\"" . S_MANAGEMENT . "\"", $name );
-$name = preg_replace( S_DELETION, "\"" . S_DELETION . "\"", $name );
+$name = str_replace(S_MANAGEMENT, '"' . S_MANAGEMENT . '"', $name);
+$name = str_replace(S_DELETION, '"' . S_DELETION . '"', $name);
 
 if ( strlen( $com ) > S_POSTLENGTH )
     error( S_TOOLONG, $dest );
@@ -399,7 +399,7 @@ $com = str_replace( "\r\n", "\n", $com );
 $com = str_replace( "\r", "\n", $com );
 //$com = preg_replace("/\A([0-9A-Za-z]{10})+\Z/", "!s8AAL8z!", $com);
 // Continuous lines
-$com = preg_replace( "\n((&#12288;| )*\n){3,}", "\n", $com );
+$com = preg_replace("/\n((&#12288;| )*\n){3,}/", "\n", $com );
 
 if ( !$admin && substr_count( $com, "\n" ) > MAX_LINES )
     error( "Error: Too many lines.", $dest );
@@ -408,7 +408,7 @@ $com = nl2br( $com ); //br is substituted before newline char
 
 $com = str_replace( "\n", "", $com ); //\n is erased
 // Continuous lines
-$com = preg_replace( "\n((&#12288;| )*\n){3,}", "\n", $com );
+$com = preg_replace("/\n((&#12288;| )*\n){3,}/", "\n", $com );
 
 if ( !$admin && substr_count( $com, "\n" ) > MAX_LINES )
     error( "Error: Too many lines.", $dest );
