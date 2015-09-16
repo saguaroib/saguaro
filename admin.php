@@ -1,7 +1,7 @@
 <?php
 
 require('config.php');
-include(__DIR__.'/lang/language.php');
+include('lang/language.php');
 
 $con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
 
