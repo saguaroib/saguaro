@@ -12,7 +12,7 @@
 
 */
 
-require_once("_core/thread/thread.php"); //PHP_SELF is imgboard.php so we can't relatively include it "../thread/thread.php".
+require_once(CORE_DIR . "/thread/thread.php");
 
 class Index {
     private $data = [];
