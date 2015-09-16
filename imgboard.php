@@ -882,12 +882,10 @@ function form( &$dat, $resno, $admin = "" ) {
 
 /* Footer */
 function foot( &$dat ) {
-    $dat .= '
-<span class="boardlist">' . file_get_contents( BOARDLIST ) . '</span>
-<div class="footer">' . S_FOOT . '</div>
-<a href="#bottom" /></a>
- 
-</body></html>';
+    if (file_exists(BOARDLIST))
+        $dat .= '<span class="boardlist">' . file_get_contents( BOARDLIST ) . '</span>';
+
+    $dat .= '<div class="footer">' . S_FOOT . '</div><a href="#bottom" /></a></body></html>';
 }
 
 
