@@ -306,20 +306,11 @@ if ( mysql_num_rows( $badip ) == 0 ) {
     error( S_BADHOST, $dest );
 }
 
-if ( eregi( "^mail", $host ) || eregi( "^ns", $host ) || eregi( "^dns", $host ) || eregi( "^ftp", $host ) || eregi( "^prox", $host ) || eregi( "^pc", $host ) || eregi( "^[^\.]\.[^\.]$", $host ) ) {
-    $pxck = "on";
-}
-if ( eregi( "ne\\.jp$", $host ) || eregi( "ad\\.jp$", $host ) || eregi( "bbtec\\.net$", $host ) || eregi( "aol\\.com$", $host ) || eregi( "uu\\.net$", $host ) || eregi( "asahi-net\\.or\\.jp$", $host ) || eregi( "rim\\.or\\.jp$", $host ) ) {
-    $pxck = "off";
-} else {
-    $pxck = "on";
-}
-
-if ( $pxck == "on" && PROXY_CHECK ) {
-    if ( proxy_connect( '80' ) == 1 ) {
-        error( S_PROXY80, $dest );
-    } elseif ( proxy_connect( '8080' ) == 1 ) {
-        error( S_PROXY8080, $dest );
+if (PROXY_CHECK && preg_match("/^(mail|ns|dns|ftp|prox|pc|[^\.]\.[^\.]$)/", $host) > 0 || preg_match("/(ne|ad|bbtec|aol|uu|(asahi-net|rim)\.or)\.(com|net|jp)$/", $host) > 0) {
+    if (proxy_connect('80') == 1) {
+        error(S_PROXY80, $dest);
+    } elseif (proxy_connect('8080') == 1) {
+        error(S_PROXY8080, $dest);
     }
 }
 
