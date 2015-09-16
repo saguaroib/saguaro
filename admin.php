@@ -105,63 +105,11 @@ function postinfo( $no ) {
 
 }
 
-function aform( &$dat, $resno, $admin = "" ) {
-    $maxbyte = MAX_KB * 1024;
+function aform( &$post, $resno, $admin = "" ) {
+    require_once(CORE_DIR . "/postform.php");
 
-	$upfile_name = $_FILES["upfile"]["name"];
-	$upfile      = $_FILES["upfile"]["tmp_name"];
-	
-		if ( valid( 'moderator' ) ) {
-			$name = '<b><font color="770099">Anonymous ## Mod </font></b>';
-            if ( valid( 'admin' ) )
-                $name = '<b><font color="FF101A">Anonymous ## Admin  </font></b>';
-            if ( valid( 'manager' ) )
-                $name = '<b><font color="2E2EFE">Anonymous ## Manager  </font></b>';	
-        }
-        
-        $msg    = "<em>" . S_NOTAGS . ", posting as</em>: " . $name;
-
-    $dat .= $msg . '<div align="center"><div class="postarea">';
-    //$dat .= '<form id="contribform" action="' . PHP_SELF_ABS . '" method="post" name="contrib" enctype="multipart/form-data">';
-
-    
-    //$dat .= "<form action='" . PHP_SELF ."' id='memer' >";
-    $dat .= '<input type="hidden" name="mode" value="regist" />' . $hidden . '<input type="hidden" name="MAX_FILE_SIZE" value="' . $maxbyte . '" />';
-    if ( $no ) {
-        $dat .= '<input type="hidden" name="resto" value="' . $no . '" />';
-    }
-    
-    $dat .= '<table>';
-    if ( !FORCED_ANON )
-        $dat .= '<tr><td class="postblock" align="left">' . S_NAME . '</td><td align="left"><input type="text" name="name" size="28" /></td></tr>';
-    
-    if ( !$resno ) {
-        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /></td></tr>
-                        <tr><td class="postblock" align="left">' . S_SUBJECT . '</td><td align="left"><input type="text" name="sub" size="35" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
-    } else {
-        $dat .= '<tr><td class="postblock" align="left">' . S_EMAIL . '</td><td align="left"><input type="text" name="email" size="28" /><input type="submit" value="' . S_SUBMIT . '" /></td></tr>';
-    }
-    
-    $dat .= '<tr><td class="postblock" align="left">' . S_COMMENT . '</td><td align="left"><textarea name="com" cols="48" rows="4"></textarea></td></tr>';
-    
-    $dat .= '<tr><td class="postblock" align="left">' . S_UPLOADFILE . '</td><td><input type="file" name="upfile" accept="image/*" />';
-
-    
-    if ( SPOILERS ) {
-        $dat .= '[<label><input type=checkbox name=spoiler value=on>' . S_SPOILERS . '</label>]</td></tr>';
-    } else {
-        $dat .= '</td></tr>';
-    }
-    
-        $dat .= '<tr><td align="left" class="postblock" align="left">
-            Options</td><td align="left">
-            Sticky: <input type="checkbox" name="isSticky" value="isSticky" />
-            Lock:<input type="checkbox" name="isLocked" value="isLocked" />
-            Capcode:<input type="checkbox" name="showCap" value="showCap" />
-            <tr><td class="postblock" align="left">' . S_RESNUM . '</td><td align="left"><input type="text" name="resto" size="28" /></td></tr>';
-    
-    $dat .= '<tr><td align="left" class="postblock" align="left">' . S_DELPASS . '</td><td align="left"><input type="password" name="pwd" size="8" maxlength="8" value="" />' . S_DELEXPL . '</td></tr></table></form></div></div>';
-
+    $postform = new PostForm;
+    $post .= $postform->format($resno, $admin);
 }
 
 function login( $usernm, $passwd ) {
@@ -203,7 +151,7 @@ function oldvalid( $pass ) {
         }
         echo "[<a href=\"" . PHP_ASELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
         echo "<div class=\"passvalid\">" . S_MANAMODE . "</div>\n";
-        echo "<form action='" . PHP_SELF . "' method='post' id='contrib' >";
+        //echo "<form action='" . PHP_SELF . "' method='post' id='contrib' >";
     }
 
     // Mana login form
@@ -223,9 +171,7 @@ function oldvalid( $pass ) {
 /* Admin deletion */
 function admindel( $pass ) {
     global $path, $onlyimgdel;
-    $delno   = array(
-         dummy 
-    );
+    $delno   = [];
     $delflag = FALSE;
     reset( $_POST );
     while ( $item = each( $_POST ) ) {

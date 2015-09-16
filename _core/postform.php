@@ -24,12 +24,24 @@ class PostForm {
 
         if ($resno) $temp .= "<div class='theader'>" . S_POSTING . "</div>\n";
 
+        $temp .= "<div align='center'><div class='postarea'>";
+
         if ($admin) {
             $hidden = "<input type='hidden' name='admin' value='" . PANEL_PASS . "'>";
-            $temp .= "<em>" . S_NOTAGS . "</em>";
-        }
+            $name = "";
 
-        $temp .= "<div align='center'><div class='postarea'>";
+            if (valid('moderator')) {
+                $name = '<span style="color:#770099;font-weight:bold;">Anonymous ## Mod</span>';
+            }
+            if (valid('admin')) {
+                $name = '<span style="color:#FF101A;font-weight:bold;">Anonymous ## Admin</span>';
+            }
+            if (valid('manager')) {
+                $name = '<span style="color:#2E2EFE;font-weight:bold;">Anonymous ## Manager</span>';
+            }
+
+            $temp .= "<em>" . S_NOTAGS . " Posting as</em>: " . $name;
+        }
 
         $temp .= "<form id='contribform' action='" . PHP_SELF_ABS . "' method='post' name='contrib' enctype='multipart/form-data'>";
 
