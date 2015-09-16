@@ -260,11 +260,11 @@ error( S_STRREF, $dest );
 if ( $_SERVER["REQUEST_METHOD"] != "POST" )
     error( S_UNJUST, $dest );
 // Form content check
-if ( !$name || ereg( "^[ |&#12288;|]*$", $name ) )
+if (!$name || preg_match("/^[ |&#12288;|]*$/", $name))
     $name = "";
-if ( !$com || ereg( "^[ |&#12288;|\t]*$", $com ) )
+if (!$com || preg_match("/^[ |&#12288;|\t]*$/", $com))
     $com = "";
-if ( !$sub || ereg( "^[ |&#12288;|]*$", $sub ) )
+if (!$sub || preg_match("/^[ |&#12288;|]*$/", $sub))
     $sub = "";
 
 if ( !$resto && !$textonly && !is_file( $dest ) && !valid( 'moderator' ) )
