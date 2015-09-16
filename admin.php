@@ -33,8 +33,8 @@ function postinfo( $no ) {
     
     head( $dat );
 	
-    $dat .= "<table style='border:solid black 2px; border-collapse=:collapse;' />";
-	$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br>";
+    $dat .= "<table style='border-collapse=:collapse;' />";
+	$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br><hr><br>";
 	if ( $sticky || $locked || $permasage ) {
 		if ( $sticky )
 			$special .= "<b><font color=\"FF101A\"> [Stickied]</font></b>";
@@ -55,20 +55,20 @@ function postinfo( $no ) {
         $hasimg = 1;
         $dat .= "<td><img width='" . MAX_W . "' height='" . MAX_H . "' src='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "'/></td></tr>
 		<tr><td class='postblock'>Thumbnail:</td><td><img width='" . $tn_w . "' height='" . $tn_h . "' src='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg" . "'/></td></tr>
-		<tr><td class='postblock'>Image locations:</td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "' target='_blank' />Image</a> | <a href='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg' target='_blank' />Thumb</a></td></tr>
-		<tr><td ></td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "' target='_blank' /><center><b>View in thread<b></center></a>";
+		<tr><td class='postblock'>Links:</td><td>[<a href='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "' target='_blank' />Image src</a>][<a href='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg' target='_blank' />Thumb src</a>]
+		[<a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "' target='_blank' /><b>View in thread</b></a>]</td></tr>";
 		} else
         $dat .= "<td>No file</td></tr>";
 	if (!$resto) {
         $dat .= "<form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
-        <tr><td class='postblock'>Action</td><td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
+        <tr><td class='postblock'>Action</td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
         <option value='sticky' />Sticky</option>
         <option value='unsticky' />Unsticky</option>
         <option value='lock' />Lock</option>
         <option value='unlock' />Unlock</option>
         <option value='permasage' />Autosage</option>
         <option value='nopermasage' />De-autosage</option>
-        </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'><td></td></tr></table></form>";
+        </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></td></tr></table></form>";
     } else 
 		$dat .= "</table></form>";
     	
@@ -80,26 +80,25 @@ function postinfo( $no ) {
 	else 
 		$alert = "No bans on record for IP $host";
 	
-	$dat .= "<br><table style='border:solid black 2px; border-collapse=:collapse;' /><form action='admin.php' />
+	$dat .= "<br><table style='border-collapse=:collapse;' /><form action='admin.php' />
 	<input type='hidden' name='mode' value='modipost' />
-	<th><center><b>Moderation info</b></center></th>
+	<center><th class='postblock'><b>Ban panel</b></th></center>
 	<tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
-	<tr><th><center><b>Ban<b></center></th></tr>
 	<tr><td class='postblock'>Length:</td><td><input type='text' name='length' placeholder='Number only' /><select name='time' />
         <option value='' /></option>
 		<option value='minute' />Minutes</option>
         <option value='hour' />Hours</option>
         <option value='day' />Days</option>
         <option value='month' />Months</option>
-        </select>[ Perma<input type='checkbox' value='perma' /> ] [ Warn only <input type='checkbox' value='warn' /> ]
+        </select>
 	</td></tr>
-	<tr><td class='postblock'>Ban type:</td><td>
+	<center><tr><td class='postblock'>Ban type:</td><td></center>
 		<select name='banType' />
         <option value='global' />This board  /" . BOARD_DIR . '/ - ' . TITLE . " </option>
         <option value='localboard' />All boards</option>
         <option value='globalview' />All boards - Viewban</option>
         <option value='localview' />This board - Viewban</option>
-        </select>
+        </select>[Perma<input type='checkbox' value='perma' />] [Warn only <input type='checkbox' value='warn' />]
 	</td></tr>
 	<tr><td class='postblock'>Public reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
 	<tr><td class='postblock'>Staff notes:</td><td><input type='text' name='staffnote' /></td></tr>
@@ -114,9 +113,9 @@ function postinfo( $no ) {
 	</td></tr>";
 		if ( valid( 'admin' ) )
 			$dat .= "
-		<tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr></table></form>";
-		else 
-			$dat .= "</table></form>";
+		<tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";
+
+		$dat .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form><br><hr>";
 		
 		$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br>";
 
