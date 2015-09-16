@@ -272,8 +272,8 @@ if ( !$resto && !$textonly && !is_file( $dest ) && !valid( 'moderator' ) )
 if ( !$com && !is_file( $dest ) && !valid( 'moderator' ) )
     error( S_NOTEXT, $dest );
 
-$name = ereg_replace( S_MANAGEMENT, "\"" . S_MANAGEMENT . "\"", $name );
-$name = ereg_replace( S_DELETION, "\"" . S_DELETION . "\"", $name );
+$name = preg_replace( S_MANAGEMENT, "\"" . S_MANAGEMENT . "\"", $name );
+$name = preg_replace( S_DELETION, "\"" . S_DELETION . "\"", $name );
 
 if ( strlen( $com ) > S_POSTLENGTH )
     error( S_TOOLONG, $dest );
@@ -384,13 +384,13 @@ $c_email = $email;
 
 //Text plastic surgery (rorororor)
 $email = CleanStr( $email );
-$email = ereg_replace( "[\r\n]", "", $email );
+$email = preg_replace( "[\r\n]", "", $email );
 $sub   = CleanStr( $sub );
-$sub   = ereg_replace( "[\r\n]", "", $sub );
+$sub   = preg_replace( "[\r\n]", "", $sub );
 $url   = CleanStr( $url );
-$url   = ereg_replace( "[\r\n]", "", $url );
+$url   = preg_replace( "[\r\n]", "", $url );
 $resto = CleanStr( $resto );
-$resto = ereg_replace( "[\r\n]", "", $resto );
+$resto = preg_replace( "[\r\n]", "", $resto );
 $com   = CleanStr( $com, 1 );
 
 if (USE_BBCODE === true) {
@@ -408,7 +408,7 @@ $com = str_replace( "\r\n", "\n", $com );
 $com = str_replace( "\r", "\n", $com );
 //$com = preg_replace("/\A([0-9A-Za-z]{10})+\Z/", "!s8AAL8z!", $com);
 // Continuous lines
-$com = ereg_replace( "\n((&#12288;| )*\n){3,}", "\n", $com );
+$com = preg_replace( "\n((&#12288;| )*\n){3,}", "\n", $com );
 
 if ( !$admin && substr_count( $com, "\n" ) > MAX_LINES )
     error( "Error: Too many lines.", $dest );
@@ -417,12 +417,12 @@ $com = nl2br( $com ); //br is substituted before newline char
 
 $com = str_replace( "\n", "", $com ); //\n is erased
 // Continuous lines
-$com = ereg_replace( "\n((&#12288;| )*\n){3,}", "\n", $com );
+$com = preg_replace( "\n((&#12288;| )*\n){3,}", "\n", $com );
 
 if ( !$admin && substr_count( $com, "\n" ) > MAX_LINES )
     error( "Error: Too many lines.", $dest );
 
-$name  = ereg_replace( "[\r\n]", "", $name );
+$name  = preg_replace( "[\r\n]", "", $name );
 $names = iconv( "UTF-8", "CP932//IGNORE", $name ); // convert to Windows Japanese #&#65355;&#65345;&#65357;&#65353;
 
 if ( $email == 'sage' ) {

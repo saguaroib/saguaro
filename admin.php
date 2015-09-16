@@ -278,8 +278,8 @@ function admindel( $pass ) {
         $img_flag = FALSE;
         list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
         // Format
-        $now = ereg_replace( '.{2}/(.*)$', '\1', $now );
-        $now = ereg_replace( '\(.*\)', ' ', $now );
+        $now = preg_replace( '.{2}/(.*)$', '\1', $now );
+        $now = preg_replace( '\(.*\)', ' ', $now );
         if ( strlen( $name ) > 10 )
             $truncname = substr( $name, 0, 9 ) . "...";
         else
