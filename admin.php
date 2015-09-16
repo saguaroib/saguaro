@@ -347,7 +347,7 @@ function modify_post ( $no, $action = 'none') {
 		case 'sticky':
             $rootnum = "2027-07-07 00:00:00";
 			$sqlBool = 0;
-			$verb = "Unlocked";			
+			$verb = "Stuck";			
 			break;
 		case 'permasage':
             $sqlValue = "permasage";
@@ -442,12 +442,6 @@ switch ( $_GET['mode'] ) {
             break;
         case 'zmdlog':
             login( $_POST['usernm'], $_POST['passwd'] );
-            break;
-        case 'rebuild':
-		    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL='" . PHP_ASELF_ABS . "?mode=rebuild' \">";
-            break;
-        case 'rebuildall':
-		    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL='" . PHP_ASELF_ABS . "?mode=rebuildall' \">";
             break;
         case 'lock':
 			modify_post( $_GET['no'], "lock");
