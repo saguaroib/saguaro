@@ -12,7 +12,7 @@
     
     //Define constants.
     foreach (get_defined_vars() as $KEY=>$VALUE) {
-        if (substr($KEY,0,2) === "S_") {
+        if (substr($KEY,0,2) === "S_" && !defined($KEY)) {
             define($KEY,$VALUE);
         }
     }
