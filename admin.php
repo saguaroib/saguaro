@@ -29,7 +29,7 @@ function postinfo( $no ) {
         echo S_SQLFAIL;
     $row = mysql_fetch_row( $result );
     
-    list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $resto, $board,  ) = $row;
+    list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board,  ) = $row;
     
     head( $dat );
     $dat .= "<table border='solid black 2px' border-collapse='collapse' />";
@@ -58,7 +58,7 @@ function postinfo( $no ) {
     <input type='submit' name='action' value='Image only' /><br />
     <input type='submit' name='action' value='All by IP' /><br /></td></tr></table></form>";
 	
-    if ($resto) {
+    if (!$resto) {
         $dat .= "<br /><br /><table><form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
         <tr><td>Action</td><td><td><select name='mode' />
         <option value='sticky' />Sticky</option>
@@ -339,40 +339,40 @@ function modify_post ( $no, $action = 'none') {
 	if ( !valid( 'moderator' ) )
 		die("\"PLEASE AUTOBAN ME FOREVER!!!\" - you");
 	switch ( $action ) {
-		case 'lock':
-            $sqlValue = "locked";
-			$sqlBool = 1;
-			$verb = "Locked";
-			break;
 		case 'sticky':
+            $sqlValue = "sticky";
             $rootnum = "2027-07-07 00:00:00";
-			$sqlBool = 0;
+			$sqlBool = "'1', root='" . $rootnum ."'";
 			$verb = "Stuck";			
 			break;
-		case 'permasage':
-            $sqlValue = "permasage";
-			$sqlBool = 1;
-			$verb = "Permanently saged";
+		case 'unsticky':
+            $sqlValue = "sticky";
+            $rootnum = date('Y-m-d G:i:s');
+			$sqlBool = "'0', root='" . $rootnum . "'";
+			$verb = "Unstuck";
+			break;
+		case 'lock':
+            $sqlValue = "locked";
+			$sqlBool = "'1'";
+			$verb = "Locked";
 			break;
 		case 'unlock':
             $sqlValue = "locked";
-			$sqlBool = 0;
+			$sqlBool = "'0'";
 			$verb = "Unlocked";
-		case 'unsticky':
-            $rootnum = date('Y-m-d G:i:s');
-			$sqlBool = 0;
-			$verb = "Unstuck";
+			break;
+		case 'permasage':
+            $sqlValue = "permasage";
+			$sqlBool = "'1'";
+			$verb = "Permanently saged";
 			break;
 		default:
 			break;
 	}
 
-	if ( $verb !== "Stuck" || $verb !== "Unstuck" )
-		mysql_call( 'UPDATE ' . SQLLOG . " SET " . $sqlValue . "='" . $sqlBool . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-	else 
-		mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='". $sqlBool ."' , root='" . $rootnum . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-
-    echo $verb . " thread $no<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
+	mysql_call( 'UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+   
+   echo $verb . " thread $no. Redirecting...<META HTTP-EQUIV=\"refresh\" content=\"1;URL=" . PHP_ASELF_ABS . "\">";
 
 }
 /*
