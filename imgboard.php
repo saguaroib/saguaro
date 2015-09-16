@@ -859,7 +859,7 @@ function head( &$dat ) {
 </head>
 <body>
  ' . $titlebar . '
-<span class="boardlist">' . file_get_contents( BOARDLIST ) . ' </span>
+<span class="boardlist">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : ''). ' </span>
 <span class="adminbar">
 [<a href="' . HOME . '" target="_top">' . S_HOME . '</a>]
 [<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
