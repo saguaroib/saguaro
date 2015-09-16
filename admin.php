@@ -58,7 +58,7 @@ function postinfo( $no ) {
     <input type='submit' name='action' value='Image only' /><br />
     <input type='submit' name='action' value='All by IP' /><br /></td></tr></table></form>";
 	
-    if (!$resto) {
+    if ($resto) {
         $dat .= "<br /><br /><table><form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
         <tr><td>Action</td><td><td><select name='mode' />
         <option value='sticky' />Sticky</option>
@@ -335,7 +335,7 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
 	$remove->targeted( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 );
 }
 
-function modify_post ( $action = 'none', $no) {
+function modify_post ( $no, $action = 'none') {
 	if ( !valid( 'moderator' ) )
 		die("\"PLEASE AUTOBAN ME FOREVER!!!\" - you");
 	switch ( $action ) {
@@ -347,7 +347,7 @@ function modify_post ( $action = 'none', $no) {
 		case 'sticky':
             $rootnum = "2027-07-07 00:00:00";
 			$sqlBool = 0;
-			$verb = "Unstuck";			
+			$verb = "Unlocked";			
 			break;
 		case 'permasage':
             $sqlValue = "permasage";
@@ -372,7 +372,7 @@ function modify_post ( $action = 'none', $no) {
 	else 
 		mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='". $sqlBool ."' , root='" . $rootnum . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
 
-    return $verb . " thread $no<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
+    echo $verb . " thread $no<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 
 }
 /*
@@ -442,6 +442,12 @@ switch ( $_GET['mode'] ) {
             break;
         case 'zmdlog':
             login( $_POST['usernm'], $_POST['passwd'] );
+            break;
+        case 'rebuild':
+		    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL='" . PHP_ASELF_ABS . "?mode=rebuild' \">";
+            break;
+        case 'rebuildall':
+		    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL='" . PHP_ASELF_ABS . "?mode=rebuildall' \">";
             break;
         case 'lock':
 			modify_post( $_GET['no'], "lock");
