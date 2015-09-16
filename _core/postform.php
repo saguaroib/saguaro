@@ -94,12 +94,13 @@ class PostForm {
             $temp .= "<tr><td colspan='2'><div align='left' class='rules'>" . S_RULES . "</div></td></tr></table></form></div></div><hr>";
         else
             $temp .= '</table></form></div></div>';
-
-        if (!$resno && !$admin)
+        
+        if (file_exists(GLOBAL_NEWS)) {
             $news = file_get_contents(GLOBAL_NEWS);
-        if ($news !== "") //Could this be invalidated if file_get_contents doesn't return anything? if ($news)?
-            $temp .= "<div class='globalnews'>" . file_get_contents( GLOBAL_NEWS ) . "</div><hr>";
-
+            
+            if ($news !== "")
+                $temp .= "<div class='globalnews'>" . file_get_contents( GLOBAL_NEWS ) . "</div><hr>";
+        }
 
         if ($resno) //Navigation bar above thread.
             $temp .= "<div class='threadnav' /> [<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='" . $resno . PHP_EXT . "#bottom'/>Bottom</a>] </div>\n<hr>";
