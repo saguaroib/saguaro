@@ -124,8 +124,11 @@ function rebuildqueue_take_all() {
     return $posts;
 }
 
-function log_cache( $invalidate = 0 ) {
-    require_once(CORE_DIR . '/log/cache.php');
+function log_cache(/*$invalidate = 0*/) {
+    require_once(CORE_DIR . '/log/log.php');
+    $my_log = new Log;
+    $my_log->update_cache();
+    $log = $my_log->cache;
 }
 
 // truncate $str to $max_lines lines and return $str and $abbr
