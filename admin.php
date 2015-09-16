@@ -140,7 +140,9 @@ function oldvalid( $pass ) {
 /* Admin deletion */
 function admindel( $pass ) {
     global $path, $onlyimgdel;
-    $delno   = [];
+    $delno   = array(
+         dummy 
+    );
     $delflag = FALSE;
     reset( $_POST );
     while ( $item = each( $_POST ) ) {
@@ -158,39 +160,13 @@ function admindel( $pass ) {
         while ( $row = mysql_fetch_row( $result ) ) {
             list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize,  ) = $row;
             if ( $onlyimgdel == on ) {
-                /*if ( array_search( $no, $delno ) ) { //only a picture is deleted
-                $delfile = $path . $tim . $ext; //only a picture is deleted
-                if ( is_file( $delfile ) )
-                unlink( $delfile ); //delete
-                if ( is_file( THUMB_DIR . $tim . 's.jpg' ) )
-                unlink( THUMB_DIR . $tim . 's.jpg' ); //delete
-                }*/
                 delete_post( $no, $pwd, 1, 1, 1, 0 );
             } else {
                 if ( array_search( $no, $delno ) ) { //It is empty when deleting
                     delete_post( $no, $pwd, 0, 1, 1, 0 );
-                    
-                    /*$find = TRUE;
-                    if ( !mysql_call( "delete from " . SQLLOG . " where no=" . $no ) ) {
-                    echo S_SQLFAIL;
-                    }
-                    //eat the baby posts too if we kill the parent (OP) post
-                    $findchildren = mysql_call( "SELECT * FROM " . SQLLOG . " where  resto=" . $no );
-                    if ( mysql_num_rows( $findchildren ) > 0 ) {
-                    $eatchildren = mysql_call( "DELETE FROM " . SQLLOG . " where resto=" . $no );
-                    mysql_query( $eatchildren );
-                    }
-                    $delfile = $path . $tim . $ext; //Delete file
-                    if ( is_file( $delfile ) )
-                    unlink( $delfile ); //Delete
-                    if ( is_file( THUMB_DIR . $tim . 's.jpg' ) )
-                    unlink( THUMB_DIR . $tim . 's.jpg' ); //Delete*/
                 }
             }
         }
-        /*		mysql_free_result( $result );
-        if ( $find ) { //log renewal
-        }*/
     }
     
     function calculate_age( $timestamp, $comparison = '' ) {
@@ -199,7 +175,7 @@ function admindel( $pass ) {
             'minute' => 60,
             'hour' => 24,
             'day' => 7,
-            'week' => 4.25, // FUCK YOU GREGORIAN CALENDAR
+            'week' => 4.25, 
             'month' => 12 
         );
         
@@ -247,8 +223,8 @@ function admindel( $pass ) {
         $img_flag = FALSE;
         list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
         // Format
-        $now = preg_replace('/.{2}\/(.*)$/', '\\1', $now);
-        $now = preg_replace('/\(.*\)/', ' ', $now);
+        $now = ereg_replace( '.{2}/(.*)$', '\1', $now );
+        $now = ereg_replace( '\(.*\)', ' ', $now );
         if ( strlen( $name ) > 10 )
             $truncname = substr( $name, 0, 9 ) . "...";
         else
@@ -306,7 +282,6 @@ function admindel( $pass ) {
         echo "<td>$truncname</b></td><td>$trunccom</td>";
         echo "<td class='postimg' >$clip</td><td>" . calculate_age( $time ) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
         echo "</tr>\n";
-
     }
     mysql_free_result( $result );
 	
@@ -327,7 +302,6 @@ function valid( $action = 'moderator', $no = 0 ) {
 	return $allowed;
 }
 
-
 if (!function_exists(mysql_call)) {
 	function mysql_call( $query ) {
 		$ret = mysql_query( $query );
@@ -339,97 +313,68 @@ if (!function_exists(mysql_call)) {
 	}
 }
 
-function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 ) {
-    require_once("_core/log/log.php");
-
-    global $log, $path;
-    log_cache();
-    $resno = intval( $resno );
-    
-    // get post info
-    if ( !isset( $log[$resno] ) ) {
-        if ( $die )
-            error( "Can't find the post $resno." );
-    }
-    $row = $log[$resno];
-    
-    // check password- if not ok, check admin status (and set $admindel if allowed)
-    $delete_ok = ( $automatic || ( substr( md5( $pwd ), 2, 8 ) == $row['pwd'] ) || ( $row['host'] == $_SERVER['REMOTE_ADDR'] ) );
-    if ( valid( 'janitor_board' ) ) {
-        $delete_ok = $admindel = valid( 'delete', $resno );
-    }
-    if ( !$delete_ok )
-        error( S_BADDELPASS );
-    
-    // check ghost bumping
-    if ( !isset( $admindel ) || !$admindel ) {
-        if ( BOARD_DIR == 'a' && (int) $row['time'] > ( time() - 25 ) && $row['email'] != 'sage' ) {
-            $ghostdump = var_export( array(
-                 'server' => $_SERVER,
-                'post' => $_POST,
-                'cookie' => $_COOKIE,
-                'row' => $row 
-            ), true );
-            //file_put_contents('ghostbump.'.time(),$ghostdump);
-        }
-    }
-    
-    if ( isset( $admindel ) && $admindel ) { // extra actions for admin user
-        $auser   = mysql_real_escape_string( $_COOKIE['saguaro_auser'] );
-        $adfsize = ( $row['fsize'] > 0 ) ? 1 : 0;
-        $adname  = str_replace( '</span> <span class="postertrip">!', '#', $row['name'] );
-        if ( $imgonly ) {
-            $imgonly = 1;
-        } else {
-            $imgonly = 0;
-        }
-        $row['sub']      = mysql_real_escape_string( $row['sub'] );
-        $row['com']      = mysql_real_escape_string( $row['com'] );
-        $row['filename'] = mysql_real_escape_string( $row['filename'] );
-        mysql_call( "INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . SQLLOG . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')" );
-    }
-    
-    if ( $row['resto'] == 0 && $children && !$imgonly ) // select thread and children
-        $result = mysql_call( "select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno" );
-    else // just select the post
-        $result = mysql_call( "select no,resto,tim,ext from " . SQLLOG . " where no=$resno" );
-    
-    while ( $delrow = mysql_fetch_array( $result ) ) {
-        // delete
-        $delfile  = $path . $delrow['tim'] . $delrow['ext']; //path to delete
-        $delthumb = THUMB_DIR . $delrow['tim'] . 's.jpg';
-        if ( is_file( $delfile ) )
-            unlink( $delfile ); // delete image
-        if ( is_file( $delthumb ) )
-            unlink( $delthumb ); // delete thumb
-        if ( OEKAKI_BOARD == 1 && is_file( $path . $delrow['tim'] . '.pch' ) )
-            unlink( $path . $delrow['tim'] . '.pch' ); // delete oe animation
-        if ( !$imgonly ) { // delete thread page & log_cache row
-            if ( $delrow['resto'] )
-                unset( $log[$delrow['resto']]['children'][$delrow['no']] );
-            unset( $log[$delrow['no']] );
-            $log['THREADS'] = array_diff( $log['THREADS'], array(
-                 $delrow['no'] 
-            ) ); // remove from THREADS
-            mysql_call( "DELETE FROM reports WHERE no=" . $delrow['no'] ); // clear reports
-            if ( USE_GZIP == 1 ) {
-                @unlink( RES_DIR . $delrow['no'] . PHP_EXT );
-                @unlink( RES_DIR . $delrow['no'] . PHP_EXT . '.gz' );
-            } else {
-                @unlink( RES_DIR . $delrow['no'] . PHP_EXT );
-            }
-        }
-    }
-    
-    //delete from DB
-    if ( $row['resto'] == 0 && $children && !$imgonly ) // delete thread and children
-        $result = mysql_call( "delete from " . SQLLOG . " where no=$resno or resto=$resno" );
-    elseif ( !$imgonly ) // just delete the post
-        $result = mysql_call( "delete from " . SQLLOG . " where no=$resno" );
-    
-    return $row['resto']; // so the caller can know what pages need to be rebuilt
+function log_cache($invalidate = 0) {
+    require_once(CORE_DIR . "/log/log.php");
+	
+	$my_log = new Log;
+    $my_log->update_cache();
+    $log = $my_log->cache;
 }
 
+// deletes a post from the database
+// imgonly: whether to just delete the file or to delete from the database as well
+// automatic: always delete regardless of password/admin (for self-pruning)
+// children: whether to delete just the parent post of a thread or also delete the children
+// die: whether to die on error
+// careful, setting children to 0 could leave orphaned posts.
+function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 ) {
+    require_once("_core/log/log.php");
+	require_once(CORE_DIR . "admin/delpost.php");
+	
+	$remove = new DeletePost;
+	$remove->targeted( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 );
+}
+
+function modify_post ( $action = 'none', $no) {
+	if ( !valid( 'moderator' ) )
+		die("\"PLEASE AUTOBAN ME FOREVER!!!\" - you");
+	switch ( $action ) {
+		case 'lock':
+            $sqlValue = "locked";
+			$sqlBool = 1;
+			$verb = "Locked";
+			break;
+		case 'sticky':
+            $rootnum = "2027-07-07 00:00:00";
+			$sqlBool = 0;
+			$verb = "Unstuck";			
+			break;
+		case 'permasage':
+            $sqlValue = "permasage";
+			$sqlBool = 1;
+			$verb = "Permanently saged";
+			break;
+		case 'unlock':
+            $sqlValue = "locked";
+			$sqlBool = 0;
+			$verb = "Unlocked";
+		case 'unsticky':
+            $rootnum = date('Y-m-d G:i:s');
+			$sqlBool = 0;
+			$verb = "Unstuck";
+			break;
+		default:
+			break;
+	}
+
+	if ( $verb !== "Stuck" || $verb !== "Unstuck" )
+		mysql_call( 'UPDATE ' . SQLLOG . " SET " . $sqlValue . "='" . $sqlBool . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+	else 
+		mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='". $sqlBool ."' , root='" . $rootnum . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+
+    return $verb . " thread $no<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
+
+}
 /*
 function ban($no) {
 
@@ -498,46 +443,22 @@ switch ( $_GET['mode'] ) {
         case 'zmdlog':
             login( $_POST['usernm'], $_POST['passwd'] );
             break;
-        case 'rebuild':
-		    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL='" . PHP_ASELF_ABS . "?mode=rebuild' \">";
-            break;
-        case 'rebuildall':
-		    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL='" . PHP_ASELF_ABS . "?mode=rebuildall' \">";
-            break;
         case 'lock':
-			$no = $_GET['no'];
-            mysql_call( 'UPDATE ' . SQLLOG . " SET locked='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            echo "Locking thread $no";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
+			modify_post( $_GET['no'], "lock");
 			break;
         case 'permasage':
-			$no = $_GET['no'];
-            mysql_call( 'UPDATE ' . SQLLOG . " SET permasage='1' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-			echo "Permasaging $no";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
+			modify_post( $_GET['no'], "permasage");
             break;
         case 'sticky':
-			$no = $_GET['no'];
-            $rootnum = "2027-07-07 00:00:00";
-            mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='1' , root='" . $rootnum . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-			echo "Stickying thread $no";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
+			modify_post( $_GET['no'], "sticky");
 			break;
         case 'unlock':
-			$no = $_GET['no'];
-            mysql_call( 'UPDATE ' . SQLLOG . " SET locked='0' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            echo "Unlocking thread $no";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
+			modify_post( $_GET['no'], "unlock");
 			break;
         case 'unsticky':
-			$no = $_GET['no'];
-            $rootnum = date('Y-m-d G:i:s');
-            mysql_call( 'UPDATE ' . SQLLOG . " SET sticky='0' , root='" . $rootnum . "' WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-            echo "Unstickying thread $no";
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
+			modify_post( $_GET['no'], "unsticky");
 			break;
 		case 'delete':
-			include('imgboard.php');
 			$no = $_GET['no'];
 			$action = $_GET['action'];
 			if ( $action = 'This+post') 
