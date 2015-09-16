@@ -25,9 +25,10 @@ class PostForm {
         if ($resno) $temp .= "<div class='theader'>" . S_POSTING . "</div>\n";
 
         $temp .= "<div align='center'><div class='postarea'>";
+        $temp .= "<form id='contribform' action='" . PHP_SELF_ABS . "' method='post' name='contrib' enctype='multipart/form-data'>";
 
         if ($admin) {
-            $hidden = "<input type='hidden' name='admin' value='" . PANEL_PASS . "'>";
+
             $name = "";
 
             if (valid('moderator')) {
@@ -41,11 +42,10 @@ class PostForm {
             }
 
             $temp .= "<em>" . S_NOTAGS . " Posting as</em>: " . $name;
+            $temp .= "<input type='hidden' name='admin' value='" . PANEL_PASS . "'>";
         }
 
-        $temp .= "<form id='contribform' action='" . PHP_SELF_ABS . "' method='post' name='contrib' enctype='multipart/form-data'>";
-
-        $temp .= "<input type='hidden' name='mode' value='regist' />" . $hidden . "<input type='hidden' name='MAX_FILE_SIZE' value='" . $maxbyte . "'>";
+        $temp .= "<input type='hidden' name='mode' value='regist'><input type='hidden' name='MAX_FILE_SIZE' value='" . $maxbyte . "'>";
 
         if ($resno)
             $temp .= "<input type='hidden' name='resto' value='" . $resno . "'>";
@@ -94,10 +94,10 @@ class PostForm {
             $temp .= "<tr><td colspan='2'><div align='left' class='rules'>" . S_RULES . "</div></td></tr></table></form></div></div><hr>";
         else
             $temp .= '</table></form></div></div>';
-        
+
         if (file_exists(GLOBAL_NEWS)) {
             $news = file_get_contents(GLOBAL_NEWS);
-            
+
             if ($news !== "")
                 $temp .= "<div class='globalnews'>" . file_get_contents( GLOBAL_NEWS ) . "</div><hr>";
         }
