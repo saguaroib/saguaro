@@ -1,8 +1,11 @@
 <?php
+    //Potentially rewrite as a class to accept and apply languages easily.
+    //However, we should never need to explicitly need config.php if used alone.
+
     //Require base translation.
     require("en-us.php");
     //Get defined language and include it, overwriting en-us as needed.
-    include("/../config.php");
+    //include("/../config.php");
     if (defined(LANGUAGE) && LANGUAGE !== "en-us") {
         include(LANGUAGE . ".php");
     }
