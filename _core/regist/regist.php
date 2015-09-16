@@ -15,6 +15,7 @@ if (BOTCHECK === true) {
         error(S_CAPFAIL, $dest);
 }
 
+require_once("cleanstr.php");
 require_once("tripcode.php");
 require_once("wordwrap.php");
 

@@ -1015,20 +1015,6 @@ it's good to be straight up deleted when it is removed from regist*/
     }
 }
 
-/* text plastic surgery */
-function CleanStr( $str ) {
-    global $admin;
-    $str = trim( $str ); //blankspace removal
-    if ( get_magic_quotes_gpc() ) { //magic quotes is deleted (?)
-        $str = stripslashes( $str );
-    }
-    if ( $admin != PANEL_PASS ) { //admins can use tags
-        $str = htmlspecialchars( $str ); //remove html special chars
-        $str = str_replace( "&amp;", "&", $str ); //remove ampersands
-    }
-    return str_replace( ",", "&#44;", $str ); //remove commas
-}
-
 // deletes a post from the database
 // imgonly: whether to just delete the file or to delete from the database as well
 // automatic: always delete regardless of password/admin (for self-pruning)
