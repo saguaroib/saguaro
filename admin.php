@@ -505,9 +505,9 @@ switch ( $_GET['mode'] ) {
         case 'zmdlog':
             login( $_POST['usernm'], $_POST['passwd'] );
             break;
-		case "modipost":
-			modify_post( $_GET['no'], $_GET['action']);
-			break;
+	case "modipost":
+		modify_post( $_GET['no'], $_GET['action']);
+		break;
 		default:
             oldvalid( $pass );
             aform( $post, $res, 1 );
