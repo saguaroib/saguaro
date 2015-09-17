@@ -30,6 +30,7 @@ class Post {
         $temp .= "<span class='commentpostername'>$name</span> $now <span id='norep$no'>";
 
         $com = $this->abbr($com, MAX_LINES_SHOWN);
+        $com = $this->auto_link($com, $resno);
 
         if ($resno) {
             $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\"$no\")' class='quotejs'>$no</a></span>";
@@ -71,6 +72,7 @@ class Post {
         }
 
         $com = $this->abbr($com, MAX_LINES_SHOWN);
+        $com = $this->auto_link($com, $no);
 
         $temp .= "<br>";
         $temp .= "</span>\n<blockquote>$com</blockquote>";
@@ -113,6 +115,11 @@ class Post {
              $str,
             $abbr
         );
+    }
+
+    function auto_link($com, $resno) {
+        require_once("autolink.php");
+        return auto_link($com, $resno);
     }
 }
 

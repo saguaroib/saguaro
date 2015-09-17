@@ -301,9 +301,10 @@ class Log {
         $this->cache = $log;
     }
 
-    // print $contents to $filename by using a temporary file and renaming it
-    // (makes *.html and *.gz if USE_GZIP is on)
     function print_page($filename, $contents, $force_nogzip = 0) {
+        // print $contents to $filename by using a temporary file and renaming it
+        // (makes *.html and *.gz if USE_GZIP is on)
+
         $gzip = (USE_GZIP == 1 && !$force_nogzip);
         $tempfile = tempnam(realpath(RES_DIR), "tmp"); //note: THIS actually creates the file
         file_put_contents($tempfile, $contents, FILE_APPEND);
