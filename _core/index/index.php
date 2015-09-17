@@ -9,6 +9,8 @@
     $sample = new Catalog;
     $sample->format(); //Will default to 1 and generate the first page index.
     $sample->format(2); //Will generate the second page index.
+    
+    Surely the sticky sorting is optimized.
 
 */
 
@@ -93,6 +95,7 @@ class Index {
 
         $this->parseOPs();
         $this->parseReplies();
+        $this->parseStickies();
         
         if (!function_exists("last_compare")) {
             function last_compare($a, $b) {
@@ -101,7 +104,9 @@ class Index {
             }
         }
 
-        usort($this->data, "last_compare");
+        usort($this->data['sticky'], "last_compare");
+        usort($this->data['unsticky'], "last_compare");
+        $this->data = array_merge($this->data['sticky'], $this->data['unsticky']);
 
         $this->data = array_slice($this->data, $min, $max);
     }
@@ -121,7 +126,8 @@ class Index {
                     'no' => $entry['no'],
                     'replies' => 0,
                     'images' => 0,
-                    'last' => $entry['no']
+                    'last' => $entry['no'],
+                    'sticky' => $entry['sticky']
                 ];
         }
     }
@@ -138,6 +144,17 @@ class Index {
                     $this->data[$rto]['images']++;
             }
         }
+    }
+    private function parseStickies() {
+        //There's probably a better way to do this.
+        $temp = ["sticky" => [], "unsticky" => []];
+        
+        foreach ($this->data as $thread) {
+            $sticky = ($thread['sticky']) ? 'sticky': 'unsticky';
+            array_push($temp[$sticky], $thread);
+        }
+        
+        $this->data = $temp;
     }
 }
 
