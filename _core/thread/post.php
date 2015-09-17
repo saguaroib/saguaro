@@ -8,6 +8,7 @@
 */
 
 include("image.php");
+include("abbreviate.php");
 
 class Post {
     public $data = [];
@@ -28,7 +29,14 @@ class Post {
         $temp .= "<table><tr><td nowrap class='doubledash'>&gt;&gt;</td><td id='$no' class='reply'>\n";
         $temp .= "<input type=checkbox name='$no' value=delete><span class='replytitle'>$sub</span> \n";
         $temp .= "<span class='commentpostername'>$name</span> $now <span id='norep$no'>";
+        
+        if ($this->inIndex) {
+            list($com, $abbreviated) = abbreviate($com, MAX_LINES_SHOWN);
 
+            if (isset($abbreviated) && $abbreviated)
+                $com .= "<br><br><span class='abbr'>Comment too long. Click <a href='" . RES_DIR . ($resto ? $resto : $no) . PHP_EXT . "#$no'>here</a> to view the full text.</span>";
+        }
+        
         if ( $resno ) {
             $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\"$no\")' class='quotejs'>$no</a></span>";
         } else {
