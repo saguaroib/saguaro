@@ -8,7 +8,6 @@
 */
 
 include("image.php");
-include("abbreviate.php");
 
 class Post {
     public $data = [];
@@ -89,6 +88,8 @@ class Post {
                 $com .= "<br><br><span class='abbr'>Comment too long. Click <a href='" . RES_DIR . ($resto ? $resto : $no) . PHP_EXT . "#$no'>here</a> to view the full text.</span>";
 
             return $com;
+        } else {
+            return $str;
         }
     }
 
