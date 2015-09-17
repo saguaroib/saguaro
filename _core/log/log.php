@@ -57,8 +57,7 @@ class Log {
         //$counttree=mysql_num_rows($treeline);
         if (!$counttree) {
             $logfilename = PHP_SELF2;
-            $dat = '';
-            $dat .= head();
+            $dat = head();
             form($dat, $resno);
             print_page($logfilename, $dat);
         }
@@ -125,12 +124,7 @@ class Log {
                 Not implemented:
                 
                 $com = auto_link($com, $resno);
-                if (!$resno)
-                    list($com, $abbreviated) = abbreviate($com, MAX_LINES_SHOWN);
-
-                if (isset($abbreviated) && $abbreviated)
-                    $com .= "<br /><span class=\"abbr\">Comment too long. Click <a href=\"" . RES_DIR . ( $resto ? $resto : $no ) . PHP_EXT . "#$no\">here</a> to view the full text.</span>";
-
+                
                 */
 
                 //This won't need needed once the extra fluff is dealt with as we can just use the Index class.
