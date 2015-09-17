@@ -106,8 +106,7 @@ class Log {
         
         
         for ($page = 0; $page < $counttree; $page += PAGE_DEF) {
-            $dat = '';
-            head($dat);
+            $dat = head();
             form($dat, $resno);
             if (!$resno) {
                 $st = $page;

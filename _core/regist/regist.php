@@ -15,6 +15,9 @@ if (BOTCHECK === true) {
         error(S_CAPFAIL, $dest);
 }
 
+$upfile_name = $_FILES["upfile"]["name"];
+$upfile = $_FILES["upfile"]["tmp_name"];
+
 require_once("cleanstr.php");
 require_once("tripcode.php");
 require_once("wordwrap.php");

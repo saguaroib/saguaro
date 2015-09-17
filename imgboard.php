@@ -28,9 +28,6 @@ extract( $_POST );
 extract( $_GET );
 extract( $_COOKIE );
 
-$upfile_name = $_FILES["upfile"]["name"];
-$upfile      = $_FILES["upfile"]["tmp_name"];
-
 $path = realpath( "./" ) . '/' . IMG_DIR;
 ignore_user_abort( TRUE );
 $badstring = array(
@@ -190,8 +187,7 @@ function valid( $action = 'moderator', $no = 0 ) {
 	require_once("_core/admin/validate.php");
 	
 	$validate = new Validation;
-	$allowed = $validate->verify( $action );
-	return $allowed;
+	return $validate->verify( $action );
 }
 
 /* head */
@@ -220,7 +216,8 @@ function foot( &$dat ) {
 
 
 function error( $mes, $dest = '' ) {
-    global $upfile_name, $path;
+    global $path;
+    $upfile_name = $_FILES["upfile"]["name"];
     if ( is_file( $dest ) )
         unlink( $dest );
     $dat .= head();
@@ -329,7 +326,7 @@ function auto_link( $proto, $resno ) {
 }
 
 /* Regist */
-function regist( $name, $email, $sub, $com, $url, $pwd, $upfile, $upfile_name, $resto ) {
+function regist( $name, $email, $sub, $com, $url, $pwd, $resto ) {
     require_once(CORE_DIR . "/regist/regist.php");
 }
 
@@ -472,7 +469,7 @@ function rebuild( $all = 0 ) {
 /*-----------Main-------------*/
 switch ( $mode ) {
     case 'regist':
-        regist( $name, $email, $sub, $com, '', $pwd, $upfile, $upfile_name, $resto );
+        regist( $name, $email, $sub, $com, '', $pwd, $resto );
         break;
     case 'rebuild':
         rebuild();
