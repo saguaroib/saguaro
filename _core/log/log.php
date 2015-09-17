@@ -214,15 +214,12 @@ class Log {
                 if ( $locked == 1 )
                     $stickyicon .= ' <img src="' . CSS_PATH . '/locked.gif" alt="closed"> ';
                 
-				if ( valid( 'moderator' ) && ADMINCRUISIN )
-					$adminBROWSIN = " [<a href=\"" . PHP_ASELF_ABS . "?mode=more&no=$no\" target='_blank' />View info</a>]";
-				
                 if ( $resno ) {
                     $dat .= "<a href=\"#$no\" class=\"quotejs\">No.</a><a href=\"javascript:insert('$no')\" class=\"quotejs\">$no</a> $stickyicon &nbsp; ";
                 } else {
-                    $dat .= "<a href=\"" . RES_DIR . $no . PHP_EXT . "#" . $no . "\" class=\"quotejs\">No.</a><a href=\"" . RES_DIR . $no . PHP_EXT . "#q" . $no . "\" class=\"quotejs\">$no</a> $stickyicon &nbsp; " . $adminBROWSIN . " [<a href=\"" . RES_DIR . $no . PHP_EXT . "\">" . S_REPLY . "</a>]";
+                    $dat .= "<a href=\"" . RES_DIR . $no . PHP_EXT . "#" . $no . "\" class=\"quotejs\">No.</a><a href=\"" . RES_DIR . $no . PHP_EXT . "#q" . $no . "\" class=\"quotejs\">$no</a> $stickyicon &nbsp; [<a href=\"" . RES_DIR . $no . PHP_EXT . "\">" . S_REPLY . "</a>]";
                 }
-	
+                
                 $dat .= "</span>\n<blockquote>$com</blockquote>";
                 
                 // Deletion pending
@@ -363,9 +360,9 @@ class Log {
                     $dat .= "<input type=checkbox name=\"$no\" value=delete><span class=\"replytitle\">$sub</span> \n";
                     $dat .= "<span class=\"commentpostername\">$name</span> $now <span id=\"norep$no\">";
                     if ( $resno ) {
-                        $dat .= "<a href=\"#$no\" class=\"quotejs\">No.</a><a href=\"javascript:insert('$no')\" class=\"quotejs\">$no</a>  " . $adminBROWSIN . " </span>";
+                        $dat .= "<a href=\"#$no\" class=\"quotejs\">No.</a><a href=\"javascript:insert('$no')\" class=\"quotejs\">$no</a></span>";
                     } else {
-                        $dat .= "<a href=\"" . RES_DIR . $resto . PHP_EXT . "#$no\" class=\"quotejs\">No.</a><a href=\"" . RES_DIR . $resto . PHP_EXT . "#q$no\" class=\"quotejs\">$no</a> " . $adminBROWSIN . "</span>";
+                        $dat .= "<a href=\"" . RES_DIR . $resto . PHP_EXT . "#$no\" class=\"quotejs\">No.</a><a href=\"" . RES_DIR . $resto . PHP_EXT . "#q$no\" class=\"quotejs\">$no</a></span>";
                     }
                     
                     if ( isset( $r_imgreply ) )
@@ -478,7 +475,7 @@ class Log {
         //However, it still needs to be rewritten.
 
         //This currently does nothing as nothing ever calls it with true.
-        if ($invalidate == 0 && !empty($this->cache)) { return; }
+        //if ($invalidate == 0 && !empty($this->cache)) { return; }
 
         global $log, $ipcount, $mysql_unbuffered_reads, $lastno;
 
