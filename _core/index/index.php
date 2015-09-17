@@ -80,7 +80,7 @@ class Index {
         } else {
             $dat .= "<td>" . S_LASTPG . "</td>";
         }
-        $dat .= '</tr></table><br clear="all" >\n';
+        $dat .= "</tr></table><br clear='all' >\n";
         
         return $dat;
     }
