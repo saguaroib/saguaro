@@ -9,7 +9,7 @@
     $sample = new Catalog;
     $sample->format(); //Will default to 1 and generate the first page index.
     $sample->format(2); //Will generate the second page index.
-    
+
     Surely the sticky sorting is optimized.
 
 */
@@ -18,6 +18,7 @@ require_once(CORE_DIR . "/thread/thread.php");
 
 class Index {
     private $data = [];
+    public $thread_cache = [];
 
     public function format($page_no = 1 ,$counttree = 0) {
         global $log;
@@ -30,14 +31,16 @@ class Index {
 
         foreach ($this->data as $resno) {
             //Eventually remove display:table, disgusting.
-            $temp .= "<div style='display:table;clear:both;width:100%;'>" . $this->generateThread($resno["no"]) . "</div><hr>";
+            $cache = "<div style='display:table;clear:both;width:100%;'>" . $this->generateThread($resno["no"]) . "</div><hr>";
+            $this->thread_cache[$resno["no"]] = $cache; //Put in thread cache for use of parent classes (instead of regenerating threads).
+            $temp .= $cache;
         }
-        
+
         $temp .= $this->foot($page_no, $counttree);
 
         return $temp;
     }
-    
+
     public function foot($st, $counttree) {
         $dat = '';
         $prev = $st - PAGE_DEF;
@@ -83,10 +86,10 @@ class Index {
             $dat .= "<td>" . S_LASTPG . "</td>";
         }
         $dat .= "</tr></table><br clear='all' >\n";
-        
+
         return $dat;
     }
-    
+
     private function formatRange($page_no) {
         global $log;
         $temp = [];
@@ -96,7 +99,7 @@ class Index {
         $this->parseOPs();
         $this->parseReplies();
         $this->parseStickies();
-        
+
         if (!function_exists("last_compare")) {
             function last_compare($a, $b) {
                 if ($a['last'] == $b['last']) { return 0; }
@@ -148,12 +151,12 @@ class Index {
     private function parseStickies() {
         //There's probably a better way to do this.
         $temp = ["sticky" => [], "unsticky" => []];
-        
+
         foreach ($this->data as $thread) {
             $sticky = ($thread['sticky']) ? 'sticky': 'unsticky';
             array_push($temp[$sticky], $thread);
         }
-        
+
         $this->data = $temp;
     }
 }

@@ -355,21 +355,30 @@ class Log {
                 ' . S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />
                 <input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="var o=document.getElementsByTagName(\'INPUT\');for(var i=0;i<o.length;i++)if(o[i].type==\'checkbox\' && o[i].checked && o[i].value==\'delete\') return reppop(\'' . PHP_SELF_ABS . '?mode=report&no=\'+o[i].name+\'\');"></tr></td></form><script>document.delform.pwd.value=l(' . SITE_ROOT . '_pass");</script></td></tr></table>';
         $postform = new PostForm; $postform = $postform->format();
-        $threads = $log['THREADS'];
-
-        for ($i = 0; $i < count($threads); $i++) {
-            $thread = new Thread;
-            $temp = $dat . $thread->format($threads[$i]) . $foot;
-            $this->print_page(RES_DIR . $threads[$i] . PHP_EXT, $temp);
-        }
-
-        for ($page = 0; $page < count($threads); $page += PAGE_DEF) {
+        
+        $profile = microtime(); //Basic profiling.
+        for ($page = 0; $page < ceil(count($log['THREADS']) / PAGE_DEF); $page += 1) {
+            //Generate Index pages.
             $index = new Index;
-            $logfilename = ($page == 0) ? PHP_SELF2 : $page / PAGE_DEF . PHP_EXT;
+            $logfilename = ($page == 0) ? PHP_SELF2 : $page . PHP_EXT;
             $temp = $dat . $postform . $index->format(($page + 1)) . $foot;
-
+            
+            echo "Writing out Index $page ($logfilename)... ";
             $this->print_page($logfilename , $temp);
+            echo "Done!<br>";
+
+            //Access Index's thread cache (for that instance) to generate Thread pages.
+            foreach ($index->thread_cache as $no => $thread) {
+                $logfilename = RES_DIR . $no . PHP_EXT;
+                echo "Writing out $page#$no ($logfilename)... ";
+                $temp = $dat . $postform . $thread . $foot;
+
+                $this->print_page($logfilename, $temp);
+                echo "Done!<br>";
+            }
         }
+        
+        echo sprintf("<br>Took %f", microtime() - $profile) . " seconds.";
     }
 
     function print_page($filename, $contents, $force_nogzip = 0) {
