@@ -37,7 +37,7 @@ class Log {
         if ($resno) {
             $treeline = array(
                  $resno
-            );
+           );
             //if(!$treeline=mysql_call("select * from ".SQLLOG." where root>0 and no=".$resno." order by root desc")){echo S_SQLFAIL;}
         } else {
             $treeline = $log['THREADS'];
@@ -59,7 +59,7 @@ class Log {
             $logfilename = PHP_SELF2;
             $dat = head();
             form($dat, $resno);
-            print_page($logfilename, $dat);
+            $this->print_page($logfilename, $dat);
         }
 
         if (UPDATE_THROTTLING >= 1) {
@@ -117,13 +117,13 @@ class Log {
                 if (!$no) {
                     break;
                 }
-                
+
                 /*
 
                 Not implemented:
-                
+
                 $com = auto_link($com, $resno);
-                
+
                 */
 
                 //This won't need needed once the extra fluff is dealt with as we can just use the Index class.
@@ -133,31 +133,31 @@ class Log {
                 $dat .= $thread->format($no);
 
                 // Deletion pending
-                if ( isset( $log[$no]['old'] ) )
+                if (isset($log[$no]['old']))
                     $dat .= "<span class=\"oldpost\">" . S_OLD . "</span><br>\n";
 
                 $resline = $log[$no]['children'];
-                ksort( $resline );
-                $countres = count( $log[$no]['children'] );
+                ksort($resline);
+                $countres = count($log[$no]['children']);
                 $t        = 0;
-                if ( $sticky == 1 ) {
+                if ($sticky == 1) {
                     $disam = 1;
-                } elseif ( defined( 'REPLIES_SHOWN' ) ) {
+                } elseif (defined('REPLIES_SHOWN')) {
                     $disam = REPLIES_SHOWN;
                 } else {
                     $disam = 5;
                 }
                 $s   = $countres - $disam;
                 $cur = 1;
-                while ( $s >= $cur ) {
-                    list( $row ) = each( $resline );
-                    if ( $log[$row]["fsize"] != 0 ) {
+                while ($s >= $cur) {
+                    list($row) = each($resline);
+                    if ($log[$row]["fsize"] != 0) {
                         $t++;
                     }
                     $cur++;
                 }
-                if ( $countres != 0 )
-                    reset( $resline );
+                if ($countres != 0)
+                    reset($resline);
 
 
                 /*possibility for ads after each post*/
@@ -170,9 +170,9 @@ class Log {
                     $dat .= '<a href="' . PHP_SELF2_ABS . '">' . S_RETURN . '</a>] [<a href="$resto' . PHP_EXT . '#top"/>Top</a>]\n<hr>';
 
                 clearstatcache(); //clear stat cache of a file
-                //mysql_free_result( $resline );
+                //mysql_free_result($resline);
                 $p++;
-                if ( $resno ) {
+                if ($resno) {
                     break;
                 } //only one tree line at time of res
             }
@@ -185,21 +185,21 @@ class Log {
             l();
             //--></script>';*/
 
-            foot( $dat );
-            if ( $resno ) {
+            foot($dat);
+            if ($resno) {
                 $logfilename = RES_DIR . $resno . PHP_EXT;
-                print_page( $logfilename, $dat );
+                $this->print_page($logfilename, $dat);
                 $dat = '';
-                if ( !$rebuild )
+                if (!$rebuild)
                     $deferred = $this->update(0);
                 break;
             }
-            if ( $page == 0 ) {
+            if ($page == 0) {
                 $logfilename = PHP_SELF2;
             } else {
                 $logfilename = $page / PAGE_DEF . PHP_EXT;
             }
-            print_page( $logfilename, $dat );
+            $this->print_page($logfilename, $dat);
             //chmod($logfilename,0666);
         }
         //mysql_free_result($treeline);
@@ -256,8 +256,8 @@ class Log {
 
                 // add this post to list of children
                 $log[$row['resto']]['children'][$row['no']] = 1;
-                if ( $row['fsize'] ) {
-                    if (!isset( $log[$row['resto']]['imgreplycount'])) {
+                if ($row['fsize']) {
+                    if (!isset($log[$row['resto']]['imgreplycount'])) {
                         $log[$row['resto']]['imgreplycount'] = 0;
                     } else {
                         $log[$row['resto']]['imgreplycount']++;
@@ -267,9 +267,9 @@ class Log {
 
         }
 
-        $query = mysql_call( "SELECT no FROM " . SQLLOG . " WHERE root>0 order by root desc" );
-        while ( $row = mysql_fetch_assoc( $query ) ) {
-            if ( isset( $log[$row['no']] ) && $log[$row['no']]['resto'] == 0 ) {
+        $query = mysql_call("SELECT no FROM " . SQLLOG . " WHERE root>0 order by root desc");
+        while ($row = mysql_fetch_assoc($query)) {
+            if (isset($log[$row['no']]) && $log[$row['no']]['resto'] == 0) {
                 $threads[] = $row['no'];
             }
         }
@@ -299,6 +299,25 @@ class Log {
         $ipcount = count($ips);
 
         $this->cache = $log;
+    }
+
+    // print $contents to $filename by using a temporary file and renaming it
+    // (makes *.html and *.gz if USE_GZIP is on)
+    function print_page($filename, $contents, $force_nogzip = 0) {
+        $gzip = (USE_GZIP == 1 && !$force_nogzip);
+        $tempfile = tempnam(realpath(RES_DIR), "tmp"); //note: THIS actually creates the file
+        file_put_contents($tempfile, $contents, FILE_APPEND);
+        rename($tempfile, $filename);
+        chmod($filename, 0664); //it was created 0600
+
+        if ($gzip) {
+            $tempgz = tempnam(realpath(RES_DIR), "tmp"); //note: THIS actually creates the file
+            $gzfp = gzopen($tempgz, "w");
+            gzwrite($gzfp, $contents);
+            gzclose($gzfp);
+            rename($tempgz, $filename . '.gz');
+            chmod($filename . '.gz', 0664); //it was created 0600
+        }
     }
 }
 

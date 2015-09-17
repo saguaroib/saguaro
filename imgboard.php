@@ -130,27 +130,6 @@ function log_cache($invalidate = 0) {
     $log = $my_log->cache;
 }
 
-// print $contents to $filename by using a temporary file and renaming it 
-// (makes *.html and *.gz if USE_GZIP is on)
-function print_page( $filename, $contents, $force_nogzip = 0 ) {
-    $gzip     = ( USE_GZIP == 1 && !$force_nogzip );
-    $tempfile = tempnam( realpath( RES_DIR ), "tmp" ); //note: THIS actually creates the file
-    file_put_contents( $tempfile, $contents, FILE_APPEND );
-    rename( $tempfile, $filename );
-    chmod( $filename, 0664 ); //it was created 0600
-    
-    if ( $gzip ) {
-        $tempgz = tempnam( realpath( RES_DIR ), "tmp" ); //note: THIS actually creates the file
-        $gzfp   = gzopen( $tempgz, "w" );
-        gzwrite( $gzfp, $contents );
-        gzclose( $gzfp );
-        rename( $tempgz, $filename . '.gz' );
-        chmod( $filename . '.gz', 0664 ); //it was created 0600
-    }
-}
-
-
-
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
 function valid( $action = 'moderator', $no = 0 ) {
@@ -202,6 +181,20 @@ function error( $mes, $dest = '' ) {
     }
 }
 /* Auto Linker */
+function auto_link( $proto, $resno ) {
+    $proto = normalize_links( $proto );
+    
+    // auto-link remaining URLs if they're not part of HTML
+    if ( strpos( $proto, SITE_ROOT ) !== FALSE ) {
+        $proto = preg_replace( '/(http:\/\/(?:[A-Za-z]*\.)?)(' . SITE_ROOT . ')(\'' . SITE_SUFFIX . ')(\/)([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?/i', "<a href=\"\\0\" target=\"_blank\">\\0</a>", $proto );
+        $proto = preg_replace( '/([<][^>]*?)<a href="((http:\/\/(?:[A-Za-z]*\.)?)(' . SITE_ROOT . ')(\'' . SITE_SUFFIX . ')(\/)([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?)" target="_blank">\\2<\/a>([^<]*?[>])/i', '\\1\\3\\4\\5\\6\\7\\8', $proto );
+    }
+    
+    $proto = intraboard_links( $proto, $resno );
+    $proto = interboard_links( $proto );
+    return $proto;
+}
+
 function normalize_link_cb( $m ) {
     $subdomain = $m[1];
     $original  = $m[0];
@@ -278,20 +271,6 @@ function interboard_links( $proto ) {
     $boards = "an?|cm?|fa|fit|gif|h[cr]?|[bdefgkmnoprstuvxy]|wg?|ic?|y|cgl|c[ko]|mu|po|t[gv]|toy|test2|trv|jp|r9k|sp";
     $proto  = preg_replace_callback( '@&gt;&gt;&gt;/(' . $boards . ')/([0-9]*)@i', 'interboard_link_cb', $proto );
     $proto  = preg_replace_callback( '@&gt;&gt;&gt;/rs/([^\s<>]+)@', 'interboard_rs_link_cb', $proto );
-    return $proto;
-}
-
-function auto_link( $proto, $resno ) {
-    $proto = normalize_links( $proto );
-    
-    // auto-link remaining URLs if they're not part of HTML
-    if ( strpos( $proto, SITE_ROOT ) !== FALSE ) {
-        $proto = preg_replace( '/(http:\/\/(?:[A-Za-z]*\.)?)(' . SITE_ROOT . ')(\'' . SITE_SUFFIX . ')(\/)([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?/i', "<a href=\"\\0\" target=\"_blank\">\\0</a>", $proto );
-        $proto = preg_replace( '/([<][^>]*?)<a href="((http:\/\/(?:[A-Za-z]*\.)?)(' . SITE_ROOT . ')(\'' . SITE_SUFFIX . ')(\/)([\w\-\.,@?^=%&:\/~\+#]*[\w\-\@?^=%&\/~\+#])?)" target="_blank">\\2<\/a>([^<]*?[>])/i', '\\1\\3\\4\\5\\6\\7\\8', $proto );
-    }
-    
-    $proto = intraboard_links( $proto, $resno );
-    $proto = interboard_links( $proto );
     return $proto;
 }
 
