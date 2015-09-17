@@ -114,7 +114,6 @@ class Log {
 
             for ($i = $st; $i < $st + PAGE_DEF; $i++) {
                 list($_unused, $no) = each($treeline);
-                //list($no,$sticky,$permasage,$closed,$now,$name,$email,$sub,$com,$host,$pwd,$filename,$ext,$w,$h,$tn_w,$tn_h,$tim,$time,$md5,$fsize,$root,$resto)=mysql_fetch_row($treeline);
                 if (!$no) {
                     break;
                 }
@@ -178,9 +177,6 @@ class Log {
                 } //only one tree line at time of res
             }
 
-
-
-
             $dat .= '<table align="right"><tr><td class="delsettings" nowrap="nowrap" align="center">
     <input type="hidden" name="mode" value="usrdel" />' . S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']
     ' . S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />
@@ -188,53 +184,6 @@ class Log {
             /*<script language="JavaScript" type="script"><!--
             l();
             //--></script>';*/
-
-            if ( !$resno ) { // if not in reply to mode
-                $prev = $st - PAGE_DEF;
-                $next = $st + PAGE_DEF;
-                //  Page processing
-                $dat .= "<table align=left border=1 class=pages><tr>";
-                if ( $prev >= 0 ) {
-                    if ( $prev == 0 ) {
-                        $dat .= "<form action=\"" . PHP_SELF2 . "\" method=\"get\" /><td>";
-                    } else {
-                        $dat .= "<form action=\"" . $prev / PAGE_DEF . PHP_EXT . "\" method=\"get\"><td>";
-                    }
-                    $dat .= "<input type=\"submit\" value=\"" . S_PREV . "\" />";
-                    $dat .= "</td></form>";
-                } else {
-                    $dat .= "<td>" . S_FIRSTPG . "</td>";
-                }
-
-                $dat .= "<td>";
-                for ( $i = 0; $i < $counttree; $i += PAGE_DEF ) {
-                    if ( $i && !( $i % ( PAGE_DEF * 2 ) ) ) {
-                        $dat .= " ";
-                    }
-                    if ( $st == $i ) {
-                        $dat .= "[" . ( $i / PAGE_DEF ) . "] ";
-                    } else {
-                        if ( $i == 0 ) {
-                            $dat .= "[<a href=\"" . PHP_SELF2 . "\">0</a>] ";
-                        } else {
-                            $dat .= "[<a href=\"" . ( $i / PAGE_DEF ) . PHP_EXT . "\">" . ( $i / PAGE_DEF ) . "</a>] ";
-                        }
-                    }
-                }
-                $dat .= "</td>";
-
-                if ( $p >= PAGE_DEF && $counttree > $next ) {
-                    $dat .= "<td><form action=\"" . $next / PAGE_DEF . PHP_EXT . "\" method=\"get\">";
-                    $dat .= "<input type=\"submit\" value=\"" . S_NEXT . "\" />";
-                    $dat .= "</form></td>";
-                } else {
-                    $dat .= "<td>" . S_LASTPG . "</td>";
-                }
-                $dat .= "</tr></table><br clear=\"all\" />\n";
-            } else {
-                $dat .= "<br />";
-            }
-
 
             foot( $dat );
             if ( $resno ) {

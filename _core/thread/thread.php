@@ -47,8 +47,8 @@ class Thread {
         $temp_l = 0;
         $omit_replies = 0;
         $omit_images = 0;
-        $post = "post";
-        $image = "image";
+        $post = "post"; //Translate
+        $image = "image"; //Translate
 
         foreach ($log as $entry) {
             if ($entry["resto"] == $op) {
