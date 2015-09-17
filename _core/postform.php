@@ -13,7 +13,7 @@
 */
 
 class PostForm {
-    function format($resno, $admin) {
+    function format($resno = null, $admin = false) {
         //echo debug_backtrace()[1]['function'];
 
         $resno = (is_numeric($resno)) ? $resno : null;
