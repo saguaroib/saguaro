@@ -22,12 +22,6 @@ Remember to look through older threads and see if your problem wasn't solved alr
 include "config.php";
 include "lang/language.php"; //Language file.
 
-if ( BOARD_DIR == 'test' ) {
-    ini_set( 'display_errors', 1 );
-} else {
-    ini_set( 'display_errors', 0 );
-}
-
 $host = $_SERVER['REMOTE_ADDR'];
 
 extract( $_POST );
