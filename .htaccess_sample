@@ -1,5 +1,5 @@
 RewriteEngine on
-Options +FollowSymLinks
+Options +FollowSymLinks -Indexes
 #RewriteRule friendly_pcre target
 RewriteRule ^res/(\d+)/?$ res/$1.html [NC,L]
 RewriteRule ^(admin|catalog)/?$ imgboard.php?mode=$1 [L]
