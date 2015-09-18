@@ -1,7 +1,6 @@
 <?php
 
 require('config.php');
-include('lang/language.php');
 
 $con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
 
@@ -294,7 +293,7 @@ function admindel( $pass ) {
 
 
 function valid( $action = 'moderator', $no = 0 ) {
-	require_once("_core/admin/validate.php");
+	require_once(CORE_DIR . "/admin/validate.php");
 	
 	$validate = new Validation;
 	$allowed = $validate->verify( $action );
@@ -327,8 +326,8 @@ function log_cache($invalidate = 0) {
 // die: whether to die on error
 // careful, setting children to 0 could leave orphaned posts.
 function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 ) {
-    require_once("_core/log/log.php");
-	require_once(CORE_DIR . "admin/delpost.php");
+    require_once(CORE_DIR . "/log/log.php");
+	require_once(CORE_DIR . "/admin/delpost.php");
 	
 	$remove = new DeletePost;
 	$remove->targeted( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 );
