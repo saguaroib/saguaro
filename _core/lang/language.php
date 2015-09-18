@@ -3,7 +3,7 @@
     //However, we should never need to explicitly need config.php if used alone.
 
     //Require base translation.
-    require("en-us.php");
+    require(dirname(__FILE__) . "/en-us.php");
     //Get defined language and include it, overwriting en-us as needed.
     //include("/../config.php");
     if (defined(LANGUAGE) && LANGUAGE !== "en-us") {
