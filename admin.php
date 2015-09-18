@@ -30,7 +30,7 @@ function postinfo( $no ) {
     
     list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board,  ) = $row;
     
-    $dat .= head( $dat );
+    $dat .= head( );
 	
     $dat .= "<table style='border-collapse=:collapse;' />";
 	$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br><hr><br>";
