@@ -15,11 +15,11 @@ if ( !$db_id ) {
     echo S_SQLDBSF;
 }
 
-function head( $dat ) {
-	require_once(CORE_DIR . "thread/header.php");
-	
-	$heading = new PageHead;
-	echo $heading->format($dat);
+function head() {
+    require_once(CORE_DIR . "/general/head.php");
+
+    $head = new Head;
+    return $head->generate();
 }
 
 function postinfo( $no ) {
@@ -31,92 +31,43 @@ function postinfo( $no ) {
     
     list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board,  ) = $row;
     
-    head( $dat );
-	
-    $dat .= "<table style='border-collapse=:collapse;' />";
-	$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br><hr><br>";
-	if ( $sticky || $locked || $permasage ) {
-		if ( $sticky )
-			$special .= "<b><font color=\"FF101A\"> [Stickied]</font></b>";
-		if ( $locked ) 
-			$special.= "<b><font color=\"770099\">[Locked]</font></b>";
-		if ( $permasage)
-			$special .= "<b><font color=\"2E2EFE\">[Permasaged]</font></b>";
-		$dat .= "<tr><td class='postblock'>Special:</td><td class='row2'>This thread is $special</td></tr>"; //lmoa
-	}
-    $dat .= "<tr><td class='postblock'>Name:</td><td class='row1'>$name</td></tr>
-  <tr><td class='postblock'>Date:</td><td class='row2' />$now</td></tr>
-  <tr><td class='postblock'>IP:</td><td class='row1' /><b>$host</b></td></tr><br>
-  <tr><td class='postblock'>Comment:</td><td class='row2' />$com</td></tr>
-  <tr><td class='postblock'>MD5:</td><td class='row1' />$md5</td></tr>
-  <tr><td class='postblock'>File</td>";
+    $dat .= head();
+    $dat .= "<table border='solid black 2px' border-collapse='collapse' />";
+	$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br>";
+    $dat .= "<tr><td>Name:</td><td>$name</td></tr>
+  <tr><td>Date:</td><td>$now</td></tr>
+  <tr><td>IP</td><td>$host</td></tr>
+  <tr><td>Comment:</td><td>$com</td></tr>
+  <tr><td>MD5:</td><td>$md5</td></tr>
+  <tr><td>File</td>";
 
     if ( $w && $h ) {
         $hasimg = 1;
         $dat .= "<td><img width='" . MAX_W . "' height='" . MAX_H . "' src='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "'/></td></tr>
-		<tr><td class='postblock'>Thumbnail:</td><td><img width='" . $tn_w . "' height='" . $tn_h . "' src='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg" . "'/></td></tr>
-		<tr><td class='postblock'>Links:</td><td>[<a href='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "' target='_blank' />Image src</a>][<a href='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg' target='_blank' />Thumb src</a>]
-		[<a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "' target='_blank' /><b>View in thread</b></a>]</td></tr>";
-		} else
+		<tr><td>Thumbnail:</td><td><img width='" . $tn_w . "' height='" . $tn_h . "' src='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg" . "'/></td></tr>
+		<tr><td>Link to file | Link to thumbnail:</td><td><a href='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "' target='_blank' />Image</a> | <a href='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg' target='_blank' />Thumb</a></td></tr>";
+    } else
         $dat .= "<td>No file</td></tr>";
-	if (!$resto) {
-        $dat .= "<form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
-        <tr><td class='postblock'>Action</td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
+    
+	//<form action='admin.php'/><input type='submit' name='mode' value='test' /></form>
+	
+	$dat .= "<tr><form action='admin.php' /><td>Delete:</td><td><br />
+	<input type='hidden' name='mode' value='delete' />
+	<input type='hidden' name='no' value='$no' />
+    <input type='submit' name='action' value='This post' /><br />
+    <input type='submit' name='action' value='Image only' /><br />
+    <input type='submit' name='action' value='All by IP' /><br /></td></tr></table></form>";
+	
+    if (!$resto) {
+        $dat .= "<br /><br /><table><form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
+        <tr><td>Action</td><td><td><select name='mode' />
         <option value='sticky' />Sticky</option>
-        <option value='unsticky' />Unsticky</option>
         <option value='lock' />Lock</option>
+        <option value='permasage' />Permasage</option>
+        <option value='unsticky' />Unsticky</option>
         <option value='unlock' />Unlock</option>
-        <option value='permasage' />Autosage</option>
-        <option value='nopermasage' />De-autosage</option>
-        </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></td></tr></table></form>";
-    } else 
-		$dat .= "</table></form>";
-    	
-	$result = mysql_call( "SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
-	$wew = mysql_result($result, 0);
-	
-	if ( $wew > 0 )
-		$alert = "<b><font color=\"FF101A\"> $wew ban(s) on record for $host!</font></b>";
-	else 
-		$alert = "No bans on record for IP $host";
-	
-	$dat .= "<br><table style='border-collapse=:collapse;' /><form action='admin.php' />
-	<input type='hidden' name='mode' value='modipost' />
-	<center><th class='postblock'><b>Ban panel</b></th></center>
-	<tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
-	<tr><td class='postblock'>Length:</td><td><input type='text' name='length' placeholder='Number only' /><select name='time' />
-        <option value='' /></option>
-		<option value='minute' />Minutes</option>
-        <option value='hour' />Hours</option>
-        <option value='day' />Days</option>
-        <option value='month' />Months</option>
-        </select>
-	</td></tr>
-	<center><tr><td class='postblock'>Ban type:</td><td></center>
-		<select name='banType' />
-        <option value='global' />This board  /" . BOARD_DIR . '/ - ' . TITLE . " </option>
-        <option value='localboard' />All boards</option>
-        <option value='globalview' />All boards - Viewban</option>
-        <option value='localview' />This board - Viewban</option>
-        </select>[Perma<input type='checkbox' value='perma' />] [Warn only <input type='checkbox' value='warn' />]
-	</td></tr>
-	<tr><td class='postblock'>Public reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
-	<tr><td class='postblock'>Staff notes:</td><td><input type='text' name='staffnote' /></td></tr>
-	<tr><td class='postblock'>Append user's comment:</td><td><input type='text' name='custmess' placeholder='(USER WAS BANNED FOR THIS POST)' /> [ Show ban message<input type='checkbox' name='showbanmess' /> ] </td></tr>
-	<tr><td class='postblock'>After-ban options:</td><td>
-		<select name='afterban' />
-        <option value='none' />None</option>
-        <option value='delpost' />Delete this post</option>
-        <option value='delallbyip' />Delete all by this IP</option>
-        <option value='delimgonly' />Delete image only</option>
-        </select>
-	</td></tr>";
-		if ( valid( 'admin' ) )
-			$dat .= "
-		<tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";
-
-		$dat .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form><br><hr>";
-		
+        </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'><td></td></tr></table></form>";
+    }
 		$dat .= "<tr>[<a href='". PHP_ASELF ."' />Return</a>]</tr><br>";
 
     echo $dat;
@@ -159,8 +110,7 @@ function oldvalid( $pass ) {
     error( S_WRONGPASS );*/
     
     if ( valid( 'janitor_board' ) ) {
-        head( $dat );
-        echo $dat;
+        echo head();
         echo "[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]\n";
         echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]\n";
         if ( valid( 'moderator' ) ) {
@@ -413,29 +363,15 @@ function modify_post ( $no, $action = 'none') {
 		case 'permasage':
             $sqlValue = "permasage";
 			$sqlBool = "'1'";
-			$verb = "Autosaging";
-			break;
-		case 'nopermasage':
-            $sqlValue = "permasage";
-			$sqlBool = "'0'";
-			$verb = "Normally bumping";
-			break;
-		case 'delete':
-			delete_post( $resno, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1 );
-			break;
-		case 'deleteallbyip':
-			delete_post( $resno, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1, $allbyip = 1 );
-			break;
-		case 'deleteimgonly':
-			delete_post( $resno, $pwd, $imgonly = 1, $automatic = 1, $children = 0, $die = 1 );
+			$verb = "Permanently saged";
 			break;
 		default:
 			break;
 	}
 
 	mysql_call( 'UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-	head($dat);
-	echo $verb . " thread $no. Redirecting...<META HTTP-EQUIV=\"refresh\" content=\"1;URL=" . PHP_ASELF_ABS . "\">";
+   
+   echo $verb . " thread $no. Redirecting...<META HTTP-EQUIV=\"refresh\" content=\"1;URL=" . PHP_ASELF_ABS . "\">";
 
 }
 /*
@@ -443,48 +379,49 @@ function ban($no) {
 
 $placedOn = time();
 $query    = mysql_call( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip' AND banlength != 0" );
-	switch ( $banlength ) {
-	case 'warn':
-	$banset = '100';
-	break;
-	case '3hr':
-	$banset = '1';
-	break;
-	case '3day':
-	$banset = '2';
-	break;
-	case '1wk':
-	$banset = '3';
-	break;
-	case '1mon':
-	$banset = '4';
-	break;
-	case 'perma':
-	$banset = '-1';
-	break;
-	default:
-	//Sure is 2007 around here
-	$banset = '9001';
-	}
+switch ( $banlength ) {
+case 'warn':
+$banset = '100';
+break;
+case '3hr':
+$banset = '1';
+break;
+case '3day':
+$banset = '2';
+break;
+case '1wk':
+$banset = '3';
+break;
+case '1mon':
+$banset = '4';
+break;
+case 'perma':
+$banset = '-1';
+break;
+default:
+//Sure is 2007 around here
+$banset = '9001';
+}
 if ( mysql_num_rows( $query ) == 0 ) {
 $sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength, placedOn, board) VALUES ('$ip', '$pubreason', '$staffreason', '$banset', '$placedOn', '" . BOARD_DIR . "')";
 
 if ( mysql_call( $sql ) ) {
-	if ( $banset == '100' ) {
-		echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-		echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-	} elseif {
-		echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-		echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-	} elseif {
-		echo "ERROR: Could not execute $sql. " . mysql_error();
-	}
-	} else {
-	echo "This IP is already banned!";
-	}
-	mysql_free_result( $query );
-	} else {
-	die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . " logged." );
+if ( $banset == '100' ) {
+echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
+echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
+} else {
+echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
+echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
+}
+} else {
+echo "ERROR: Could not execute $sql. " . mysql_error();
+}
+} else {
+echo "This IP is already banned!";
+}
+mysql_free_result( $query );
+} else {
+die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . " logged." );
 }
 */
 
@@ -505,9 +442,30 @@ switch ( $_GET['mode'] ) {
         case 'zmdlog':
             login( $_POST['usernm'], $_POST['passwd'] );
             break;
-	case "modipost":
-		modify_post( $_GET['no'], $_GET['action']);
-		break;
+        case 'lock':
+			modify_post( $_GET['no'], "lock");
+			break;
+        case 'permasage':
+			modify_post( $_GET['no'], "permasage");
+            break;
+        case 'sticky':
+			modify_post( $_GET['no'], "sticky");
+			break;
+        case 'unlock':
+			modify_post( $_GET['no'], "unlock");
+			break;
+        case 'unsticky':
+			modify_post( $_GET['no'], "unsticky");
+			break;
+		case 'delete':
+			$no = $_GET['no'];
+			$action = $_GET['action'];
+			if ( $action = 'This+post') 
+				$imgonly = 0;
+			else 
+				$imgonly = 1;
+			delete_post($no, $pwd, $imgonly, 0, 1, 1);
+			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
 		default:
             oldvalid( $pass );
             aform( $post, $res, 1 );

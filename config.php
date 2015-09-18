@@ -40,11 +40,6 @@ define(SHOWTITLEIMG, 0);      //Show image at top (0: no, 1: single, 2: rotating
 define(TITLEIMG, '');         //Title image (point to php file if rotating)
 define(DATE_FORMAT, 'm/d/y'); //Formatting for the date in each post, see http://php.net/manual/en/function.date.php for different options
 
-/*
-    Administrative features
-*/
-define(ADMINCRUISIN, true);   //Displays a small [View Info] option next to each post number for admins/moderators only
-
 
 
 /*
@@ -180,5 +175,10 @@ define(MAXR_W, 125); //Image replies exceeding this width will be thumbnailed
 define(MAXR_H, 125); //Image replies exceeding this height will be thumbnailed
 define(MIN_W, 30);   //minimum image dimensions - width
 define(MIN_H, 30);   //minimum image dimensions - height
+
+include(CORE_DIR . "/lang/language.php");
+
+/*ini_set('display_errors',1);
+error_reporting(E_ALL & ~E_NOTICE);*/
 
 ?>
