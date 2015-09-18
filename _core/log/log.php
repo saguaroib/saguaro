@@ -357,7 +357,7 @@ class Log {
         $postform = new PostForm; $postform = $postform->format();
         
         $profile = microtime(); //Basic profiling.
-        for ($page = 0; $page < ceil(count($log['THREADS']) / PAGE_DEF); $page += 1) {
+        for ($page = 0; $page < ceil(count($log['THREADS']) / PAGE_DEF); $page++) {
             //Generate Index pages.
             $index = new Index;
             $logfilename = ($page == 0) ? PHP_SELF2 : $page . PHP_EXT;
