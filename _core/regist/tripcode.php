@@ -63,7 +63,7 @@ if ( preg_match( "/\#/", $names ) ) {
             
             $salt = strtr( preg_replace( "/[^\.-z]/", ".", substr( $trip . "H.", 1, 2 ) ), ":;<=>?@[\\]^_`", "ABCDEFGabcdef" );
             $trip = substr( crypt( $trip, $salt ), -10 );
-            $name .= " <span class=\"postertrip\">!" . $trip;
+            $name .= " <span class='postertrip'>!" . $trip;
         }
     }
     
@@ -83,7 +83,7 @@ if ( preg_match( "/\#/", $names ) ) {
         $sha = base64_encode( pack( "H*", sha1( $sectrip . $salt ) ) );
         $sha = substr( $sha, 0, 11 );
         if ( $trip == "" )
-            $name .= " <span class=\"postertrip\" text-color=#117743>";
+            $name .= " <span class='postertrip' style='color:#117743'>";
         $name .= "!!" . $sha;
     }
 }

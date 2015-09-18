@@ -19,7 +19,6 @@ $upfile_name = $_FILES["upfile"]["name"];
 $upfile = $_FILES["upfile"]["tmp_name"];
 
 require_once("cleanstr.php");
-require_once("tripcode.php");
 require_once("wordwrap.php");
 
 global $path, $badstring, $badfile, $badip, $pwdc, $textonly;
@@ -418,6 +417,7 @@ if ( !$admin && substr_count( $com, "\n" ) > MAX_LINES )
 
 $name  = preg_replace( "[\r\n]", "", $name );
 $names = iconv( "UTF-8", "CP932//IGNORE", $name ); // convert to Windows Japanese #&#65355;&#65345;&#65357;&#65353;
+require_once("tripcode.php");
 
 if ( $email == 'sage' ) {
     $noko  = 0;
