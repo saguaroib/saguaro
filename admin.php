@@ -362,15 +362,29 @@ function modify_post ( $no, $action = 'none') {
 		case 'permasage':
             $sqlValue = "permasage";
 			$sqlBool = "'1'";
-			$verb = "Permanently saged";
+			$verb = "Autosaging";
+			break;
+		case 'nopermasage':
+                $sqlValue = "permasage";
+		$sqlBool = "'0'";
+		$verb = "Normally bumping";
+		break;
+		case 'delete':
+			delete_post( $resno, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1 );
+			break;
+		case 'deleteallbyip':
+			delete_post( $resno, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1, $allbyip = 1 );
+			break;
+		case 'deleteimgonly':
+			delete_post( $resno, $pwd, $imgonly = 1, $automatic = 1, $children = 0, $die = 1 );
 			break;
 		default:
 			break;
 	}
 
 	mysql_call( 'UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . mysql_real_escape_string( $no ) . "'" );
-   
-   echo $verb . " thread $no. Redirecting...<META HTTP-EQUIV=\"refresh\" content=\"1;URL=" . PHP_ASELF_ABS . "\">";
+	echo head($dat);
+	echo $verb . " thread $no. Redirecting...<META HTTP-EQUIV=\"refresh\" content=\"1;URL=" . PHP_ASELF_ABS . "\">";
 
 }
 /*
@@ -378,49 +392,48 @@ function ban($no) {
 
 $placedOn = time();
 $query    = mysql_call( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip' AND banlength != 0" );
-switch ( $banlength ) {
-case 'warn':
-$banset = '100';
-break;
-case '3hr':
-$banset = '1';
-break;
-case '3day':
-$banset = '2';
-break;
-case '1wk':
-$banset = '3';
-break;
-case '1mon':
-$banset = '4';
-break;
-case 'perma':
-$banset = '-1';
-break;
-default:
-//Sure is 2007 around here
-$banset = '9001';
-}
+	switch ( $banlength ) {
+	case 'warn':
+	$banset = '100';
+	break;
+	case '3hr':
+	$banset = '1';
+	break;
+	case '3day':
+	$banset = '2';
+	break;
+	case '1wk':
+	$banset = '3';
+	break;
+	case '1mon':
+	$banset = '4';
+	break;
+	case 'perma':
+	$banset = '-1';
+	break;
+	default:
+	//Sure is 2007 around here
+	$banset = '9001';
+	}
 if ( mysql_num_rows( $query ) == 0 ) {
 $sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength, placedOn, board) VALUES ('$ip', '$pubreason', '$staffreason', '$banset', '$placedOn', '" . BOARD_DIR . "')";
 
 if ( mysql_call( $sql ) ) {
-if ( $banset == '100' ) {
-echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-} else {
-echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-}
-} else {
-echo "ERROR: Could not execute $sql. " . mysql_error();
-}
-} else {
-echo "This IP is already banned!";
-}
-mysql_free_result( $query );
-} else {
-die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . " logged." );
+	if ( $banset == '100' ) {
+		echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
+		echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
+	} elseif {
+		echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
+		echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
+	} elseif {
+		echo "ERROR: Could not execute $sql. " . mysql_error();
+	}
+	} else {
+	echo "This IP is already banned!";
+	}
+	mysql_free_result( $query );
+	} else {
+	die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . " logged." );
 }
 */
 
@@ -441,31 +454,10 @@ switch ( $_GET['mode'] ) {
         case 'zmdlog':
             login( $_POST['usernm'], $_POST['passwd'] );
             break;
-        case 'lock':
-			modify_post( $_GET['no'], "lock");
-			break;
-        case 'permasage':
-			modify_post( $_GET['no'], "permasage");
-            break;
-        case 'sticky':
-			modify_post( $_GET['no'], "sticky");
-			break;
-        case 'unlock':
-			modify_post( $_GET['no'], "unlock");
-			break;
-        case 'unsticky':
-			modify_post( $_GET['no'], "unsticky");
-			break;
-		case 'delete':
-			$no = $_GET['no'];
-			$action = $_GET['action'];
-			if ( $action = 'This+post') 
-				$imgonly = 0;
-			else 
-				$imgonly = 1;
-			delete_post($no, $pwd, $imgonly, 0, 1, 1);
-			echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
-		default:
+	case "modipost":
+	    modify_post( $_GET['no'], $_GET['action']);
+	    break;
+	    default:
             oldvalid( $pass );
             aform( $post, $res, 1 );
             echo $post;
@@ -476,3 +468,4 @@ switch ( $_GET['mode'] ) {
             break;
     }
 ?>
+
