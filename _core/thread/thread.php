@@ -47,8 +47,8 @@ class Thread {
         $temp_l = 0;
         $omit_replies = 0;
         $omit_images = 0;
-        $post = "post";
-        $image = "image";
+        $post = "post"; //Translate
+        $image = "image"; //Translate
 
         foreach ($log as $entry) {
             if ($entry["resto"] == $op) {
@@ -81,7 +81,7 @@ class Thread {
             $image .= ($omit_images == 1) ? "" : "s";
             $and_images = ($omit_images > 0) ? "and $omit_images $image" : "";
 
-            $temp .= "$omit_replies $post $and_images omitted. Click <a href='" . RES_DIR . $op . PHP_EXT . "#" . $op . "'> " . S_REPLY . "</a> to view.</span>";
+            $temp .= "<span class='omittedposts'>$omit_replies $post $and_images omitted. Click <a href='" . RES_DIR . $op . PHP_EXT . "#" . $op . "'> " . S_REPLY . "</a> to view.</span>";
         }
 
 

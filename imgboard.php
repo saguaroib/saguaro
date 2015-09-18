@@ -162,7 +162,6 @@ function foot( &$dat ) {
     $dat .= '<div class="footer">' . S_FOOT . '</div><a href="#bottom" /></a></body></html>';
 }
 
-
 function error( $mes, $dest = '' ) {
     global $path;
     $upfile_name = $_FILES["upfile"]["name"];
@@ -334,6 +333,17 @@ switch ( $mode ) {
         break;
     case 'usrdel':
         usrdel( $no, $pwd );
+        break;
+    case 'test':
+        log_cache();
+    
+        require("_core/general/head.php");
+        $head = new Head;
+        echo $head->generate();
+        
+        require("_core/index/index.php");
+        $index = new Index;
+        echo $index->format(1, count($log['THREADS']));
         break;
     default:
         if ( $res ) {
