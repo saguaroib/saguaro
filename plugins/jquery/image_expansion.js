@@ -15,7 +15,11 @@ repod.image_expansion = {
 	},
 	check_image: function(event,e) {
 		event.preventDefault();
-		$(e).data("o-s") ? this.shrink_image(e) : this.expand_image(e);
+        if (/\.webm$/.test($(e).parent().attr("href"))) {
+            $(e).data("o-s") ? this.shrink_video(e) : this.expand_video(e);
+        } else {
+            $(e).data("o-s") ? this.shrink_image(e) : this.expand_image(e);
+        }
 		$("#img_hover_element").remove();
 	},
 	expand_image: function(e) {
@@ -25,5 +29,13 @@ repod.image_expansion = {
 	shrink_image: function(e) {
 		$(e).attr("src",$(this).data("o-s"));
 		$(e).css({"max-height":"","max-width":"","width":$(e).data("o-w")}).attr("src",$(e).data("o-s")).removeData();
-	}
+	},
+    expand_video: function(e) {
+        $(e).data({"o-s": true, "name": $(e).attr("src").split("/").pop().split(".")[0]}).hide();
+        $(e).parent().after("<video class='expandedwebm-" + $(e).data("name") +"' loop autoplay controls src='" + $(e).parent().attr("href") + "'></video>");
+    },
+    shrink_video: function(e) {
+        $(e).data({"o-s": false}).show();
+        $(".expandedwebm-" + $(e).data("name")).remove();
+    }
 };
