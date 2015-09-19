@@ -21,15 +21,17 @@ repod.image_hover = {
 	display: function(e) {
 		if (!$(e).data("o-s")) {
             var element = $('<div id="img_hover_element" />');
-            $(element).css({right:"0px",top:"0px",position:"fixed",width:"auto",height:"auto","max-height":"100%","max-width":Math.round($("body").width() - ($(e).offset().left + $(e).outerWidth(true)) + 20) + "px"});
+            var css = {right:"0px",top:"0px",position:"fixed",width:"auto",height:"auto","max-height":"100%","max-width":Math.round($("body").width() - ($(e).offset().left + $(e).outerWidth(true)) + 20) + "px"}
             
             if (/\.webm$/.test($(e).parent().attr("href"))) {
                 $(element).append("<video class='expandedwebm-" + $(e).data("name") +"' loop autoplay src='" + $(e).parent().attr("href") + "'></video>");
             } else {
                 var img = $("<img src='"+$(e).parent().attr("href")+"'/>");
+                $(img).css(css);
                 $(element).append(img);
             }
             
+            $(element).css(css);
             $("body").append(element);
 		}
 	},
