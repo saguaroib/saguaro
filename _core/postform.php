@@ -64,8 +64,11 @@ class PostForm {
 
         $temp .= "<tr><td class='postblock' align='left'>" . S_COMMENT . "</td><td align='left'><textarea name='com' cols='48' rows='4'></textarea></td></tr>";
 
-        if (BOTCHECK && !$admin) //Captcha
-            $temp .= "<tr><td class='postblock' align='left'><img src='" . CORE_DIR_PUBLIC . "general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
+        if (BOTCHECK && !$admin) { //Captcha
+            require_once(CORE_DIR . '/general/captcha.php');
+            $captcha = new Captcha;
+            $temp .= "<tr><td class='postblock' align='left'><img src='" . $captcha->generate() . "' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
+        }
 
         //File selection
         $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*|.webm' size='35'>";

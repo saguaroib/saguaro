@@ -41,8 +41,10 @@ class Captcha {
         $padding = rand(1,8); //Initial horizontal offset.
 
         //Helper functions.
-        function rx() { return rand(0,100); }
-        function ry() { return rand(0,30); }
+        if (!function_exists('rx')) {
+            function rx() { return rand(0,100); }
+            function ry() { return rand(0,30); }
+        }
 
         //Create image.
         $image = @imagecreatetruecolor(100, 30) or die("Cannot Initialize new GD image stream");
@@ -73,9 +75,17 @@ class Captcha {
         //PHP >= 4.3
         //$image = imagerotate($image, rand(-17,17), 0);
 
-        //Output image.
-        header("Content-type: image/jpeg");
+        //Output image directly:
+        //header("Content-type: image/jpeg");
+        //imagejpeg($image);
+
+        //Return image data as base64 encoded:
+        ob_start();
         imagejpeg($image);
+        $img = base64_encode(ob_get_contents());
+        ob_end_clean();
+
+        return 'data:image/jpeg;base64,' . $img;
     }
 
     private function drawLines($image, $amount) {
@@ -90,10 +100,10 @@ class Captcha {
     }
 }
 
-//If accessed directly, generate the captcha like normal.
-if ($_SERVER['SCRIPT_FILENAME'] == __FILE__) {
+//If accessed directly, generate the captcha like normal (produce JPEG):
+/*if ($_SERVER['SCRIPT_FILENAME'] == __FILE__) {
     $a = new Captcha;
     $a->generate();
-}
+}*/
 
 ?>
