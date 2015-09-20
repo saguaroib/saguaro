@@ -132,7 +132,7 @@ function log_cache($invalidate = 0) {
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
 function valid( $action = 'moderator', $no = 0 ) {
-	require_once("_core/admin/validate.php");
+	require_once(CORE_DIR . "/admin/validate.php");
 
 	$validate = new Validation;
 	return $validate->verify( $action );
@@ -211,7 +211,7 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
 /* user image deletion */
 function usrdel( $no, $pwd ) {
 	require_once(CORE_DIR . "/log/log.php");
-	require_once(CORE_DIR . "admin/delpost.php");
+	require_once(CORE_DIR . "/admin/delpost.php");
 	
 	$del = new DeletePost;
 	$del->userDel($no, $pwd);
