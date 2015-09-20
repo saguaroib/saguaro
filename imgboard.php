@@ -211,7 +211,7 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
 /* user image deletion */
 function usrdel( $no, $pwd ) {
 	require_once(CORE_DIR . "/log/log.php");
-	require_once(CORE_DIR . "/admin/delete.php");
+	require_once(CORE_DIR . "admin/delpost.php");
 	
 	$del = new DeletePost;
 	$del->userDel($no, $pwd);
