@@ -1,4 +1,5 @@
 <?php
+
 $S_HOME = 'Home';                                               //Forwards to home page
 $S_ADMIN = 'Manage';                                            //Forwards to Management Panel
 $S_RETURN = 'Return';                                           //Returns to image board
@@ -12,9 +13,15 @@ $S_COMMENT = 'Comment';                                         //Describes comm
 $S_UPLOADFILE = 'File';                                         //Describes file field
 $S_NOFILE = 'No File';                                          //Describes file/no file checkbox
 $S_DELPASS = 'Password';                                        //Describes password field
-$S_DELEXPL = '(Password used for file deletion)';               //Prints explanation for password box (to the right)
-$S_RULES = '<ul><li>Supported file types are: GIF, JPG, PNG</li>
-            <li>Maximum file size allowed is '.MAX_KB.' KB.</li>
+$S_DELEXPL = ' (For file deletion)';               //Prints explanation for password box (to the right)
+
+$temp = '<ul><li>Supported file types are: GIF, JPG, PNG</li>';
+
+if (GIF_ONLY)
+	$temp = '<ul><li>Supported file types are: GIF</li>';
+
+$S_RULES = $temp . 
+            '<li>Maximum file size allowed is '.MAX_KB.' KB.</li>
             <li>Images greater than '.MAX_W.'x'.MAX_H.' pixels will be thumbnailed.</li>
             <li>Images smaller than '.MIN_W.'x'.MIN_H.' pixels will be refused.</li>
             </ul>';                                             //Prints rules under posting section
