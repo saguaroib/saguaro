@@ -99,6 +99,7 @@ class DeletePost extends Log
             $result = mysql_call( "select no,resto,tim,ext from " . SQLLOG . " where no=$resno" );
         while ( $delrow = mysql_fetch_array( $result ) ) {
             // delete
+            $path = realpath( "./" ) . '/' . IMG_DIR;
             $delfile  = $path . $delrow['tim'] . $delrow['ext']; //path to delete
             $delthumb = THUMB_DIR . $delrow['tim'] . 's.jpg';
             if ( is_file( $delfile ) )
