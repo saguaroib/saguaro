@@ -16,7 +16,7 @@
 class Log {
     public $cache = [];
 
-    function update($resno, $rebuild) {
+    function update($resno, $rebuild = 0) {
         global $log, $path;
         $this->update_cache();
 
