@@ -211,7 +211,7 @@ function admindel( $pass )
         $find = FALSE;
         
         while ( $row = mysql_fetch_row( $result ) ) {
-            list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tim, $time, $md5, $fsize,  ) = $row;
+        list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
             if ( $onlyimgdel == on ) {
                 delete_post( $no, $pwd, 1, 1, 1, 0 );
             } else {
@@ -274,6 +274,7 @@ function admindel( $pass )
     $j = 0;
     while ( $row = mysql_fetch_row( $result ) ) {
         $j++;
+		$path = realpath( "./" ) . '/' . IMG_DIR;
         $img_flag = FALSE;
         list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
         // Format
