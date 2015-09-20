@@ -76,16 +76,17 @@ class Captcha {
         //$image = imagerotate($image, rand(-17,17), 0);
 
         //Output image directly:
-        //header("Content-type: image/jpeg");
-        //imagejpeg($image);
+        header("Content-type: image/jpeg");
+        imagejpeg($image);
 
         //Return image data as base64 encoded:
-        ob_start();
+        /*ob_start();
         imagejpeg($image);
         $img = base64_encode(ob_get_contents());
         ob_end_clean();
 
         return 'data:image/jpeg;base64,' . $img;
+        */
     }
 
     private function drawLines($image, $amount) {
@@ -101,9 +102,9 @@ class Captcha {
 }
 
 //If accessed directly, generate the captcha like normal (produce JPEG):
-/*if ($_SERVER['SCRIPT_FILENAME'] == __FILE__) {
+if ($_SERVER['SCRIPT_FILENAME'] == __FILE__) {
     $a = new Captcha;
     $a->generate();
-}*/
+}
 
 ?>
