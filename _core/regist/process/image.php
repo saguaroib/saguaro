@@ -2,7 +2,6 @@
 $size = getimagesize( $dest );
 if ( !is_array( $size ) )
     error( S_NOREC, $dest );
-$md5 = md5_file( $dest );
 
 //chmod($dest,0666);
 $W = $size[0];
