@@ -7,7 +7,7 @@ Eventually rewrite this.
 */
 
 //If catpcha fails, stop processing immediately.
-if (BOTCHECK === true) {
+if (BOTCHECK === true && !valid('moderator')) {
     require_once(CORE_DIR . '/general/captcha.php');
     $captcha = new Captcha;
 
@@ -115,11 +115,14 @@ if ( $has_image ) {
             error( S_UPFAIL, $dest );
         }
     } else if ($ext == ".webm") {
+        global $W, $H;
+        require('process/video.php');
+        $processor = new VideoProcessor;
+        $processor->process($dest);
     } else {
         $maxw = (!$resto) ? MAX_W : MAXR_W;
         $maxh = (!$resto) ? MAX_H : MAXR_H;
         require_once("process/image.php");
-        echo "$TN_W $TN_H";
     }
 
     $md5 = md5_file($dest);
