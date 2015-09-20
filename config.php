@@ -41,6 +41,12 @@ define(TITLEIMG, '');         //Title image (point to php file if rotating)
 define(DATE_FORMAT, 'm/d/y'); //Formatting for the date in each post, see http://php.net/manual/en/function.date.php for different options
 
 
+/*
+	Specialized board settings - a board with specific purpose 
+*/
+
+define(GIF_ONLY, false); //GIF upload only imageboard.
+
 
 /*
     Posting, threads, and images.

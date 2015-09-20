@@ -132,7 +132,7 @@ function log_cache($invalidate = 0) {
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
 function valid( $action = 'moderator', $no = 0 ) {
-	require_once("_core/admin/validate.php");
+	require_once(CORE_DIR . "/admin/validate.php");
 
 	$validate = new Validation;
 	return $validate->verify( $action );
@@ -162,7 +162,7 @@ function foot( &$dat ) {
     $dat .= '<div class="footer">' . S_FOOT . '</div><a href="#bottom" /></a></body></html>';
 }
 
-function error( $mes, $dest = '' ) {
+function error( $mes, $dest = '', $fancy = 0 ) {
     global $path;
     $upfile_name = $_FILES["upfile"]["name"];
     if ( is_file( $dest ) )
@@ -171,7 +171,7 @@ function error( $mes, $dest = '' ) {
     echo $dat;
     if ( $mes == S_BADHOST ) {
         die( "<html><head><meta http-equiv=\"refresh\" content=\"0; url=banned.php\"></head></html>" );
-    } else {
+    } elseif (!$fancy) {
         echo "<br /><br /><hr size=1><br /><br />
 		   <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2_ABS . ">" . S_RELOAD . "</a></b></font></center>
 		   <br /><br /><hr size=1>";
@@ -201,8 +201,8 @@ it's good to be straight up deleted when it is removed from regist*/
 // die: whether to die on error
 // careful, setting children to 0 could leave orphaned posts.
 function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 ) {
-    require_once("_core/log/log.php");
-	require_once(CORE_DIR . "admin/delpost.php");
+    require_once(CORE_DIR . "/log/log.php");
+	require_once(CORE_DIR . "/admin/delpost.php");
 
 	$remove = new DeletePost;
 	$remove->targeted( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 );
@@ -210,39 +210,14 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
 
 /* user image deletion */
 function usrdel( $no, $pwd ) {
-    global $path, $pwdc, $onlyimgdel;
-    $host         = $_SERVER["REMOTE_ADDR"];
-    $delno        = array();
-    $rebuildindex = !( defined( "STATIC_REBUILD" ) && STATIC_REBUILD );
-    $delflag      = FALSE;
-    reset( $_POST );
-    while ( $item = each( $_POST ) ) {
-        if ( $item[1] == 'delete' ) {
-            array_push( $delno, $item[0] );
-            $delflag = TRUE;
-        }
-    }
-    if ( $pwd == "" && $pwdc != "" )
-        $pwd = $pwdc;
-    $countdel = count( $delno );
-
-    $flag    = FALSE;
-    $rebuild = array(); // keys are pages that need to be rebuilt (0 is index, of course)
-    for ( $i = 0; $i < $countdel; $i++ ) {
-        $resto = delete_post( $delno[$i], $pwd, $onlyimgdel, 0, 1, $countdel == 1 ); // only show error for user deletion, not multi
-        if ( $resto )
-            $rebuild[$resto] = 1;
-    }
-    /*if ( !$flag )
-    error( S_BADDELPASS );*/
-    log_cache();
-    //mysql_board_call("UNLOCK TABLES");
-    foreach ( $rebuild as $key => $val ) {
-        updatelog( $key, 1 ); // leaving the second parameter as 0 rebuilds the index each time!
-    }
-    if ( $rebuildindex )
-        updatelog(); // update the index page last
+	require_once(CORE_DIR . "/log/log.php");
+	require_once(CORE_DIR . "/admin/delpost.php");
+	
+	$del = new DeletePost;
+	$del->userDel($no, $pwd);
 }
+	
+	
 
 //Called when someone tries to visit imgboard.php?res=[[[postnumber]]]
 function resredir( $res ) {

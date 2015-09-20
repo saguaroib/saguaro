@@ -36,7 +36,8 @@ class Head {
                 <meta name='description' content='" . S_DESCR . "'/></meta>
                 <meta http-equiv='content-type'  content='text/html;charset=utf-8' /></meta>
                 <meta name='viewport' content='width=device-width, initial-scale=1'></meta>
-                <meta http-equiv='pragma' content='no-cache'></meta>
+                <META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">
+				<META HTTP-EQUIV=\"Expires\" CONTENT=\"-1\">
                 <link href='" . CSS_PATH . "favicon.ico'>
                 <title>$titlepart</title>
                 <link rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
