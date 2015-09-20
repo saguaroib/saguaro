@@ -24,8 +24,7 @@ function thumb( $path, $tim, $ext ) {
     if ($ext == ".webm") {
         require_once("thumb/video.php");
         $thumb = new VideoThumbnail;
-        $thumb->config = ['width' => $width, 'height' => $height]; //Very stupid way but it works for now.
-        $thumb->run($fname, $outpath);
+        $thumb->run($fname, $outpath, $width, $height);
     } else {
         require_once("thumb/image.php");
 
