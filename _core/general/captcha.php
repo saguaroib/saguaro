@@ -22,7 +22,7 @@ class Captcha {
         if (is_null($_SESSION['captcha_key']))
             return false;
 
-        return (strtoupper($_REQUEST['num']) === $_SESSION['captcha_key']) ? true : false;
+        return (strtoupper($_POST['num']) === $_SESSION['captcha_key']) ? true : false;
         unset($_SESSION['captcha_key']);
     }
 
