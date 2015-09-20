@@ -7,7 +7,7 @@ Eventually rewrite this.
 */
 
 //If catpcha fails, stop processing immediately.
-if (BOTCHECK === true) {
+if (BOTCHECK === true && !valid('moderator')) {
     require_once(CORE_DIR . '/general/captcha.php');
     $captcha = new Captcha;
 
