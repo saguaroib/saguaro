@@ -20,6 +20,7 @@ Remember to look through older threads and see if your problem wasn't solved alr
 
 */
 require "config.php";
+//require "../global/global_config.php";
 
 $host = $_SERVER['REMOTE_ADDR'];
 
@@ -210,6 +211,7 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
 
 /* user image deletion */
 function usrdel( $no, $pwd ) {
+	global $path, $pwdc, $onlyimgdel;
 	require_once(CORE_DIR . "/log/log.php");
 	require_once(CORE_DIR . "/admin/delpost.php");
 	
@@ -217,7 +219,28 @@ function usrdel( $no, $pwd ) {
 	$del->userDel($no, $pwd);
 }
 	
-	
+function report()
+	{
+		require_once(CORE_DIR . "/admin/report.php");
+		$report = new Report;
+		
+		if ( $_SERVER['REQUEST_METHOD'] == 'GET' ) {
+			$no = $_GET['no'];
+			//Various checks in the popup window before form is filed
+			if ( !$report->report_post_exists( $no ) ) 
+				$report->error('That post doesn\'t exist anymore.', $no);
+			if ( $report->report_post_isSticky( $no ) ) 
+				$report->error('Stop trying to report a sticky.', $no);
+			$report->report_check_ip( BOARD_DIR, $no );
+			$report->form_report( BOARD_DIR, $_GET['no'] );			//User passed checks, display form
+
+		} else {
+			//Report form has been filled out, POST'ed and can now be filed
+			$report->report_check_ip( BOARD_DIR, $_POST['no'] );
+			$report->report_submit( BOARD_DIR, $_POST['no'], $_POST['cat'] );
+		}
+		die( '</body></html>' );
+	}
 
 //Called when someone tries to visit imgboard.php?res=[[[postnumber]]]
 function resredir( $res ) {
@@ -306,6 +329,9 @@ switch ( $mode ) {
     case 'rebuildall':
         rebuild( 1 );
         break;
+	case 'report':
+		report();
+		break;
     case 'usrdel':
         usrdel( $no, $pwd );
         break;

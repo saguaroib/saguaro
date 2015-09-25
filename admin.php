@@ -14,6 +14,8 @@ if ( !$db_id ) {
     echo S_SQLDBSF;
 }
 
+extract($_POST);
+
 function head( )
 {
     require_once( CORE_DIR . "/general/head.php" );
@@ -34,7 +36,7 @@ function postinfo( $no )
     
     $dat .= head();
     
-    $dat .= "<table style='border-collapse=:collapse;' />";
+    $dat .= "<table border='0' cellpadding='0' cellspacing='0'  />";
     $dat .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br><hr><br>";
     if ( $sticky || $locked || $permasage ) {
         if ( $sticky )
@@ -61,7 +63,7 @@ function postinfo( $no )
     } else
         $dat .= "<td>No file</td></tr>";
     if ( !$resto ) {
-        $dat .= "<form action='" . DATA_SERVER . BOARD_DIR . "/admin.php' />
+        $dat .= "<form action='admin.php' />
         <tr><td class='postblock'>Action</td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
         <option value='sticky' />Sticky</option>
         <option value='unsticky' />Unsticky</option>
@@ -81,29 +83,24 @@ function postinfo( $no )
     else
         $alert = "No bans on record for IP $host";
     
-    $dat .= "<br><table style='border-collapse=:collapse;' /><form action='admin.php' />
-	<input type='hidden' name='mode' value='modipost' />
+    $dat .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
+	<input type='hidden' name='no' value='$no' />
+	<input type='hidden' name='ip' value='$host' />
+
 	<center><th class='postblock'><b>Ban panel</b></th></center>
 	<tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
-	<tr><td class='postblock'>Length:</td><td><input type='text' name='length' placeholder='Number only' /><select name='time' />
-        <option value='' /></option>
-		<option value='minute' />Minutes</option>
-        <option value='hour' />Hours</option>
-        <option value='day' />Days</option>
-        <option value='month' />Months</option>
-        </select>
-	</td></tr>
+	<tr><td class='postblock'>Unban in:</td><td><input type='number' min='0' size='4' name='banlength'  /> days</td></tr>
 	<center><tr><td class='postblock'>Ban type:</td><td></center>
 		<select name='banType' />
-        <option value='global' />This board  /" . BOARD_DIR . '/ - ' . TITLE . " </option>
-        <option value='localboard' />All boards</option>
-        <option value='globalview' />All boards - Viewban</option>
-        <option value='localview' />This board - Viewban</option>
-        </select>[Perma<input type='checkbox' value='perma' />] [Warn only <input type='checkbox' value='warn' />]
+        <option value='warn' />Warning only</option>
+        <option value='thisboard' />This board - /" . BOARD_DIR . "/ </option>
+        <option value='global' />All boards</option>
+		<option value='perma' />Permanent - All boards</option>
+        </select>
 	</td></tr>
 	<tr><td class='postblock'>Public reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
 	<tr><td class='postblock'>Staff notes:</td><td><input type='text' name='staffnote' /></td></tr>
-	<tr><td class='postblock'>Append user's comment:</td><td><input type='text' name='custmess' placeholder='(USER WAS BANNED FOR THIS POST)' /> [ Show ban message<input type='checkbox' name='showbanmess' /> ] </td></tr>
+	<tr><td class='postblock'>Append user's comment:</td><td><input type='text' name='custmess' placeholder='Leave blank for USER WAS BAN etc.' /> [ Show message<input type='checkbox' name='showbanmess' /> ] </td></tr>
 	<tr><td class='postblock'>After-ban options:</td><td>
 		<select name='afterban' />
         <option value='none' />None</option>
@@ -161,6 +158,11 @@ function oldvalid( $pass )
     
     /*    if ( $pass && $pass != PANEL_PASS )
     error( S_WRONGPASS );*/
+
+    require_once(CORE_DIR . "/admin/report.php");
+
+    $getReport = new Report;
+    $active = $getReport->get_all_reports_board();
     
     if ( valid( 'janitor_board' ) ) {
         echo head();
@@ -169,6 +171,7 @@ function oldvalid( $pass )
         if ( valid( 'moderator' ) ) {
             echo "[<a href=\"" . PHP_SELF_ABS . "?mode=rebuild\">Rebuild</a>]\n";
             echo "[<a href=\"" . PHP_SELF_ABS . "?mode=rebuildall\">Rebuild all</a>]\n";
+            echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=reports\"><b>" . $active . "</b></a>]\n";
         }
         echo "[<a href=\"" . PHP_ASELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
         echo "<div class=\"passvalid\">" . S_MANAMODE . "</div>\n";
@@ -444,61 +447,13 @@ function modify_post( $no, $action = 'none' )
             break;
     }
     
-    mysql_call( 'UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . mysql_real_escape_string( $no ) . "'" );
+    mysql_call( 'UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . mysql_real_escape_string( $no ) . "' LIMIT 1" );
     echo head( $dat );
     echo $verb . " thread $no. Redirecting...<META HTTP-EQUIV=\"refresh\" content=\"1;URL=" . PHP_ASELF_ABS . "\">";
     
 }
-/*
-function ban($no) {
 
-$placedOn = time();
-$query    = mysql_call( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$ip' AND banlength != 0" );
-switch ( $banlength ) {
-case 'warn':
-$banset = '100';
-break;
-case '3hr':
-$banset = '1';
-break;
-case '3day':
-$banset = '2';
-break;
-case '1wk':
-$banset = '3';
-break;
-case '1mon':
-$banset = '4';
-break;
-case 'perma':
-$banset = '-1';
-break;
-default:
-//Sure is 2007 around here
-$banset = '9001';
-}
-if ( mysql_num_rows( $query ) == 0 ) {
-$sql = "INSERT INTO " . SQLBANLOG . " (ip, pubreason, staffreason, banlength, placedOn, board) VALUES ('$ip', '$pubreason', '$staffreason', '$banset', '$placedOn', '" . BOARD_DIR . "')";
-
-if ( mysql_call( $sql ) ) {
-if ( $banset == '100' ) {
-echo "Warned " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-} elseif {
-echo "Banned (" . $banlength . ") " . $ip . " for public reason: <br /><b> " . $pubreason . " </b><br />";
-echo "Logged private reason: <br /><b> " . $staffreason . " </b>";
-} elseif {
-echo "ERROR: Could not execute $sql. " . mysql_error();
-}
-} else {
-echo "This IP is already banned!";
-}
-mysql_free_result( $query );
-} else {
-die( 'You do not have permission to do that! IP: ' . $_SERVER['REMOTE_ADDR'] . " logged." );
-}
-*/
-
+  
 /* Main switch */
 switch ( $_GET['mode'] ) {
     case 'admin':
@@ -513,6 +468,25 @@ switch ( $_GET['mode'] ) {
         setcookie( 'saguaro_auser', '0', 1 );
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
         break;
+    case 'ban':
+		echo head();
+        require_once(CORE_DIR . "/admin/banish.php");
+		
+		$banish = new Banish;
+		if ($banish->checkBan($_SERVER['REMOTE_ADDR'])) {
+			$banish->postOptions($no, $_SERVER['REMOTE_ADDR'], $_POST['banlength'], $_POST['banType'], $_POST['perma'], $_POST['pubreason'], $_POST['staffnote'], $_POST['custmess'], $_POST['showbanmess'], $_POST['afterban']);
+        //gee i hope nobody saw this
+		}
+		$banish->afterBan;
+		break;
+	case 'reports':
+		require_once(CORE_DIR . "/admin/report.php");
+
+		$getReport = new Report;
+		$active = $getReport->get_all_reports_board();
+		oldvalid( $pass );
+		$getReport->display_list();
+		break;
     case 'zmdlog':
         login( $_POST['usernm'], $_POST['passwd'] );
         break;
