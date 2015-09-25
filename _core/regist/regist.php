@@ -334,6 +334,7 @@ $name  = preg_replace( "[\r\n]", "", $name );
 $names = iconv( "UTF-8", "CP932//IGNORE", $name ); // convert to Windows Japanese #&#65355;&#65345;&#65357;&#65353;
 require_once("tripcode.php");
 
+$noko = 1;
 if ( stripos( $email, 'sage' ) || stripos( $email, 'nokosage' ) ) {
     $is_sage = true;
 } elseif ( stripos( $email, 'nonoko' )) {
