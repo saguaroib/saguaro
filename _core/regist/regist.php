@@ -429,11 +429,11 @@ if ( !$sub )
 
 if ( $moderator && isset( $_POST['showCap'] ) ) {
     if ( $moderator == 1 )
-        $name = '<b><font color="770099">$name ## Mod </font></b>';
+        $name = '<b><font color="770099">' . $name . ' ## Mod </font></b>';
     if ( $moderator == 2 )
-        $name = '<b><font color="FF101A">$name ## Admin  </font></b>';
+        $name = '<b><font color="FF101A">' . $name . ' ## Admin  </font></b>';
     if ( $moderator == 3 )
-        $name = '<b><font color="2E2EFE">$name ## Manager  </font></b>';
+        $name = '<b><font color="2E2EFE">' . $name . ' ## Manager  </font></b>';
 }
 
 if ( FORCED_ANON == 1 ) {
