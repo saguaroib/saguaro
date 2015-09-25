@@ -6,17 +6,36 @@ Eventually rewrite this.
 
 */
 
-//If catpcha fails, stop processing immediately.
+//Check prereq conditions for post processing
+
+$upfile_name = $_FILES["upfile"]["name"];
+$upfile = $_FILES["upfile"]["tmp_name"];
+
+//Captcha check
 if (BOTCHECK === true && !valid('moderator')) {
     require_once(CORE_DIR . '/general/captcha.php');
     $captcha = new Captcha;
 
     if ($captcha->isValid() === false)
-        error(S_CAPFAIL, $dest);
+        error(S_CAPFAIL, $upfile);
 }
 
-$upfile_name = $_FILES["upfile"]["name"];
-$upfile = $_FILES["upfile"]["tmp_name"];
+//Check if user is banned
+$host  = $_SERVER["REMOTE_ADDR"];
+$badip = mysql_call( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' and active <> 0 " );
+//Check if user IP is in bans table
+if ( mysql_num_rows( $badip ) !== 0 )
+    error( S_BADHOST, $upfile );
+
+//Check if replying to locked thread
+$resto = (int) $resto;
+if ( $resto ) {
+	$query  = mysql_call( "SELECT * FROM " . SQLLOG . " WHERE no=" . mysql_real_escape_string($resto) );
+	$result = mysql_fetch_assoc( $query );
+	if ( $result["locked"] == '1' && !valid('moderator') )
+		error( S_THREADLOCKED, $upfile );
+	 mysql_free_result( $query );
+}
 
 require_once("cleanstr.php");
 require_once("wordwrap.php");
@@ -52,18 +71,6 @@ if ( !$upfile && !$resto ) { // allow textonly threads for moderators!
 // time
 $time = time();
 $tim  = $time . substr( microtime(), 2, 3 );
-
-// check closed
-$resto = (int) $resto;
-if ( $resto ) {
-    if ( !$cchk = mysql_call( "select locked from " . SQLLOG . " where no=" . $resto ) ) {
-        echo S_SQLFAIL;
-    }
-    list( $locked ) = mysql_fetch_row( $cchk );
-    if ( $locked == 1 && !$admin )
-        error( "You can't reply to this thread anymore.", $upfile );
-    mysql_free_result( $cchk );
-}
 
 // upload processing
 
@@ -216,24 +223,6 @@ if ( strlen( $resto ) > 10 )
 if ( strlen( $url ) > 10 )
     error( S_UNUSUAL, $dest );
 
-//host check
-$host  = $_SERVER["REMOTE_ADDR"];
-$badip = mysql_call( "SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' and banlength <> 0 " );
-
-$query  = mysql_query( "SELECT * FROM " . SQLLOG . " WHERE no=" . $resto );
-$result = mysql_fetch_assoc( $query );
-if ( $result["locked"] == '1' ) {
-    error( S_THREADLOCKED, $dest );
-}
-
-//Check if user IP is in bans table
-if ( mysql_num_rows( $badip ) == 0 ) {
-    // Not Banned
-} else {
-    //NOW YOU FUCKED UP
-    error( S_BADHOST, $dest );
-}
-
 if (PROXY_CHECK && preg_match("/^(mail|ns|dns|ftp|prox|pc|[^\.]\.[^\.]$)/", $host) > 0 || preg_match("/(ne|ad|bbtec|aol|uu|(asahi-net|rim)\.or)\.(com|net|jp)$/", $host) > 0) {
     if (proxy_connect('80') == 1) {
         error(S_PROXY80, $dest);
@@ -345,28 +334,15 @@ $name  = preg_replace( "[\r\n]", "", $name );
 $names = iconv( "UTF-8", "CP932//IGNORE", $name ); // convert to Windows Japanese #&#65355;&#65345;&#65357;&#65353;
 require_once("tripcode.php");
 
-if ( $email == 'sage' ) {
-    $noko  = 0;
-    $email = '';
-} elseif ( $email == 'nokosage' ) {
-    $noko  = 1;
-    $email = 'sage';
-} elseif ( $email == 'nonoko' ) {
-    $noko  = 0;
-    $email = '';
+$noko = 1;
+if ( stripos( $email, 'sage' ) || stripos( $email, 'nokosage' ) ) {
+    $is_sage = true;
+} elseif ( stripos( $email, 'nonoko' )) {
+    $is_sage = false;
+	$noko = 0;
 } else {
-    $noko = 1;
+	$is_sage = false;
 }
-
-if ( $moderator ) {
-    if ( $moderator == 1 && isset( $_POST['showCap'] ) )
-        $name = '<b><font color="770099">Anonymous ## Mod </font></b>';
-    if ( $moderator == 2 && isset( $_POST['showCap'] ) )
-        $name = '<b><font color="FF101A">Anonymous ## Admin  </font></b>';
-    if ( $moderator == 3 && isset( $_POST['showCap'] ) )
-        $name = '<b><font color="2E2EFE">Anonymous ## Manager  </font></b>';
-}
-
 
 if ( !$name )
     $name = S_ANONAME;
@@ -374,6 +350,15 @@ if ( !$com )
     $com = S_ANOTEXT;
 if ( !$sub )
     $sub = S_ANOTITLE;
+
+if ( $moderator && isset( $_POST['showCap'] ) ) {
+    if ( $moderator == 1 )
+        $name = '<b><font color="770099">' . $name . ' ## Mod </font></b>';
+    if ( $moderator == 2 )
+        $name = '<b><font color="FF101A">' . $name . ' ## Admin  </font></b>';
+    if ( $moderator == 3 )
+        $name = '<b><font color="2E2EFE">' . $name . ' ## Manager  </font></b>';
+}
 
 if ( FORCED_ANON == 1 ) {
     $name = "</span>$now<span>";
@@ -448,10 +433,6 @@ if ( $has_image ) {
         mysql_free_result( $result );
     }
 }
-
-if ( $moderator )
-    $host = '[Staff]'; // Don't store mod/admin ips
-
 
 $rootqu = $resto ? "0" : "now()";
 if ( $stickied )
