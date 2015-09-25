@@ -33,7 +33,7 @@ class Post {
         $com = $this->auto_link($com, $resno);
 
         if (!$this->inIndex) {
-            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\"$no\")' class='quotejs'>$no</a></span>";
+            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a></span>";
         } else {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' class='quotejs'>No.</a><a href='" . RES_DIR . $resto . PHP_EXT . "#q$no' class='quotejs'>$no</a></span>";
         }
