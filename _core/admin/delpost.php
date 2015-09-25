@@ -8,7 +8,6 @@ class DeletePost extends Log
 {
     function userDel( $no, $pwd )
     {
-        global $path, $pwdc, $onlyimgdel;
         $host         = $_SERVER["REMOTE_ADDR"];
         $delno        = array( );
         $rebuildindex = !( defined( "STATIC_REBUILD" ) && STATIC_REBUILD );
@@ -20,6 +19,7 @@ class DeletePost extends Log
                 $delflag = TRUE;
             }
         }
+        $pwdc = $_COOKIE['saguaro_pwdc'];
         if ( $pwd == "" && $pwdc != "" )
             $pwd = $pwdc;
         $countdel = count( $delno );
@@ -34,15 +34,12 @@ class DeletePost extends Log
             error( S_BADDELPASS );*/
         $my_log = new Log;
         $log = $my_log->cache;
-        global $log, $path;
-        $my_log->update_cache();
-		
-		$indexGen = new Index;
+
         foreach ( $rebuild as $key => $val ) {
             $my_log->update( $key, 1 ); // leaving the second parameter as 0 rebuilds the index each time!
         }
         if ( $rebuildindex )
-           $indexGen->format(); // update the index page last
+           $my_log->update(0, 1); // update the index page last
     }
     
     function targeted( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 )
@@ -91,7 +88,7 @@ class DeletePost extends Log
             $row['sub']      = mysql_real_escape_string( $row['sub'] );
             $row['com']      = mysql_real_escape_string( $row['com'] );
             $row['filename'] = mysql_real_escape_string( $row['filename'] );
-            mysql_call( "INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . SQLLOG . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')" );
+            mysql_call( "INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . BOARD_DIR . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')" );
         }
         if ( $row['resto'] == 0 && $children && !$imgonly ) // select thread and children
             $result = mysql_call( "select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno" );
