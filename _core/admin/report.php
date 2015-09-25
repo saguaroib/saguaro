@@ -107,7 +107,7 @@ class Report {
 	
 	function display_list() {
 
-	$active = mysql_query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' ORDER BY `type` DESC `no` DESC ");
+	$active = mysql_query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' ORDER BY `type` DESC ");
 	
 	if ( !$result = mysql_call( "select * from " . SQLLOG . "" ) ) {
             echo S_SQLFAIL;
