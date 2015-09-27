@@ -64,7 +64,7 @@ if ( !$db_id ) {
 }
 
 //Rebuild (used by Log).
-//Keeping top level until properly dealth with.
+//Keeping top level until properly dealt with.
 require_once(CORE_DIR . "/log/rebuild.php");
 
 //Log
@@ -204,11 +204,9 @@ function resredir( $res ) {
     $redirect = DATA_SERVER . BOARD_DIR . "/res/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
 
     echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=$redirect\">";
-    if ( $resto == "0" )
+    if ($resto == "0") {
         log_cache();
-
-    if ( $resto == "0" ) { // thread
-        updatelog( $res );
+        updatelog($res);
     }
 }
 
