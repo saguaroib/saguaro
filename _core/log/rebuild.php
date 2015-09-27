@@ -45,4 +45,41 @@ function rebuildqueue_take_all() {
     return $posts;
 }
 
+function rebuild( $all = 0 ) {
+    if ( !valid( 'moderator' ) )
+        die( 'Update failed...' );
+
+    header( "Pragma: no-cache" );
+    echo "Rebuilding " . (($all) ? "all" : "missing") . ' replies and pages... <a href="' . PHP_SELF2_ABS . '">Go back</a><br><br>';
+
+    ob_end_flush();
+    $starttime = microtime( true );
+    if ( !$treeline = mysql_call( "select no,resto from " . SQLLOG . " where root>0 order by root desc" ) ) {
+        echo S_SQLFAIL;
+    }
+    log_cache();
+    echo "Writing...\n";
+    if ( $all || !defined( 'CACHE_TTL' ) ) {
+        while ( list( $no, $resto ) = mysql_fetch_row( $treeline ) ) {
+            if ( !$resto ) {
+                updatelog( $no, 1 );
+                echo "No.$no created.<br>\n";
+            }
+        }
+        updatelog();
+        echo "Index pages created.<br>\n";
+    } else {
+        $posts = rebuildqueue_take_all();
+        foreach ( $posts as $no ) {
+            $deferred = ( updatelog( $no, 1 ) ? ' (deferred)' : '' );
+            if ( $no )
+                echo "No.$no created.$deferred<br>\n";
+            else
+                echo "Index pages created.$deferred<br>\n";
+        }
+    }
+    $totaltime = microtime( true ) - $starttime;
+    echo "<br>Time elapsed (lock excluded): $totaltime seconds", "<br>Pages created.<br><br>\nRedirecting back to board.\n<META HTTP-EQUIV=\"refresh\" content=\"10;URL=" . PHP_SELF2 . "\">";
+}
+
 ?>
