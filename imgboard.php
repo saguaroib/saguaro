@@ -20,7 +20,6 @@ Remember to look through older threads and see if your problem wasn't solved alr
 
 */
 require "config.php";
-//require "../global/global_config.php";
 
 $host = $_SERVER['REMOTE_ADDR'];
 
