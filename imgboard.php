@@ -37,7 +37,6 @@ $badfile   = array(
     "dummy2"
 ); //Refused files (md5 hashes)
 
-
 function mysql_call( $query ) {
     $ret = mysql_query( $query );
     if ( !$ret ) {
@@ -52,8 +51,6 @@ function mysql_call( $query ) {
 }
 
 //check for SQL table existance
-
-
 $con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
 
 if ( !$con ) {
@@ -172,8 +169,7 @@ function usrdel( $no, $pwd ) {
 	$del->userDel($no, $pwd);
 }
 
-function report()
-	{
+function report() {
 		require_once(CORE_DIR . "/admin/report.php");
 		$report = new Report;
 
@@ -193,7 +189,7 @@ function report()
 			$report->report_submit( BOARD_DIR, $_POST['no'], $_POST['cat'] );
 		}
 		die( '</body></html>' );
-	}
+}
 
 //Called when someone tries to visit imgboard.php?res=[[[postnumber]]]
 function resredir( $res ) {
@@ -213,16 +209,11 @@ function resredir( $res ) {
         error( S_NOTHREADERR, $dest );
     }
 
-    if ( $resto == "0" ) // thread
-        $redirect = DATA_SERVER . BOARD_DIR . "/res/" . $no . PHP_EXT . '#' . $no;
-    else
-        $redirect = DATA_SERVER . BOARD_DIR . "/res/" . $resto . PHP_EXT . '#' . $no;
-
+    $redirect = DATA_SERVER . BOARD_DIR . "/res/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
 
     echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=$redirect\">";
     if ( $resto == "0" )
         log_cache();
-
 
     if ( $resto == "0" ) { // thread
         updatelog( $res );
@@ -234,12 +225,8 @@ function rebuild( $all = 0 ) {
         die( 'Update failed...' );
 
     header( "Pragma: no-cache" );
-    echo "Rebuilding ";
-    if ( $all ) {
-        echo "all";
-    } else {
-        echo "missing";
-    }
+    echo "Rebuilding " . ($all) ? "all" : "missing";
+
     echo " replies and pages... <a href=\"" . PHP_SELF2_ABS . "\">Go back</a><br><br>\n";
     ob_end_flush();
     $starttime = microtime( true );
