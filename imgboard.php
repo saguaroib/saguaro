@@ -66,53 +66,9 @@ if ( !$db_id ) {
     echo S_SQLDBSF;
 }
 
-function rebuildqueue_create_table() {
-    $sql = <<<EOSQL
-CREATE TABLE `rebuildqueue` (
-  `board` char(4) NOT NULL,
-  `no` int(11) NOT NULL,
-  `ownedby` int(11) NOT NULL default '0',
-  `ts` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  PRIMARY KEY  (`board`,`no`,`ownedby`)
-)
-EOSQL;
-    mysql_call( $sql );
-}
-
-function rebuildqueue_add( $no ) {
-    $board = BOARD_DIR;
-    $no    = (int) $no;
-    for ( $i = 0; $i < 2; $i++ )
-        if ( !mysql_call( "INSERT IGNORE INTO rebuildqueue (board,no) VALUES ('$board','$no')" ) )
-            rebuildqueue_create_table();
-        else
-            break;
-}
-
-function rebuildqueue_remove( $no ) {
-    $board = BOARD_DIR;
-    $no    = (int) $no;
-    for ( $i = 0; $i < 2; $i++ )
-        if ( !mysql_call( "DELETE FROM rebuildqueue WHERE board='$board' AND no='$no'" ) )
-            rebuildqueue_create_table();
-        else
-            break;
-}
-
-function rebuildqueue_take_all() {
-    $board = BOARD_DIR;
-    $uid   = mt_rand( 1, mt_getrandmax() );
-    for ( $i = 0; $i < 2; $i++ )
-        if ( !mysql_call( "UPDATE rebuildqueue SET ownedby=$uid,ts=ts WHERE board='$board' AND ownedby=0" ) )
-            rebuildqueue_create_table();
-        else
-            break;
-    $q     = mysql_call( "SELECT no FROM rebuildqueue WHERE board='$board' AND ownedby=$uid" );
-    $posts = array();
-    while ( $post = mysql_fetch_assoc( $q ) )
-        $posts[] = $post['no'];
-    return $posts;
-}
+//Rebuild (used by Log).
+//Keeping top level until properly dealth with.
+require_once(CORE_DIR . "/log/rebuild.php");
 
 //Log
 require_once(CORE_DIR . "/log/log.php");
@@ -211,22 +167,22 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
 function usrdel( $no, $pwd ) {
 	global $path, $pwdc, $onlyimgdel;
 	require_once(CORE_DIR . "/admin/delpost.php");
-	
+
 	$del = new DeletePost;
 	$del->userDel($no, $pwd);
 }
-	
+
 function report()
 	{
 		require_once(CORE_DIR . "/admin/report.php");
 		$report = new Report;
-		
+
 		if ( $_SERVER['REQUEST_METHOD'] == 'GET' ) {
 			$no = $_GET['no'];
 			//Various checks in the popup window before form is filed
-			if ( !$report->report_post_exists( $no ) ) 
+			if ( !$report->report_post_exists( $no ) )
 				$report->error('That post doesn\'t exist anymore.', $no);
-			if ( $report->report_post_isSticky( $no ) ) 
+			if ( $report->report_post_isSticky( $no ) )
 				$report->error('Stop trying to report a sticky.', $no);
 			$report->report_check_ip( BOARD_DIR, $no );
 			$report->form_report( BOARD_DIR, $_GET['no'] );			//User passed checks, display form

@@ -202,7 +202,8 @@ if (is_file($lockout)) {
                         SQLMODSLOG => "user VARCHAR(25) PRIMARY KEY, password  VARCHAR(250), allowed  VARCHAR(250), denied  VARCHAR(250)",
                         SQLDELLOG => "postno VARCHAR(250) PRIMARY KEY, imgonly VARCHAR(25), board VARCHAR(250), name VARCHAR(250), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . "), img VARCHAR(250), filename VARCHAR(250), admin VARCHAR(100)", //Why does S_POSTLENGTH start with S_?
                         "reports" => "num VARCHAR(250) PRIMARY KEY, no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ip VARCHAR(250)",
-                        "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)"
+                        "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)",
+                        "rebuildqueue" => "board char(4) NOT NULL, no int(11) NOT NULL, ownedby int(11) NOT NULL default '0', ts timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, PRIMARY KEY (board,no,ownedby)"
                     ];
 
                     foreach ($tables as $table => $query) {
