@@ -10,15 +10,20 @@
 
 class VideoProcessor {
     function process($input) {
+        $upfile_name = $_FILES["upfile"]["name"];
+
         $info = $this->check($input);
 
-        if (!$info['has_video']) {
-            error("\"$upfile_name\" is not a valid WebM.", $dest);
-        } else {
-            global $W, $H;
-            $W = $info['width'];
-            $H = $info['height'];
-        }
+        if (!$info['has_video'])
+            error("\"$upfile_name\ is not a valid WebM.", $dest);
+        if (ALLOW_AUDIO == false && $info['has_audio'])
+            error("\"$upfile_name\" contains audio!", $dest);
+        if ($info['duration'] > MAX_DURATION)
+            error("\"$upfile_name\" is too long! ({$info['duration']} > " . MAX_DURATION . ")", $dest);
+        
+        global $W, $H;
+        $W = $info['width'];
+        $H = $info['height'];
     }
 
     private function check ($input) {
