@@ -18,6 +18,9 @@ class Log {
     private $thread_cache = [];
 
     function update($resno, $rebuild = 0) {
+        require_once(CORE_DIR . "/postform.php");
+        $postform = new PostForm;
+        
         global $log, $path;
         $this->update_cache();
 
@@ -59,7 +62,7 @@ class Log {
         if (!$counttree) {
             $logfilename = PHP_SELF2;
             $dat = head();
-            form($dat, $resno);
+            $dat .= $postform->format($resno);
             $this->print_page($logfilename, $dat);
         }
 
@@ -106,7 +109,7 @@ class Log {
 
         for ($page = 0; $page < $counttree; $page += PAGE_DEF) {
             $dat = head();
-            form($dat, $resno);
+            $dat .= $postform->format($resno);
             if (!$resno) {
                 $st = $page;
             }

@@ -99,14 +99,6 @@ function head() {
     return $head->generate();
 }
 
-/* Contribution form */
-function form( &$dat, $resno, $admin = "" ) {
-    require_once(CORE_DIR . "/postform.php");
-
-    $postform = new PostForm;
-    $dat .= $postform->format($resno, $admin);
-}
-
 /* Footer */
 function foot( &$dat ) {
     if (file_exists(BOARDLIST))
