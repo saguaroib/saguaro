@@ -21,21 +21,15 @@ Remember to look through older threads and see if your problem wasn't solved alr
 */
 require "config.php";
 
-$host = $_SERVER['REMOTE_ADDR'];
-
 extract( $_POST );
 extract( $_GET );
 extract( $_COOKIE );
 
 $path = realpath( "./" ) . '/' . IMG_DIR;
 ignore_user_abort( TRUE );
-$badstring = array(
-     "nimp.org"
-); // Refused text
-$badfile   = array(
-     "dummy",
-    "dummy2"
-); //Refused files (md5 hashes)
+
+$badstring = ["nimp.org"]; // Refused text. Currently unused by Regist.
+$badfile = ["dummy", "dummy2"]; //Refused files (md5 hashes). Currently unused by Regist.
 
 function mysql_call( $query ) {
     $ret = mysql_query( $query );
