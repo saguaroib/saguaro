@@ -89,6 +89,10 @@ define(S_OMITT_NUM, 5);     //number of posts to display in each thread on the i
 define(DUPE_CHECK, true); //whether or not to check for duplicate images
 define(MAX_KB, 2048); //Maximum upload size in KB
 
+//WebM
+define(ALLOW_AUDIO, false); //If true, allows WebMs containing an audio stream.
+define(MAX_DURATION, 60);   //The maximum duration allowed in seconds.
+
 //RePod's JS suite
 define(USE_JS_SETTINGS, 1); //Include the JS suite's settings - enables user side settings
 define(USE_IMG_HOVER, 1);   //Use image expansion on hover
