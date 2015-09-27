@@ -1,8 +1,6 @@
 <?php
 
-
 require_once(CORE_DIR . "/log/log.php");
-require_once(CORE_DIR . "/index/index.php");
 
 class DeletePost extends Log
 {
@@ -41,7 +39,7 @@ class DeletePost extends Log
         if ( $rebuildindex )
            $my_log->update(0, 1); // update the index page last
     }
-    
+
     function targeted( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 )
     {
         require_once( CORE_DIR . "/log/log.php" );
@@ -71,7 +69,7 @@ class DeletePost extends Log
                      'server' => $_SERVER,
                     'post' => $_POST,
                     'cookie' => $_COOKIE,
-                    'row' => $row 
+                    'row' => $row
                 ), true );
                 //file_put_contents('ghostbump.'.time(),$ghostdump);
             }
@@ -110,7 +108,7 @@ class DeletePost extends Log
                     unset( $log[$delrow['resto']]['children'][$delrow['no']] );
                 unset( $log[$delrow['no']] );
                 $log['THREADS'] = array_diff( $log['THREADS'], array(
-                     $delrow['no'] 
+                     $delrow['no']
                 ) ); // remove from THREADS
                 mysql_call( "DELETE FROM reports WHERE no=" . $delrow['no'] ); // clear reports
                 if ( USE_GZIP == 1 ) {

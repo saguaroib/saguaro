@@ -201,7 +201,6 @@ it's good to be straight up deleted when it is removed from regist*/
 // die: whether to die on error
 // careful, setting children to 0 could leave orphaned posts.
 function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 ) {
-    require_once(CORE_DIR . "/log/log.php");
 	require_once(CORE_DIR . "/admin/delpost.php");
 
 	$remove = new DeletePost;
@@ -211,7 +210,6 @@ function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1,
 /* user image deletion */
 function usrdel( $no, $pwd ) {
 	global $path, $pwdc, $onlyimgdel;
-	require_once(CORE_DIR . "/log/log.php");
 	require_once(CORE_DIR . "/admin/delpost.php");
 	
 	$del = new DeletePost;
