@@ -343,7 +343,7 @@ function admindel( $pass )
     }
     mysql_free_result( $result );
     
-    echo "<br /><br /><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/img.css' />";
+    echo "<br /><br /><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
     //foot($dat);
     $all = (int) ( $all / 1024 );
     echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";
