@@ -187,16 +187,9 @@ switch ( $mode ) {
     case 'regist':
         regist( $name, $email, $sub, $com, '', $pwd, $resto );
         break;
-    case 'rebuild':
-        rebuild();
-        break;
-    case 'rebuildall':
-        rebuild( 1 );
-        break;
 	case 'report':
 		require_once(CORE_DIR . "/admin/report.php");
 		$report = new Report;
-
 		$report->process();
 		break;
     case 'usrdel':

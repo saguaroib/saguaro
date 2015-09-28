@@ -169,8 +169,8 @@ function oldvalid( $pass )
         echo "[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]\n";
         echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]\n";
         if ( valid( 'moderator' ) ) {
-            echo "[<a href=\"" . PHP_SELF_ABS . "?mode=rebuild\">Rebuild</a>]\n";
-            echo "[<a href=\"" . PHP_SELF_ABS . "?mode=rebuildall\">Rebuild all</a>]\n";
+            echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=rebuild\">Rebuild</a>]\n";
+            echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=rebuildall\">Rebuild all</a>]\n";
             echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=reports\"><b>" . $active . "</b></a>]\n";
         }
         echo "[<a href=\"" . PHP_ASELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
@@ -481,7 +481,6 @@ switch ( $_GET['mode'] ) {
 		break;
 	case 'reports':
 		require_once(CORE_DIR . "/admin/report.php");
-
 		$getReport = new Report;
 		$active = $getReport->get_all_reports_board();
 		oldvalid( $pass );
@@ -490,6 +489,14 @@ switch ( $_GET['mode'] ) {
     case 'zmdlog':
         login( $_POST['usernm'], $_POST['passwd'] );
         break;
+    case 'rebuild':
+		require_once(CORE_DIR . "/log/rebuild.php");
+        rebuild();
+        break;
+    case 'rebuildall':
+		require_once(CORE_DIR . "/log/rebuild.php");
+        rebuild( 1 );
+        break;		
     case "modipost":
         modify_post( $_GET['no'], $_GET['action'] );
         break;
