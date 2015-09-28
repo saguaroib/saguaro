@@ -2,6 +2,27 @@
 
 class Report {
     
+	
+	function process() {
+		if ( $_SERVER['REQUEST_METHOD'] == 'GET' ) {
+			$no = $_GET['no'];
+			//Various checks in the popup window before form is filed
+			if ( !$this->report_post_exists( $no ) )
+				$this->error('That post doesn\'t exist anymore.', $no);
+			if ( $this->report_post_isSticky( $no ) )
+				$this->error('Stop trying to report a sticky.', $no);
+			$this->report_check_ip( BOARD_DIR, $no );
+			$this->form_report( BOARD_DIR, $_GET['no'] );			//User passed checks, display form
+
+		} else {
+			//Report form has been filled out, POST'ed and can now be filed
+			$this->report_check_ip( BOARD_DIR, $_POST['no'] );
+			$this->report_submit( BOARD_DIR, $_POST['no'], $_POST['cat'] );
+		}
+		die( '</body></html>' );		
+	}
+	
+	
     function get_all_reports_board($list = 0) {
         $query = mysql_query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' ");
 		if (!$list) { //If the call is for the oldvalid() alert in admin.php, this will be 1.	
@@ -61,9 +82,9 @@ class Report {
 	}
 	
     function form_report( $board, $no ) {
-	/*	require_once(CORE_DIR . "/general/captcha.php");
+		require_once(CORE_DIR . "/general/captcha.php");
 		
-		$captcha = new Captcha;*/
+		$captcha = new Captcha;
 		//Taken from parley who probably took it from 4chan anyway. Yolo.
 		$this->form_head($no);
 		echo '
@@ -77,20 +98,14 @@ class Report {
 		<input type="radio" name="cat" value="3">Illegal content<br/>
 		<input type="radio" name="cat" value="1">Spam
 		</fieldset>
-		</td><td>
+		</td><td><img src="' . CORE_DIR . '/general/captcha.php"  alt="captcha img" />
 		</td>
 		<td>
-		<input name="captcha" size="28" maxlength="10" accesskey="c" type="text">
+		<input name="num" size="28" maxlength="10" placeholder="Please solve the captcha" accesskey="c" type="text" required>
 		</td></tr>
 		</table>
 		<table width="100%"><tr><td width="240px"></td><td>
 		<input type="submit" value="Submit">
-		<!--
-		You are reporting post <b> $no</b> on /' . BOARD_DIR . '/
-		-->
-		<input type="hidden" name="board" value="<?php echo $board; ?>">
-		<input type="hidden" name="post[]" value="<?php echo $post; ?>">
-		<input type="hidden" name="reportpost" value="true">
 		</td></tr></table>
 		</center>
 		</form>
