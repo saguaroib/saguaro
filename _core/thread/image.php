@@ -49,7 +49,7 @@ class Image {
 
             if ( $spoiler ) {
                 $size   = "Spoiler Image, $size";
-                $imgsrc = "<br><a href='" . $displaysrc . "' target='_blank'><img src='" . SPOILER_THUMB . "' border='0' align='left' hspace='20' alt='" . $size . "B' md5='$shortmd5'></a>";
+                $imgsrc = "<br><a href='" . $displaysrc . "' target='_blank'><img src='" . CSS_PATH . "/imgs/spoiler.png' border='0' align='left' hspace='20' alt='" . $size . "B' md5='$shortmd5'></a>";
             } elseif ( $tn_w && $tn_h ) { //when there is size...
                 if ( @is_file( THUMB_DIR . $tim . 's.jpg' ) ) {
                     $imgsrc = "<br><a href='" . $displaysrc . "' target='_blank'><img class='postimg' src='" . $thumbdir . $tim . 's.jpg' . "' border='0' align='left' width='$tn_w' height='$tn_h' hspace='20' alt='" . $size . "B' md5='$shortmd5'></a>";
