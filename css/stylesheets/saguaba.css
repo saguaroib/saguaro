@@ -94,8 +94,16 @@ hr {
     text-align: left;
 }
 .postarea {} .rules {
-    font-size: 10px;
+    font-size: 11px;
+    font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
+}
+.postblock {
+    background: #EEAA88;
+    color: #800000;
+    font-weight: bold;
+    border: 1px solid #800000;
+    padding: 4px;
 }
 .postblock {
     background: #EEAA88;
@@ -214,10 +222,12 @@ hr {
     padding-left: 20px;
 }
 .pages {
-    border-collapse: collapse;
-    color: black;
-    background-color: #EEAA88;
-    padding: 5px;
+    border:1px solid #800000;
+    background:#F0E0D6;
+    color:#800;
+}
+.pages td {
+    border:none;padding:1px 5px;
 }
 /*Credits: Dynamic Drive CSS Library */
 /*URL: http://www.dynamicdrive.com/style/ */
