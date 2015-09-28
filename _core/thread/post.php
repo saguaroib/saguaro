@@ -61,9 +61,9 @@ class Post {
         $temp .= "<a name='$resno'></a>\n<input type=checkbox name='$no' value=delete><span class='filetitle'>$sub</span> \n";
         $temp .= "<span class='postername'>$name</span> $now <span id='nothread$no'>";
 
-        $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/sticky.gif" alt="sticky"> ' : "";
+        $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky"> ' : "";
 
-        if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/locked.gif" alt="closed"> ';
+        if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/imgs/locked.gif" alt="closed"> ';
 
         if (!$this->inIndex) {
             $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a> $stickyicon &nbsp; ";

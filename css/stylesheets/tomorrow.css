@@ -1,37 +1,51 @@
 body {
-    background: #EEF2FF url(fade-blue.png) top center repeat-x;
+    background: #1D1F22;
     font-size: 10pt;
-    color: #000000;
+    color: #C5C8C6;
     font-family: Arial, Helvetica, sans-serif;
+}
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+a.qu {
+    color: inherit;
+    font-size: 10pt;
+    text-decoration: none;
+}
+a.qu:hover {
+    font-weight: bold;
+    color: inherit;
+    font-size: 10pt;
+    font-weight: 800;
+}
+a.qu:visited {
+    color: #800000;
+    font-size: 10pt;
+    text-decoration: none;
 }
 form {
     margin: 0px 0px 0px 0px;
 }
-.headsub {
-    color: grey;
-    text-align: center;
-}
-.adminbar {
-    text-align: right;
-}
+/*^ new to saguaro ^*/
+
 a {
-    color: #34345C;
+    color: #C5C8C6;
     text-decoration: none;
-    font-family: inherit;
+    font-family: Arial, Helvetica, sans-serif;
 }
 a:visited {
-    color: #34345C;
-    text-decoration: none;
-    font-family: inherit;
-}
-a:hover {
-    color: #DD0000;
+    color: inherit;
     text-decoration: underline;
     font-family: inherit;
 }
+a:hover {
+    color: inherit;
+    text-decoration: underline;
+    font-family: Arial, Helvetica, sans-serif;
+}
 hr {
     border: none;
-    border-top: 1px solid #B7C5D9;
+    border-top: 1px solid #D9BFB7;
     height: 0;
 }
 .adminbar {
@@ -48,29 +62,26 @@ hr {
     width: 100%;
     clear: both;
     text-align: center;
-    color: #AF0A0F;
+    color: inherit;
 }
-.postertrip {
-    color: #117743;
-    font-weight: 600;
-    font-size: 11pt;
 }
 .theader {
     text-align: center;
-    background-color: blue;
+    background-color: orange;
     color: white;
     font-weight: 700;
     width: 100%;
 }
-.postarea {} .rules {
-    font-size: 10px;
-    font-family: inherit;
+.postertrip {
+    color: #117743;
+    font-weight: 600;
+    font-size: 12px;
 }
-.postblock {
-    background: #9988EE;
-    color: #000000;
-    padding: 4px;
-    border: 1px solid black;
+.headsub {
+    color: inherit;
+    text-align: center;
+    font-size: 11px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 .globalnews {
     align-items: center;
@@ -79,16 +90,39 @@ hr {
     font-weight: 700;
     font-size: large;
 }
+.boardlist {
+    color: inherit;
+    text-align: left;
+}
+.postarea {} .rules {
+    font-size: 11px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.postblock {
+    background: #282A2E;
+    color: #ECECEC;
+    border: 1px solid #ECECEC;
+    padding: 4px;
+}
+.spoiler {
+    display:inline-block;
+    color: #000;
+    background: #000;
+}
+.spoiler:hover {
+    color: #FFF;
+}
 .footer {
     text-align: center;
-    font-size: 10px;
-    font-family: inherit;
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 .passvalid {
-    background: #9988EE;
+    background: #FF0000;
     text-align: center;
     width: 100%;
     color: #ffffff;
+    border-radius: 20px;
 }
 .dellist {
     text-align: center;
@@ -98,9 +132,9 @@ hr {
     padding-bottom: 4px;
 }
 .managehead {
-    background: #0F8FE1;
-    color: #000000;
-    font-family: inherit;
+    background: #595959;
+    color: #FFFFEE;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     padding: 0px;
 }
@@ -108,17 +142,16 @@ hr {
     background: #FFFFFF;
     width: 100%;
     padding: 0px;
-    color: #000000;
 }
-.row1 {
-    background: #9AD2F6;
-    font-family: inherit;
+th {} .row1 {
+    background: #A6A6A6;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 10pt;
     color: #000000;
 }
 .row2 {
-    background: #FFFFFF;
-    font-family: inherit;
+    background: #F9F9F9;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 10pt;
     color: #000000;
 }
@@ -132,37 +165,35 @@ hr {
     text-decoration: none;
 }
 .filetitle {
-    font-size: 10pt;
+    font-size: 16px;
     font-family: Arial, Helvetica, sans-serif;
-    color: #0F0C5D;
+    color: #CC1105;
 }
 .postername {
     font-size: 10pt;
     font-family: Arial, Helvetica, sans-serif;
     color: #117743;
 }
-.spoiler {
-    display:inline-block;
-    color: #000;
-    background: #000;
-}
-.spoiler:hover {
-    color: #FFF;
-}
 .oldpost {
-    font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #0F0C5D;
-}
-.omittedposts {
     font-size: 8pt;
     font-family: Arial, Helvetica, sans-serif;
     padding-left: 20px;
 }
+}
+.omittedposts {
+    font-size:11px;
+    font-family: Arial,
+    Helvetica,
+    sans-serif;
+    color:#666666;
+    font-weight:800;
+}
 .reply {
-    background: #D6DAF0;
-    color: #000000;
-    font-family: Arial, Helvetica, sans-serif;
+    background: #282A2E;
+    color: inherit;
+    font-family: Arial,
+    Helvetica,
+    sans-serif;
 }
 .doubledash {
     color: #B7C5D9;
@@ -172,25 +203,35 @@ hr {
     margin-left: 2px;
 }
 .replytitle {
-    font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #0F0C5D;
+    font-size:18px;
+    font-family: Arial,
+    Helvetica,
+    sans-serif;
+    color:#CC1105;
 }
 .commentpostername {
-    font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #117743;
+    font-size:14px;
+    font-family: Arial,
+    Helvetica,
+    sans-serif;
+    color:#117743;
 }
 .thumbnailmsg {
-    font-size: 9px;
-    font-family: inherit;
-    color: #000000;
+    font-size:9px;
+    font-family: Arial,
+    Helvetica,
+    sans-serif;
+    color:#800000;
     padding-left: 20px;
 }
 .pages {
-    border-collapse: collapse;
-    background-color: #9988EE;
-    padding: 5px;
+    border:1px solid whitesmoke;
+    background:#282A2E;
+    color: whitesmoke;
+    
+}
+.pages td {
+    border:none;padding:1px 5px;
 }
 /*Credits: Dynamic Drive CSS Library */
 /*URL: http://www.dynamicdrive.com/style/ */

@@ -65,7 +65,7 @@ class Image {
             }
 
             if ( !is_file( $src ) ) {
-                $return .= "<img src='" . $cssimg . "filedeleted.gif' alt='File deleted.'>";
+                $return .= "<img src='" . $cssimg . "/imgs/filedeleted.gif' alt='File deleted.'>";
             } else {
                 $dimensions = ( $ext == ".pdf" ) ? "PDF" : "{$w}x{$h}";
                 if (!$this->inIndex) {
