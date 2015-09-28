@@ -64,7 +64,6 @@ define(BLOTTER_PATH, 'CHANGEME'); //Absolute html path to your blotter file, thi
 // Post & Thread
 define(BOTCHECK, false);    //Use CAPTCHAs
 define(USE_BBCODE, false);  //Use BBcode
-define(SPOILERS, false);    //Allow spoiler images/text on the board. This feature is still experimental and might not work fully.
 define(DICE_ROLL, false);   //Allow users to roll /dice in the name field
 define(FORTUNE_TRIP, false); //Allows users to recieve a #fortune in the namefield
 
