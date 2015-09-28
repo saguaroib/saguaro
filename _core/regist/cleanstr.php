@@ -8,7 +8,7 @@ function CleanStr( $str ) {
         $str = stripslashes( $str );
     }
     if ( !valid("moderator") ) { 
-        //Moderator+ can post using html tags
+        //If not moderator, disallow html tags
         $str = htmlspecialchars( $str ); //remove html special chars
         $str = str_replace( "&amp;", "&", $str ); //remove ampersands
     }
