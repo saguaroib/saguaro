@@ -24,7 +24,7 @@ class DeletePost extends Log
         $flag     = FALSE;
         $rebuild  = array( ); // keys are pages that need to be rebuilt (0 is index, of course)
         for ( $i = 0; $i < $countdel; $i++ ) {
-            $resto = delete_post( $delno[$i], $pwd, $onlyimgdel, 0, 1, $countdel == 1 ); // only show error for user deletion, not multi
+            $resto = $this->targeted( $delno[$i], $pwd, $onlyimgdel, 0, 1, $countdel == 1 ); // only show error for user deletion, not multi
             if ( $resto )
                 $rebuild[$resto] = 1;
         }
