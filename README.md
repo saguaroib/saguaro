@@ -26,7 +26,5 @@ This has been cobbled together from stuff I myself have written and the contribu
 - [The Wiki](//github.com/spootTheLousy/saguaro/wiki)
 - #saguaroimgboard @ irc.rizon.net
 
-Last updated: September 12th, 2015
-
 #License
 While there is no official licensing info due to this being a fork of a fork [...], a lot of great people have worked on saguaro (in spirit) and leaving in credits (specifically in the page's footer, ***S_FOOT***) attributing them is very much appreciated.
