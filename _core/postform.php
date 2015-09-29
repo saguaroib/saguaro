@@ -28,7 +28,6 @@ class PostForm {
         $temp .= "<form id='contribform' action='" . PHP_SELF_ABS . "' method='post' name='contrib' enctype='multipart/form-data'>";
 
         if ($admin) {
-
             $name = "";
 
             if (valid('moderator')) {
@@ -66,7 +65,7 @@ class PostForm {
 
         if (BOTCHECK && !$admin) { //Captcha
             if (RECAPTCHA) {
-                $temp .= "<tr><td class='postblock' align='left'>Verification</td><td><script src='https://www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></div></tr>";
+                $temp .= "<tr><td class='postblock' align='left'>Verification</td><td><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></div></tr>";
             } else {
                 $temp .= "<tr><td class='postblock' align='left'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
             }
