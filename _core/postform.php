@@ -65,7 +65,11 @@ class PostForm {
         $temp .= "<tr><td class='postblock' align='left'>" . S_COMMENT . "</td><td align='left'><textarea name='com' cols='34' rows='4'></textarea></td></tr>";
 
         if (BOTCHECK && !$admin) { //Captcha
-            $temp .= "<tr><td class='postblock' align='left'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
+            if (RECAPTCHA) {
+                $temp .= "<tr><td class='postblock' align='left'>Verification</td><td><script src='https://www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></div></tr>";
+            } else {
+                $temp .= "<tr><td class='postblock' align='left'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
+            }
         }
 
         //File selection
