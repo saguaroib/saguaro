@@ -8,7 +8,9 @@
 This has been cobbled together from stuff I myself have written and the contributions of others, named in the line I copied and pasted from the old readme just below this one:		
 *"Special thanks to !KNs1o0VDv6, Glas, Anonymous from vchan, RePod, and anyone who actually uses this."*
 
-#Installation Requirements
+#Installation Dependancies 
+- GD 2.x
+- FFMPEG/Avconv (Optional for WEBM support)
 - PHP >= 4.2.x (PHP 5 or newer is also recommended)
 - MySQL Version 4.0 or newer.
 
@@ -27,4 +29,6 @@ This has been cobbled together from stuff I myself have written and the contribu
 - #saguaroimgboard @ irc.rizon.net
 
 #License
-While there is no official licensing info due to this being a fork of a fork [...], a lot of great people have worked on saguaro (in spirit) and leaving in credits (specifically in the page's footer, ***S_FOOT***) attributing them is very much appreciated.
+While there is no official licensing info due to this being a fork of a fork [...], a lot of great people have worked on saguaro (in spirit) and leaving in credits (specifically in the page's footer, ***S_FOOT***) attributing them is very much appreciated
+
+Updated Sep 29, 2015
