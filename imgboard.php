@@ -194,7 +194,6 @@ switch ( $mode ) {
 		break;
     case 'usrdel':
         usrdel( $no, $pwd );
-        break;
     default:
         if ( $res ) {
             resredir( $res );
