@@ -9,10 +9,10 @@ This has been cobbled together from stuff I myself have written and the contribu
 *"Special thanks to !KNs1o0VDv6, Glas, Anonymous from vchan, RePod, and anyone who actually uses this."*
 
 #Installation Dependancies 
-- GD 2.x
-- FFMPEG/Avconv (Optional for WEBM support)
 - PHP >= 4.2.x (PHP 5 or newer is also recommended)
-- MySQL Version 4.0 or newer.
+- MySQL >= 4.0 
+- GD 2.x
+- FFmpeg or libav (avconv) for WebM 
 
 **Additional installation resources:**
 - [Installing](//github.com/spootTheLousy/saguaro/wiki/Installing)
