@@ -8,7 +8,7 @@
 This has been cobbled together from stuff I myself have written and the contributions of others, named in the line I copied and pasted from the old readme just below this one:		
 *"Special thanks to !KNs1o0VDv6, Glas, Anonymous from vchan, RePod, and anyone who actually uses this."*
 
-#Installation Dependancies 
+#Installation Dependencies 
 - PHP >= 4.2.x (PHP 5 or newer is also recommended)
 - MySQL >= 4.0 
 - GD 2.x
