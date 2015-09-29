@@ -38,7 +38,7 @@ class Head {
                 <meta name='viewport' content='width=device-width, initial-scale=1'></meta>
                 <META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">
 				<META HTTP-EQUIV=\"Expires\" CONTENT=\"-1\">
-                <link href='" . CSS_PATH . "favicon.ico'>
+                <link rel='shortcut icon' href='" . CSS_PATH . "/imgs/favicon.ico'>
                 <title>$titlepart</title>
                 <link rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
                 <link rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan'/>
