@@ -249,6 +249,14 @@ class Log {
         //mysql_free_result($treeline);
         if (isset($deferred))
             return $deferred;
+        
+		if ($deferred) {
+				echo "<html><head><META HTTP-EQUIV=\"refresh\" content=\"2;URL=$redirect\"></head>";
+				echo "<body>$mes " . S_SCRCHANGE . "<br>Your post may not appear immediately.<!-- thread:$resto,no:$insertid --></body></html>";
+		} else {
+				echo "<html><head><META HTTP-EQUIV=\"refresh\" content=\"1;URL=$redirect\"></head>";
+				echo "<body>$mes " . S_SCRCHANGE . "<!-- thread:$resto,no:$insertid --></body></html>";
+		}
         return false;
     }
 
