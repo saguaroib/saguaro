@@ -16,7 +16,7 @@ if (BOTCHECK === true && !valid('moderator')) {
     require_once(CORE_DIR . '/general/captcha.php');
     $captcha = new Captcha;
 
-    if ($captcha->isValid() === false)
+    if ($captcha->isValid() !== true)
         error(S_CAPFAIL, $upfile);
 }
 
