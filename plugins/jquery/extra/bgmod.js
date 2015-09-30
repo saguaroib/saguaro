@@ -11,9 +11,9 @@ $(document).ready(function() {
     
     function bgmod_set() {
         if (localStorage['bgmod_url']) {
-            $("body").css({
-                "background": "#FFF url('" + localStorage['bgmod_url'] + "') center/cover no-repeat fixed"
-            });
+            $.get(localStorage['bgmod_url'])
+            .success(function() { $("body").css({"background": "#FFF url('" + localStorage['bgmod_url'] + "') center/cover no-repeat fixed"}) })
+            .fail(function() { localStorage.removeItem('bgmod_url'); });
         }
     }
     
