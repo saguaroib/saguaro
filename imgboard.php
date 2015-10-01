@@ -96,10 +96,10 @@ function head() {
 
 /* Footer */
 function foot( &$dat ) {
-    if (file_exists(BOARDLIST))
-        $dat .= '<span class="boardlist">' . file_get_contents( BOARDLIST ) . '</span>';
+    require_once(CORE_DIR . "/general/foot.php");
+    $foot = new Footer;
 
-    $dat .= '<div class="footer">' . S_FOOT . '</div><a href="#bottom" /></a></body></html>';
+    $dat .= $foot->format();
 }
 
 function error( $mes, $dest = '', $fancy = 0 ) {

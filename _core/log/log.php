@@ -17,10 +17,10 @@ class Log {
     public $cache = [];
     private $thread_cache = [];
 
-    function update($resno, $rebuild = 0) {
+    function update($resno = 0, $rebuild = 0) {
         require_once(CORE_DIR . "/postform.php");
         $postform = new PostForm;
-        
+
         global $log, $path;
         $this->update_cache();
 
@@ -228,7 +228,11 @@ class Log {
             }
             //end delete
 
-            foot($dat);
+            require_once(CORE_DIR . "/general/foot.php");
+            $foot = new Footer;
+
+            $dat .= $foot->format();
+
             if ($resno) {
                 $logfilename = RES_DIR . $resno . PHP_EXT;
                 $this->print_page($logfilename, $dat);
@@ -249,7 +253,7 @@ class Log {
         //mysql_free_result($treeline);
         if (isset($deferred))
             return $deferred;
-        
+
         return false;
     }
 
@@ -345,7 +349,7 @@ class Log {
 
         $this->cache = $log;
     }
-    
+
     function generate($type, $no, $inIndex = false) {
         require_once(CORE_DIR . "/postform.php");
 
@@ -355,21 +359,21 @@ class Log {
                 ' . S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />
                 <input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="var o=document.getElementsByTagName(\'INPUT\');for(var i=0;i<o.length;i++)if(o[i].type==\'checkbox\' && o[i].checked && o[i].value==\'delete\') return reppop(\'' . PHP_SELF_ABS . '?mode=report&no=\'+o[i].name+\'\');"></tr></td></form><script>document.delform.pwd.value=l(' . SITE_ROOT . '_pass");</script></td></tr></table>';
         $postform = new PostForm; $postform = $postform->format();
-        
+
         if ($type == "index") {
             return $dat . $postform . $this->generate_index($no) . $foot;
         } elseif ($type == "thread") {
             return $dat . $postform . $this->generate_thread($no, $inIndex) . $foot;
-        }        
+        }
     }
 
     function generate_index($no) {
         if (empty($this->cache)) $this->update_cache();
-        
+
         require_once(CORE_DIR . "/index/index.php");
         $index = new Index;
         $index_temp = $index->format($no);
-        
+
         $this->thread_cache = $index->thread_cache; //Copy Index thread cache.
 
         return $index_temp;
@@ -377,7 +381,7 @@ class Log {
 
     function generate_thread($no, $inIndex) {
         if (empty($this->cache)) $this->update_cache();
-        
+
         if ($inIndex && $this->thread_cache[$no]) { //Use $this->thread_cache if we want to generate an inIndex thread and it already exists.
            return $this->thread_cache[$no];
         } else {

@@ -46,6 +46,8 @@ function rebuildqueue_take_all() {
 }
 
 function rebuild( $all = 0 ) {
+    global $my_log;
+
     if ( !valid( 'moderator' ) )
         die( 'Update failed...' );
 
@@ -57,16 +59,18 @@ function rebuild( $all = 0 ) {
     if ( !$treeline = mysql_call( "select no,resto from " . SQLLOG . " where root>0 order by root desc" ) ) {
         echo S_SQLFAIL;
     }
-    log_cache();
+
+    $my_log->update_cache();
+
     echo "Writing...\n";
     if ( $all || !defined( 'CACHE_TTL' ) ) {
         while ( list( $no, $resto ) = mysql_fetch_row( $treeline ) ) {
             if ( !$resto ) {
-                updatelog( $no, 1 );
+                $my_log->update($no, 1);
                 echo "No.$no created.<br>\n";
             }
         }
-        updatelog();
+        $my_log->update();
         echo "Index pages created.<br>\n";
     } else {
         $posts = rebuildqueue_take_all();
