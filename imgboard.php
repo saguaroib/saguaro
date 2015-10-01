@@ -21,9 +21,9 @@ Remember to look through older threads and see if your problem wasn't solved alr
 */
 require "config.php";
 
-extract( $_POST );
-extract( $_GET );
-extract( $_COOKIE );
+extract($_POST, EXTR_SKIP);
+extract($_GET, EXTR_SKIP);
+extract($_COOKIE, EXTR_SKIP);
 
 $path = realpath( "./" ) . '/' . IMG_DIR;
 ignore_user_abort( TRUE );
