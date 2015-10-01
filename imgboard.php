@@ -1,5 +1,4 @@
 <?php
-session_start();
 /*
 =================================
 ===Saguaro Imageboard Software===
@@ -19,7 +18,9 @@ If you need help setting saguaro up, check http://saguaroimgboard.tk/suprt/
 Remember to look through older threads and see if your problem wasn't solved already!
 
 */
+
 require "config.php";
+session_start();
 
 extract($_POST, EXTR_SKIP);
 extract($_GET, EXTR_SKIP);
