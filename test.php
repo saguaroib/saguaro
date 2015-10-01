@@ -23,7 +23,7 @@ if (is_file($lockout)) {
     ini_set('display_errors',1);
     error_reporting(E_ALL & ~E_NOTICE);
 
-    $config = 'config.php';
+    $config_file = 'config.php';
     $min_php = '4.2.0';
     $min_gd = '2.0.0';
     $min_mysql = '4.0.0';
@@ -55,7 +55,7 @@ if (is_file($lockout)) {
 
     $log .= "<br>";
 
-    $config_good = false;
+    $config_file_good = false;
     $mysql_good = false;
     $owner = "<strong>" . get_current_user() ."</strong>";
     $user = "<strong>" . posix_getpwuid(posix_geteuid())['name'] . "</strong>";
@@ -65,17 +65,20 @@ if (is_file($lockout)) {
 
     echo "<div class='box' id='title'>Saguaro Testing and Installation Utility</div>";
 
-    //Check to see if $config was included properly.
-    include($config);
-    $loga = "<strong>\"$config\"</strong> from the same directory $mydir failed to be included properly, some tests may fail.<br>";
+    //Check to see if $config_file was included properly.
+    include($config_file);
+    $loga = "<strong>\"$config_file\"</strong> from the same directory $mydir failed to be included properly, some tests may fail.<br>";
     foreach (get_included_files() as $val) {
-        if (strrpos($val, $config)) { $loga = "Successfully loaded <strong>\"$config\"</strong> from the same directory. $mydir<br>"; $config_good = true; }
+        if (strrpos($val, $config_file)) {
+            $loga = "Successfully loaded <strong>\"$config_file\"</strong> from the same directory. $mydir<br>";
+            $config_file_good = true;
+        }
     }
     $log .= $loga;
 
     echo "<div class='box' id='log'>$log</div>";
     if ($mode == 'uninstall') {
-        if ($config_good == true) {
+        if ($config_file_good == true) {
             $mysqli = new mysqli(SQLHOST, SQLUSER, SQLPASS);
 
             echo "<div class='box'>";
@@ -164,7 +167,7 @@ if (is_file($lockout)) {
         echo "</div><div class='box extra' id='mysql'>";
 
         //Create MySQL database and tables.
-        if (!$config_good) {
+        if (!$config_file_good) {
             echo "Config was not loaded, cannot initialize MySQL data.";
         } else {
             if (!$mysql_good) {
@@ -243,7 +246,7 @@ if (is_file($lockout)) {
         echo "<div class='box extra' id='dirs'>";
 
         //Create working directories.
-        if (!$config_good) {
+        if (!$config_file_good) {
             echo "Config was not loaded, cannot validate install files.";
         } else {
             if (!is_dir(CORE_DIR)) {
