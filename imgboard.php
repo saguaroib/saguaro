@@ -66,13 +66,6 @@ require_once(CORE_DIR . "/log/rebuild.php");
 require_once(CORE_DIR . "/log/log.php");
 $my_log = new Log;
 
-function log_cache($invalidate = 0) {
-    global $my_log;
-
-    $my_log->update_cache();
-    $log = $my_log->cache;
-}
-
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
 function valid($action = 'moderator', $no = 0) {
