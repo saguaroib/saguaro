@@ -46,8 +46,9 @@ function rebuildqueue_take_all() {
 }
 
 function rebuild( $all = 0 ) {
-    global $my_log;
-
+    //global $my_log;
+    require_once("log.php");
+    $my_log = new Log;
     if ( !valid( 'moderator' ) )
         die( 'Update failed...' );
 
