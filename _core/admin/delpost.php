@@ -57,7 +57,7 @@ class DeletePost extends Log
         $row       = $log[$resno];
         // check password- if not ok, check admin status (and set $admindel if allowed)
         $delete_ok = ( $automatic || ( substr( md5( $pwd ), 2, 8 ) == $row['pwd'] ) || ( $row['host'] == $_SERVER['REMOTE_ADDR'] ) );
-        if ( valid( 'janitor_board' ) ) {
+        if ( valid( 'janitor_board' ) && !$automatic ) {
             $delete_ok = $admindel = valid( 'delete', $resno );
         }
         if ( !$delete_ok )
