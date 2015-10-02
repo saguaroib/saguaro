@@ -95,35 +95,6 @@ function usrdel($no, $pwd) {
     $del->userDel($no, $pwd);
 }
 
-//Called when someone tries to visit imgboard.php?res=[[[postnumber]]]
-function resredir($res) {
-    global $my_log;
-
-    $res = (int) $res;
-
-    if (!$redir = mysql_call("select no,resto from " . SQLLOG . " where no=" . $res)) {
-        echo S_SQLFAIL;
-    }
-    list($no, $resto) = mysql_fetch_row($redir);
-    if (!$no) {
-        $maxq = mysql_call("select max(no) from " . SQLLOG . "");
-        list($max) = mysql_fetch_row($maxq);
-        if (!$max || ($res > $max))
-            header("HTTP/1.0 404 Not Found");
-        else // res < max, so it must be deleted!
-            header("HTTP/1.0 410 Gone");
-        error(S_NOTHREADERR, $dest);
-    }
-
-    $redirect = DATA_SERVER . BOARD_DIR . "/res/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
-
-    echo "<META HTTP-EQUIV='refresh' content='0;URL=$redirect'>";
-    if ($resto == "0") {
-        $my_log->update_cache();
-        $my_log->update($res);
-    }
-}
-
 /*-----------Main-------------*/
 switch ($mode) {
     case 'regist':
@@ -138,7 +109,7 @@ switch ($mode) {
         usrdel($no, $pwd);
     default:
         if ($res) {
-            resredir($res);
+            require_once(CORE_DIR . "/general/resredir.php");
             echo "<META HTTP-EQUIV='refresh' content='10;URL=" . PHP_SELF2_ABS . "'>";
         } else {
             echo "Updating index...\n";
