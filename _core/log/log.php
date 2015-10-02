@@ -60,8 +60,12 @@ class Log {
         $counttree = count($treeline);
         //$counttree=mysql_num_rows($treeline);
         if (!$counttree) {
+            require_once(CORE_DIR . "/general/head.php");
+            $head = new Head;
+            
             $logfilename = PHP_SELF2;
-            $dat = head();
+            
+            $dat = $head->generate();
             $dat .= $postform->format($resno);
             $this->print_page($logfilename, $dat);
         }

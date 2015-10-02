@@ -75,22 +75,6 @@ function valid($action = 'moderator', $no = 0) {
     return $validate->verify($action);
 }
 
-/* head */
-function head() {
-    require_once(CORE_DIR . "/general/head.php");
-
-    $head = new Head;
-    return $head->generate();
-}
-
-/* Footer */
-function foot(&$dat) {
-    require_once(CORE_DIR . "/general/foot.php");
-    $foot = new Footer;
-
-    $dat .= $foot->format();
-}
-
 function error($mes, $dest = '', $fancy = 0) {
     global $path;
     $upfile_name = $_FILES["upfile"]["name"];
