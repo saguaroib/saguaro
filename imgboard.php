@@ -86,11 +86,6 @@ function error($mes, $dest = '', $fancy = 0) {
     }
 }
 
-/* Regist */
-function regist($name, $email, $sub, $com, $url, $pwd, $resto) {
-    require_once(CORE_DIR . "/regist/regist.php");
-}
-
 /* user image deletion */
 function usrdel($no, $pwd) {
     global $path, $pwdc, $onlyimgdel;
@@ -132,7 +127,7 @@ function resredir($res) {
 /*-----------Main-------------*/
 switch ($mode) {
     case 'regist':
-        regist($name, $email, $sub, $com, '', $pwd, $resto);
+        require_once(CORE_DIR . "/regist/regist.php"); // $name, $email, $sub, $com, $url, $pwd, $resto
         break;
     case 'report':
         require_once(CORE_DIR . "/admin/report.php");
