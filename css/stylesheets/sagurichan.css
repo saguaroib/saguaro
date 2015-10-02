@@ -89,7 +89,7 @@ hr {
 }
 .footer {
     text-align: center;
-    font-size: 10px;
+    font-size: 12px;
     font-family: inherit;
 }
 .passvalid {
@@ -140,14 +140,14 @@ hr {
     text-decoration: none;
 }
 .filetitle {
-    font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #0F0C5D;
+    color: #0E07B7;
+    font-weight: bold;
 }
+
+span.filetitle {}
 .postername {
-    font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
     color: #117743;
+    font-weight: bold;
 }
 .spoiler {
     display:inline-block;
