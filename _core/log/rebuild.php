@@ -75,8 +75,8 @@ function rebuild( $all = 0 ) {
     } else {
         $posts = rebuildqueue_take_all();
         foreach ( $posts as $no ) {
-            $deferred = ( updatelog( $no, 1 ) ? ' (deferred)' : '' );
-            if ( $no )
+            $deferred = ($my_log->update($no, 1) ? ' (deferred)' : '');
+            if ($no)
                 echo "No.$no created.$deferred<br>\n";
             else
                 echo "Index pages created.$deferred<br>\n";
