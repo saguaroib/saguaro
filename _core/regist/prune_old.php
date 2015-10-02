@@ -37,7 +37,7 @@ function prune_old() {
             $result      = mysql_call("SELECT no FROM " . SQLLOG . " WHERE sticky=0 AND resto=0 ORDER BY $exp_order ASC");
             $threadcount = mysql_num_rows($result);
             while ($row = mysql_fetch_array($result) and $threadcount >= $maxthreads) {
-                delete_post($row['no'], 'trim', 0, 1); // imgonly=0, automatic=1, children=1
+                delete_post($row['no'], 'trim', 0, 1, 1, 0); // imgonly=0, automatic=1, children=1
                 $threadcount--;
             }
             mysql_free_result($result);
@@ -59,7 +59,7 @@ function prune_old() {
                 // don't delete if this is a REPLY to a sticky
                 if ($row['resto'] != 0 && $stickies[$row['resto']] == 1)
                     continue;
-                delete_post($row['no'], 'trim', 0, 1, 0); // imgonly=0, automatic=1, children=0
+                delete_post($row['no'], 'trim', 0, 1, 0, 0); // imgonly=0, automatic=1, children=0
                 $postcount--;
             }
             mysql_free_result($result);
