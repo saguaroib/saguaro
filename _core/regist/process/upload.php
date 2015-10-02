@@ -2,6 +2,9 @@
 
 global $upfile, $upfile_name;
 
+if ($_SERVER["REQUEST_METHOD"] != "POST")
+    error(S_UNJUST, $upfile);
+
 //Captcha check
 if (BOTCHECK === true && !valid('moderator')) {
     require_once(CORE_DIR . '/general/captcha.php');
