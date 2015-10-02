@@ -13,13 +13,17 @@
 
 */
 
+require_once("rebuild.php");
+
 class Log {
     public $cache = [];
     private $thread_cache = [];
 
     function update($resno = 0, $rebuild = 0) {
         require_once(CORE_DIR . "/postform.php");
+        require_once(CORE_DIR . "/general/head.php");
         $postform = new PostForm;
+        $head = new Head; $head = $head->generate();
 
         global $log, $path;
         $this->update_cache();
@@ -60,12 +64,9 @@ class Log {
         $counttree = count($treeline);
         //$counttree=mysql_num_rows($treeline);
         if (!$counttree) {
-            require_once(CORE_DIR . "/general/head.php");
-            $head = new Head;
-            
             $logfilename = PHP_SELF2;
             
-            $dat = $head->generate();
+            $dat = $head;
             $dat .= $postform->format($resno);
             $this->print_page($logfilename, $dat);
         }
@@ -112,7 +113,7 @@ class Log {
         }
 
         for ($page = 0; $page < $counttree; $page += PAGE_DEF) {
-            $dat = head();
+            $dat = $head;
             $dat .= $postform->format($resno);
             if (!$resno) {
                 $st = $page;
@@ -356,8 +357,10 @@ class Log {
 
     function generate($type, $no, $inIndex = false) {
         require_once(CORE_DIR . "/postform.php");
+        require_once(CORE_DIR . "/general/head.php");
+        $head = new Head; $head = $head->generate();
 
-        $dat = head() . '<form name= "delform" action="' . PHP_SELF_ABS . '" method="post">';
+        $dat = $head . '<form name= "delform" action="' . PHP_SELF_ABS . '" method="post">';
         $foot = '<table align="right"><tr><td class="delsettings" nowrap="nowrap" align="center">
                 <input type="hidden" name="mode" value="usrdel" />' . S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']
                 ' . S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />

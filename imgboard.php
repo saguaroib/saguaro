@@ -58,10 +58,6 @@ if (!$db_id) {
     echo S_SQLDBSF;
 }
 
-//Rebuild (used by Log).
-//Keeping top level until properly dealt with.
-require_once(CORE_DIR . "/log/rebuild.php");
-
 //Log
 require_once(CORE_DIR . "/log/log.php");
 $my_log = new Log;
@@ -76,11 +72,14 @@ function valid($action = 'moderator', $no = 0) {
 }
 
 function error($mes, $dest = '', $fancy = 0) {
+    require_once(CORE_DIR . "/general/head.php");
+    $head = new Head; $head = $head->generate();
+
     global $path;
     $upfile_name = $_FILES["upfile"]["name"];
     if (is_file($dest))
         unlink($dest);
-    $dat .= head();
+    $dat .= $head;
     echo $dat;
     if ($mes == S_BADHOST) {
         die("<html><head><meta http-equiv=\"refresh\" content=\"0; url=banned.php\"></head></html>");
