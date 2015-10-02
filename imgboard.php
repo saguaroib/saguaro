@@ -91,16 +91,6 @@ function regist($name, $email, $sub, $com, $url, $pwd, $resto) {
     require_once(CORE_DIR . "/regist/regist.php");
 }
 
-function proxy_connect($port) { /*A copy of this exists in the function hell,
-it's good to be straight up deleted when it is removed from regist*/
-    $fp = @fsockopen($_SERVER["REMOTE_ADDR"], $port, $a, $b, 2);
-    if (!$fp) {
-        return 0;
-    } else {
-        return 1;
-    }
-}
-
 /* user image deletion */
 function usrdel($no, $pwd) {
     global $path, $pwdc, $onlyimgdel;

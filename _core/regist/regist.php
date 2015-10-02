@@ -20,6 +20,15 @@ if (BOTCHECK === true && !valid('moderator')) {
         error(S_CAPFAIL, $upfile);
 }
 
+//Basic proxy check.
+if (PROXY_CHECK && preg_match("/^(mail|ns|dns|ftp|prox|pc|[^\.]\.[^\.]$)/", $host) > 0 || preg_match("/(ne|ad|bbtec|aol|uu|(asahi-net|rim)\.or)\.(com|net|jp)$/", $host) > 0) {
+    if (@fsockopen($_SERVER["REMOTE_ADDR"], 80, $a, $b, 2) == 1) {
+        error(S_PROXY80, $dest);
+    } elseif (@fsockopen($_SERVER["REMOTE_ADDR"], 8080, $a, $b, 2) == 1) {
+        error(S_PROXY8080, $dest);
+    }
+}
+
 //Check if user is banned
 $host  = $_SERVER["REMOTE_ADDR"];
 $badip = mysql_call("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' and active <> 0 ");
@@ -221,14 +230,6 @@ if (strlen($resto) > 10)
     error(S_UNUSUAL, $dest);
 if (strlen($url) > 10)
     error(S_UNUSUAL, $dest);
-
-if (PROXY_CHECK && preg_match("/^(mail|ns|dns|ftp|prox|pc|[^\.]\.[^\.]$)/", $host) > 0 || preg_match("/(ne|ad|bbtec|aol|uu|(asahi-net|rim)\.or)\.(com|net|jp)$/", $host) > 0) {
-    if (proxy_connect('80') == 1) {
-        error(S_PROXY80, $dest);
-    } elseif (proxy_connect('8080') == 1) {
-        error(S_PROXY8080, $dest);
-    }
-}
 
 // No, path, time, and url format
 srand((double) microtime() * 1000000);
