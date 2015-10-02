@@ -1,49 +1,53 @@
 <?php
 
-require( 'config.php' );
+require('config.php');
 
-$con = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
+require_once(CORE_DIR . "/mysql/mysql.php");
+$mysql = new SaguaroMySQL;
+$mysql->init();
+$con = $mysql->connection;
 
-if ( !$con ) {
-    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
-    exit;
+if (!function_exists(mysql_call)) {
+    function mysql_call($query) {
+        global $mysql;
+        return $mysql->query($query);
+    }
 }
 
-$db_id = mysql_select_db( SQLDB, $con );
-if ( !$db_id ) {
-    echo S_SQLDBSF;
-}
+//Load and initialize Log.
+require_once(CORE_DIR . "/log/log.php");
+$my_log = new Log;
 
 extract($_POST);
 
-function head( )
+function head()
 {
-    require_once( CORE_DIR . "/general/head.php" );
-    
+    require_once(CORE_DIR . "/general/head.php");
+
     $head = new Head;
     return $head->generate();
 }
 
-function postinfo( $no )
+function postinfo($no)
 {
-    
-    
-    if ( !$result = mysql_query( "SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'" ) )
+
+
+    if (!$result = mysql_query("SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'"))
         echo S_SQLFAIL;
-    $row = mysql_fetch_row( $result );
-    
-    list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board,  ) = $row;
-    
+    $row = mysql_fetch_row($result);
+
+    list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board, ) = $row;
+
     $dat .= head();
-    
+
     $dat .= "<table border='0' cellpadding='0' cellspacing='0'  />";
     $dat .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br><hr><br>";
-    if ( $sticky || $locked || $permasage ) {
-        if ( $sticky )
+    if ($sticky || $locked || $permasage) {
+        if ($sticky)
             $special .= "<b><font color=\"FF101A\"> [Stickied]</font></b>";
-        if ( $locked )
+        if ($locked)
             $special .= "<b><font color=\"770099\">[Locked]</font></b>";
-        if ( $permasage )
+        if ($permasage)
             $special .= "<b><font color=\"2E2EFE\">[Permasaged]</font></b>";
         $dat .= "<tr><td class='postblock'>Special:</td><td class='row2'>This thread is $special</td></tr>"; //lmoa
     }
@@ -53,8 +57,8 @@ function postinfo( $no )
   <tr><td class='postblock'>Comment:</td><td class='row2' />$com</td></tr>
   <tr><td class='postblock'>MD5:</td><td class='row1' />$md5</td></tr>
   <tr><td class='postblock'>File</td>";
-    
-    if ( $w && $h ) {
+
+    if ($w && $h) {
         $hasimg = 1;
         $dat .= "<td><img width='" . MAX_W . "' height='" . MAX_H . "' src='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "'/></td></tr>
 		<tr><td class='postblock'>Thumbnail:</td><td><img width='" . $tn_w . "' height='" . $tn_h . "' src='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg" . "'/></td></tr>
@@ -62,7 +66,7 @@ function postinfo( $no )
 		[<a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "' target='_blank' /><b>View in thread</b></a>]</td></tr>";
     } else
         $dat .= "<td>No file</td></tr>";
-    if ( !$resto ) {
+    if (!$resto) {
         $dat .= "<form action='admin.php' />
         <tr><td class='postblock'>Action</td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
         <option value='sticky' />Sticky</option>
@@ -74,15 +78,15 @@ function postinfo( $no )
         </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></td></tr></table></form>";
     } else
         $dat .= "</table></form>";
-    
-    $result = mysql_call( "SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'" );
-    $wew    = mysql_result( $result, 0 );
-    
-    if ( $wew > 0 )
+
+    $result = mysql_call("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
+    $wew    = mysql_result($result, 0);
+
+    if ($wew > 0)
         $alert = "<b><font color=\"FF101A\"> $wew ban(s) on record for $host!</font></b>";
     else
         $alert = "No bans on record for IP $host";
-    
+
     $dat .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
 	<input type='hidden' name='no' value='$no' />
 	<input type='hidden' name='ip' value='$host' />
@@ -109,66 +113,66 @@ function postinfo( $no )
         <option value='delimgonly' />Delete image only</option>
         </select>
 	</td></tr>";
-    if ( valid( 'admin' ) )
+    if (valid('admin'))
         $dat .= "
 		<tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";
-    
+
     $dat .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form><br><hr>";
-    
+
     $dat .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br>";
-    
+
     echo $dat;
-    
+
 }
 
-function aform( &$post, $resno, $admin = "" )
+function aform(&$post, $resno, $admin = "")
 {
-    require_once( CORE_DIR . "/postform.php" );
-    
+    require_once(CORE_DIR . "/postform.php");
+
     $postform = new PostForm;
-    $post .= $postform->format( $resno, $admin );
+    $post .= $postform->format($resno, $admin);
 }
 
-function login( $usernm, $passwd )
+function login($usernm, $passwd)
 {
     $ip     = $_SERVER['REMOTE_ADDR'];
-    $usernm = mysql_real_escape_string( $usernm );
-    $passwd = mysql_real_escape_string( $passwd );
-    
-    $query = mysql_call( "SELECT user,password FROM " . SQLMODSLOG . " WHERE user='$usernm' and password='$passwd'" );
-    
-    if ( $query == 0 or $query == FALSE ) {
-        mysql_call( "INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$usernm','$passwd','" . BOARD_DIR . "','$ip','1')" );
-        error( S_WRONGPASS );
+    $usernm = mysql_real_escape_string($usernm);
+    $passwd = mysql_real_escape_string($passwd);
+
+    $query = mysql_call("SELECT user,password FROM " . SQLMODSLOG . " WHERE user='$usernm' and password='$passwd'");
+
+    if ($query == 0 or $query == FALSE) {
+        mysql_call("INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$usernm','$passwd','" . BOARD_DIR . "','$ip','1')");
+        error(S_WRONGPASS);
     }
-    
-    $hacky  = mysql_fetch_array( $query );
+
+    $hacky  = mysql_fetch_array($query);
     $usernm = $hacky[0];
     $passwd = $hacky[1];
-    
-    setcookie( 'saguaro_auser', $usernm, 0 );
-    setcookie( 'saguaro_apass', $passwd, 0 );
-    
+
+    setcookie('saguaro_auser', $usernm, 0);
+    setcookie('saguaro_apass', $passwd, 0);
+
     echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . " \">";
 }
 
 /*password validation */
-function oldvalid( $pass )
+function oldvalid($pass)
 {
-    
-    /*    if ( $pass && $pass != PANEL_PASS )
-    error( S_WRONGPASS );*/
+
+    /*    if ($pass && $pass != PANEL_PASS)
+    error(S_WRONGPASS);*/
 
     require_once(CORE_DIR . "/admin/report.php");
 
     $getReport = new Report;
     $active = $getReport->get_all_reports_board();
-    
-    if ( valid( 'janitor_board' ) ) {
+
+    if (valid('janitor_board')) {
         echo head();
         echo "[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]\n";
         echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]\n";
-        if ( valid( 'moderator' ) ) {
+        if (valid('moderator')) {
             echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=rebuild\">Rebuild</a>]\n";
             echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=rebuildall\">Rebuild all</a>]\n";
             echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=reports\"><b>" . $active . "</b></a>]\n";
@@ -177,55 +181,55 @@ function oldvalid( $pass )
         echo "<div class=\"passvalid\">" . S_MANAMODE . "</div>\n";
         //echo "<form action='" . PHP_SELF . "' method='post' id='contrib' >";
     }
-    
+
     // Mana login form
-    if ( !valid( 'janitor_board' ) ) {
+    if (!valid('janitor_board')) {
         echo "<p><form action=\"" . PHP_ASELF . "\" method=\"post\">\n";
         echo "<div class=\passvalid\" align=\"center\" vertical-align=\"middle\" >";
         echo "<input type=hidden name=mode value=admin>\n";
         echo "<input type=text name=usernm size=20><br />";
         echo "<input type=password name=passwd size=20><br />";
         echo "<input type=submit value=\"" . S_MANASUB . "\"></form></div>\n";
-        if ( isset( $_POST['usernm'] ) && isset( $_POST['passwd'] ) )
-            login( $_POST['usernm'], $_POST['passwd'] );
-        die( "</body></html>" );
+        if (isset($_POST['usernm']) && isset($_POST['passwd']))
+            login($_POST['usernm'], $_POST['passwd']);
+        die("</body></html>");
     }
 }
 
 /* Admin deletion */
-function admindel( $pass )
+function admindel($pass)
 {
     global $path, $onlyimgdel;
     $delno   = array(
-         dummy 
-    );
+         dummy
+   );
     $delflag = FALSE;
-    reset( $_POST );
-    while ( $item = each( $_POST ) ) {
-        if ( $item[1] == 'delete' ) {
-            array_push( $delno, $item[0] );
+    reset($_POST);
+    while ($item = each($_POST)) {
+        if ($item[1] == 'delete') {
+            array_push($delno, $item[0]);
             $delflag = TRUE;
         }
     }
-    if ( $delflag ) {
-        if ( !$result = mysql_call( "select * from " . SQLLOG . "" ) ) {
+    if ($delflag) {
+        if (!$result = mysql_call("select * from " . SQLLOG . "")) {
             echo S_SQLFAIL;
         }
         $find = FALSE;
-        
-        while ( $row = mysql_fetch_row( $result ) ) {
-        list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
-            if ( $onlyimgdel == on ) {
-                delete_post( $no, $pwd, 1, 1, 1, 0 );
+
+        while ($row = mysql_fetch_row($result)) {
+        list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto) = $row;
+            if ($onlyimgdel == on) {
+                delete_post($no, $pwd, 1, 1, 1, 0);
             } else {
-                if ( array_search( $no, $delno ) ) { //It is empty when deleting
-                    delete_post( $no, $pwd, 0, 1, 1, 0 );
+                if (array_search($no, $delno)) { //It is empty when deleting
+                    delete_post($no, $pwd, 0, 1, 1, 0);
                 }
             }
         }
     }
-    
-    function calculate_age( $timestamp, $comparison = '' )
+
+    function calculate_age($timestamp, $comparison = '')
     {
         $units = array(
              'second' => 60,
@@ -233,31 +237,31 @@ function admindel( $pass )
             'hour' => 24,
             'day' => 7,
             'week' => 4.25,
-            'month' => 12 
-        );
-        
-        if ( empty( $comparison ) ) {
+            'month' => 12
+       );
+
+        if (empty($comparison)) {
             $comparison = $_SERVER['REQUEST_TIME'];
         }
-        $age_current_unit = abs( $comparison - $timestamp );
-        foreach ( $units as $unit => $max_current_unit ) {
+        $age_current_unit = abs($comparison - $timestamp);
+        foreach ($units as $unit => $max_current_unit) {
             $age_next_unit = $age_current_unit / $max_current_unit;
-            if ( $age_next_unit < 1 ) {
+            if ($age_next_unit < 1) {
                 // are there enough of the current unit to make one of the next unit?
-                $age_current_unit = floor( $age_current_unit );
+                $age_current_unit = floor($age_current_unit);
                 $formatted_age    = $age_current_unit . ' ' . $unit;
-                return $formatted_age . ( $age_current_unit == 1 ? '' : 's' );
+                return $formatted_age . ($age_current_unit == 1 ? '' : 's');
             }
             $age_current_unit = $age_next_unit;
         }
-        
-        $age_current_unit = round( $age_current_unit, 1 );
+
+        $age_current_unit = round($age_current_unit, 1);
         $formatted_age    = $age_current_unit . ' year';
-        return $formatted_age . ( floor( $age_current_unit ) == 1 ? '' : 's' );
-        
+        return $formatted_age . (floor($age_current_unit) == 1 ? '' : 's');
+
     }
-    
-    
+
+
     // Deletion screen display
     echo "<input type=hidden name=mode value=admin>\n";
     echo "<input type=hidden name=admin value=del>\n";
@@ -270,116 +274,95 @@ function admindel( $pass )
     echo "<tr class=\"managehead\">" . S_MDTABLE1;
     echo S_MDTABLE2;
     echo "</tr>\n";
-    
-    if ( !$result = mysql_call( "select * from " . SQLLOG . " order by no desc" ) ) {
+
+    if (!$result = mysql_call("select * from " . SQLLOG . " order by no desc")) {
         echo S_SQLFAIL;
     }
     $j = 0;
-    while ( $row = mysql_fetch_row( $result ) ) {
+    while ($row = mysql_fetch_row($result)) {
         $j++;
-		$path = realpath( "./" ) . '/' . IMG_DIR;
+		$path = realpath("./") . '/' . IMG_DIR;
         $img_flag = FALSE;
-        list( $no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto ) = $row;
+        list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto) = $row;
         // Format
-        $now = ereg_replace( '.{2}/(.*)$', '\1', $now );
-        $now = ereg_replace( '\(.*\)', ' ', $now );
-        if ( strlen( $name ) > 10 )
-            $truncname = substr( $name, 0, 9 ) . "...";
+        $now = ereg_replace('.{2}/(.*)$', '\1', $now);
+        $now = ereg_replace('\(.*\)', ' ', $now);
+        if (strlen($name) > 10)
+            $truncname = substr($name, 0, 9) . "...";
         else
             $truncname = $name;
-        if ( strlen( $sub ) > 10 )
-            $truncsub = substr( $sub, 0, 9 ) . "...";
+        if (strlen($sub) > 10)
+            $truncsub = substr($sub, 0, 9) . "...";
         else
             $truncsub = $sub;
-        if ( $email )
+        if ($email)
             $name = "<a href=\"mailto:$email\">$name</a>";
-        $com = str_replace( "<br />", " ", $com );
-        $com = htmlspecialchars( $com );
-        if ( strlen( $com ) > 20 )
-            $trunccom = substr( $com, 0, 18 ) . "...";
+        $com = str_replace("<br />", " ", $com);
+        $com = htmlspecialchars($com);
+        if (strlen($com) > 20)
+            $trunccom = substr($com, 0, 18) . "...";
         else
             $trunccom = $com;
-        if ( strlen( $fname ) > 10 )
-            $truncfname = substr( $fname, 0, 40 ) . "..." . $ext;
+        if (strlen($fname) > 10)
+            $truncfname = substr($fname, 0, 40) . "..." . $ext;
         else
             $truncfname = $fname;
         // Link to the picture
-        if ( $ext && is_file( $path . $tim . $ext ) ) {
+        if ($ext && is_file($path . $tim . $ext)) {
             $img_flag = TRUE;
             $clip     = "<a class=\"thumbnail\" target=\"_blank\" href=\"" . IMG_DIR . $tim . $ext . "\">" . $tim . $ext . "<span><img class='postimg' src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" width=\"100\" height=\"100\" /></span></a><br />";
-            if ( $fsize >= 1048576 ) {
-                $size  = round( ( $fsize / 1048576 ), 2 ) . " M";
+            if ($fsize >= 1048576) {
+                $size  = round(($fsize / 1048576), 2) . " M";
                 $fsize = $asize;
-            } else if ( $fsize >= 1024 ) {
-                $size  = round( $fsize / 1024 ) . " K";
+            } else if ($fsize >= 1024) {
+                $size  = round($fsize / 1024) . " K";
                 $fsize = $asize;
             } else {
                 $size  = $fsize . " ";
                 $fsize = $asize;
             }
             $all += $asize; //total calculation
-            $md5 = substr( $md5, 0, 10 );
+            $md5 = substr($md5, 0, 10);
         } else {
             $clip = "[No file]";
             $size = 0;
             $md5  = "";
         }
-        $class = ( $j % 2 ) ? "row1" : "row2"; //BG color
-        
-        if ( $resto == '0' )
+        $class = ($j % 2) ? "row1" : "row2"; //BG color
+
+        if ($resto == '0')
             $resdo = '<b>OP(<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . '#' . $no . '" target="_blank" />' . $no . '</a>)</b>';
         else
             $resdo = '<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $resto . PHP_EXT . '#' . $no . '" target="_blank" />' . $resto . '</a>';
         $warnSticky = '';
-        if ( $sticky == '1' )
+        if ($sticky == '1')
             $warnSticky = "<b><font color=\"FF101A\">(Sticky)</font></b>";
-        if ( valid( 'janitor_board' ) && !valid( 'moderator' ) ) //Hide IPs from janitors
+        if (valid('janitor_board') && !valid('moderator')) //Hide IPs from janitors
             $host = '###.###.###.###';
         echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
         echo "<td>$no</td><td>$resdo</td><td>$now</td><td>$truncsub</td>";
         echo "<td>$truncname</b></td><td>$trunccom</td>";
-        echo "<td class='postimg' >$clip</td><td>" . calculate_age( $time ) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
+        echo "<td class='postimg' >$clip</td><td>" . calculate_age($time) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
         echo "</tr>\n";
     }
-    mysql_free_result( $result );
-    
+    mysql_free_result($result);
+
     echo "<br /><br /><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
     //foot($dat);
-    $all = (int) ( $all / 1024 );
+    $all = (int) ($all / 1024);
     echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";
-    die( "</body></html>" );
+    die("</body></html>");
 }
 
 
 
-function valid( $action = 'moderator', $no = 0 )
+function valid($action = 'moderator', $no = 0)
 {
-    require_once( CORE_DIR . "/admin/validate.php" );
-    
+    require_once(CORE_DIR . "/admin/validate.php");
+
     $validate = new Validation;
-    $allowed  = $validate->verify( $action );
+    $allowed  = $validate->verify($action);
     return $allowed;
-}
-
-if ( !function_exists( mysql_call ) ) {
-    function mysql_call( $query )
-    {
-        $ret = mysql_query( $query );
-        if ( !$ret ) {
-            echo "Error on query: " . $query . "<br />";
-            echo mysql_error() . "<br />";
-        }
-        return $ret;
-    }
-}
-
-function log_cache( $invalidate = 0 )
-{
-    require_once( CORE_DIR . "/log/log.php" );
-    
-    $my_log = new Log;
-    $my_log->update_cache();
-    $log = $my_log->cache;
 }
 
 // deletes a post from the database
@@ -388,20 +371,20 @@ function log_cache( $invalidate = 0 )
 // children: whether to delete just the parent post of a thread or also delete the children
 // die: whether to die on error
 // careful, setting children to 0 could leave orphaned posts.
-function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 )
+function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1)
 {
-    require_once( CORE_DIR . "/log/log.php" );
-    require_once( CORE_DIR . "/admin/delpost.php" );
-    
+    require_once(CORE_DIR . "/log/log.php");
+    require_once(CORE_DIR . "/admin/delpost.php");
+
     $remove = new DeletePost;
-    $remove->targeted( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 );
+    $remove->targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1);
 }
 
-function modify_post( $no, $action = 'none' )
+function modify_post($no, $action = 'none')
 {
-    if ( !valid( 'moderator' ) )
-        die( "\"PLEASE AUTOBAN ME FOREVER!!!\" - you" );
-    switch ( $action ) {
+    if (!valid('moderator'))
+        die("\"PLEASE AUTOBAN ME FOREVER!!!\" - you");
+    switch ($action) {
         case 'sticky':
             $sqlValue = "sticky";
             $rootnum  = "2027-07-07 00:00:00";
@@ -410,7 +393,7 @@ function modify_post( $no, $action = 'none' )
             break;
         case 'unsticky':
             $sqlValue = "sticky";
-            $rootnum  = date( 'Y-m-d G:i:s' );
+            $rootnum  = date('Y-m-d G:i:s');
             $sqlBool  = "'0', root='" . $rootnum . "'";
             $verb     = "Unstuck";
             break;
@@ -435,43 +418,43 @@ function modify_post( $no, $action = 'none' )
             $verb     = "Normally bumping";
             break;
         case 'delete':
-            delete_post( $resno, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1 );
+            delete_post($resno, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1);
             break;
         case 'deleteallbyip':
-            delete_post( $resno, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1, $allbyip = 1 );
+            delete_post($resno, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1, $allbyip = 1);
             break;
         case 'deleteimgonly':
-            delete_post( $resno, $pwd, $imgonly = 1, $automatic = 1, $children = 0, $die = 1 );
+            delete_post($resno, $pwd, $imgonly = 1, $automatic = 1, $children = 0, $die = 1);
             break;
         default:
             break;
     }
-    
-    mysql_call( 'UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . mysql_real_escape_string( $no ) . "' LIMIT 1" );
-    echo head( $dat );
+
+    mysql_call('UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . mysql_real_escape_string($no) . "' LIMIT 1");
+    echo head($dat);
     echo $verb . " thread $no. Redirecting...<META HTTP-EQUIV=\"refresh\" content=\"1;URL=" . PHP_ASELF_ABS . "\">";
-    
+
 }
 
-  
+
 /* Main switch */
-switch ( $_GET['mode'] ) {
+switch ($_GET['mode']) {
     case 'admin':
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
         break;
     case 'more':
-        $no = mysql_real_escape_string( $_GET['no'] );
-        postinfo( $no );
+        $no = mysql_real_escape_string($_GET['no']);
+        postinfo($no);
         break;
     case 'logout':
-        setcookie( 'saguaro_apass', '0', 1 );
-        setcookie( 'saguaro_auser', '0', 1 );
+        setcookie('saguaro_apass', '0', 1);
+        setcookie('saguaro_auser', '0', 1);
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
         break;
     case 'ban':
 		echo head();
         require_once(CORE_DIR . "/admin/banish.php");
-		
+
 		$banish = new Banish;
 		if ($banish->checkBan($_SERVER['REMOTE_ADDR'])) {
 			$banish->postOptions($no, $_SERVER['REMOTE_ADDR'], $_POST['banlength'], $_POST['banType'], $_POST['perma'], $_POST['pubreason'], $_POST['staffnote'], $_POST['custmess'], $_POST['showbanmess'], $_POST['afterban']);
@@ -483,11 +466,11 @@ switch ( $_GET['mode'] ) {
 		require_once(CORE_DIR . "/admin/report.php");
 		$getReport = new Report;
 		$active = $getReport->get_all_reports_board();
-		oldvalid( $pass );
+		oldvalid($pass);
 		$getReport->display_list();
 		break;
     case 'zmdlog':
-        login( $_POST['usernm'], $_POST['passwd'] );
+        login($_POST['usernm'], $_POST['passwd']);
         break;
     case 'rebuild':
 		require_once(CORE_DIR . "/log/rebuild.php");
@@ -495,19 +478,19 @@ switch ( $_GET['mode'] ) {
         break;
     case 'rebuildall':
 		require_once(CORE_DIR . "/log/rebuild.php");
-        rebuild( 1 );
-        break;		
+        rebuild(1);
+        break;
     case "modipost":
-        modify_post( $_GET['no'], $_GET['action'] );
+        modify_post($_GET['no'], $_GET['action']);
         break;
     default:
-        oldvalid( $pass );
-        aform( $post, $res, 1 );
+        oldvalid($pass);
+        aform($post, $res, 1);
         echo $post;
         echo "<form action=\"" . PHP_ASELF . "\" method=\"post\">
             <input type=hidden name=admin value=del checked>";
-        admindel( $pass );
-        die( "</body></html>" );
+        admindel($pass);
+        die("</body></html>");
         break;
 }
 ?>
