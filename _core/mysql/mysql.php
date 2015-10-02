@@ -12,9 +12,9 @@ class SaguaroQL {
     public $connection;
     private $last; //This is updated after an advanced query (anything other than 'query') to cache the result. Calls without arguments will return this.
     
-    function __construct() {
+    /*function __construct() {
         $this->init(); //Init automatically.
-    }
+    }*/
 
     function init() {
         $this->connect(SQLHOST, SQLUSER, SQLPASS);

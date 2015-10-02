@@ -27,6 +27,7 @@ $my_log = new Log;
 
 require_once(CORE_DIR . "/mysql/mysql.php");
 $mysql = new SaguaroQL;
+$mysql->init();
 $con = $mysql->connection;
 
 function mysql_call($query) {
