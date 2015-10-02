@@ -26,35 +26,35 @@ extract($_POST, EXTR_SKIP);
 extract($_GET, EXTR_SKIP);
 extract($_COOKIE, EXTR_SKIP);
 
-$path = realpath( "./" ) . '/' . IMG_DIR;
-ignore_user_abort( TRUE );
+$path = realpath("./") . '/' . IMG_DIR;
+ignore_user_abort(TRUE);
 
 $badstring = ["nimp.org"]; // Refused text. Currently unused by Regist.
 $badfile = ["dummy", "dummy2"]; //Refused files (md5 hashes). Currently unused by Regist.
 
-function mysql_call( $query ) {
-    $ret = mysql_query( $query );
-    if ( !$ret ) {
-	if ( DEBUG_MODE ) {
-	        echo "Error on query: " . $query . "<br />";
-	        echo mysql_error() . "<br />";
-    	} else {
-	        echo "MySQL error!<br />";
-    	}
+function mysql_call($query) {
+    $ret = mysql_query($query);
+    if (!$ret) {
+    if (DEBUG_MODE) {
+            echo "Error on query: " . $query . "<br />";
+            echo mysql_error() . "<br />";
+        } else {
+            echo "MySQL error!<br />";
+        }
     }
     return $ret;
 }
 
 //check for SQL table existance
-$con  = mysql_connect( SQLHOST, SQLUSER, SQLPASS );
+$con  = mysql_connect(SQLHOST, SQLUSER, SQLPASS);
 
-if ( !$con ) {
+if (!$con) {
     echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
     exit;
 }
 
-$db_id = mysql_select_db( SQLDB, $con );
-if ( !$db_id ) {
+$db_id = mysql_select_db(SQLDB, $con);
+if (!$db_id) {
     echo S_SQLDBSF;
 }
 
@@ -65,11 +65,7 @@ require_once(CORE_DIR . "/log/rebuild.php");
 //Log
 require_once(CORE_DIR . "/log/log.php");
 $my_log = new Log;
-function updatelog($resno = 0, $rebuild = 0) {
-    global $my_log;
 
-    $my_log->update($resno, $rebuild);
-}
 function log_cache($invalidate = 0) {
     global $my_log;
 
@@ -79,11 +75,11 @@ function log_cache($invalidate = 0) {
 
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
-function valid( $action = 'moderator', $no = 0 ) {
-	require_once(CORE_DIR . "/admin/validate.php");
+function valid($action = 'moderator', $no = 0) {
+    require_once(CORE_DIR . "/admin/validate.php");
 
-	$validate = new Validation;
-	return $validate->verify( $action );
+    $validate = new Validation;
+    return $validate->verify($action);
 }
 
 /* head */
@@ -95,39 +91,39 @@ function head() {
 }
 
 /* Footer */
-function foot( &$dat ) {
+function foot(&$dat) {
     require_once(CORE_DIR . "/general/foot.php");
     $foot = new Footer;
 
     $dat .= $foot->format();
 }
 
-function error( $mes, $dest = '', $fancy = 0 ) {
+function error($mes, $dest = '', $fancy = 0) {
     global $path;
     $upfile_name = $_FILES["upfile"]["name"];
-    if ( is_file( $dest ) )
-        unlink( $dest );
+    if (is_file($dest))
+        unlink($dest);
     $dat .= head();
     echo $dat;
-    if ( $mes == S_BADHOST ) {
-        die( "<html><head><meta http-equiv=\"refresh\" content=\"0; url=banned.php\"></head></html>" );
+    if ($mes == S_BADHOST) {
+        die("<html><head><meta http-equiv=\"refresh\" content=\"0; url=banned.php\"></head></html>");
     } elseif (!$fancy) {
         echo "<br /><br /><hr size=1><br /><br />
-		   <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2_ABS . ">" . S_RELOAD . "</a></b></font></center>
-		   <br /><br /><hr size=1>";
-        die( "</body></html>" );
+           <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2_ABS . ">" . S_RELOAD . "</a></b></font></center>
+           <br /><br /><hr size=1>";
+        die("</body></html>");
     }
 }
 
 /* Regist */
-function regist( $name, $email, $sub, $com, $url, $pwd, $resto ) {
+function regist($name, $email, $sub, $com, $url, $pwd, $resto) {
     require_once(CORE_DIR . "/regist/regist.php");
 }
 
-function proxy_connect( $port ) { /*A copy of this exists in the function hell,
+function proxy_connect($port) { /*A copy of this exists in the function hell,
 it's good to be straight up deleted when it is removed from regist*/
-    $fp = @fsockopen( $_SERVER["REMOTE_ADDR"], $port, $a, $b, 2 );
-    if ( !$fp ) {
+    $fp = @fsockopen($_SERVER["REMOTE_ADDR"], $port, $a, $b, 2);
+    if (!$fp) {
         return 0;
     } else {
         return 1;
@@ -140,68 +136,70 @@ it's good to be straight up deleted when it is removed from regist*/
 // children: whether to delete just the parent post of a thread or also delete the children
 // die: whether to die on error
 // careful, setting children to 0 could leave orphaned posts.
-function delete_post( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 ) {
-	require_once(CORE_DIR . "/admin/delpost.php");
+function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1) {
+    require_once(CORE_DIR . "/admin/delpost.php");
 
-	$remove = new DeletePost;
-	$remove->targeted( $resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1 );
+    $remove = new DeletePost;
+    $remove->targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1);
 }
 
 /* user image deletion */
-function usrdel( $no, $pwd ) {
-	global $path, $pwdc, $onlyimgdel;
-	require_once(CORE_DIR . "/admin/delpost.php");
+function usrdel($no, $pwd) {
+    global $path, $pwdc, $onlyimgdel;
+    require_once(CORE_DIR . "/admin/delpost.php");
 
-	$del = new DeletePost;
-	$del->userDel($no, $pwd);
+    $del = new DeletePost;
+    $del->userDel($no, $pwd);
 }
 
 //Called when someone tries to visit imgboard.php?res=[[[postnumber]]]
-function resredir( $res ) {
+function resredir($res) {
+    global $my_log;
+
     $res = (int) $res;
 
-    if ( !$redir = mysql_call( "select no,resto from " . SQLLOG . " where no=" . $res ) ) {
+    if (!$redir = mysql_call("select no,resto from " . SQLLOG . " where no=" . $res)) {
         echo S_SQLFAIL;
     }
-    list( $no, $resto ) = mysql_fetch_row( $redir );
-    if ( !$no ) {
-        $maxq = mysql_call( "select max(no) from " . SQLLOG . "" );
-        list( $max ) = mysql_fetch_row( $maxq );
-        if ( !$max || ( $res > $max ) )
-            header( "HTTP/1.0 404 Not Found" );
+    list($no, $resto) = mysql_fetch_row($redir);
+    if (!$no) {
+        $maxq = mysql_call("select max(no) from " . SQLLOG . "");
+        list($max) = mysql_fetch_row($maxq);
+        if (!$max || ($res > $max))
+            header("HTTP/1.0 404 Not Found");
         else // res < max, so it must be deleted!
-            header( "HTTP/1.0 410 Gone" );
-        error( S_NOTHREADERR, $dest );
+            header("HTTP/1.0 410 Gone");
+        error(S_NOTHREADERR, $dest);
     }
 
     $redirect = DATA_SERVER . BOARD_DIR . "/res/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
 
     echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=$redirect\">";
     if ($resto == "0") {
-        log_cache();
-        updatelog($res);
+        $my_log->update_cache();
+        $my_log->update($res);
     }
 }
 
 /*-----------Main-------------*/
-switch ( $mode ) {
+switch ($mode) {
     case 'regist':
-        regist( $name, $email, $sub, $com, '', $pwd, $resto );
+        regist($name, $email, $sub, $com, '', $pwd, $resto);
         break;
-	case 'report':
-		require_once(CORE_DIR . "/admin/report.php");
-		$report = new Report;
-		$report->process();
-		break;
+    case 'report':
+        require_once(CORE_DIR . "/admin/report.php");
+        $report = new Report;
+        $report->process();
+        break;
     case 'usrdel':
-        usrdel( $no, $pwd );
+        usrdel($no, $pwd);
     default:
-        if ( $res ) {
-            resredir( $res );
+        if ($res) {
+            resredir($res);
             echo "<META HTTP-EQUIV=\"refresh\" content=\"10;URL=" . PHP_SELF2_ABS . "\">";
         } else {
             echo "Updating index...\n";
-            updatelog();
+            $my_log->update();
             echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
         }
 }
