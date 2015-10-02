@@ -37,7 +37,7 @@ if ($resto) {
      mysql_free_result($query);
 }
 
-global $my_log;
+global $my_log, $path, $badstring, $badfile, $badip, $pwdc, $textonly;
 require_once("cleanstr.php");
 require_once("wordwrap.php");
 
