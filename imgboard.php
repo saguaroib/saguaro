@@ -31,7 +31,6 @@ $con = $mysql->connection;
 
 function mysql_call($query) {
     global $mysql;
-
     return $mysql->query($query);
 }
 
@@ -49,34 +48,20 @@ $badfile = ["dummy", "dummy2"]; //Refused files (md5 hashes). Currently unused b
 // board-level access is cached in $valid_cache.
 function valid($action = 'moderator', $no = 0) {
     require_once(CORE_DIR . "/admin/validate.php");
-
     $validate = new Validation;
     return $validate->verify($action);
 }
 
-function error($mes, $dest = '', $fancy = 0) {
-    require_once(CORE_DIR . "/general/head.php");
-    $head = new Head; $head = $head->generate();
-
-    global $path;
-    $upfile_name = $_FILES["upfile"]["name"];
-    if (is_file($dest))
-        unlink($dest);
-    $dat .= $head;
-    echo $dat;
-    if ($mes == S_BADHOST) {
-        die("<html><head><meta http-equiv='refresh' content='0; url=banned.php'></head></html>");
-    } elseif (!$fancy) {
-        echo "<br><br><hr><br><br><div style='text-align:center;font-size:24px;font-color:#blue'>$mes<br><br><a href='" . PHP_SELF2_ABS . "'>" . S_RELOAD . "</a></div><br><br><hr>";
-        die("</body></html>");
-    }
+function error($mes, $dest, $fancy) {
+    require_once(CORE_DIR . "/general/error.php");
+    $error = new Error();
+    $error->format($mes, $dest, $fancy);
 }
 
 /* user image deletion */
 function usrdel($no, $pwd) {
     global $path, $pwdc, $onlyimgdel;
     require_once(CORE_DIR . "/admin/delpost.php");
-
     $del = new DeletePost;
     $del->userDel($no, $pwd);
 }
