@@ -22,6 +22,19 @@ Remember to look through older threads and see if your problem wasn't solved alr
 require "config.php";
 session_start();
 
+require_once(CORE_DIR . "/log/log.php");
+$my_log = new Log;
+
+require_once(CORE_DIR . "/mysql/mysql.php");
+$mysql = new SaguaroQL;
+$con = $mysql->connection;
+
+function mysql_call($query) {
+    global $mysql;
+
+    return $mysql->query($query);
+}
+
 extract($_POST, EXTR_SKIP);
 extract($_GET, EXTR_SKIP);
 extract($_COOKIE, EXTR_SKIP);
@@ -31,33 +44,6 @@ ignore_user_abort(TRUE);
 
 $badstring = ["nimp.org"]; // Refused text. Currently unused by Regist.
 $badfile = ["dummy", "dummy2"]; //Refused files (md5 hashes). Currently unused by Regist.
-
-function mysql_call($query) {
-    $ret = mysql_query($query);
-    if (!$ret) {
-    if (DEBUG_MODE) {
-            echo "Error on query: " . $query . "<br />";
-            echo mysql_error() . "<br />";
-        } else {
-            echo "MySQL error!<br />";
-        }
-    }
-    return $ret;
-}
-
-//check for SQL table existance
-$con  = mysql_connect(SQLHOST, SQLUSER, SQLPASS);
-
-if (!$con) {
-    echo S_SQLCONF; //unable to login to server (wrong user/pass?)
-    exit;
-}
-
-if (!mysql_select_db(SQLDB, $con)) { echo S_SQLDBSF; } //Attempts to select the working database.
-
-//Log
-require_once(CORE_DIR . "/log/log.php");
-$my_log = new Log;
 
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
@@ -104,6 +90,14 @@ switch ($mode) {
         require_once(CORE_DIR . "/admin/report.php");
         $report = new Report;
         $report->process();
+        break;
+    case 'mysql':
+        require_once(CORE_DIR . "/mysql/mysql.php");
+        $mysql = new SaguaroQL;
+        //$mysql->init();
+        echo "1: " . $mysql->fetch_array('select * from imgboard')['now'] . "<br>";
+        echo "2: " . $mysql->num_rows('select * from imgboard');
+        
         break;
     case 'usrdel':
         usrdel($no, $pwd);
