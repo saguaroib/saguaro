@@ -41,9 +41,6 @@ extract($_COOKIE, EXTR_SKIP);
 $path = realpath("./") . '/' . IMG_DIR;
 ignore_user_abort(TRUE);
 
-$badstring = ["nimp.org"]; // Refused text. Currently unused by Regist.
-$badfile = ["dummy", "dummy2"]; //Refused files (md5 hashes). Currently unused by Regist.
-
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
 function valid($action = 'moderator', $no = 0) {

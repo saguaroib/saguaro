@@ -190,6 +190,9 @@ define(MAXR_H, 125); //Image replies exceeding this height will be thumbnailed
 define(MIN_W, 30);   //minimum image dimensions - width
 define(MIN_H, 30);   //minimum image dimensions - height
 
+$badstring = ["nimp.org"]; // Refused text. Currently unused by Regist.
+$badfile = ["dummy", "dummy2"]; //Refused files (md5 hashes). Currently unused by Regist.
+
 include(CORE_DIR . "/lang/language.php");
 
 /*ini_set('display_errors',1);
