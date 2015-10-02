@@ -92,6 +92,7 @@ hr {
     color: #800000;
     text-align: left;
 }
+.postarea { opacity: 0.9; }
 .postarea {} .rules {
     font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
@@ -190,7 +191,7 @@ hr {
     font-weight: 800;
 }
 .reply {
-    background: #F0E0D6;
+    background: rgba(240,224,214,0.85); /*#F0E0D6*/
     color: #800000;
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -219,7 +220,7 @@ hr {
 }
 .pages {
     border:1px solid #800000;
-    background:#F0E0D6;
+    background: rgba(240,224,214,0.85); /*#F0E0D6*/
     color:#800;
 }
 .pages td {

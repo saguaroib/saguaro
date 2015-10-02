@@ -92,6 +92,7 @@ hr {
     color: inherit;
     text-align: left;
 }
+.postarea { opacity: 0.9; }
 .postarea {} .rules {
     font-weight: bold;
 }
@@ -185,7 +186,7 @@ th {} .row1 {
     font-weight:800;
 }
 .reply {
-    background: #282A2E;
+    background: rgba(40,42,46,0.85); /*#282A2E;*/ 
     color: inherit;
     font-family: Arial,
     Helvetica,
@@ -222,7 +223,7 @@ th {} .row1 {
 }
 .pages {
     border:1px solid whitesmoke;
-    background:#282A2E;
+    background: rgba(40,42,46,0.85); /*#282A2E;*/ 
     color: whitesmoke;
     
 }

@@ -62,6 +62,7 @@ hr {
     font-weight: 700;
     width: 100%;
 }
+.postarea { opacity: 0.9; }
 .postarea {} .rules {
     font-weight: bold;
 }
@@ -166,7 +167,7 @@ span.filetitle {}
     padding-left: 20px;
 }
 .reply {
-    background: #D6DAF0;
+    background: rgba(214,218,240,0.85); /*#D6DAF0;*/
     color: #000000;
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -195,7 +196,7 @@ span.filetitle {}
 }
 .pages {
         border:1px solid black;
-        background:#D6DAF0;
+        background: rgba(214,218,240,0.85); /*#D6DAF0;*/
         color:#89A;
 }
 .pages td {
