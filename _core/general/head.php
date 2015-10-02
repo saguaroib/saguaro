@@ -36,8 +36,11 @@ class Head {
                 <meta name='description' content='" . S_DESCR . "'/></meta>
                 <meta http-equiv='content-type'  content='text/html;charset=utf-8' /></meta>
                 <meta name='viewport' content='width=device-width, initial-scale=1'></meta>
-                <META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">
-				<META HTTP-EQUIV=\"Expires\" CONTENT=\"-1\">
+                <meta http-equiv='cache-control' content='max-age=0' />
+                <meta http-equiv='cache-control' content='no-cache' />
+                <meta http-equiv='expires' content='0' />
+                <meta http-equiv='expires' content='Tue, 01 Jan 1980 1:00:00 GMT' />
+                <meta http-equiv='pragma' content='no-cache' />
                 <link rel='shortcut icon' href='" . CSS_PATH . "/imgs/favicon.ico'>
                 <title>$titlepart</title>
                 <link rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
