@@ -8,6 +8,19 @@
 
 */
 
+// deletes a post from the database
+// imgonly: whether to just delete the file or to delete from the database as well
+// automatic: always delete regardless of password/admin (for self-pruning)
+// children: whether to delete just the parent post of a thread or also delete the children
+// die: whether to die on error
+// careful, setting children to 0 could leave orphaned posts.
+function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1) {
+    require_once(CORE_DIR . "/admin/delpost.php");
+
+    $remove = new DeletePost;
+    $remove->targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1);
+}
+
 function prune_old() {
     global $my_log;
     $my_log->update_cache();
