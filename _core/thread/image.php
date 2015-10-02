@@ -75,7 +75,7 @@ class Image {
                 }
             }
 
-            return undefined;
+            return "<span class='tn_thread' title='Image Unavailable'>Image unavailable</span></a>";
         }
     }
 }
