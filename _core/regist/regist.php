@@ -30,10 +30,9 @@ if (PROXY_CHECK && preg_match("/^(mail|ns|dns|ftp|prox|pc|[^\.]\.[^\.]$)/", $hos
 }
 
 //Check if user is banned
-$host  = $_SERVER["REMOTE_ADDR"];
-$badip = mysql_call("SELECT ip FROM " . SQLBANLOG . " WHERE ip = '$host' and active <> 0 ");
-//Check if user IP is in bans table
-if (mysql_num_rows($badip) !== 0)
+require_once(CORE_DIR . "/admin/banish.php");
+$checkban = new Banish;
+if ($checkban->checkBan($_SERVER["REMOTE_ADDR"]))
     error(S_BADHOST, $upfile);
 
 //Check if replying to locked thread
