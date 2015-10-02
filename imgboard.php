@@ -79,11 +79,9 @@ function error($mes, $dest = '', $fancy = 0) {
     $dat .= $head;
     echo $dat;
     if ($mes == S_BADHOST) {
-        die("<html><head><meta http-equiv=\"refresh\" content=\"0; url=banned.php\"></head></html>");
+        die("<html><head><meta http-equiv='refresh' content='0; url=banned.php'></head></html>");
     } elseif (!$fancy) {
-        echo "<br /><br /><hr size=1><br /><br />
-           <center><font color=blue size=5>$mes<br /><br /><a href=" . PHP_SELF2_ABS . ">" . S_RELOAD . "</a></b></font></center>
-           <br /><br /><hr size=1>";
+        echo "<br><br><hr><br><br><div style='text-align:center;font-size:24px;font-color:#blue'>$mes<br><br><a href='" . PHP_SELF2_ABS . "'>" . S_RELOAD . "</a></div><br><br><hr>";
         die("</body></html>");
     }
 }
@@ -147,7 +145,7 @@ function resredir($res) {
 
     $redirect = DATA_SERVER . BOARD_DIR . "/res/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
 
-    echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=$redirect\">";
+    echo "<META HTTP-EQUIV='refresh' content='0;URL=$redirect'>";
     if ($resto == "0") {
         $my_log->update_cache();
         $my_log->update($res);
@@ -169,11 +167,11 @@ switch ($mode) {
     default:
         if ($res) {
             resredir($res);
-            echo "<META HTTP-EQUIV=\"refresh\" content=\"10;URL=" . PHP_SELF2_ABS . "\">";
+            echo "<META HTTP-EQUIV='refresh' content='10;URL=" . PHP_SELF2_ABS . "'>";
         } else {
             echo "Updating index...\n";
             $my_log->update();
-            echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
+            echo "<META HTTP-EQUIV='refresh' content='0;URL=" . PHP_SELF2_ABS . "'>";
         }
 }
 ?>
