@@ -91,14 +91,6 @@ switch ($mode) {
         $report = new Report;
         $report->process();
         break;
-    case 'mysql':
-        require_once(CORE_DIR . "/mysql/mysql.php");
-        $mysql = new SaguaroQL;
-        //$mysql->init();
-        echo "1: " . $mysql->fetch_array('select * from imgboard')['now'] . "<br>";
-        echo "2: " . $mysql->num_rows('select * from imgboard');
-        
-        break;
     case 'usrdel':
         usrdel($no, $pwd);
     default:
