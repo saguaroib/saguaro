@@ -20,6 +20,18 @@ if (BOTCHECK === true && !valid('moderator')) {
         error(S_CAPFAIL, $upfile);
 }
 
+//Uploaded file check
+if ($_FILES["upfile"]["error"] > 0) {
+    if ($_FILES["upfile"]["error"] == UPLOAD_ERR_INI_SIZE || $_FILES["upfile"]["error"] == UPLOAD_ERR_FORM_SIZE)
+        error(S_TOOBIG, $upfile);
+    if ($_FILES["upfile"]["error"] == UPLOAD_ERR_PARTIAL || $_FILES["upfile"]["error"] == UPLOAD_ERR_CANT_WRITE)
+        error(S_UPFAIL, $upfile);
+}
+
+if ($upfile_name && $_FILES["upfile"]["size"] == 0) {
+    error(S_TOOBIGORNONE, $upfile);
+}
+
 //Basic proxy check.
 if (PROXY_CHECK && preg_match("/^(mail|ns|dns|ftp|prox|pc|[^\.]\.[^\.]$)/", $host) > 0 || preg_match("/(ne|ad|bbtec|aol|uu|(asahi-net|rim)\.or)\.(com|net|jp)$/", $host) > 0) {
     if (@fsockopen($_SERVER["REMOTE_ADDR"], 80, $a, $b, 2) == 1) {
@@ -38,14 +50,15 @@ if (!$checkban->checkBan($_SERVER["REMOTE_ADDR"]))
 //Check if replying to locked thread
 $resto = (int) $resto;
 if ($resto) {
-    $query  = mysql_call("SELECT * FROM " . SQLLOG . " WHERE no=" . mysql_real_escape_string($resto));
-    $result = mysql_fetch_assoc($query);
+    global $mysql;
+    $resto = (int) $resto;
+    $result = $mysql->fetch_array("SELECT * FROM " . SQLLOG . " WHERE no=$resto");
     if ($result["locked"] == '1' && !valid('moderator'))
         error(S_THREADLOCKED, $upfile);
      mysql_free_result($query);
 }
 
-global $my_log, $path, $badstring, $badfile, $badip, $pwdc, $textonly;
+global $my_log, $mysql, $path, $badstring, $badfile, $badip, $pwdc, $textonly;
 require_once("cleanstr.php");
 require_once("wordwrap.php");
 
@@ -63,7 +76,7 @@ if (valid('moderator')) {
         $moderator = 3;
 }
 
-if (isset($_POST['isSticky']) || isset($_POST['isLocked']) && valid('moderator')) {
+if (valid('moderator')) {
     if (isset($_POST['isSticky']))
         $stickied = 1;
     if (isset($_POST['isLocked']))
@@ -86,9 +99,10 @@ $has_image = $upfile && file_exists($upfile);
 if ($has_image) {
     // check image limit
     if ($resto) {
-        if (!$result = mysql_call("select COUNT(*) from " . SQLLOG . " where resto=$resto and fsize!=0")) {
+        if (!$result = $mysql->query("select COUNT(*) from " . SQLLOG . " where resto=$resto and fsize!=0")) {
             echo S_SQLFAIL;
         }
+
         $countimgres = mysql_result($result, 0, 0);
         if ($countimgres > MAX_IMGRES)
             error("Max limit of " . MAX_IMGRES . " image replies has been reached.", $upfile);
@@ -143,26 +157,13 @@ if ($has_image) {
     $mes = $upfile_name . ' ' . S_UPGOOD;
 }
 
-if ($_FILES["upfile"]["error"] > 0) {
-    if ($_FILES["upfile"]["error"] == UPLOAD_ERR_INI_SIZE)
-        error(S_TOOBIG, $dest);
-    if ($_FILES["upfile"]["error"] == UPLOAD_ERR_FORM_SIZE)
-        error(S_TOOBIG, $dest);
-    if ($_FILES["upfile"]["error"] == UPLOAD_ERR_PARTIAL)
-        error(S_UPFAIL, $dest);
-    if ($_FILES["upfile"]["error"] == UPLOAD_ERR_CANT_WRITE)
-        error(S_UPFAIL, $dest);
-}
 
-if ($upfile_name && $_FILES["upfile"]["size"] == 0) {
-    error(S_TOOBIGORNONE, $dest);
-}
 
 //The last result number
-$lastno = mysql_result(mysql_call("select max(no) from " . SQLLOG), 0, 0);
+$lastno = mysql_result($mysql->query("select max(no) from " . SQLLOG), 0, 0);
 
 // Number of log lines
-if (!$result = mysql_call("select no,ext,tim from " . SQLLOG . " where no<=" . ($lastno - LOG_MAX))) {
+if (!$result = $mysql->query("select no,ext,tim from " . SQLLOG . " where no<=" . ($lastno - LOG_MAX))) {
     echo S_SQLFAIL;
 } else {
     while ($resrow = mysql_fetch_row($result)) {
@@ -183,7 +184,7 @@ if (!$result = mysql_call("select no,ext,tim from " . SQLLOG . " where no<=" . (
 $find  = false;
 $resto = (int) $resto;
 if ($resto) {
-    if (!$result = mysql_call("select * from " . SQLLOG . " where root>0 and no=$resto")) {
+    if (!$result = $mysql->query("select * from " . SQLLOG . " where root>0 and no=$resto")) {
         echo S_SQLFAIL;
     } else {
         $find = mysql_fetch_row($result);
@@ -376,7 +377,7 @@ if (!$may_flood) {
     if ($com) {
         // Check for duplicate comments
         $query  = "select count(no)>0 from " . SQLLOG . " where com='" . mysql_real_escape_string($com) . "' " . "and host='" . mysql_real_escape_string($host) . "' " . "and time>" . ($time - RENZOKU_DUPE);
-        $result = mysql_call($query);
+        $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU, $dest);
         mysql_free_result($result);
@@ -385,7 +386,7 @@ if (!$may_flood) {
     if (!$has_image) {
         // Check for flood limit on replies
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU) . " " . "and host='" . mysql_real_escape_string($host) . "' and resto>0";
-        $result = mysql_call($query);
+        $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU, $dest);
         mysql_free_result($result);
@@ -394,7 +395,7 @@ if (!$may_flood) {
     if ($is_sage) {
         // Check flood limit on sage posts
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU_SAGE) . " " . "and host='" . mysql_real_escape_string($host) . "' and resto>0 and permasage=1";
-        $result = mysql_call($query);
+        $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU, $dest);
         mysql_free_result($result);
@@ -403,7 +404,7 @@ if (!$may_flood) {
     if (!$resto) {
         // Check flood limit on new threads
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU3) . " " . "and host='" . mysql_real_escape_string($host) . "' and root>0"; //root>0 == non-sticky
-        $result = mysql_call($query);
+        $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU3, $dest);
         mysql_free_result($result);
@@ -414,7 +415,7 @@ if (!$may_flood) {
 if ($has_image) {
     if (!$may_flood) {
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU2) . " " . "and host='" . mysql_real_escape_string($host) . "' and resto>0";
-        $result = mysql_call($query);
+        $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU2, $dest);
         mysql_free_result($result);
@@ -422,7 +423,7 @@ if ($has_image) {
 
     //Duplicate image check
     if (DUPE_CHECK) {
-        $result = mysql_call("select no,resto from " . SQLLOG . " where md5='$md5'");
+        $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
         if (mysql_num_rows($result)) {
             list($dupeno, $duperesto) = mysql_fetch_row($result);
             if (!$duperesto)
@@ -438,22 +439,22 @@ if ($stickied)
     $rootqu = '20270727070707';
 //Bump processing
 if ($resto) { //sage or age action
-    $resline  = mysql_call("select count(no) from " . SQLLOG . " where resto=" . $resto);
+    $resline  = $mysql->query("select count(no) from " . SQLLOG . " where resto=" . $resto);
     $countres = mysql_result($resline, 0, 0);
     mysql_free_result($resline);
-    $resline = mysql_call("select sticky,permasage from " . SQLLOG . " where no=" . $resto);
+    $resline = $mysql->query("select sticky,permasage from " . SQLLOG . " where no=" . $resto);
     list($sticky, $permasage) = mysql_fetch_row($resline);
     mysql_free_result($resline);
     if ((stripos($email, 'sage') === FALSE && $countres < MAX_RES && $sticky != "1" && $permasage != "1") || ($admin && $age && $sticky != "1")) {
         $query = "update " . SQLLOG . " set root=now() where no=$resto"; //age
-        mysql_call($query);
+        $mysql->query($query);
     }
 }
 
 //Main insert
 $query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) values (" . "'" . $now . "'," . "'" . mysql_real_escape_string($name) . "'," . "'" . mysql_real_escape_string($email) . "'," . "'" . mysql_real_escape_string($sub) . "'," . "'" . mysql_real_escape_string($com) . "'," . "'" . mysql_real_escape_string($host) . "'," . "'" . mysql_real_escape_string($pass) . "'," . "'" . $ext . "'," . (int) $W . "," . (int) $H . "," . (int) $TN_W . "," . (int) $TN_H . "," . "'" . $tim . "'," . (int) $time . "," . "'" . $md5 . "'," . (int) $fsize . "," . "'" . mysql_real_escape_string($upfile_name) . "'," . (int) $stickied . "," . (int) $permasage . "," . (int) $locked . "," . $rootqu . "," . (int) mysql_real_escape_string($resto) . ")";
 
-if (!$result = mysql_call($query)) {
+if (!$result = $mysql->query($query)) {
     echo S_SQLFAIL;
 } //post registration
 
@@ -486,7 +487,7 @@ if ($has_image) {
 $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
 
 //Finding the last entry number
-if (!$result = mysql_call("select max(no) from " . SQLLOG)) {
+if (!$result = $mysql->query("select max(no) from " . SQLLOG)) {
     echo S_SQLFAIL;
 }
 $hacky    = mysql_fetch_array($result);
