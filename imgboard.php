@@ -49,14 +49,11 @@ function mysql_call($query) {
 $con  = mysql_connect(SQLHOST, SQLUSER, SQLPASS);
 
 if (!$con) {
-    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
+    echo S_SQLCONF; //unable to login to server (wrong user/pass?)
     exit;
 }
 
-$db_id = mysql_select_db(SQLDB, $con);
-if (!$db_id) {
-    echo S_SQLDBSF;
-}
+if (!mysql_select_db(SQLDB, $con)) { echo S_SQLDBSF; } //Attempts to select the working database.
 
 //Log
 require_once(CORE_DIR . "/log/log.php");
