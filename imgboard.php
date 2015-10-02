@@ -26,7 +26,7 @@ require_once(CORE_DIR . "/log/log.php");
 $my_log = new Log;
 
 require_once(CORE_DIR . "/mysql/mysql.php");
-$mysql = new SaguaroQL;
+$mysql = new SaguaroMySQL;
 $mysql->init();
 $con = $mysql->connection;
 

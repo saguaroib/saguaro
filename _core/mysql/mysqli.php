@@ -2,15 +2,15 @@
 
 /*
 
-    Legacy/deprecated MySQL support for SaguaroQL.
+    MySQLi support for SaguaroQL.
 
 */
 
 require_once("saguaroql.php");
 
-class SaguaroMySQL extends SaguaroQL {
+class SaguaroMySQLi extends SaguaroQL {
     function connect($host, $username, $password) {
-        $this->connection = mysql_connect($host, $username, $password);
+        $this->connection = new mysqli($host, $username, $password);
 
         if (!$this->connection) {
             die(S_SQLCONF);
@@ -19,7 +19,7 @@ class SaguaroMySQL extends SaguaroQL {
 
     function selectDatabase($database) {
         //Attempts to select the working database.
-        if (!mysql_select_db(SQLDB, $this->connection)) {
+        if (!$this->connection->select_db(SQLDB)) {
             echo S_SQLDBSF;
         }
     }
@@ -31,10 +31,10 @@ class SaguaroMySQL extends SaguaroQL {
     function query($string) {
         $string = $this->sanitizeString($string);
 
-        $ret = mysql_query($string);
+        $ret = $this->connection->query($string);
         if (!$ret) {
             if (DEBUG_MODE) {
-                echo "Error #" . mysql_error() . " on query: " . $string . "<br>";
+                echo "Error #" . $this->connection->error . " on query: " . $string . "<br>";
             } else {
                 echo "MySQL error!<br>";
             }
@@ -43,27 +43,27 @@ class SaguaroMySQL extends SaguaroQL {
     }
     
     function result($string, $index = 0) {
-        return mysql_result($this->query($string), $index);
+        return $this->query($string);
     }
 
     function fetch_row($string) {
         if (!$string) return $this->last;
         
-        $this->last = mysql_fetch_row($this->query($string));
+        $this->last = $this->query($string)->fetch_row();
         return $this->last;
     }
 
     function fetch_array($string) {
         if (!$string) return $this->last;
 
-        $this->last = mysql_fetch_array($this->query($string));
+        $this->last = $this->query($string)->fetch_array();
         return $this->last;
     }
     
     function num_rows($string) {
-        if (!$string) return mysql_num_rows($this->last);
+        if (!$string) return $this->last->num_rows;
         
-        $this->last = mysql_num_rows($this->query($string));
+        $this->last = $this->query($string)->num_rows;
         return $this->last;
     }
 }
