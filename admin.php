@@ -175,7 +175,7 @@ function oldvalid($pass)
         if (valid('moderator')) {
             echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=rebuild\">Rebuild</a>]\n";
             echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=rebuildall\">Rebuild all</a>]\n";
-            echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=reports\"><b>" . $active . "</b></a>]\n";
+            echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=reports\">" . $active . "</a>]\n";
         }
         echo "[<a href=\"" . PHP_ASELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
         echo "<div class=\"passvalid\">" . S_MANAMODE . "</div>\n";
