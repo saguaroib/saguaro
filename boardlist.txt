@@ -1,2 +1,0 @@
-<!---This is an example header--->
-[<a href='/a' />a</a> / <a href='/b' />b</a> / <a href='/c' />c</a>]

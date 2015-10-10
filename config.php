@@ -30,7 +30,11 @@ define(PREFIX, 'imgboard'); //Prefix to automatically use for the database table
 define(PANEL_PASS, 'CHANGEME');  //Janitor password  (CHANGE THIS YO)
 define(SITE_ROOT, 'MYSITE.COM'); //simplified site domain ONLY, EX: saguaro.org
 define(SITE_SUFFIX, '');         //Domain suffix, ex: org, com, info, net. NO DOTS, ONLY LETTERS
-define(BOARDLIST, 'CHANGEME');   //the file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
+define(BOARDLIST, 'CHANGEME.txt');   //the text file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
+/*
+<!---This is an example of what the contents of a board list textfile would look like--->
+[<a href='/a' />a</a> / <a href='/b' />b</a> / <a href='/c' />c</a>]
+*/
 define(GLOBAL_NEWS, 'CHANGEME'); //Absolute html path to your global board news file, the contents of this file will be automatically
 define(SALTFILE, 'salt');        //Name of the salt file, do not add a file extension for security
 
