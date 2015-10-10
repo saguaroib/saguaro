@@ -178,13 +178,13 @@ hr {
     color: #117743;
     font-weight: bold;
 }
-.capCode.moderator {
+.cap.moderator {
     color: #770099;
 }
-.capCode.admin {
+.cap.admin {
     color: #FF101A;
 }
-.capCode.manager {
+.cap.manager {
     color: #2E2EFE;
 }
 .oldpost {

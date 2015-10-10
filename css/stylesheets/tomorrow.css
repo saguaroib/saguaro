@@ -171,13 +171,13 @@ th {} .row1 {
     color: #c5c8c6;
     font-weight: bold;
 }
-.capCode.moderator {
+.cap.moderator {
     color: #770099;
 }
-.capCode.admin {
+.cap.admin {
     color: #FF101A;
 }
-.capCode.manager {
+.cap.manager {
     color: #2E2EFE;
 }
 .oldpost {
