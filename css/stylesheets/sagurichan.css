@@ -148,6 +148,15 @@ span.filetitle {}
     color: #117743;
     font-weight: bold;
 }
+.capCode.moderator {
+    color: #770099;
+}
+.capCode.admin {
+    color: #FF101A;
+}
+.capCode.manager {
+    color: #2E2EFE;
+}
 .spoiler {
     display:inline-block;
     color: #000;
