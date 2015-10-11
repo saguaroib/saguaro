@@ -88,7 +88,7 @@ class Thread {
         foreach ($temp_a as $entry) {
             $temp .= $this->generateReply($entry);
         }
-
+        $temp .= "</div>"; //Close thread div started in formatOP(), post.php
         return $temp;
     }
 

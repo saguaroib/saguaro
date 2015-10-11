@@ -71,7 +71,7 @@ class Image {
                 if (!$this->inIndex) {
                     return "<div class='file'><span class='filesize' />" . S_PICNAME . "<a href='$linksrc' target='_blank'>$time$ext</a> (" . $size . "B, " . $dimensions . ", <span title='" . $longname . "'>" . $shortname . "</span>)</span>" . $imgsrc . "</div></div>";
                 } else {
-                    return "<div class='file'><span class='filesize' />" . S_PICNAME . "<a href='$linksrc' target='_blank'>$time$ext</a> (" . $size . "B, " . $dimensions . ")</div></span><div class='fileThumb' />" . $imgsrc . "</div></div>";
+                    return "<div class='file'><span class='filesize' />" . S_PICNAME . "<a href='$linksrc' target='_blank'>$time$ext</a> (" . $size . "B, " . $dimensions . ")</div></span><div class='fileThumb' />" . $imgsrc . "</div>";
                 }
             }
 

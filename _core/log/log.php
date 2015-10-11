@@ -161,7 +161,7 @@ class Log {
 
 
                 /*possibility for ads after each post*/
-                $dat .= "</span><br clear=\"left\" /><hr />\n";
+                $dat .= "</span>\n";
 
                 if (USE_ADS3)
                     $dat .= ADS3 . '<hr>';
