@@ -76,9 +76,6 @@ class Post {
         $temp .= "<blockquote class='postMessage' id='m$no'>$com</blockquote>";
 
         $temp .= "</td></tr></table></div>\n";
-        
-        if ($this->inIndex)
-            $temp .= "<br clear=\"left\" /><hr />";
 
         return $temp;
     }
