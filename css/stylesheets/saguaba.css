@@ -71,11 +71,6 @@ hr {
     font-weight: 700;
     width: 100%;
 }
-.postertrip {
-    color: #117743;
-    font-weight: 600;
-    font-size: 12px;
-}
 .headsub {
     color: #666666;
     text-align: center;
@@ -170,11 +165,11 @@ hr {
     font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
 }
-.filetitle {
+.subject {
     color: #CC1105;
     font-weight: bold;
 }
-.postername {
+.name {
     color: #117743;
     font-weight: bold;
 }
@@ -204,22 +199,12 @@ hr {
     color: #800000;
     font-family: Arial, Helvetica, sans-serif;
 }
-.doubledash {
+.sideArrows {
     color: #B7C5D9;
     float: left;
     margin-right: 2px;
     margin-top: 0px;
     margin-left: 2px;
-}
-.replytitle {
-    font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #CC1105;
-}
-.commentpostername {
-    font-size: 14px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #117743;
 }
 .thumbnailmsg {
     font-size: 9px;
