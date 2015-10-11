@@ -50,11 +50,6 @@ hr {
     text-align: center;
     color: #AF0A0F;
 }
-.postertrip {
-    color: #117743;
-    font-weight: 600;
-    font-size: 11pt;
-}
 .theader {
     text-align: center;
     background-color: blue;
@@ -142,9 +137,7 @@ hr {
     color: #0E07B7;
     font-weight: bold;
 }
-
-span.filetitle {}
-.postername {
+.subject {
     color: #117743;
     font-weight: bold;
 }
@@ -180,22 +173,12 @@ span.filetitle {}
     color: #000000;
     font-family: Arial, Helvetica, sans-serif;
 }
-.doubledash {
+.sideArrows {
     color: #B7C5D9;
     float: left;
     margin-right: 2px;
     margin-top: 0px;
     margin-left: 2px;
-}
-.replytitle {
-    font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #0F0C5D;
-}
-.commentpostername {
-    font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #117743;
 }
 .thumbnailmsg {
     font-size: 9px;
