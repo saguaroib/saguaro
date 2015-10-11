@@ -118,7 +118,7 @@ class Log {
             if (!$resno) {
                 $st = $page;
             }
-            $dat .= '<form name= "delform" action="' . PHP_SELF_ABS . '" method="post">';
+            $dat .= '<form name="delform" action="' . PHP_SELF_ABS . '" method="post">';
 
             for ($i = $st; $i < $st + PAGE_DEF; $i++) {
                 list($_unused, $no) = each($treeline);
@@ -131,7 +131,7 @@ class Log {
                 $thread = new Thread;
                 $thread->inIndex = ($resno) ? false : true;
                 $dat .= $thread->format($no);
-
+                
                 // Deletion pending
                 if (isset($log[$no]['old']))
                     $dat .= "<span class=\"oldpost\">" . S_OLD . "</span><br>\n";

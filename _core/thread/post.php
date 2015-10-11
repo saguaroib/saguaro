@@ -15,10 +15,11 @@ class Post {
 
     function formatOP() {
         extract($this->data);
+        $temp = "<div class='postContainer opContainer' id='pc$no'/>";
 
         $image = new Image;
         $image->inIndex = $this->inIndex;
-        $temp = $image->format($this->data);
+        $temp .= $image->format($this->data);
 
         $temp .= "<input type=checkbox name='$no' value=delete>";
         $temp .= "<span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' />$now</span> <span id='nothread$no'>";
@@ -38,7 +39,7 @@ class Post {
 
         $temp .= "<br>";
         $temp .= "</span>\n<blockquote class='postMessage' id='m$no'>$com</blockquote>";
-
+        $temp .= "</div>";
         return $temp;
     }   
     
@@ -52,7 +53,7 @@ class Post {
         } else {
             $spoiler = 0;
         }
-
+        $temp .= "<div class='postContainer replyContainer' id='pc$no'/>";
         $temp .= "<table><tr><td nowrap class='sideArrows' id='sa$no'>&gt;&gt;</td><td id='$no' class='reply'>\n";
         $temp .= "<input type=checkbox name='$no' value=delete>";
         $temp .= "<span class='subject'>$sub</span> \n<span class='name'>$name</span> <span class='dateTime' />$now</span> <span id='norep$no'>";
@@ -74,7 +75,7 @@ class Post {
 
         $temp .= "<blockquote class='postMessage' id='m$no'>$com</blockquote>";
 
-        $temp .= "</td></tr></table>\n";
+        $temp .= "</td></tr></table></div>\n";
 
         return $temp;
     }
