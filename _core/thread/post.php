@@ -15,7 +15,7 @@ class Post {
 
     function formatOP() {
         extract($this->data);
-        $temp = "<div class='thread' id='t$no'/><div class='postContainer opContainer' id='pc$no'/>";
+        $temp = "<div class='thread' id='t$no'/><div class='post op' id='p$no'/><div class='postContainer opContainer' id='pc$no'/>";
 
         $image = new Image;
         $image->inIndex = $this->inIndex;
@@ -39,7 +39,7 @@ class Post {
 
         $temp .= "<br>";
         $temp .= "</span>\n<blockquote class='postMessage' id='m$no'>$com</blockquote>";
-        $temp .= "</div>";
+        $temp .= "</div></div>";
         return $temp;
     }   
     
