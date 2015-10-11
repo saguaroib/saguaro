@@ -104,7 +104,7 @@ define(MAX_DURATION, 60);   //The maximum duration allowed in seconds.
 //RePod's JS suite
 define(USE_JS_SETTINGS, 1); //Include the JS suite's settings - enables user side settings
 define(USE_IMG_HOVER, 1);   //Use image expansion on hover
-define(USE_IMG_TOOLBAR, 1); //Use the image search toolbars
+define(USE_IMG_TOOLBAR, 0); //Use the image search toolbars
 define(USE_IMG_EXP, 1);     //Use image expansion
 define(USE_UTIL_QUOTE, 1);  //Use utility quotes
 define(USE_INF_SCROLL, 0);  //Use infinite scroll
