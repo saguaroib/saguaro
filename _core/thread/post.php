@@ -20,25 +20,27 @@ class Post {
         $image = new Image;
         $image->inIndex = $this->inIndex;
         $temp .= $image->format($this->data);
-
-        $temp .= "<input type=checkbox name='$no' value=delete>";
-        $temp .= "<span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' />$now</span> <span id='nothread$no'>";
+        
+        $temp .= "<div class='postInfoM mobile' id='pim$no'/><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' />$now</span></div>";
+        $temp .= "<div class='postInfo desktop'><input type=checkbox name='$no' value=delete><span class='subject'>$sub</span> \n<span class='name'>$name</span> <span class='dateTime' />$now</span>";
 
         $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky"> ' : "";
 
         if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/imgs/locked.gif" alt="closed"> ';
 
         if (!$this->inIndex) {
-            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a> $stickyicon &nbsp; ";
+            $temp .= "<a href='#$no' class='quotejs' >No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a> $stickyicon ";
         } else {
-            $temp .= "<a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='quotejs'>No.</a><a href='" . RES_DIR . $no . PHP_EXT . "#q" . $no . "' class='quotejs'>$no</a> $stickyicon &nbsp; [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]";
+            $temp .= "  <a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='quotejs'>No.</a><a href='" . RES_DIR . $no . PHP_EXT . "#q" . $no . "' class='quotejs'>$no</a> $stickyicon [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]</div>";
+            $temp .= "<div class='postLink mobile' > $stickyicon &nbsp; <a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a></div>";
+        
         }
 
         $com = $this->abbr($com, MAX_LINES_SHOWN);
         $com = $this->auto_link($com, $no);
 
         $temp .= "<br>";
-        $temp .= "</span>\n<blockquote class='postMessage' id='m$no'>$com</blockquote>";
+        $temp .= "<blockquote class='postMessage' id='m$no' >$com</blockquote>";
         $temp .= "</div></div>";
         return $temp;
     }   
@@ -54,28 +56,29 @@ class Post {
             $spoiler = 0;
         }
         $temp .= "<div class='postContainer replyContainer' id='pc$no'/>";
-        $temp .= "<table><tr><td nowrap class='sideArrows' id='sa$no'>&gt;&gt;</td><td id='$no' class='reply'>\n";
-        $temp .= "<input type=checkbox name='$no' value=delete>";
-        $temp .= "<span class='subject'>$sub</span> \n<span class='name'>$name</span> <span class='dateTime' />$now</span> <span id='norep$no'>";
+        $temp .= "<div class='sideArrows' id='sa$no'>&gt;&gt;</div><div id='$no' class='post reply'>\n";
+        
 
-        $com = $this->abbr($com, MAX_LINES_SHOWN);
-        $com = $this->auto_link($com, $resno);
+        
+        $temp .= "<div class='postInfoM mobile' id='pim$no'/><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' />$now</span></div>";
+        $temp .= "<div class='postInfo desktop'><input type=checkbox name='$no' value=delete><span class='subject'>$sub</span> \n<span class='name'>$name</span> <span class='dateTime' />$now</span> ";
 
         if (!$this->inIndex) {
-            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a></span>";
+            $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a></span></div>";
         } else {
-            $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' class='quotejs'>No.</a><a href='" . RES_DIR . $resto . PHP_EXT . "#q$no' class='quotejs'>$no</a></span>";
+            $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' class='quotejs'>No.</a><a href='" . RES_DIR . $resto . PHP_EXT . "#q$no' class='quotejs'>$no</a></div>";
         }
-
-        $temp .= "<br>";
 
         $image = new Image;
         $image->inIndex = $this->inIndex;
         $temp .= $image->format($this->data);
 
+        $com = $this->abbr($com, MAX_LINES_SHOWN);
+        $com = $this->auto_link($com, $resno);
+
         $temp .= "<blockquote class='postMessage' id='m$no'>$com</blockquote>";
 
-        $temp .= "</td></tr></table></div>\n";
+        $temp .= "</div></div>\n";
 
         return $temp;
     }

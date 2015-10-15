@@ -88,8 +88,9 @@ hr {
     text-align: left;
 }
 .postarea { opacity: 0.9; }
-.postarea {} .rules {
-    font-weight: bold;
+.postarea {} 
+.rules {
+    /**/
 }
 .postblock {
     background: #282A2E;
@@ -192,16 +193,22 @@ th {} .row1 {
 .reply {
     background: rgba(40,42,46,0.85); /*#282A2E;*/ 
     color: inherit;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    display: table;
+    padding: 2px;
+}
+.post {
+    margin: 4px;
 }
 .sideArrows {
-    color: #B7C5D9;
+    color: white;
     float: left;
     margin-right: 2px;
     margin-top: 0px;
     margin-left: 2px;
+}
+.postLink.mobile {
+    display: none;
 }
 .thumbnailmsg {
     font-size:9px;
@@ -220,16 +227,26 @@ th {} .row1 {
 .pages td {
     border:none;padding:1px 5px;
 }
+.postInfoM {
+    display: none;
+}
+
 /*Credits: Dynamic Drive CSS Library */
 /*URL: http://www.dynamicdrive.com/style/ */
-
 .gallerycontainer {
     position: relative;
     /*Add a height attribute and set to largest image's height to prevent overlaying*/
 }
+img.postimg {
+    padding: inherit;
+    padding-bottom: 4pt;
+}
 .thumbnail img {
     border: 1px solid white;
     margin: 0 5px 5px 0;
+}
+.fileThumb {
+    float: left;
 }
 .thumbnail:hover {
     background-color: transparent;

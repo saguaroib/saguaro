@@ -42,11 +42,20 @@ class Head {
                 <meta http-equiv='expires' content='Tue, 01 Jan 1980 1:00:00 GMT' />
                 <meta http-equiv='pragma' content='no-cache' />
                 <link rel='shortcut icon' href='" . CSS_PATH . "/imgs/favicon.ico'>
-                <title>$titlepart</title>
-                <link rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
-                <link rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan'/>
-                <link rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />
-                <link rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS4 . "' title='Burichan'/>
+                <title>$titlepart</title>";
+        
+        if (NSFW) {
+            $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/mobile.css' title='mobile' />
+                <link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
+                <link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />";
+        } else {
+            $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/mobile.css' title='mobile' />
+            <link class='togglesheet' rel='stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />
+            <link class='togglesheet' rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />";
+        }
+       
+       $dat  .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />
+                <link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS4 . "' title='Burichan'/>
                 <script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/styleswitch.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>";
@@ -78,7 +87,7 @@ class Head {
             unset($path);
         }
 
-        $dat .= EXTRA_SHIT . '</head><body>' . $titlebar . '
+        $dat .= EXTRA_SHIT . '</head><body class="is_index">' . $titlebar . '
                 <span class="boardlist">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : ''). '</span>
                 <span class="adminbar">
                 [<a href="' . HOME . '" target="_top">' . S_HOME . '</a>]
