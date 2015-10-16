@@ -201,6 +201,9 @@ hr {
     display: table;
     padding: 2px;
 }
+.postMessage {
+    overflow: hidden;
+}
 .post {
     margin: 4px;
 }

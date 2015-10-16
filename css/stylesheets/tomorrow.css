@@ -197,6 +197,9 @@ th {} .row1 {
     display: table;
     padding: 2px;
 }
+.postMessage {
+    overflow: hidden;
+}
 .post {
     margin: 4px;
 }

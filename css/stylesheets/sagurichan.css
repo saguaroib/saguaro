@@ -58,8 +58,9 @@ hr {
     width: 100%;
 }
 .postarea { opacity: 0.9; }
-.postarea {} .rules {
-    font-weight: bold;
+.postarea {}
+.rules {
+    /**/
 }
 .postblock {
     background: #EEAA88;
@@ -176,6 +177,14 @@ hr {
     background: rgba(214,218,240,0.85); /*#D6DAF0;*/
     color: #000000;
     font-family: Arial, Helvetica, sans-serif;
+    display: table;
+    padding: 2px;
+}
+.postMessage {
+    overflow: hidden;
+}
+.post {
+    margin: 4px;
 }
 .sideArrows {
     color: #B7C5D9;
@@ -184,6 +193,9 @@ hr {
     margin-top: 0px;
     margin-left: 2px;
 }
+.postLink.mobile {
+    display: none;
+}
 .thumbnailmsg {
     font-size: 9px;
     font-family: inherit;
@@ -191,13 +203,17 @@ hr {
     padding-left: 20px;
 }
 .pages {
-        border:1px solid black;
-        background: rgba(214,218,240,0.85); /*#D6DAF0;*/
-        color:#89A;
+    border:1px solid black;
+    background: rgba(214,218,240,0.85); /*#D6DAF0;*/
+    color:#89A;
 }
 .pages td {
     border:none;padding:1px 5px;
 }
+.postInfoM {
+    display: none;
+}
+
 /*Credits: Dynamic Drive CSS Library */
 /*URL: http://www.dynamicdrive.com/style/ */
 
@@ -208,6 +224,13 @@ hr {
 .thumbnail img {
     border: 1px solid white;
     margin: 0 5px 5px 0;
+}
+img.postimg {
+    padding: inherit;
+    padding-bottom: 4pt;
+}
+.fileThumb {
+    float: left;
 }
 .thumbnail:hover {
     background-color: transparent;
