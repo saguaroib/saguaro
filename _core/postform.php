@@ -24,7 +24,7 @@ class PostForm {
 
         if ($resno) $temp .= "<div class='theader'>" . S_POSTING . "</div>\n";
 
-        $temp .= "<div align='center'><div class='postarea'>";
+        $temp .= "<div class='postForm' align='center'><div class='postarea'>";
         $temp .= "<form id='contribform' action='" . PHP_SELF_ABS . "' method='post' name='contrib' enctype='multipart/form-data'>";
 
         if ($admin) {
@@ -103,7 +103,8 @@ class PostForm {
             $news = file_get_contents(GLOBAL_NEWS);
 
             if ($news !== "")
-                $temp .= "<div class='globalnews'>" . file_get_contents( GLOBAL_NEWS ) . "</div><hr>";
+                $temp .= "<div class='globalNews desktop'>" . file_get_contents( GLOBAL_NEWS ) . "</div><hr>";
+                $temp .= "<div class='globalNewsM mobile'>" . file_get_contents( GLOBAL_NEWS ) . "<hr></div>";
         }
 
         if ($resno) //Navigation bar above thread.

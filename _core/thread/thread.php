@@ -81,7 +81,8 @@ class Thread {
             $image .= ($omit_images == 1) ? "" : "s";
             $and_images = ($omit_images > 0) ? "and $omit_images $image" : "";
 
-            $temp .= "<span class='omittedposts'>$omit_replies $post $and_images omitted. Click <a href='" . RES_DIR . $op . PHP_EXT . "#" . $op . "'> " . S_REPLY . "</a> to view.</span>";
+            $temp .= "<span class='summary'>$omit_replies $post $and_images omitted. Click <a href='" . RES_DIR . $op . PHP_EXT . "#" . $op . "'> " . S_REPLY . "</a> to view.</span>";
+
         }
 
 

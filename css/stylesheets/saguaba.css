@@ -48,10 +48,8 @@ hr {
     border-top: 1px solid #D9BFB7;
     height: 0;
 }
-.adminbar {
+.linkBar {
     text-align: right;
-    clear: both;
-    float: right;
 }
 .logo {
     font-family: Tahoma, sans-serif;
@@ -76,7 +74,15 @@ hr {
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
 }
-.globalnews {
+.globalNews.desktop {
+    align-items: center;
+    text-align: center;
+    color: red;
+    font-weight: 700;
+    font-size: large;
+}
+.globalNewsM {
+    display: none;
     align-items: center;
     text-align: center;
     color: red;
@@ -187,12 +193,10 @@ hr {
     font-family: Arial, Helvetica, sans-serif;
     padding-left: 20px;
 }
-}
-.omittedposts {
-    font-size: 11px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #666666;
-    font-weight: 800;
+.summary {
+    font-size: 10pt;
+    margin-top: 10px;
+    color: gray;
 }
 .reply {
     background: rgba(240,224,214,0.85);/*#F0E0D6*/
@@ -202,7 +206,7 @@ hr {
     padding: 2px;
 }
 .postMessage {
-    overflow: hidden;
+    display: -webkit-box;
 }
 .post {
     margin: 4px;

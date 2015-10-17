@@ -256,6 +256,10 @@
         font-size: 11pt;
         word-wrap: break-word;
         padding: 5px;
+        display: block;
+    }
+    .postMessage {
+        word-break: break-all;
     }
     .omittedposts,
     .abbr {
