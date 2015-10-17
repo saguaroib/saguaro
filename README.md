@@ -8,6 +8,12 @@
 This has been cobbled together from stuff I myself have written and the contributions of others, named in the line I copied and pasted from the old readme just below this one:		
 *"Special thanks to !KNs1o0VDv6, Glas, Anonymous from vchan, RePod, and anyone who actually uses this."*
 
+#Why use Saguaro?
+Saguaro features many competitive features not commonly found in other imageboard suites:
+- Read only JSON API
+- Full mobile browser support
+- A modular & customizable jQuery suite
+
 #Installation Dependencies 
 - PHP >= 4.2.x (PHP 5 or newer is also recommended)
 - MySQL >= 4.0 
@@ -24,11 +30,12 @@ This has been cobbled together from stuff I myself have written and the contribu
 #Contributing
 - Check out our [Wiki Page on contributing and standards](//github.com/spootTheLousy/saguaro/wiki/Contributing)
 
-#Additional support
+#API Documentation and Additional support
+- [API Documentation](//github.com/spootTheLousy/saguaro/wiki/API-Documentation) 
 - [The Wiki](//github.com/spootTheLousy/saguaro/wiki)
 - #saguaroimgboard @ irc.rizon.net
 
 #License
 While there is no official licensing info due to this being a fork of a fork [...], a lot of great people have worked on saguaro (in spirit) and leaving in credits (specifically in the page's footer, ***S_FOOT***) attributing them is very much appreciated
 
-Updated Sep 29, 2015
+Updated Oct 16, 2015
