@@ -16,7 +16,7 @@ class Footer {
         if (file_exists(BOARDLIST))
             $dat .= '<span class="boardlist">' . file_get_contents( BOARDLIST ) . '</span>';
 
-        $dat .= '<div class="footer">' . S_FOOT . '</div><a href="#bottom" /></a></body></html>';
+        $dat .= '<br><br><div class="footer">' . S_FOOT . '</div><a href="#bottom" /></a></div></body></html>'; //Last div ends the "afterPosts" class, opened in log.php
 
         return $dat;
     }

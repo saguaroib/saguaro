@@ -39,6 +39,7 @@ define(GLOBAL_NEWS, 'CHANGEME'); //Absolute html path to your global board news 
 define(SALTFILE, 'salt');        //Name of the salt file, do not add a file extension for security
 
 //Basic settings
+define(NSFW_BOARD, false);    //Whether or not this is a NSFW(Red/Saguaba or blue/Sagurichan) board. Also affects mobile theme.
 define(SHOWTITLETXT, true);   //Show TITLE at top.
 define(SHOWTITLEIMG, 0);      //Show image at top (0: no, 1: single, 2: rotating)
 define(TITLEIMG, '');         //Title image (point to php file if rotating)
@@ -104,7 +105,7 @@ define(MAX_DURATION, 60);   //The maximum duration allowed in seconds.
 //RePod's JS suite
 define(USE_JS_SETTINGS, 1); //Include the JS suite's settings - enables user side settings
 define(USE_IMG_HOVER, 1);   //Use image expansion on hover
-define(USE_IMG_TOOLBAR, 1); //Use the image search toolbars
+define(USE_IMG_TOOLBAR, 0); //Use the image search toolbars
 define(USE_IMG_EXP, 1);     //Use image expansion
 define(USE_UTIL_QUOTE, 1);  //Use utility quotes
 define(USE_INF_SCROLL, 0);  //Use infinite scroll

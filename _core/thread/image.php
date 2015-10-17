@@ -68,10 +68,10 @@ class Image {
                 $return .= "<img src='" . $cssimg . "/imgs/filedeleted.gif' alt='File deleted.'>";
             } else {
                 $dimensions = ( $ext == ".pdf" ) ? "PDF" : "{$w}x{$h}";
-                if (!$this->inIndex) {
-                    return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='filesize'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$time$ext</a>-(" . $size . "B, " . $dimensions . ", <span title='" . $longname . "'>" . $shortname . "</span>)</span>" . $imgsrc;
+                if (!$this->inIndex) { //, <span title='" . $longname . "'>" . $shortname . "</span>)
+                    return "<div class='file'><span class='filesize' />" . S_PICNAME . "<a href='$linksrc' target='_blank'>$shortname</a> (" . $size . "B, " . $dimensions . ")</span>" . $imgsrc . "</div>";
                 } else {
-                    return "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class='filesize'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$time$ext</a>-(" . $size . "B, " . $dimensions . ")</span>" . $imgsrc;
+                    return "<div class='file'><span class='filesize' />" . S_PICNAME . "<a href='$linksrc' target='_blank'>$shortname</a> (" . $size . "B, " . $dimensions . ")</div></span><div class='fileThumb' />" . $imgsrc . "</div>";
                 }
             }
 

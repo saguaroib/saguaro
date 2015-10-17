@@ -9,7 +9,7 @@ repod.suite_settings = {
 			//At the moment multi_suffix isn't applied. The suffix applied is hard coded to "amount".
 			pre_categories: ["Images","Quotes & Replying","Monitoring","Navigation","Miscellaneous"] //Categories that should be spawned in this order before everything else.
 		}
-		$("span.adminbar").prepend("[<a href='#' id='repod_jquery_suite_settings_open'>Settings</a>]");
+		$("div.linkBar").prepend("[<a href='#' id='repod_jquery_suite_settings_open'>Settings</a>]");
 		$("a#repod_jquery_suite_settings_open").click(function() { repod.suite_settings.spawn.settings_window(); });
 	},
 	spawn: {

@@ -3,8 +3,8 @@ try { repod; } catch(e) { repod = {}; }
 
 repod.styleswitch = {
     init: function() {
-        this.stylesheet_cache = $("link[rel$=stylesheet]"); //Eventually change to a safer selector.
-
+        this.stylesheet_cache = $("link[rel$=stylesheet].togglesheet"); //Eventually change to a safer selector.
+        
         //$("#switchform").remove(); //Literally removing the competition
 
         this.ready();

@@ -48,10 +48,8 @@ hr {
     border-top: 1px solid #D9BFB7;
     height: 0;
 }
-.adminbar {
+.linkBar {
     text-align: right;
-    clear: both;
-    float: right;
 }
 .logo {
     font-family: Tahoma, sans-serif;
@@ -72,16 +70,19 @@ hr {
     font-weight: 700;
     width: 100%;
 }
-.postertrip {
-    color: #117743;
-    font-weight: 600;
-    font-size: 12px;
-}
 .headsub {
     color: inherit;
     text-align: center;
 }
-.globalnews {
+.globalNews.desktop {
+    align-items: center;
+    text-align: center;
+    color: red;
+    font-weight: 700;
+    font-size: large;
+}
+.globalNewsM {
+    display: none;
     align-items: center;
     text-align: center;
     color: red;
@@ -93,8 +94,9 @@ hr {
     text-align: left;
 }
 .postarea { opacity: 0.9; }
-.postarea {} .rules {
-    font-weight: bold;
+.postarea {} 
+.rules {
+    /**/
 }
 .postblock {
     background: #282A2E;
@@ -163,11 +165,11 @@ th {} .row1 {
     font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
 }
-.filetitle {
+.subject {
     color: #F7ABFF;
     font-weight: bold;
 }
-.postername {
+.name {
     color: #c5c8c6;
     font-weight: bold;
 }
@@ -185,42 +187,33 @@ th {} .row1 {
     font-family: Arial, Helvetica, sans-serif;
     padding-left: 20px;
 }
-}
-.omittedposts {
-    font-size:11px;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
-    color:#666666;
-    font-weight:800;
+.summary {
+    font-size: 10pt;
+    margin-top: 10px;
+    color: gray;
 }
 .reply {
     background: rgba(40,42,46,0.85); /*#282A2E;*/ 
     color: inherit;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    display: table;
+    padding: 2px;
 }
-.doubledash {
-    color: #B7C5D9;
+.postMessage {
+    display: -webkit-box;
+}
+.post {
+    margin: 4px;
+}
+.sideArrows {
+    color: white;
     float: left;
     margin-right: 2px;
     margin-top: 0px;
     margin-left: 2px;
 }
-.replytitle {
-    font-size:18px;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
-    color:#CC1105;
-}
-.commentpostername {
-    font-size:14px;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
-    color:#117743;
+.postLink.mobile {
+    display: none;
 }
 .thumbnailmsg {
     font-size:9px;
@@ -239,16 +232,26 @@ th {} .row1 {
 .pages td {
     border:none;padding:1px 5px;
 }
+.postInfoM {
+    display: none;
+}
+
 /*Credits: Dynamic Drive CSS Library */
 /*URL: http://www.dynamicdrive.com/style/ */
-
 .gallerycontainer {
     position: relative;
     /*Add a height attribute and set to largest image's height to prevent overlaying*/
 }
+img.postimg {
+    padding: inherit;
+    padding-bottom: 4pt;
+}
 .thumbnail img {
     border: 1px solid white;
     margin: 0 5px 5px 0;
+}
+.fileThumb {
+    float: left;
 }
 .thumbnail:hover {
     background-color: transparent;
