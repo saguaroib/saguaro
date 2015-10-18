@@ -281,6 +281,28 @@ if (is_file($lockout)) {
                 clearstatcache();
             }
         }
+
+        //Create working files.
+        if (!$config_file_good) {
+            echo 'Config was not loaded, cannot create working files.';
+        } else {
+            echo "<br>";
+
+            if (!defined(BOARDLIST) && BOARDLIST !== '') {
+                $bl = '<strong>BOARDLIST</strong> (' . BOARDLIST . ')';
+                $url = rawurlencode(BOARDLIST);
+
+                if (file_exists(BOARDLIST)) {
+                    echo "<a href='$url' target='_blank'>$bl</a> already exists, skipping.<br>";
+                } else {
+                    echo "Creating $bl... ";
+                    $test = file_put_contents(BOARDLIST, "[<a href='/a' />a</a> / <a href='/b' />b</a> / <a href='/c' />c</a>]");
+                    echo ($test > 0) ? "<a href='$url' target='_blank'>$success</a>" : $fail;
+                }
+            } else {
+                echo "<strong>BOARDLIST</strong> was empty or undefined, skipping.<br>";
+            }
+        }
     }
 
     //Additional edge-case settings we can't easily change.
