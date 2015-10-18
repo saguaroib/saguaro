@@ -1,10 +1,14 @@
 #php_value post_max_size 4M
 #php_value upload_max_filesize 3M
 
-RewriteEngine on
 Options +FollowSymLinks -Indexes
-#RewriteRule friendly_pcre target
-RewriteRule ^res/(\d+)/?$ res/$1.html [NC,L]
+
+RewriteEngine on
+RewriteRule ^res/(\d+)/?$ res/$1.html [NC,L]             #res/# -> res/#.html
+RewriteRule ^res/(\d+).json$ api/$1.json [NC,L]          #res/#.json -> api/#.json.
 RewriteRule ^(admin|catalog)/?$ imgboard.php?mode=$1 [L]
-RewriteRule ^(?:page/)(\d+)/?$ $1.html [L]
+RewriteRule ^(?:page/)(\d+)/?$ $1.html [NC,L]            #page/# -> #.html (indexes)
 RewriteRule banned banned.php [NC]
+
+#RewriteRule friendly_pcre target
+#Flags: http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewriteflags
