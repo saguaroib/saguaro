@@ -199,9 +199,6 @@ th {} .row1 {
     display: table;
     padding: 2px;
 }
-.postMessage {
-    display: -webkit-box;
-}
 .post {
     margin: 4px;
 }
@@ -245,6 +242,7 @@ th {} .row1 {
 img.postimg {
     padding: inherit;
     padding-bottom: 4pt;
+    float: left;
 }
 .thumbnail img {
     border: 1px solid white;

@@ -205,9 +205,6 @@ hr {
     display: table;
     padding: 2px;
 }
-.postMessage {
-    display: -webkit-box;
-}
 .post {
     margin: 4px;
 }
@@ -249,6 +246,7 @@ hr {
 img.postimg {
     padding: inherit;
     padding-bottom: 4pt;
+    float: left;
 }
 .fileThumb {
     float: left;
