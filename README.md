@@ -9,9 +9,9 @@ This has been cobbled together from stuff I myself have written and the contribu
 *"Special thanks to !KNs1o0VDv6, Glas, Anonymous from vchan, RePod, and anyone who actually uses this."*
 
 #Why use Saguaro?
-Saguaro features many competitive features not commonly found in other imageboard suites:
+Saguaro sports many competitive features not commonly found in other imageboard software:
+- Mobile browser support
 - Read only JSON API
-- Full mobile browser support
 - A modular & customizable jQuery suite
 
 #Installation Dependencies 
@@ -28,14 +28,12 @@ Saguaro features many competitive features not commonly found in other imageboar
 - Setting up a basic [Development Environment.](//github.com/spootTheLousy/saguaro/wiki/Development-Environment)
 
 #Contributing
-- Check out our [Wiki Page on contributing and standards](//github.com/spootTheLousy/saguaro/wiki/Contributing)
+- Check out our [wiki page on contributing and standards](//github.com/spootTheLousy/saguaro/wiki/Contributing)
 
-#API Documentation and Additional support
+#Additional support
 - [API Documentation](//github.com/spootTheLousy/saguaro/wiki/API-Documentation) 
 - [The Wiki](//github.com/spootTheLousy/saguaro/wiki)
 - #saguaroimgboard @ irc.rizon.net
 
 #License
 While there is no official licensing info due to this being a fork of a fork [...], a lot of great people have worked on saguaro (in spirit) and leaving in credits (specifically in the page's footer, ***S_FOOT***) attributing them is very much appreciated
-
-Updated Oct 16, 2015
