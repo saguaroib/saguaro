@@ -62,13 +62,11 @@ hr {
     text-align: center;
     color: inherit;
 }
-}
 .theader {
     text-align: center;
-    background-color: orange;
-    color: white;
+    background-color: #C5C8C6;
+    color: black;
     font-weight: 700;
-    width: 100%;
 }
 .headsub {
     color: inherit;
