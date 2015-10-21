@@ -118,7 +118,7 @@ define(USE_EXTRAS, 1);      //Automatically include all .js files in JS_PATH/ext
 define(CSS1, '/stylesheets/saguaba.css');    //location of the first stylesheet.
 define(CSS2, '/stylesheets/sagurichan.css'); //location of the second stylesheet.
 define(CSS3, '/stylesheets/tomorrow.css');   //location of the third stylesheet.
-define(CSS4, '/stylesheets/burichan.css');   //location of the fourth stylesheet.
+//define(CSS4, '/stylesheets/CHANGEME.css');   //location of the fourth stylesheet.
 
 define(EXTRA_SHIT, ''); //Any extra javascripts you want to include inside the <head>
 

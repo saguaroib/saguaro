@@ -40,6 +40,7 @@ class Post {
         $com = $this->auto_link($com, $no);
 
         $temp .= "<br>";
+        $temp .= ($com == "") ? "<blockquote style='display:none;' class='postMessage' id='m$no' >$com</blockquote>" : "<blockquote class='postMessage' id='m$no' >$com</blockquote>";
         $temp .= "<blockquote class='postMessage' id='m$no' >$com</blockquote>";
         $temp .= "</div></div>";
         return $temp;

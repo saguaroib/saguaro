@@ -62,13 +62,11 @@ hr {
     text-align: center;
     color: inherit;
 }
-}
 .theader {
     text-align: center;
-    background-color: orange;
-    color: white;
+    background-color: #C5C8C6;
+    color: black;
     font-weight: 700;
-    width: 100%;
 }
 .headsub {
     color: inherit;
@@ -199,9 +197,6 @@ th {} .row1 {
     display: table;
     padding: 2px;
 }
-.postMessage {
-    display: -webkit-box;
-}
 .post {
     margin: 4px;
 }
@@ -245,6 +240,7 @@ th {} .row1 {
 img.postimg {
     padding: inherit;
     padding-bottom: 4pt;
+    float: left;
 }
 .thumbnail img {
     border: 1px solid white;
