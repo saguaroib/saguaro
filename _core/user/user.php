@@ -8,9 +8,13 @@
     $user->info(); //Returns entire $instance.
     $user->info('permissions'); //Returns specified key from $instance.
 
+    This class saves User->instance to $_SESSION[User->session_var] after being first run then retrieves it instead of populating it again when reused (multiple inits).
+    To get around this behavior (for instances that need the latest user status) call User->invalidate() before User->init().
+
 */
 
 class User {
+    public $session_var = 'user'; //The session variable to store $instance in. Can be changed to handle multiple user instances at once.
     private $instance = [ //Default settings.
         'canPost' => true,
         'isBanned' => true, //Unset by checkBan(), if not banned.
@@ -29,15 +33,23 @@ class User {
     ];
     private $row;
 
-    function init($user, $pass) {
-        $this->checkBan(); //Just get this out of the way. Admins can be banned and still post. WIP.
+    public function init($user, $pass) {
+        if (!$this->load()) {
+            //Process as normal.
+            $this->checkBan(); //Just get this out of the way. Admins can be banned and still post. WIP.
 
-        if ($user && $pass)
-            $this->pullRow($user, $pass);
-            $this->checkPermissions(); //Only check (therefore modify) permissions if we have a validated user.
+            if ($user && $pass)
+                $this->pullRow($user, $pass);
+                $this->checkPermissions(); //Only check (therefore modify) permissions if we have a validated user.
+
+            $this->save();
+        } else {
+            //Do nothing since it was retrieved from the session.
+            echo 'I am from a session!';
+        }
     }
 
-    function info($topkey = null) {
+    public function info($topkey = null) {
         if ($topkey)
            return $this->instance[$topkey];
         else
@@ -73,6 +85,24 @@ class User {
             foreach ($deny as $prop)
                 $this->instance['permissions']["$prop"] = false;
         }
+    }
+
+    private function load() {
+        if (isset($_SESSION[$this->session_var])) {
+            $this->instance = $_SESSION[$this->session_var];
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function save() {
+        $_SESSION[$this->session_var] = $this->instance;
+    }
+
+    public function invalidate() {
+        if (isset($_SESSION[$this->session_var]))
+            unset($_SESSION[$this->session_var]);
     }
 }
 
