@@ -23,7 +23,7 @@ class SaguaroMySQL extends SaguaroQL {
             echo S_SQLDBSF;
         }
     }
-    
+
     private function sanitizeString($string) {
         return $string;
     }
@@ -41,14 +41,14 @@ class SaguaroMySQL extends SaguaroQL {
         }
         return $ret;
     }
-    
+
     function result($string, $index = 0) {
         return mysql_result($this->query($string), $index);
     }
 
     function fetch_row($string) {
         if (!$string) return $this->last;
-        
+
         $this->last = mysql_fetch_row($this->query($string));
         return $this->last;
     }
@@ -59,10 +59,17 @@ class SaguaroMySQL extends SaguaroQL {
         $this->last = mysql_fetch_array($this->query($string));
         return $this->last;
     }
-    
+
+    function fetch_assoc($string) {
+        if (!$string) return $this->last;
+
+        $this->last = mysql_fetch_assoc($this->query($string));
+        return $this->last;
+    }
+
     function num_rows($string) {
         if (!$string) return mysql_num_rows($this->last);
-        
+
         $this->last = mysql_num_rows($this->query($string));
         return $this->last;
     }
