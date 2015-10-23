@@ -10,6 +10,7 @@
 
     This class saves User->instance to $_SESSION[User->session_var] after being first run then retrieves it instead of populating it again when reused (multiple inits).
     To get around this behavior (for instances that need the latest user status) call User->invalidate() before User->init().
+    Or if you're lazy, User->autoinit() does the above.
 
 */
 
@@ -43,10 +44,12 @@ class User {
                 $this->checkPermissions(); //Only check (therefore modify) permissions if we have a validated user.
 
             $this->save();
-        } else {
-            //Do nothing since it was retrieved from the session.
-            echo 'I am from a session!';
-        }
+        } //Else, do nothing since it was retrieved from the session.
+    }
+
+    public function autoinit($user, $pass) {
+        $this->invalidate();
+        $this->init($user, $pass);
     }
 
     public function info($topkey = null) {
