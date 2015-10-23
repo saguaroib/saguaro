@@ -60,6 +60,13 @@ class SaguaroMySQLi extends SaguaroQL {
         return $this->last;
     }
     
+    function fetch_assoc($string) {
+        if (!$string) return $this->last;
+
+        $this->last = $this->query($string)->fetch_assoc();
+        return $this->last;
+    }
+    
     function num_rows($string) {
         if (!$string) return $this->last->num_rows;
         
