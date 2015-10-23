@@ -22,7 +22,7 @@ if (!$no) {
     error(S_NOTHREADERR, $dest);
 }
 
-$redirect = DATA_SERVER . BOARD_DIR . "/res/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
+$redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
 
 echo "<META HTTP-EQUIV='refresh' content='0;URL=$redirect'>";
 
