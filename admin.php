@@ -102,7 +102,9 @@ switch ($_GET['mode']) {
 		require_once(CORE_DIR . "/admin/report.php");
 		$getReport = new Report;
 		$active = $getReport->get_all_reports_board();
-		oldvalid($pass);
+        require_once(CORE_DIR . "/admin/login.php");
+        $login = new Login;
+        $login->auth($pass);
 		$getReport->display_list();
 		break;
     case 'rebuild':
