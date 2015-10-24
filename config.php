@@ -21,8 +21,6 @@ define(SQLHOST, 'localhost');
 define(SQLDB, 'saguaro');   //Database used by image board.
 define(PREFIX, 'imgboard'); //Prefix to automatically use for the database tables.
 
-
-
 /*
     Something descriptive.
 */
@@ -36,18 +34,16 @@ define(SALTFILE, 'salt');        //Name of the salt file, do not add a file exte
 
 //Basic settings
 define(NSFW_BOARD, false);    //Whether or not this is a NSFW(Red/Saguaba or blue/Sagurichan) board. Also affects mobile theme.
-define(SHOWTITLETXT, true);   //Show TITLE at top.
-define(SHOWTITLEIMG, 0);      //Show image at top (0: no, 1: single, 2: rotating)
-define(TITLEIMG, '');         //Title image (point to php file if rotating)
+define(SHOWTITLETXT, true);   //Show TITLE at top. False: hide title, True: display title (Setting this to 2 will show "/{your BOARD_DIR value}/ - {Your TITLE value}"
+define(SHOWTITLEIMG, false);      //Show image at top
+define(TITLEIMG, '');         //Title image (point to an img rotating script if you want rotating banners)
 define(DATE_FORMAT, 'm/d/y'); //Formatting for the date in each post, see http://php.net/manual/en/function.date.php for different options
-
 
 /*
     Specialized board settings - a board with specific purpose
 */
 
 define(GIF_ONLY, false); //GIF upload only imageboard.
-
 
 /*
     Posting, threads, and images.

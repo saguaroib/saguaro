@@ -11,25 +11,18 @@
 
 class Head {
     function generate() {
-        $titlepart = '';
         $dat = '';
-
-        if (SHOWTITLEIMG == 1) {
-            $titlepart .= '<img src="' . TITLEIMG . '" alt="' . TITLE . '" />';
-            if ( SHOWTITLETXT == 1 ) {
-                $titlepart .= '<br>';
-            }
-        } else if (SHOWTITLEIMG == 2) {
-            $titlepart .= '<img src="' . TITLEIMG . '" onclick="this.src=this.src;" alt="' . TITLE . '" />';
-            if ( SHOWTITLETXT == 1) {
-                $titlepart .= '<br>';
-            }
-        }
-        if (SHOWTITLETXT == 1) {
-            $titlepart .= TITLE;
-        } elseif (SHOWTITLETXT == 2) {
-            $titlepart .= '/' . BOARD_DIR . '/ - ' . TITLE . '';
-        }
+        $boardTitle = '';
+        $bannerImg = '';
+        $headSub = '';
+        
+        if (SHOWTITLETXT > 0) {
+            $boardTitle = TITLE . $headSub;
+            $headSub .= '<div class="headsub">' . S_HEADSUB . '</div><hr>';           
+            if (SHOWTITLETXT == 2)  //you cannot stop me repod i am invincible 
+                $boardTitle = '/' . BOARD_DIR . '/ - ' . TITLE;
+        }      
+        $bannerImg .= (SHOWTITLEIMG) ? '<img class="bannerImg" src="' . TITLEIMG . '" onclick="this.src=this.src;" alt="' . TITLE . '" /><br>' : '';
 
         /* begin page content */
         $dat .= "<!DOCTYPE html><head>
@@ -42,7 +35,7 @@ class Head {
                 <meta http-equiv='expires' content='Tue, 01 Jan 1980 1:00:00 GMT' />
                 <meta http-equiv='pragma' content='no-cache' />
                 <link rel='shortcut icon' href='" . CSS_PATH . "/imgs/favicon.ico'>
-                <title>$titlepart</title>";
+                <title>$title</title>";
         
         if (NSFW) {
             $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
@@ -79,9 +72,8 @@ class Head {
         $dat .= EXTRA_SHIT . '</head><body class="is_index"><div class="beforePostform" />' . $titlebar . '
                 <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : ''). '</div>
                 <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
-                </span><div class="logo">' . $titlepart . '</div>
-                <a href="#top" /></a>
-                <div class="headsub">' . S_HEADSUB . '</div><hr>';
+                </span><div class="logo">' . $bannerImg . $boardTitle . '</div>' . $headSub . '
+                <a href="#top" /></a>';
 
         if (USE_ADS1) {
             $dat .= ADS1 . '<hr>';
