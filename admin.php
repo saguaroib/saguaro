@@ -51,6 +51,8 @@ function postinfo($no)
             $special .= "<b><font color=\"2E2EFE\">[Permasaged]</font></b>";
         $dat .= "<tr><td class='postblock'>Special:</td><td class='row2'>This thread is $special</td></tr>"; //lmoa
     }
+    if (!valid('moderator')) //Hide IPs from janitors
+        $host = '###.###.###.###';        
     $dat .= "<tr><td class='postblock'>Name:</td><td class='row1'>$name</td></tr>
   <tr><td class='postblock'>Date:</td><td class='row2' />$now</td></tr>
   <tr><td class='postblock'>IP:</td><td class='row1' /><b>$host</b></td></tr><br>
@@ -139,9 +141,7 @@ function login($usernm, $passwd)
     $usernm = mysql_real_escape_string($usernm);
     $passwd = mysql_real_escape_string($passwd);
 
-    $query = mysql_call("SELECT user,password FROM " . SQLMODSLOG . " WHERE user='$usernm' and password='$passwd'");
-
-    if ($query == 0 or $query == FALSE) {
+    if (!$query = mysql_call("SELECT user,password FROM " . SQLMODSLOG . " WHERE user='$usernm' and password='$passwd'")) {
         mysql_call("INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$usernm','$passwd','" . BOARD_DIR . "','$ip','1')");
         error(S_WRONGPASS);
     }
@@ -181,11 +181,8 @@ function oldvalid($pass)
         echo "<div class='managerBanner' >" . S_MANAMODE . "</div><br>
         [ <a href='#' onclick=\"toggle_visibility('adminForm');\" style='text-align:center;' >Toggle postform</a> ]</div><br>";
         //echo "<form action='" . PHP_SELF . "' method='post' id='contrib' >";
-    }
-
-    // Mana login form
-    if (!valid('janitor_board')) {
-        echo "<p><form action='" . PHP_ASELF . "' method='post'>";
+    } else { // Admin.php login
+        echo "<form action='" . PHP_ASELF . "' method='post'>";
         echo "<div align='center' vertical-align=\"middle\" >";
         echo "<input type='hidden' name=mode value=admin>";
         echo "<input type='text' name=usernm size=20><br />";
@@ -286,28 +283,20 @@ function admindel($pass)
         $img_flag = FALSE;
         list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto) = $row;
         // Format
-        $now = ereg_replace('.{2}/(.*)$', '\1', $now);
-        $now = ereg_replace('\(.*\)', ' ', $now);
+        /*$now = ereg_replace('.{2}/(.*)$', '\1', $now);
+        $now = ereg_replace('\(.*\)', ' ', $now);*/
         if (strlen($name) > 10)
-            $truncname = substr($name, 0, 9) . "...";
-        else
-            $truncname = $name;
+            $name = substr($name, 0, 9) . "...";
         if (strlen($sub) > 10)
-            $truncsub = substr($sub, 0, 9) . "...";
-        else
-            $truncsub = $sub;
+            $sub = substr($sub, 0, 9) . "...";
         if ($email)
             $name = "<a href=\"mailto:$email\">$name</a>";
         $com = str_replace("<br />", " ", $com);
         $com = htmlspecialchars($com);
         if (strlen($com) > 20)
-            $trunccom = substr($com, 0, 18) . "...";
-        else
-            $trunccom = $com;
+            $com = substr($com, 0, 18) . "...";
         if (strlen($fname) > 10)
-            $truncfname = substr($fname, 0, 40) . "..." . $ext;
-        else
-            $truncfname = $fname;
+            $fname = substr($fname, 0, 40) . "..." . $ext;
         // Link to the picture
         if ($ext && is_file($path . $tim . $ext)) {
             $img_flag = TRUE;
@@ -338,13 +327,11 @@ function admindel($pass)
         $warnSticky = '';
         if ($sticky == '1')
             $warnSticky = "<b><font color=\"FF101A\">(Sticky)</font></b>";
-        if (valid('janitor_board') && !valid('moderator')) //Hide IPs from janitors
-            $host = '###.###.###.###';
         echo "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
-        echo "<td>$no</td><td>$resdo</td><td>$now</td><td>$truncsub</td>";
-        echo "<td>$truncname</b></td><td>$trunccom</td>";
+        echo "<td>$no</td><td>$resdo</td><td>$now</td><td>$sub</td>";
+        echo "<td>$name</b></td><td>$com</td>";
         echo "<td class='postimg' >$clip</td><td>" . calculate_age($time) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
-        echo "</tr>\n";
+        echo "</tr>";
     }
     mysql_free_result($result);
 
@@ -354,8 +341,6 @@ function admindel($pass)
     echo "<div align='center'/>[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]</div>";
     die("</body></html>");
 }
-
-
 
 function valid($action = 'moderator', $no = 0)
 {
