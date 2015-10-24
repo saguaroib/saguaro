@@ -153,7 +153,7 @@ if (DISP_ID) {
     //$rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
     //$color = '#'.$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)];
     $color  = "inherit"; // Until unique IDs between threads get sorted out
-    $idhtml = "<span id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
+    $idhtml = "<span class='posteruid' id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
     mysql_real_escape_string($idhtml);
 
     if ($email && DISP_ID == 1) {
@@ -166,15 +166,15 @@ if (DISP_ID) {
         } else {
             $idsalt = $resto;
         }
-        $now .= " (ID:" . $idhtml . substr(crypt(md5($_SERVER["REMOTE_ADDR"] . 'id' . date("Ymd", $time)), $idsalt), +3) . "</span>)";
+        $now .= " (ID:" . $idhtml . substr(crypt(md5($_SERVER["REMOTE_ADDR"] . PANEL_PASS . 'id' . date("Ymd", $time)), $idsalt), +3) . "</span>)";
     }
 }
 
-/*if (COUNTRY_FLAGS) {
-    include("geoiploc.php");
+if (COUNTRY_FLAGS && file_exists('geoiploc.php')) {
+    require_once(CORE_DIR . "/regist/geoiploc.php");
     $country = getCountryFromIP($host, "CTRY");
     $now .= " <img src=" . CSS_PATH . "flags/" . strtolower($country) . ".png /> ";
-}*/
+}
 
 $c_name  = $name;
 $c_email = $email;
@@ -250,7 +250,7 @@ if ($moderator && isset($_POST['showCap'])) {
 }
 
 if (FORCED_ANON == 1) {
-    $name = "</span>$now<span>";
+    $name = S_ANONAME . " </span>$now<span>";
     $sub  = '';
     $now  = '';
 }
@@ -392,9 +392,9 @@ if ($resto) {
 }
 
 if ($noko && !$resto) {
-    $redirect = DATA_SERVER . BOARD_DIR . "/res/" . $insertid . PHP_EXT;
+    $redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $insertid . PHP_EXT;
 } else if ($noko == 1) {
-    $redirect = DATA_SERVER . BOARD_DIR . "/res/" . $resto . PHP_EXT . '#' . $insertid;
+    $redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $resto . PHP_EXT . '#' . $insertid;
 } else {
     $redirect = PHP_SELF2_ABS;
 }
