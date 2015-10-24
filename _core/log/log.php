@@ -167,7 +167,7 @@ class Log {
                     $dat .= ADS3 . '<hr>';
 
                 if ($resno)
-                    $dat .= "[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resto" . PHP_EXT . "#top'>Top</a>]<hr>";
+                    $dat .= "[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]<hr>";
 
                 clearstatcache(); //clear stat cache of a file
                 //mysql_free_result($resline);

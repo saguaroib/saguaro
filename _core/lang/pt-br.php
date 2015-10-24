@@ -73,7 +73,7 @@ $S_BADDELPASS = 'Erro: Senha incorreta.';							//Returns error for wrong passwo
 $S_WRONGPASS = 'Erro: Senha de administra&#231;&#227;o incorreta.';						//Returns error for wrong password (when trying to access Manager modes)
 $S_RETURNS = 'Retornar';										//Returns to HTML file instead of PHP--thus no log/SQLDB update occurs
 $S_LOGUPD = 'Atualizar';										//Updates the log/SQLDB by accessing the PHP file
-$S_MANAMODE = 'Modo de gerenciamento';									//Prints heading on top of Manager page
+$S_MANAMODE = "  [ <a href='#' onclick=\"toggle_visibility('adminForm');\" style='color:white;text-align:center;' >Toggle Admin Post Form</a> ]";                                   //Prints heading on top of Manager page
 $S_MANAREPDEL = 'Painel de gerenciador';								//Defines Management Panel radio button--allows the user to view the management panel (overview of all posts)
 $S_MANAPOST = 'Admin post';									//Defines Manager Post radio button--allows the user to post using HTML code in the comment box
 $S_MANASUB = 'Enviar';										//Defines name for submit button in Manager Mode
