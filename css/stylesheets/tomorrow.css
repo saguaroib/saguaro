@@ -171,6 +171,10 @@ th {} .row1 {
     color: #c5c8c6;
     font-weight: bold;
 }
+.postertrip {
+    color: #c5c8c6;
+    font-weight: 500;
+}
 .cap.moderator {
     color: #770099;
 }
