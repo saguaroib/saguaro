@@ -28,6 +28,8 @@ class Image {
         if ( $fname == 'image' )
             $fname = time();
         $longname  = $fname;
+        if (!$fname) 
+            $longname = $tim.$ext; //Legacy support for boards that didn't store an $fname in the table pre saguaro 0.99.0
         $shortname = ( strlen( $fname ) > 40 ) ? substr( $fname, 0, 40 ) . "(...)" . $ext : $longname;
         // img tag creation
         $imgsrc    = "";
@@ -69,9 +71,9 @@ class Image {
             } else {
                 $dimensions = ( $ext == ".pdf" ) ? "PDF" : "{$w}x{$h}";
                 if (!$this->inIndex) { //, <span title='" . $longname . "'>" . $shortname . "</span>)
-                    return "<div class='file'><span class='filesize' />" . S_PICNAME . "<a href='$linksrc' target='_blank'>$shortname</a> (" . $size . "B, " . $dimensions . ")</span>" . $imgsrc . "</div>";
+                    return "<div class='file'><span class='filesize' />" . S_PICNAME . "<a href='$linksrc' target='_blank'>$longname</a> (" . $size . "B, " . $dimensions . ")</span>" . $imgsrc . "</div>";
                 } else {
-                    return "<div class='file'><span class='filesize' />" . S_PICNAME . "<a href='$linksrc' target='_blank'>$shortname</a> (" . $size . "B, " . $dimensions . ")</div></span><div class='fileThumb' />" . $imgsrc . "</div>";
+                    return "<div class='file'><span class='filesize' />" . S_PICNAME . "<a href='$linksrc' target='_blank'>$longname</a> (" . $size . "B, " . $dimensions . ")</div></span><div class='fileThumb' />" . $imgsrc . "</div>";
                 }
             }
 
