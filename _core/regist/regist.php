@@ -159,13 +159,13 @@ if (DISP_ID) {
     if ($email && DISP_ID == 1) {
         $now .= " (ID:" . $idhtml . " Heaven </span>)";
     } else {
-        /* if (!$resto) {
+        if (!$resto) {
         //holy hell there has to be a better way to do this. i swear ill think of it soon
-        $idsalt = mysql_result(mysql_call("select max(no) from " . SQLLOG), 0, 0) + 1; //In the year 2054 A.D., your op number is known before you even post it
+        $idsalt = mysql_result(mysql_call("select max(no) from " . SQLLOG), 0, 0); 
+        $idsalt = $idsalt + 1;
         } else {
-        $idsalt = $resto;
-        }*/
-        $idsalt = 'id';
+            $idsalt = $resto;
+        }
         $now .= " (ID:" . $idhtml . substr(crypt(md5($_SERVER["REMOTE_ADDR"] . 'id' . date("Ymd", $time)), $idsalt), +3) . "</span>)";
     }
 }

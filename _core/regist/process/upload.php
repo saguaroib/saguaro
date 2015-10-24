@@ -47,9 +47,8 @@ if ($resto) {
     global $mysql;
     $resto = (int) $resto;
     $result = $mysql->fetch_array("SELECT * FROM " . SQLLOG . " WHERE no=$resto");
-    if ($result["locked"] == '1' && !valid('moderator'))
+    if ($result["locked"] == '1' && !valid('moderator')) 
         error(S_THREADLOCKED, $upfile);
-     mysql_free_result($query);
 }
 
 ?>

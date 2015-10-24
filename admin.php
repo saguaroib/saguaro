@@ -52,7 +52,9 @@ function postinfo($no)
         $dat .= "<tr><td class='postblock'>Special:</td><td class='row2'>This thread is $special</td></tr>"; //lmoa
     }
     if (!valid('moderator')) //Hide IPs from janitors
-        $host = '###.###.###.###';        
+        $host = '###.###.###.###';       
+    if ($host == '')
+        $host = "No IP in database";
     $dat .= "<tr><td class='postblock'>Name:</td><td class='row1'>$name</td></tr>
   <tr><td class='postblock'>Date:</td><td class='row2' />$now</td></tr>
   <tr><td class='postblock'>IP:</td><td class='row1' /><b>$host</b></td></tr><br>
