@@ -55,7 +55,7 @@ class Login {
                 $this->doLogin($_POST['usernm'], $_POST['passwd']); 
                 echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
             }                
-            //die("</body></html>");
+            die("</body></html>");
         }
         return $temp;
     }

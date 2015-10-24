@@ -2,7 +2,7 @@
 
 class DelTable {
     
-    function displayTable() {
+    function displayTable($onlyimgdel) {
         $delno   = array(
                  dummy
            );
@@ -22,7 +22,7 @@ class DelTable {
 
                 while ($row = mysql_fetch_row($result)) {
                 list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto) = $row;
-                    if ($onlyimgdel == on) {
+                    if ($onlyimgdel == 'on') {
                         delete_post($no, $pwd, 1, 1, 1, 0);
                     } else {
                         if (array_search($no, $delno)) { //It is empty when deleting
@@ -66,9 +66,11 @@ class DelTable {
 
 
             // Deletion screen display
+            $temp .= "<form action='" . PHP_ASELF . "' method='post' id='delForm'>
+    <input type=hidden name=admin value=del checked>";
             $temp .=  "<input type=hidden name=mode value=admin>";
             $temp .=  "<input type=hidden name=admin value=del>";
-            $temp .=  "<input type=hidden name=pass value=\"$pass\">";
+            $temp .=  "<input type=hidden name=pass value='$pass'>";
             $temp .=  "<div class='managerBanner'>" . S_DELLIST . "</div>";
             $temp .=  "<div class='delbuttons'><input type=submit value='" . S_ITDELETES . "'>";
             $temp .=  "<input type=reset value='" . S_MDRESET . "'>";

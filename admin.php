@@ -32,8 +32,7 @@ function aform(&$post, $resno, $admin = "")
 {
     require_once(CORE_DIR . "/postform.php");
     $postform = new PostForm;
-    $post .= "<div id='adminForm' style='display:none; align:center;' />" . $postform->format($resno, $admin) . "</div><form action='" . PHP_ASELF . "' method='post'>
-    <input type=hidden name=admin value=del checked>";
+    $post .= "<div id='adminForm' style='display:none; align:center;' />" . $postform->format($resno, $admin) . "</div>";
     echo $post;
 }
 
@@ -49,7 +48,7 @@ function admindel($pass)
     global $path, $onlyimgdel;
     require_once(CORE_DIR . "/admin/postInfo.php");
     $list = new DelTable;
-    $list->displayTable();
+    $list->displayTable($onlyimgdel);
 }
 
 function valid($action = 'moderator', $no = 0)
@@ -92,7 +91,6 @@ switch ($_GET['mode']) {
     case 'ban':
 		echo head();
         require_once(CORE_DIR . "/admin/banish.php");
-
 		$banish = new Banish;
 		if ($banish->checkBan($_SERVER['REMOTE_ADDR'])) {
 			$banish->postOptions($no, $_SERVER['REMOTE_ADDR'], $_POST['banlength'], $_POST['banType'], $_POST['perma'], $_POST['pubreason'], $_POST['staffnote'], $_POST['custmess'], $_POST['showbanmess'], $_POST['afterban']);
@@ -122,8 +120,8 @@ switch ($_GET['mode']) {
         break;
     default:
         require_once(CORE_DIR . "/admin/login.php");
-        $good = new Login;
-        $good->auth($pass);
+        $login = new Login;
+        $login->auth($pass);
         aform($post, $res, 1);
         admindel($pass);
         die("</body></html>");
