@@ -130,7 +130,7 @@ function aform(&$post, $resno, $admin = "")
     require_once(CORE_DIR . "/postform.php");
 
     $postform = new PostForm;
-    $post .= $postform->format($resno, $admin);
+    $post .= "<div id='adminForm' style='display:none; align:center;' />" . $postform->format($resno, $admin) . "</div>";
 }
 
 function login($usernm, $passwd)
@@ -170,26 +170,27 @@ function oldvalid($pass)
 
     if (valid('janitor_board')) {
         echo head();
-        echo "[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]\n";
-        echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]\n";
+        echo "<div class='pannelOps' />[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]";
+        echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]";
         if (valid('moderator')) {
-            echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=rebuild\">Rebuild</a>]\n";
-            echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=rebuildall\">Rebuild all</a>]\n";
-            echo "[<a href=\"" . PHP_ASELF_ABS . "?mode=reports\">" . $active . "</a>]\n";
+            echo "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' >Rebuild</a>]";
+            echo "[<a href='" . PHP_ASELF_ABS . "?mode=rebuildall' >Rebuild all</a>]";
+            echo "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $active . "</a>]";
         }
-        echo "[<a href=\"" . PHP_ASELF . "?mode=logout\">" . S_LOGOUT . "</a>]\n";
-        echo "<div class=\"passvalid\">" . S_MANAMODE . "</div>\n";
+        echo "[<a href='" . PHP_ASELF . "?mode=logout'>" . S_LOGOUT . "</a>]";
+        echo "<div class='managerBanner' >" . S_MANAMODE . "</div><br>
+        [ <a href='#' onclick=\"toggle_visibility('adminForm');\" style='text-align:center;' >Toggle postform</a> ]</div><br>";
         //echo "<form action='" . PHP_SELF . "' method='post' id='contrib' >";
     }
 
     // Mana login form
     if (!valid('janitor_board')) {
-        echo "<p><form action=\"" . PHP_ASELF . "\" method=\"post\">\n";
-        echo "<div class=\passvalid\" align=\"center\" vertical-align=\"middle\" >";
-        echo "<input type=hidden name=mode value=admin>\n";
-        echo "<input type=text name=usernm size=20><br />";
-        echo "<input type=password name=passwd size=20><br />";
-        echo "<input type=submit value=\"" . S_MANASUB . "\"></form></div>\n";
+        echo "<p><form action='" . PHP_ASELF . "' method='post'>";
+        echo "<div align='center' vertical-align=\"middle\" >";
+        echo "<input type='hidden' name=mode value=admin>";
+        echo "<input type='text' name=usernm size=20><br />";
+        echo "<input type='password' name=passwd size=20><br />";
+        echo "<input type=submit value=\"" . S_MANASUB . "\"></form></div>";
         if (isset($_POST['usernm']) && isset($_POST['passwd']))
             login($_POST['usernm'], $_POST['passwd']);
         die("</body></html>");
@@ -263,17 +264,17 @@ function admindel($pass)
 
 
     // Deletion screen display
-    echo "<input type=hidden name=mode value=admin>\n";
-    echo "<input type=hidden name=admin value=del>\n";
-    echo "<input type=hidden name=pass value=\"$pass\">\n";
-    echo "<div class=\"dellist\">" . S_DELLIST . "</div>\n";
-    echo "<div class=\"delbuttons\"><input type=submit value=\"" . S_ITDELETES . "\">";
-    echo "<input type=reset value=\"" . S_MDRESET . "\">";
+    echo "<input type=hidden name=mode value=admin>";
+    echo "<input type=hidden name=admin value=del>";
+    echo "<input type=hidden name=pass value=\"$pass\">";
+    echo "<div class='managerBanner'>" . S_DELLIST . "</div>";
+    echo "<div class='delbuttons'><input type=submit value='" . S_ITDELETES . "'>";
+    echo "<input type=reset value='" . S_MDRESET . "'>";
     echo "[<input type=checkbox name=onlyimgdel value=on><!--checked-->" . S_MDONLYPIC . "]</div>";
-    echo "<table class=\"postlists\">\n";
-    echo "<tr class=\"managehead\">" . S_MDTABLE1;
+    echo "<table class='postlists'>";
+    echo "<tr class='postTable head'>" . S_MDTABLE1;
     echo S_MDTABLE2;
-    echo "</tr>\n";
+    echo "</tr>";
 
     if (!$result = mysql_call("select * from " . SQLLOG . " order by no desc")) {
         echo S_SQLFAIL;
@@ -347,10 +348,10 @@ function admindel($pass)
     }
     mysql_free_result($result);
 
-    echo "<br /><br /><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
+    echo "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
     //foot($dat);
     $all = (int) ($all / 1024);
-    echo "[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]";
+    echo "<div align='center'/>[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]</div>";
     die("</body></html>");
 }
 

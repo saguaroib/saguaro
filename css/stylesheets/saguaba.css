@@ -51,7 +51,7 @@ hr {
 .linkBar {
     text-align: right;
 }
-.logo {
+.boardBanner {
     font-family: Tahoma, sans-serif;
     font-size: 28px;
     font-weight: bold;
@@ -69,7 +69,7 @@ hr {
     font-weight: 700;
     width: 100%;
 }
-.headsub {
+.boardSubtitle {
     color: #666666;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
@@ -124,7 +124,7 @@ hr {
     font-size: 12px;
     font-family: Arial, Helvetica, sans-serif;
 }
-.passvalid {
+.managerBanner {
     background: #EEAA88;
     text-align: center;
     width: 100%;
@@ -137,7 +137,7 @@ hr {
     text-align: center;
     padding-bottom: 4px;
 }
-.managehead {
+.postTable.head {
     background: #AF0A0F;
     color: #FFFFEE;
     font-family: Arial, Helvetica, sans-serif;

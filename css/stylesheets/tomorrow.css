@@ -51,7 +51,7 @@ hr {
 .linkBar {
     text-align: right;
 }
-.logo {
+.boardBanner {
     font-family: Tahoma, sans-serif;
     font-size: 28px;
     font-weight: bold;
@@ -62,15 +62,15 @@ hr {
     text-align: center;
     color: inherit;
 }
+.boardSubtitle {
+    color: inherit;
+    text-align: center;
+}
 .theader {
     text-align: center;
     background-color: #C5C8C6;
     color: black;
     font-weight: 700;
-}
-.headsub {
-    color: inherit;
-    text-align: center;
 }
 .globalNews.desktop {
     align-items: center;
@@ -116,7 +116,7 @@ hr {
     font-size: 12px;
     font-family: Arial, Helvetica, sans-serif;
 }
-.passvalid {
+.managerBanner {
     background: #FF0000;
     text-align: center;
     width: 100%;
@@ -130,7 +130,7 @@ hr {
     text-align: center;
     padding-bottom: 4px;
 }
-.managehead {
+.postTable.head {
     background: #595959;
     color: #FFFFEE;
     font-family: Arial, Helvetica, sans-serif;

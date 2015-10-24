@@ -7,10 +7,6 @@ body {
 form {
     margin: 0px 0px 0px 0px;
 }
-.headsub {
-    color: grey;
-    text-align: center;
-}
 .linkBar {
     text-align: right;
 }
@@ -34,7 +30,7 @@ hr {
     border-top: 1px solid #B7C5D9;
     height: 0;
 }
-.logo {
+.boardBanner {
     font-family: Tahoma, sans-serif;
     font-size: 28px;
     font-weight: bold;
@@ -44,6 +40,10 @@ hr {
     clear: both;
     text-align: center;
     color: #AF0A0F;
+}
+.boardSubtitle {
+    color: grey;
+    text-align: center;
 }
 .theader {
     text-align: center;
@@ -90,7 +90,7 @@ hr {
     font-size: 12px;
     font-family: inherit;
 }
-.passvalid {
+.managerBanner {
     background: #9988EE;
     text-align: center;
     width: 100%;
@@ -103,7 +103,7 @@ hr {
     text-align: center;
     padding-bottom: 4px;
 }
-.managehead {
+.postTable.head {
     background: #0F8FE1;
     color: #000000;
     font-family: inherit;

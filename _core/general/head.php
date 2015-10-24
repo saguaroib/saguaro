@@ -17,10 +17,10 @@ class Head {
         $headSub = '';
         
         if (SHOWTITLETXT > 0) {
-            $boardTitle = TITLE . $headSub;
-            $headSub .= '<div class="headsub">' . S_HEADSUB . '</div><hr>';           
+            $boardTitle = "<div class='boardTitle'/>" . TITLE . "</div>" . $headSub;
+            $headSub .= '<div class="boardSubtitle">' . S_HEADSUB . '</div><hr>';           
             if (SHOWTITLETXT == 2)  //you cannot stop me repod i am invincible 
-                $boardTitle = '/' . BOARD_DIR . '/ - ' . TITLE;
+                $boardTitle ="<div class='boardTitle'/>/" . BOARD_DIR . "/ - " . TITLE . "</div>";
         }      
         $bannerImg .= (SHOWTITLEIMG) ? '<img class="bannerImg" src="' . TITLEIMG . '" onclick="this.src=this.src;" alt="' . TITLE . '" /><br>' : '';
 
@@ -72,7 +72,7 @@ class Head {
         $dat .= EXTRA_SHIT . '</head><body class="is_index"><div class="beforePostform" />' . $titlebar . '
                 <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : ''). '</div>
                 <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
-                </span><div class="logo">' . $bannerImg . $boardTitle . '</div>' . $headSub . '
+                </span><div class="boardBanner">' . $bannerImg . $boardTitle . '</div>' . $headSub . '
                 <a href="#top" /></a>';
 
         if (USE_ADS1) {
