@@ -153,7 +153,8 @@ if (DISP_ID) {
     //$rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
     //$color = '#'.$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)];
     $color  = "inherit"; // Until unique IDs between threads get sorted out
-    $idhtml = "<span class='posteruid' id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
+    //Leave these quotes escaped for mysql
+    $idhtml = "<span class=\"posteruid\" id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
     mysql_real_escape_string($idhtml);
 
     if ($email && DISP_ID == 1) {
