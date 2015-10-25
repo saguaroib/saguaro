@@ -37,7 +37,7 @@ class DeletePost extends Log {
             $this->update(0, 1); // update the index page last
     }
 
-    function targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1) {
+    function targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $allbyip = 0, $delhost = '') {
         global $path;
 
         $this->update_cache();
@@ -47,7 +47,7 @@ class DeletePost extends Log {
         // get post info
         if (!isset($log[$resno])) {
             if ($die)
-                return error("Can't find the post $resno.");
+                echo "Can't find the post $resno.";
         }
         $row       = $log[$resno];
         // check password- if not ok, check admin status (and set $admindel if allowed)
@@ -83,7 +83,9 @@ class DeletePost extends Log {
             $row['filename'] = mysql_real_escape_string($row['filename']);
             mysql_call("INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . BOARD_DIR . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')");
         }
-        if ($row['resto'] == 0 && $children && !$imgonly) // select thread and children
+        if ($allbyip && $delhost !== '') 
+            $result = mysql_call("select no,resto,tim,ext from " . SQLLOG . " where host='" . $delhost . "'");
+        if ($row['resto'] == 0 && $children && !$imgonly && !$allbyip) // select thread and children
             $result = mysql_call("select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno");
         else // just select the post
             $result = mysql_call("select no,resto,tim,ext from " . SQLLOG . " where no=$resno");

@@ -6,7 +6,7 @@ Eventually rewrite this.
 
 */
 
-
+$host = $_SERVER['REMOTE_ADDR'];
 
 $upfile_name = $_FILES["upfile"]["name"];
 $upfile = $_FILES["upfile"]["tmp_name"];
@@ -31,7 +31,7 @@ if (valid('moderator')) {
         $moderator = 3;
 }
 
-if (valid('moderator')) {
+if ($moderator) {
     if (isset($_POST['isSticky']))
         $stickied = 1;
     if (isset($_POST['isLocked']))
