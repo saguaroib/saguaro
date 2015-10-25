@@ -10,7 +10,14 @@
 */
 
 class Head {
-    public $extracss = [];
+    public $info = [ //These are the defaults used unless specified otherwise.
+        'page' => [
+            'title' => ''
+        ],
+        'css' => [
+            'extra' => []
+        ]
+    ];
 
     function generate() {
         $dat = '';
@@ -19,7 +26,7 @@ class Head {
         $headSub = '';
 
         if (SHOWTITLETXT > 0) {
-            $boardTitle = "<div class='boardTitle'/>" . TITLE . "</div>" . $headSub;
+            $boardTitle = "<div class='boardTitle'>" . TITLE . "</div>" . $headSub;
             $headSub .= '<div class="boardSubtitle">' . S_HEADSUB . '</div><hr>';
             if (SHOWTITLETXT == 2)  //you cannot stop me repod i am invincible
                 $boardTitle ="<div class='boardTitle'/>/" . BOARD_DIR . "/ - " . TITLE . "</div>";
@@ -37,11 +44,11 @@ class Head {
                 <meta http-equiv='expires' content='Tue, 01 Jan 1980 1:00:00 GMT' />
                 <meta http-equiv='pragma' content='no-cache' />
                 <link rel='shortcut icon' href='" . CSS_PATH . "/imgs/favicon.ico'>
-                <title>$title</title>";
+                <title>" .  $this->info['page']['title'] ."</title>";
 
         if (NSFW) {
             $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
-            <link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/mobile.css' title='mobile' />
+                <link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/mobile.css' title='mobile' />
                 <link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />";
         } else {
             $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />
@@ -51,7 +58,7 @@ class Head {
         //<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS4 . "' title='Burichan'/> RIP Burichan 1862-2015
         $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";
 
-        foreach($this->extracss as $css) {
+        foreach($this->info['css']['extra'] as $css) {
             $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "$css'/>";
         }
 

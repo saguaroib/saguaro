@@ -25,8 +25,9 @@ class Catalog {
 
         $head = new Head;
         $foot = new Footer;
-        
-        $head->extracss = ["stylesheets/catalog.css"];
+
+        $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . " - Catalog";
+        array_push($head->info['css']['extra'], "stylesheets/catalog.css");
 
         return $head->generate() . $this->format() . $foot->format();
     }
