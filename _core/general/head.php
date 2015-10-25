@@ -10,18 +10,20 @@
 */
 
 class Head {
+    public $extracss = [];
+
     function generate() {
         $dat = '';
         $boardTitle = '';
         $bannerImg = '';
         $headSub = '';
-        
+
         if (SHOWTITLETXT > 0) {
             $boardTitle = "<div class='boardTitle'/>" . TITLE . "</div>" . $headSub;
-            $headSub .= '<div class="boardSubtitle">' . S_HEADSUB . '</div><hr>';           
-            if (SHOWTITLETXT == 2)  //you cannot stop me repod i am invincible 
+            $headSub .= '<div class="boardSubtitle">' . S_HEADSUB . '</div><hr>';
+            if (SHOWTITLETXT == 2)  //you cannot stop me repod i am invincible
                 $boardTitle ="<div class='boardTitle'/>/" . BOARD_DIR . "/ - " . TITLE . "</div>";
-        }      
+        }
         $bannerImg .= (SHOWTITLEIMG) ? '<img class="bannerImg" src="' . TITLEIMG . '" onclick="this.src=this.src;" alt="' . TITLE . '" /><br>' : '';
 
         /* begin page content */
@@ -36,7 +38,7 @@ class Head {
                 <meta http-equiv='pragma' content='no-cache' />
                 <link rel='shortcut icon' href='" . CSS_PATH . "/imgs/favicon.ico'>
                 <title>$title</title>";
-        
+
         if (NSFW) {
             $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
             <link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/mobile.css' title='mobile' />
@@ -46,9 +48,14 @@ class Head {
             <link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/mobile.css' title='mobile' />
             <link class='togglesheet' rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />";
         }
-       //<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS4 . "' title='Burichan'/> RIP Burichan 1862-2015
-       $dat  .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />
-                <script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
+        //<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS4 . "' title='Burichan'/> RIP Burichan 1862-2015
+        $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";
+
+        foreach($this->extracss as $css) {
+            $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "$css'/>";
+        }
+
+        $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/styleswitch.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>";
 
@@ -79,7 +86,7 @@ class Head {
             $dat .= ADS1 . '<hr>';
         }
         $dat .= "</div>";
-        
+
         return $dat;
     }
 }

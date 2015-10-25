@@ -5,6 +5,12 @@
 
     The class you didn't know you wanted.
     Don't try this at home.
+    
+    case 'catalog':
+        require_once(CORE_DIR . "/catalog/catalog.php");
+        $catalog = new Catalog;
+        echo $catalog->formatPage();
+        break;
 
 */
 
@@ -13,9 +19,23 @@ require("post.php");
 class Catalog {
     private $data = [];
 
-    function format() {
-        global $log;
+    function formatPage() {
+        require_once(CORE_DIR . "/general/head.php");
+        require_once(CORE_DIR . "/general/foot.php");
 
+        $head = new Head;
+        $foot = new Footer;
+        
+        $head->extracss = ["stylesheets/catalog.css"];
+
+        return $head->generate() . $this->format() . $foot->format();
+    }
+
+    function format() {
+        global $my_log;
+
+        $my_log->update_cache();
+        $log = $my_log->cache;
         $temp = "";
 
         $this->parseOPs();
@@ -32,13 +52,13 @@ class Catalog {
 
         return $temp;
     }
-    function sortOPs($method) {
+    function sortOPs(/*$method = null*/) {
         /*
             Might not need this later if we change to a cached jQuery environment.
             Does not sage/autosage into consideration.
         */
 
-        $method = ($method) ? $method : "last"; //Default to "last".
+        $method = "last"; //($method) ? $method : "last"; //Default to "last".
 
         //Scope please. Why can't I just $method!
         function last_compare($a, $b) {
@@ -62,7 +82,8 @@ class Catalog {
         return $post->format($input,$stats);
     }
     private function parseOPs() {
-        global $log;
+        global $my_log;
+        $log = $my_log->cache;
 
         //Pick out OPs.
         foreach ($log as $entry) {
@@ -76,7 +97,8 @@ class Catalog {
         }
     }
     private function parseReplies() {
-        global $log;
+        global $my_log;
+        $log = $my_log->cache;
 
         //Assign reply stats.
         foreach ($log as $entry) {
