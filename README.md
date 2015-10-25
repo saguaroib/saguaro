@@ -10,8 +10,8 @@ This has been cobbled together from stuff I myself have written and the contribu
 
 #Why use Saguaro?
 Saguaro sports many competitive features not commonly found in other imageboard software:
-- Mobile browser support
-- Read only JSON API
+~~- Mobile browser support~~ Soon.
+~~- Read only JSON API~~ SOON.
 - A modular & customizable jQuery suite
 
 #Installation Dependencies 
