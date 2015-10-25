@@ -23,7 +23,7 @@ class Log {
         require_once(CORE_DIR . "/postform.php");
         require_once(CORE_DIR . "/general/head.php");
         $postform = new PostForm;
-        $head = new Head; $head = $head->generate();
+        $head = new Head;
 
         global $log, $path;
         $this->update_cache();
@@ -66,7 +66,7 @@ class Log {
         if (!$counttree) {
             $logfilename = PHP_SELF2;
             
-            $dat = $head;
+            $dat = $head->generate();
             $dat .= $postform->format($resno);
             $this->print_page($logfilename, $dat);
         }
@@ -113,7 +113,8 @@ class Log {
         }
 
         for ($page = 0; $page < $counttree; $page += PAGE_DEF) {
-            $dat = $head;
+            $head->info['page']['title'] = "/" . BOARD_DIR . "/" . (($resno && !empty($log[$resno]['sub'])) ? " - " . $log[$resno]['sub'] : '') . " - " . TITLE;
+            $dat = $head->generate();
             $dat .= $postform->format($resno);
             if (!$resno) {
                 $st = $page;
