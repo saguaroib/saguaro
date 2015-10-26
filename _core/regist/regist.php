@@ -6,7 +6,7 @@ Eventually rewrite this.
 
 */
 
-
+$host = $_SERVER['REMOTE_ADDR'];
 
 $upfile_name = $_FILES["upfile"]["name"];
 $upfile = $_FILES["upfile"]["tmp_name"];
@@ -31,7 +31,7 @@ if (valid('moderator')) {
         $moderator = 3;
 }
 
-if (valid('moderator')) {
+if ($moderator) {
     if (isset($_POST['isSticky']))
         $stickied = 1;
     if (isset($_POST['isLocked']))
@@ -153,7 +153,8 @@ if (DISP_ID) {
     //$rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
     //$color = '#'.$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)];
     $color  = "inherit"; // Until unique IDs between threads get sorted out
-    $idhtml = "<span class='posteruid' id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
+    //Leave these quotes escaped for mysql
+    $idhtml = "<span class=\"posteruid\" id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
     mysql_real_escape_string($idhtml);
 
     if ($email && DISP_ID == 1) {

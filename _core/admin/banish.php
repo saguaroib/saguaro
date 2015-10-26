@@ -43,7 +43,14 @@ class Banish
 		//$banish->applyBan($no, $ip, $length, $banType, $pubreason, $staffnote, $custmess);
 		
 		if ( $afterban !== 'none' ) {
-			//delete shit
+            require_once(CORE_DIR . '/admin/delpost.php');
+            $del = new DeletePost;
+			if ($afterban == 'delpost')
+                $del->targeted($no, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1);
+			if ($afterban == 'delallbyip')
+                $del->targeted($no, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1, $allbyip = 1, $ip);
+			if ($afterban == 'delimgonly')
+                $del->targeted($no, $pwd, $imgonly = 1, $automatic = 1, $children = 0, $die = 1);
 		}
 			
 	//}

@@ -139,7 +139,7 @@ class Report {
     echo "<div class=\"delbuttons\"><input type=submit value=\"" . S_ITDELETES . "\">";
     echo "<input type=reset value=\"" . S_MDRESET . "\">";
     echo "<table class=\"postlists\">\n";
-    echo "<tr class=\"managehead\"><th>Delete Post</th><th>Clear Report</th><th>Post Number</th><th>Image</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
+    echo "<tr class=\"postTable head\"><th>Delete Post</th><th>Clear Report</th><th>Post Number</th><th>Image</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
     echo "</tr>\n";
 	
     while ( $row = mysql_fetch_row( $active ) ) {
