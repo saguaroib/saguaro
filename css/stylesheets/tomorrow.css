@@ -1,3 +1,6 @@
+@import url("mobile.css") (max-width: 480px);
+
+
 body {
     background: #1D1F22;
     font-size: 10pt;

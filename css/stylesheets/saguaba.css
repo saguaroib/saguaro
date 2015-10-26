@@ -1,3 +1,6 @@
+@import url("mobile.css") (max-width: 480px);
+
+
 body {
     background: #FFFFEE url(/imgs/fade.png) top center repeat-x;
     font-size: 10pt;
