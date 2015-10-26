@@ -19,22 +19,22 @@ class Modify {
                 break;
             case 'lock':
                 $sqlValue = "locked";
-                $sqlBool  = "'1'";
+                $sqlBool  = "'1', root=root ";
                 $verb     = "Locked";
                 break;
             case 'unlock':
                 $sqlValue = "locked";
-                $sqlBool  = "'0'";
+                $sqlBool  = "'0', root=root ";
                 $verb     = "Unlocked";
                 break;
             case 'permasage':
                 $sqlValue = "permasage";
-                $sqlBool  = "'1'";
+                $sqlBool  = "'1', root=root ";
                 $verb     = "Autosaging";
                 break;
             case 'nopermasage':
                 $sqlValue = "permasage";
-                $sqlBool  = "'0'";
+                $sqlBool  = "'0', root=root ";
                 $verb     = "Normally bumping";
                 break;
             case 'delete':
