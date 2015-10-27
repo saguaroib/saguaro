@@ -19,17 +19,13 @@ require("post.php");
 class Catalog {
     private $data = [];
 
-    function formatPage() {
-        require_once(CORE_DIR . "/general/head.php");
-        require_once(CORE_DIR . "/general/foot.php");
-
-        $head = new Head;
-        $foot = new Footer;
-
-        $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . " - Catalog";
-        array_push($head->info['css']['extra'], "stylesheets/catalog.css");
-
-        return $head->generate() . $this->format() . $foot->format();
+    function formatPage() {     
+        require_once(CORE_DIR . "/page/page.php");
+        $page = new Page;
+        $page->headVars['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . " - Catalog";
+        array_push($page->headVars['css']['extra'], "stylesheets/catalog.css");
+        
+        return $page->generate($this->format());
     }
 
     function format() {
