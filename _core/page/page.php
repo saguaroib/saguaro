@@ -23,7 +23,7 @@ class Page {
     }
     
     function head() {
-        require_once(CORE_DIR . "/general/head.php");
+        require_once("head.php");
         $head = new Head;
         $head->info = $this->headVars;
         
@@ -31,7 +31,7 @@ class Page {
     }
     
     function foot() {
-        require_once(CORE_DIR . "/general/foot.php");
+        require_once("foot.php");
         
         return Footer::format();
     }
