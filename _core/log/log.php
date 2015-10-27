@@ -23,7 +23,7 @@ class Log {
         global $path;
 
         require_once(CORE_DIR . "/postform.php");
-        require_once(CORE_DIR . "/general/head.php");
+        require_once(CORE_DIR . "/page/head.php");
         $postform = new PostForm;
         $head = new Head;
 
@@ -234,7 +234,7 @@ class Log {
             }
             //end delete
 
-            require_once(CORE_DIR . "/general/foot.php");
+            require_once(CORE_DIR . "/page/foot.php");
             $foot = new Footer;
 
             $dat .= $foot->format();
@@ -358,7 +358,7 @@ class Log {
 
     function generate($type, $no, $inIndex = false) {
         require_once(CORE_DIR . "/postform.php");
-        require_once(CORE_DIR . "/general/head.php");
+        require_once(CORE_DIR . "/page/head.php");
         $head = new Head; $head = $head->generate();
 
         $dat = $head . '<form name= "delform" action="' . PHP_SELF_ABS . '" method="post">';
