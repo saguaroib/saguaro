@@ -4,8 +4,6 @@
 
     Page generation class.
 
-    Eventually move Head and Footer class into this folder.
-
 */
 
 class Page {
