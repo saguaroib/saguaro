@@ -20,13 +20,14 @@ class Log {
     private $thread_cache = [];
 
     function update($resno = 0, $rebuild = 0) {
+        global $log, $path;
+
         require_once(CORE_DIR . "/postform.php");
         require_once(CORE_DIR . "/general/head.php");
         $postform = new PostForm;
         $head = new Head;
 
-        global $log, $path;
-        $this->update_cache();
+        if (empty($this->cache)) $this->update_cache(); //Muh speed increase (for when the function calls itself). Otherwise call Log->update_cache() manually.
 
         $find = false;
         $resno = (int) $resno;
@@ -65,9 +66,8 @@ class Log {
         //$counttree=mysql_num_rows($treeline);
         if (!$counttree) {
             $logfilename = PHP_SELF2;
-            
-            $dat = $head->generate();
-            $dat .= $postform->format($resno);
+            $dat = $head->generate() . $postform->format($resno);
+
             $this->print_page($logfilename, $dat);
         }
 
@@ -270,7 +270,7 @@ class Log {
         //This currently does nothing as nothing ever calls it with true.
         //if ($invalidate == 0 && !empty($this->cache)) { return; }
 
-        global $log, $ipcount, $mysql_unbuffered_reads, $lastno;
+        global $ipcount, $mysql_unbuffered_reads, $lastno;
 
         $ips = [];
         $threads = []; // no's
@@ -403,7 +403,6 @@ class Log {
 
     function generate_all() {
         if (empty($this->cache)) $this->update_cache();
-        global $log;
 
         $profile = microtime(); //Basic profiling.
         for ($page = 1; $page <= ceil(count($this->cache['THREADS']) / PAGE_DEF); $page++) {

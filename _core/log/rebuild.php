@@ -54,11 +54,8 @@ function rebuildqueue_take_all() {
 }
 
 function rebuild($all = 0) {
-    global $mysql;
+    global $mysql, $my_log;
 
-    //global $my_log;
-    require_once("log.php");
-    $my_log = new Log;
     if (!valid('moderator'))
         die('Update failed...');
 
@@ -70,8 +67,6 @@ function rebuild($all = 0) {
     if (!$treeline = $mysql->query("select no,resto from " . SQLLOG . " where root>0 order by root desc")) {
         echo S_SQLFAIL;
     }
-
-    $my_log->update_cache();
 
     echo "Writing...\n";
     if ($all || !defined('CACHE_TTL')) {
