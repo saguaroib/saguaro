@@ -33,7 +33,6 @@ form {
 a {
     color: #0000EE;
     text-decoration: none;
-    font-family: Arial, Helvetica, sans-serif;
 }
 a:visited {
     color: #0000EE;
@@ -43,7 +42,6 @@ a:visited {
 a:hover {
     color: #DD0000;
     text-decoration: underline;
-    font-family: Arial, Helvetica, sans-serif;
 }
 hr {
     border: none;
@@ -74,7 +72,6 @@ hr {
 .boardSubtitle {
     color: #666666;
     text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
 }
 .globalNews.desktop {
     align-items: center;
@@ -124,7 +121,6 @@ hr {
 .footer {
     text-align: center;
     font-size: 12px;
-    font-family: Arial, Helvetica, sans-serif;
 }
 .managerBanner {
     background: #EEAA88;
@@ -142,7 +138,6 @@ hr {
 .postTable.head {
     background: #AF0A0F;
     color: #FFFFEE;
-    font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     padding: 0px;
 }
@@ -154,13 +149,11 @@ hr {
 }
 .row1 {
     background: #EEAA88;
-    font-family: Arial, Helvetica, sans-serif;
     font-size: 10pt;
     color: #800000;
 }
 .row2 {
     background: #FFFFFF;
-    font-family: Arial, Helvetica, sans-serif;
     font-size: 10pt;
     color: #800000;
 }
@@ -170,7 +163,6 @@ hr {
 }
 .filesize {
     font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
 }
 .subject {
@@ -196,7 +188,6 @@ hr {
 }
 .oldpost {
     font-size: 8pt;
-    font-family: Arial, Helvetica, sans-serif;
     padding-left: 20px;
 }
 .summary {
@@ -207,7 +198,6 @@ hr {
 .reply {
     background: rgba(240,224,214,0.85);/*#F0E0D6*/
     color: #800000;
-    font-family: Arial, Helvetica, sans-serif;
     display: table;
     padding: 2px;
 }
@@ -226,7 +216,6 @@ hr {
 }
 .thumbnailmsg {
     font-size: 9px;
-    font-family: Arial, Helvetica, sans-serif;
     color: #800000;
     padding-left: 20px;
 }
@@ -273,8 +262,7 @@ img.postimg {
     position: absolute;
     background-color: lightyellow;
     padding: 5px;
-    /*right: -1000px;*/
-    
+    /*right: -1000px;*/    
     border: 1px dashed gray;
     visibility: hidden;
     color: black;

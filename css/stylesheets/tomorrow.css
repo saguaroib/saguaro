@@ -1,11 +1,10 @@
 @import url("mobile.css") (max-width: 480px);
 
-
 body {
     background: #1D1F22;
     font-size: 10pt;
     color: #C5C8C6;
-    font-family: Arial, Helvetica, sans-serif;
+
 }
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px white inset;
@@ -34,7 +33,6 @@ form {
 a {
     color: #C5C8C6;
     text-decoration: none;
-    font-family: Arial, Helvetica, sans-serif;
 }
 a:visited {
     color: inherit;
@@ -44,7 +42,6 @@ a:visited {
 a:hover {
     color: inherit;
     text-decoration: underline;
-    font-family: Arial, Helvetica, sans-serif;
 }
 hr {
     border: none;
@@ -117,7 +114,7 @@ hr {
 .footer {
     text-align: center;
     font-size: 12px;
-    font-family: Arial, Helvetica, sans-serif;
+
 }
 .managerBanner {
     background: #FF0000;
@@ -136,7 +133,6 @@ hr {
 .postTable.head {
     background: #595959;
     color: #FFFFEE;
-    font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     padding: 0px;
 }
@@ -147,13 +143,11 @@ hr {
 }
 th {} .row1 {
     background: #A6A6A6;
-    font-family: Arial, Helvetica, sans-serif;
     font-size: 10pt;
     color: #000000;
 }
 .row2 {
     background: #F9F9F9;
-    font-family: Arial, Helvetica, sans-serif;
     font-size: 10pt;
     color: #000000;
 }
@@ -163,7 +157,6 @@ th {} .row1 {
 }
 .filesize {
     font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
 }
 .subject {
@@ -189,7 +182,6 @@ th {} .row1 {
 }
 .oldpost {
     font-size: 8pt;
-    font-family: Arial, Helvetica, sans-serif;
     padding-left: 20px;
 }
 .summary {
@@ -200,7 +192,6 @@ th {} .row1 {
 .reply {
     background: rgba(40,42,46,0.85); /*#282A2E;*/ 
     color: inherit;
-    font-family: Arial, Helvetica, sans-serif;
     display: table;
     padding: 2px;
 }
@@ -263,32 +254,26 @@ img.postimg {
     border: 1px solid blue;
 }
 .thumbnail span {
-    /*CSS for enlarged image*/
-    
+    /*CSS for enlarged image*/ 
     position: absolute;
     background-color: lightyellow;
     padding: 5px;
     /*right: -1000px;*/
-    
     border: 1px dashed gray;
     visibility: hidden;
     color: black;
     text-decoration: none;
 }
 .thumbnail span img {
-    /*CSS for enlarged image*/
-    
+    /*CSS for enlarged image*/ 
     border-width: 0;
     padding: 2px;
 }
 .thumbnail:hover span {
-    /*CSS for enlarged image*/
-    
+    /*CSS for enlarged image*/  
     visibility: visible;
-    /*top: 0;*/
-    
+    /*top: 0;*/  
     right: 230px;
     /*position where enlarged image should offset horizontally */
-    
     z-index: 50;
 }

@@ -243,11 +243,11 @@ if (!$sub)
 
 if ($moderator && isset($_POST['showCap'])) {
     if ($moderator == 1)
-        $name = '<div class="cap moderator" />' . $name . ' ## Mod </div>';
+        $name = '<span class="cap moderator" >' . $name . ' ## Mod </span>';
     if ($moderator == 2)
-        $name = '<div class="cap admin" />' . $name . ' ## Admin </div>';
+        $name = '<span class="cap admin" >' . $name . ' ## Admin </span>';
     if ($moderator == 3)
-        $name = '<div class="cap manager" />' . $name . ' ## Manager  </div>';
+        $name = '<span class="cap manager" >' . $name . ' ## Manager  </span>';
 }
 
 if (FORCED_ANON == 1) {
