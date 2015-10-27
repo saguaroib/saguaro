@@ -21,8 +21,9 @@ class Index {
     public $thread_cache = [];
 
     public function format($page_no = 1 ,$counttree = 0) {
-        global $log;
-
+        global $my_log;
+        $my_log->update_cache();
+        
         $page_no = (is_numeric($page_no) && $page_no > 0) ? $page_no : 1; //Short circuits when.
         if ($page_no > PAGE_MAX) $page_no = PAGE_MAX;
         $temp = "";
@@ -91,7 +92,6 @@ class Index {
     }
 
     private function formatRange($page_no) {
-        global $log;
         $temp = [];
         $min = ($page_no - 1) * PAGE_DEF;
         $max = $page_no * PAGE_DEF;
@@ -120,7 +120,8 @@ class Index {
         return $temp->format($resno);
     }
     private function parseOPs() {
-        global $log;
+        global $my_log;
+        $log = $my_log->cache();
 
         //Pick out OPs.
         foreach ($log as $entry) {
@@ -135,7 +136,8 @@ class Index {
         }
     }
     private function parseReplies() {
-        global $log;
+        global $my_log;
+        $log = $my_log->cache();
 
         //Assign reply stats.
         foreach ($log as $entry) {

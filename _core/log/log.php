@@ -20,7 +20,7 @@ class Log {
     private $thread_cache = [];
 
     function update($resno = 0, $rebuild = 0) {
-        global $log, $path;
+        global $path;
 
         require_once(CORE_DIR . "/postform.php");
         require_once(CORE_DIR . "/general/head.php");

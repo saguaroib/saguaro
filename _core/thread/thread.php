@@ -22,7 +22,9 @@ class Thread {
     public $inIndex = false;
 
     function format($op) {
-        global $log;
+        global $my_log;
+        $my_log->update_cache();
+        $log = $my_log->cache;
 
         $temp = $this->generateOP($log[$op]);
         $temp .= $this->generateReplies($op);
@@ -39,7 +41,8 @@ class Thread {
     }
 
     function generateReplies($op) {
-        global $log;
+        global $my_log;
+        $log = $my_log->cache;
 
         //Identify replies.
         $temp = "";
