@@ -51,16 +51,16 @@ class Image {
 
             if ($spoiler) {
                 $size   = "Spoiler Image, $size";
-                $imgsrc = "<br><a href='$displaysrc' target='_blank'><img src='" . CSS_PATH . "/imgs/spoiler.png' border='0' align='left' hspace='20' alt='{$size}B' md5='$shortmd5'></a>";
+                $imgsrc = "<a href='$displaysrc' target='_blank'><img src='" . CSS_PATH . "/imgs/spoiler.png' border='0' align='left' hspace='20' alt='{$size}B' md5='$shortmd5'></a>";
             } elseif ($tn_w && $tn_h) { //when there is size...
                 if (@is_file(THUMB_DIR . $tim . 's.jpg')) {
-                    $imgsrc = "<br><a href='" . $displaysrc . "' target='_blank'><img class='postimg' src='" . $thumbdir . $tim . 's.jpg' . "' style='margin: 0px 20px;' width='$tn_w' height='$tn_h'' alt='" . $size . "B' md5='$shortmd5'></a>";
+                    $imgsrc = "<a href='" . $displaysrc . "' target='_blank'><img class='postimg' src='" . $thumbdir . $tim . 's.jpg' . "' style='margin: 0px 20px;' width='$tn_w' height='$tn_h'' alt='" . $size . "B' md5='$shortmd5'></a>";
                 } else {
                     $imgsrc = "<a href='$displaysrc' target='_blank'><span class='tn_thread' title='{$size}B'>Thumbnail unavailable</span></a>";
                 }
             } else {
                 if (@is_file(THUMB_DIR . $tim . 's.jpg')) {
-                    $imgsrc = "<br><a href='$displaysrc' target='_blank'><img class='postimg' src='" . $thumbdir . $tim . 's.jpg' . "' style='margin: 0px 20px;' alt='{$size}B' md5='$shortmd5'></a>";
+                    $imgsrc = "<a href='$displaysrc' target='_blank'><img class='postimg' src='" . $thumbdir . $tim . 's.jpg' . "' style='margin: 0px 20px;' alt='{$size}B' md5='$shortmd5'></a>";
                 } else {
                     $imgsrc = "<a href='$displaysrc' target='_blank'><span class='tn_thread' title='{$size}B'>Thumbnail unavailable</span></a>";
                 }
@@ -73,9 +73,9 @@ class Image {
                 $name = ($this->inIndex) ? $shortname : $longname;
                 $temp = "<div class='file'><span class='filesize'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$name</a> ({$size}B, $dimensions)</span>";
 
-                if (!$this->inIndex) //, <span title='" . $longname . "'>" . $shortname . "</span>)
-                    $temp .= "$imgsrc</div>";
-                else
+ /*               if (!$this->inIndex) //, <span title='" . $longname . "'>" . $shortname . "</span>)
+                    $temp .= "</div><div class='fileThumb'>$imgsrc</div>";  //If something is wrong with images, this should be the first thing you check.
+                else*/
                     $temp .= "</div><div class='fileThumb'>$imgsrc</div>";
 
                 return $temp;
