@@ -18,12 +18,13 @@ if (!function_exists(mysql_call)) {
 require_once(CORE_DIR . "/log/log.php");
 $my_log = new Log;
 
-extract($_POST);
+extract($_POST, EXTR_SKIP);
 
 //Display head.
 function head() {
-    require_once(CORE_DIR . "/general/head.php");
+    require_once(CORE_DIR . "/page/head.php");
     $head = new Head;
+    $head->info['page']['title'] = "/" . BOARD_DIR . "/ - Management Panel";
     return $head->generate();
 }
 
