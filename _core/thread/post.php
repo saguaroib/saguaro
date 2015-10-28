@@ -21,8 +21,8 @@ class Post {
         $image->inIndex = $this->inIndex;
         $temp .= $image->format($this->data);
         
-        $temp .= "<div class='postInfoM mobile' id='pim$no'/><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' />$now  <a href='#$no' class='quotejs' >No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a></span></div>";
-        $temp .= "<div class='postInfo desktop'><input type=checkbox name='$no' value=delete><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' />$now</span>";
+        $temp .= "<div class='postInfoM mobile' id='pim$no'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now  <a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a></span></div>";
+        $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span>";
 
         $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky"> ' : "";
 
@@ -58,8 +58,8 @@ class Post {
         $temp .= "<div class='postContainer replyContainer' id='pc$no'/>";
         $temp .= "<div class='sideArrows' id='sa$no'>&gt;&gt;</div><div id='$no' class='post reply'>";
         
-        $temp .= "<div class='postInfoM mobile' id='pim$no'/><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' />$now  <a href='#$no' class='quotejs' >No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a><span></div>";
-        $temp .= "<div class='postInfo desktop'><input type=checkbox name='$no' value=delete><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' />$now</span> ";
+        $temp .= "<div class='postInfoM mobile' id='pim$no'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now  <a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a><span></div>";
+        $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span> ";
 
         if (!$this->inIndex) {
             $temp .= "<a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a></span></div>";
