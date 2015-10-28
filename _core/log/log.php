@@ -408,7 +408,7 @@ class Log {
         for ($page = 1; $page <= ceil(count($this->cache['THREADS']) / PAGE_DEF); $page++) {
             //Generate Index pages.
             $temp = $this->generate("index", $page);
-            $logfilename = ($page == 1) ? PHP_SELF2 : $page . PHP_EXT;
+            $logfilename = ($page == 1) ? PHP_SELF2 : ($page - 1). PHP_EXT;
 
             echo "Writing out Index $page ($logfilename)... ";
             $this->print_page($logfilename , $temp);
