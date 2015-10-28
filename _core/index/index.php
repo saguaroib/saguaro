@@ -22,7 +22,7 @@ class Index {
 
     public function format($page_no = 1 ,$counttree = 0, $cacheThreads = false) {
         global $my_log;
-        $my_log->update_cache();
+        $my_log->update_cache(true);
 
         $page_no = (is_numeric($page_no) && $page_no > 0) ? $page_no : 1; //Short circuits when.
         if ($page_no > PAGE_MAX) $page_no = PAGE_MAX;
