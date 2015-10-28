@@ -121,7 +121,7 @@ class Index {
     }
     private function parseOPs() {
         global $my_log;
-        $log = $my_log->cache();
+        $log = $my_log->cache;
 
         //Pick out OPs.
         foreach ($log as $entry) {
@@ -137,7 +137,7 @@ class Index {
     }
     private function parseReplies() {
         global $my_log;
-        $log = $my_log->cache();
+        $log = $my_log->cache;
 
         //Assign reply stats.
         foreach ($log as $entry) {
