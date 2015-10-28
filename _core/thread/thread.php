@@ -21,13 +21,14 @@ require("post.php");
 class Thread {
     public $inIndex = false;
 
-    function format($op) {
+    function format($op, $foot = false) {
         global $my_log;
         $my_log->update_cache();
         $log = $my_log->cache;
 
         $temp = $this->generateOP($log[$op]);
         $temp .= $this->generateReplies($op);
+        if ($foot) $temp .= "</span><br clear='left'><hr>[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$op" . PHP_EXT . "#top'>Top</a>]<hr>";
 
         return $temp;
     }

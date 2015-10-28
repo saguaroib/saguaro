@@ -393,7 +393,7 @@ class Log {
             $thread->inIndex = $inIndex;
             $thread = new Thread;
 
-            return $thread->format($no);
+            return $thread->format($no, true);
         }
     }
 
