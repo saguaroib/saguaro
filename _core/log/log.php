@@ -27,7 +27,7 @@ class Log {
         $postform = new PostForm;
         $head = new Head;
 
-        if (empty($this->cache)) $this->update_cache(); //Muh speed increase (for when the function calls itself). Otherwise call Log->update_cache() manually.
+        $this->update_cache(); //Muh speed increase (for when the function calls itself). Otherwise call Log->update_cache() manually.
 
         $find = false;
         $resno = (int) $resno;
@@ -263,12 +263,11 @@ class Log {
         return false;
     }
 
-    function update_cache(/*$invalidate = 0*/) {
+    function update_cache($auto = false) {
         //For porting purposes, the code was copied, formatted, and then just made to store the result in $this->cache.
         //However, it still needs to be rewritten.
 
-        //This currently does nothing as nothing ever calls it with true.
-        //if ($invalidate == 0 && !empty($this->cache)) { return; }
+        if ($auto == false && !empty($this->cache)) { return; } //Automatically exit if the cache isn't empty.
 
         global $ipcount, $mysql_unbuffered_reads, $lastno;
 
@@ -373,7 +372,7 @@ class Log {
     }
 
     function generate_index($no, $cacheThreads = false) {
-        if (empty($this->cache)) $this->update_cache();
+        $this->update_cache();
 
         require_once(CORE_DIR . "/index/index.php");
         $index = new Index;
@@ -385,7 +384,7 @@ class Log {
     }
 
     function generate_thread($no, $inIndex) {
-        if (empty($this->cache)) $this->update_cache();
+        $this->update_cache();
 
         if ($inIndex && $this->thread_cache[$no]) { //Use $this->thread_cache if we want to generate an inIndex thread and it already exists.
            return $this->thread_cache[$no];
@@ -399,7 +398,7 @@ class Log {
     }
 
     function generate_all() {
-        if (empty($this->cache)) $this->update_cache();
+        $this->update_cache();
 
         require_once(CORE_DIR . "/page/page.php");
         $pageC = new Page;
