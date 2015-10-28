@@ -365,9 +365,9 @@ class Log {
                 <input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="var o=document.getElementsByTagName(\'INPUT\');for(var i=0;i<o.length;i++)if(o[i].type==\'checkbox\' && o[i].checked && o[i].value==\'delete\') return reppop(\'' . PHP_SELF_ABS . '?mode=report&no=\'+o[i].name+\'\');"></tr></td></form><script>document.delform.pwd.value=l(' . SITE_ROOT . '_pass");</script></td></tr></table>';
 
         if ($type == "index") {
-            return $dat . PostForm::format() . $this->generate_index($no, $inIndex) . $foot;
+            return PostForm::format() . $dat . $this->generate_index($no, $inIndex) . $foot;
         } elseif ($type == "thread") {
-            return $dat . PostForm::format($no) . $this->generate_thread($no, $inIndex) . $foot;
+            return PostForm::format($no) . $dat . $this->generate_thread($no, $inIndex) . $foot;
         }
     }
 
