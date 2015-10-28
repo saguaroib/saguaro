@@ -23,7 +23,7 @@ class Index {
     public function format($page_no = 1 ,$counttree = 0) {
         global $my_log;
         $my_log->update_cache();
-        
+
         $page_no = (is_numeric($page_no) && $page_no > 0) ? $page_no : 1; //Short circuits when.
         if ($page_no > PAGE_MAX) $page_no = PAGE_MAX;
         $temp = "";
@@ -37,56 +37,47 @@ class Index {
             $temp .= $cache;
         }
 
-        $temp .= $this->foot($page_no, $counttree);
+        $temp .= $this->foot($page_no);
 
         return $temp;
     }
 
-    public function foot($st, $counttree) {
-        $dat = '';
-        $prev = $st - PAGE_DEF;
-        $next = $st + PAGE_DEF;
+    public function foot($st) {
+        global $my_log;
 
-        //  Page processing
+        $dat = '';
+        $currentpage = $st;
+        $totalpages = ceil(count($my_log->cache['THREADS']) / PAGE_DEF); //Hardcoded, is there a reason to make this configurable?
+
+        //Previous
         $dat .= '<table align="left" border="1" class="pages"><tr>';
-        if ($prev >= 0) {
-            if ($prev == 0) {
-                $dat .= '<form action="' . PHP_SELF2 . '" method="get" /><td>';
-            } else {
-                $dat .= '<form action="' . $prev / PAGE_DEF . PHP_EXT . '" method="get"><td>';
-            }
+        if ($currentpage > 1) {
+            $url = ($currentpage > 2) ? ($currentpage - 1) . PHP_EXT : PHP_SELF2;
+            $dat .= "<form action='$url' method='get'><td>";
             $dat .= '<input type="submit" value="' . S_PREV . '" />';
-            $dat .= "</td></form>";
+            $dat .= '</td></form>';
         } else {
             $dat .= "<td>" . S_FIRSTPG . "</td>";
         }
 
-        //Page listing.
+        //Page numbers
         $dat .= "<td>";
-        for ($i = 0; $i < $counttree; $i += PAGE_DEF) {
-            if ($i && !($i % (PAGE_DEF * 2))) {
-                $dat .= " ";
-            }
-            if ($st == $i) {
-                $dat .= "[" . ($i / PAGE_DEF) . "] ";
-            } else {
-                if ($i == 0) {
-                    $dat .= '[<a href="' . PHP_SELF2 . '">0</a>] ';
-                } else {
-                    $dat .= '[<a href="' . ($i / PAGE_DEF) . PHP_EXT . '">' . ($i / PAGE_DEF) . '</a>] ';
-                }
-            }
+        for ($page = 1; $page <= $totalpages; $page++) {
+            $temp = ($page == $currentpage) ? "<strong>$page</strong>" : $page;
+            $url = ($page > 1) ? ($page - 1) . PHP_EXT : PHP_SELF2;
+            $dat .= "[<a href='$url'>$temp</a>] ";
         }
         $dat .= "</td>";
 
-        if ($p >= PAGE_DEF && $counttree > $next) {
-            $dat .= '<td><form action="' . $next / PAGE_DEF . PHP_EXT . '" method="get">';
+        //Next
+        if ($currentpage < $totalpages) {
+            $dat .= "<td><form action='$currentpage" . PHP_EXT . "' method='get'>";
             $dat .= '<input type="submit" value="' . S_NEXT . '" />';
-            $dat .= "</form></td>";
+            $dat .= '</form></td>';
         } else {
             $dat .= "<td>" . S_LASTPG . "</td>";
         }
-        $dat .= "</tr></table><br clear='all' >\n";
+        $dat .= '</tr></table><br clear="all">';
 
         return $dat;
     }
