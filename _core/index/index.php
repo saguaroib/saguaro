@@ -20,7 +20,7 @@ class Index {
     private $data = [];
     public $thread_cache = [];
 
-    public function format($page_no = 1 ,$counttree = 0) {
+    public function format($page_no = 1 ,$counttree = 0, $cacheThreads = false) {
         global $my_log;
         $my_log->update_cache();
 
@@ -33,7 +33,7 @@ class Index {
         foreach ($this->data as $resno) {
             //Eventually remove display:table, disgusting.
             $cache = "<div style='display:table;clear:both;width:100%;'>" . $this->generateThread($resno["no"]) . "</div><hr>";
-            $this->thread_cache[$resno["no"]] = $cache; //Put in thread cache for use of parent classes (instead of regenerating threads).
+            if ($cacheThreads) $this->thread_cache[$resno["no"]] = $cache; //Put in thread cache for use of parent classes (instead of regenerating threads).
             $temp .= $cache;
         }
 
