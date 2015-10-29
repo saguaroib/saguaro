@@ -7,8 +7,7 @@ function CleanStr( $str ) {
     if ( get_magic_quotes_gpc() ) { //magic quotes is deleted (?)
         $str = stripslashes( $str );
     }
-    if ( $admin != PANEL_PASS ) { 
-        //What the hell is this even
+    if ( !valid('moderator') ) { //If not moderator+, disable html tags 
         $str = htmlspecialchars( $str ); //remove html special chars
         $str = str_replace( "&amp;", "&", $str ); //remove ampersands
     }
