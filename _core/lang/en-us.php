@@ -77,14 +77,14 @@ $S_NOTHREADERR = 'Error: Thread specified does not exist.';     //Returns error 
 $S_SCRCHANGE = 'Updating page.';                                //Defines message to be displayed when post is successful    
 $S_TOODAMNSMALL = 'Error: Image too small.';                    //Error for small images                                //
 $S_BADDELPASS = 'Error: Password incorrect.';                   //Returns error for wrong password (when user tries to delete file)
-$S_WRONGPASS = 'Error: Management password incorrect.';         //Returns error for wrong password (when trying to access Manager modes)
+$S_WRONGPASS = 'Error: Username or password invalid.';          //Returns error for wrong password (when trying to access Manager modes)
 $S_RETURNS = 'Return';                                          //Returns to HTML file instead of PHP--thus no log/SQLDB update occurs
 $S_LOGUPD = 'Update';                                           //Updates the log/SQLDB by accessing the PHP file
 $S_MANAMODE = "  [ <a href='#' onclick=\"toggle_visibility('adminForm');\" style='color:white;text-align:center;' >Toggle Admin Post Form</a> ]";                                   //Prints heading on top of Manager page
 $S_MANAREPDEL = 'Management Panel';                             //Defines Management Panel radio button--allows the user to view the management panel (overview of all posts)
 $S_MANAPOST = 'Manager Post';                                   //Defines Manager Post radio button--allows the user to post using HTML code in the comment box
 $S_MANASUB = 'Submit';                                          //Defines name for submit button in Manager Mode
-$S_DELLIST = 'Deletion Panel';                                //Prints sub-heading of Management Panel
+$S_DELLIST = 'Deletion Panel';                                  //Prints sub-heading of Management Panel
 $S_ITDELETES = 'Delete';                                        //Defines for deletion button in Management Panel
 $S_MDRESET = 'Reset';                                           //Defines name for field reset button in Management Panel
 $S_MDONLYPIC = 'File Only';                                     //Sets whether or not to delete only file, or entire post/thread
