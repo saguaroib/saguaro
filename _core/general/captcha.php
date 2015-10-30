@@ -18,6 +18,7 @@ class Captcha {
         if (RECAPTCHA) {
             return $this->validate_recaptcha();
         } else {
+            session_start();
             return $this->validate();
         }
     }
