@@ -1,6 +1,10 @@
 <?php
 
 class Login {
+    function error($in) {
+        //Currently error() isn't loaded anywhere in Admin's pipeline so we'll use this for now.
+        exit($in);
+    }
 
     function doLogin($usernm, $passwd) {
         $ip     = $_SERVER['REMOTE_ADDR'];
@@ -8,8 +12,8 @@ class Login {
         $passwd = mysql_real_escape_string($passwd);
 
         if (!$query = mysql_call("SELECT user,password FROM " . SQLMODSLOG . " WHERE user='$usernm' and password='$passwd'")) {
+            $this->error("aye lmao ".S_WRONGPASS);
             mysql_call("INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$usernm','$passwd','" . BOARD_DIR . "','$ip','1')");
-            error(S_WRONGPASS);
         }
 
         $hacky  = mysql_fetch_array($query);
@@ -21,7 +25,7 @@ class Login {
 
         return "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . " \">";
     }
-    
+
     function auth($pass) {
         /*    if ($pass && $pass != PANEL_PASS)
         error(S_WRONGPASS);*/
@@ -45,16 +49,34 @@ class Login {
            </div>";
             //echo "<form action='" . PHP_SELF . "' method='post' id='contrib' >";
         } else { // Admin.php login
-            echo  "<form action='" . PHP_ASELF . "' method='post'>";
-            echo "<div align='center' vertical-align=\"middle\" >";
-            //echo "<input type='hidden' name=mode value=login>";
-            echo "<input type='text' name=usernm size=20><br />";
-            echo "<input type='password' name=passwd size=20><br />";
-            echo "<input type=submit value=\"" . S_MANASUB . "\"></form></div>";
+            $temp = "" .
+                "<div align='center' vertical-align='middle'>" .
+                //echo "<input type='hidden' name=mode value=login>";
+            $temp = '<form action="' . PHP_ASELF . '" method="post"><table>' .
+                    '<tr><td>Username</td><td><input type="text" name="usernm"  style="width:100%" /></td></tr>'.
+                    '<tr><td>Password</td><td><input type="password" name="passwd" style="width:100%" /></td></tr>';
+
+            if (RECAPTCHA) {
+                $temp .= "<tr><td colspan='2'><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></td></tr>";
+            } else {
+                $temp .= "<tr><td><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td><input type='text' name='num' size='20' placeholder='Captcha'></td></tr>";
+            }
+
+            $temp .= "<tr><td colspan='2'><input type='submit' value='" . S_MANASUB . "'></td></tr></table>" .
+                    "<br></form></div>";
+
+            echo $temp;
+
             if (isset($_POST['usernm']) && isset($_POST['passwd'])) {
-                $this->doLogin($_POST['usernm'], $_POST['passwd']); 
+                require_once(CORE_DIR . '/general/captcha.php');
+                $captcha = new Captcha;
+
+                if ($captcha->isValid() !== true)
+                    $this->error(S_CAPFAIL);
+
+                $this->doLogin($_POST['usernm'], $_POST['passwd']);
                 echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";
-            }                
+            }
             die("</body></html>");
         }
         return $temp;
