@@ -17,14 +17,12 @@ $S_DELEXPL = ' (For file deletion)';               //Prints explanation for pass
 
 $temp = '<ul><li>Supported file types are: GIF, JPG, PNG</li>';
 
-if (GIF_ONLY)
-	$temp = '<ul><li>Supported file types are: GIF</li>';
-
+if (GIF_ONLY)	$temp = '<ul><li>Supported file types are: GIF</li>';
+if (USE_BBCODE) $temp2 = '<ul><li><b>BBCode</b> and <b>Markdown</b> are enabled for this board.';
 $S_RULES = $temp . 
             '<li>Maximum file size allowed is '.MAX_KB.' KB.</li>
             <li>Images greater than '.MAX_W.'x'.MAX_H.' pixels will be thumbnailed.</li>
-            <li>Images smaller than '.MIN_W.'x'.MIN_H.' pixels will be refused.</li>
-            </ul>';                                             //Prints rules under posting section
+            <li>Images smaller than '.MIN_W.'x'.MIN_H.' pixels will be refused.</li>' .$temp2 . '</ul>';                                             //Prints rules under posting section
 $S_REPORTERR = 'Error: Cannot find reply.';                     //Returns error when a reply (res) cannot be found
 $S_THUMB = '';                                                  //Prints instructions for viewing real source
 $S_PICNAME = 'File: ';                                         //Prints text before upload name/link
