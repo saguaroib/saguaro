@@ -12,7 +12,7 @@ class Image {
 
     function format($input) {
         global $spoiler;
-        extract($input);
+        @extract($input);
 
         $imgdir   = IMG_DIR;
         $thumbdir = DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR;

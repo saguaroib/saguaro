@@ -14,7 +14,7 @@ class Post {
     public $inIndex = false; //Until I feel like extending.
 
     function formatOP() {
-        extract($this->data);
+        @extract($this->data);
         $temp = "<div class='thread' id='t$no'/><div class='post op' id='p$no'/><div class='postContainer opContainer' id='pc$no'/>";
 
         $image = new Image;
