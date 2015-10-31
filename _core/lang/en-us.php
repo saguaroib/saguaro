@@ -16,7 +16,7 @@ $S_DELPASS = 'Password';                                        //Describes pass
 $S_DELEXPL = ' (For file deletion)';               //Prints explanation for password box (to the right)
 $temp = '<ul><li>Supported file types are: GIF, JPG, PNG</li>';
 if (GIF_ONLY)   $temp = '<ul><li>Supported file types are: GIF</li>';
-if (USE_BBCODE) $temp .= '<ul><li><b>BBCode</b> and <b>Markdown</b> are enabled for this board.';
+if (USE_BBCODE) $temp .= '<li><b>BBCode</b> and <b>Markdown</b> are enabled for this board.';
 $S_RULES = $temp . '<li>Maximum file size allowed is '.MAX_KB.' KB.</li>
             <li>Images greater than '.MAX_W.'x'.MAX_H.' pixels will be thumbnailed.</li>
             <li>Images smaller than '.MIN_W.'x'.MIN_H.' pixels will be refused.</li></ul>';                                             //Prints rules under posting section
