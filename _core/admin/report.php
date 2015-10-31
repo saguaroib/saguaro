@@ -57,6 +57,14 @@ class Report {
     }
     
     function report_submit( $board, $no, $type ) {
+		require_once(CORE_DIR . "/general/captcha.php");
+		$captcha = new Captcha;        
+        
+        $style = (NSFW) ? "saguaba" : "sagurichan";
+        
+        if ($captcha->isValid() !== true) {
+            die("<head><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/" . $style . ".css'/></head><body>
+        <center><font color=blue size=5>You did not solve the captcha correctly.</b></font><br><br>[<a href='" . PHP_SELF . "?mode=report&no=" . $no . "'>Try again?</a>]</center></body>");}
         //cat = 1: Rule violation
         //cat = 2: Illegal content
         //cat = 3: Advertising
@@ -83,8 +91,11 @@ class Report {
 	
     function form_report( $board, $no ) {
 		require_once(CORE_DIR . "/general/captcha.php");
-		
 		$captcha = new Captcha;
+        if (RECAPTCHA) 
+            $temp .= "<tr><td colspan='2'><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></td></tr>";
+        else 
+            $temp .= "<tr><td><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td><input type='text' name='num' size='20' placeholder='Captcha'></td></tr>";
 		//Taken from parley who probably took it from 4chan anyway. Yolo.
 		$this->form_head($no);
 		echo '
@@ -98,10 +109,9 @@ class Report {
 		<input type="radio" name="cat" value="3">Illegal content<br/>
 		<input type="radio" name="cat" value="1">Spam
 		</fieldset>
-		</td><td><img src="' . CORE_DIR . '/general/captcha.php"  alt="captcha img" />
+		</td><td>
 		</td>
-		<td>
-		<input name="num" size="28" maxlength="10" placeholder="Please solve the captcha" accesskey="c" type="text" required>
+		<td>' . $temp . '
 		</td></tr>
 		</table>
 		<table width="100%"><tr><td width="240px"></td><td>
