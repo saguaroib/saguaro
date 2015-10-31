@@ -35,7 +35,7 @@ $S_PREV = 'Previous';                                           //Defines previo
 $S_FIRSTPG = 'Previous';                                        //Defines previous button
 $S_NEXT = 'Next';                                               //Defines next button
 $S_LASTPG = 'Next';                                             //Defines next button
-$S_FOOT = '- <a href="http://www.2chan.net/" target="_blank">futaba</a> + <a href="http://1chan.net/futallaby/" target="_blank">futallaby</a> + <a href="http://saguaroimgboard.tk/" target="_blank">saguaro 0.98.3b4</a> -'; //Prints footer (leave these credits)
+$S_FOOT = '- <a href="http://www.2chan.net/" target="_blank">futaba</a> + <a href="http://1chan.net/futallaby/" target="_blank">futallaby</a> + <a href="http://saguaroimgboard.tk/" target="_blank">saguaro 1.3.10</a> -'; //Prints footer (leave these credits)
 $S_RELOAD = 'Return';                                           //Reloads the image board (refresh)
 $S_UPFAIL = 'Error: Upload failed.';                            //Returns error for failed upload (reason: unknown?)
 $S_NOREC = 'Error: Cannot find record.';                        //Returns error when record cannot be found
