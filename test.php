@@ -8,7 +8,7 @@
         Redirect back to page with a get to call it?
 */
 
-$autolock = true;
+$autolock = false;
 $lockout = "." . basename(__FILE__, ".php") . "_lockout";
 
 if (is_file($lockout)) {
@@ -264,7 +264,7 @@ if (is_file($lockout)) {
                     $tables = [
                         SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, sticky int, permasage int, locked int, root  timestamp, resto int, board text",
                         SQLBANLOG => "num INT(25) PRIMARY KEY AUTO_INCREMENT, ip VARCHAR(25), active INT(1),  placedon VARCHAR(25), expires VARCHAR(25), board VARCHAR(50), type VARCHAR (2), reason VARCHAR(500), staffnotes VARCHAR(500) ",
-                        SQLMODSLOG => "user VARCHAR(25) PRIMARY KEY, password VARCHAR(250), allowed VARCHAR(250), denied VARCHAR(250), public_salt VARCHAR(256)",
+                        SQLMODSLOG => "user VARCHAR(25), password VARCHAR(250), public_salt VARCHAR(256), allowed VARCHAR(250), denied VARCHAR(250), PRIMARY KEY (user), UNIQUE KEY (user)",
                         SQLDELLOG => "postno VARCHAR(250) PRIMARY KEY, imgonly VARCHAR(25), board VARCHAR(250), name VARCHAR(250), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . "), img VARCHAR(250), filename VARCHAR(250), admin VARCHAR(100)", //Why does S_POSTLENGTH start with S_?
                         "reports" => "num VARCHAR(250) PRIMARY KEY, no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ip VARCHAR(250)",
                         "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)",
@@ -297,7 +297,7 @@ if (is_file($lockout)) {
                             //$pass = ($autolock === true) ? "<span class='spoiler'>" . $account['pass'] . "</span>" : "";
                             echo "<strong>" . $account['name'] . "</strong> $pass (<span class='info' title='Privileges'>" . $account['priv'] . "</span> / <span class='info' title='Denied'>" . $account['deny'] . "</span>) ";
 
-                            $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied, public_salt) VALUES ('{$account['name']}', '{$password['hash']}', '{$account['priv']}', '{$account['deny']}', '{$password['public_salt']}')");
+                            $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, public_salt, allowed, denied) VALUES ('{$account['name']}', '{$password['hash']}', '{$password['public_salt']}', '{$account['priv']}', '{$account['deny']}')");
                             $unfail = (mysqli_errno($mysqli) == 1062) ? "<span class='fail'>ALREADY EXISTS</span><br>" : $fail;
                             echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $unfail;
                         }
