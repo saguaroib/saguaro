@@ -36,7 +36,7 @@ class SaguaroMySQL extends SaguaroQL {
             if (DEBUG_MODE) {
                 echo "Error #" . mysql_error() . " on query: " . $string . "<br>";
             } else {
-                echo "MySQL error!<br>";
+                //echo "MySQL error!<br>";
             }
         }
         return $ret;
