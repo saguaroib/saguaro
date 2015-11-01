@@ -7,34 +7,40 @@ class Login {
     }
 
     function doLogin($usernm, $passwd) {
-        require_once(CORE_DIR . '/crypt/legacy.php');
-
         global $mysql;
-        $crypt = new SaguaroCryptLegacy;
-        $ip     = $_SERVER['REMOTE_ADDR'];
-        $usernm = mysql_real_escape_string($usernm);
 
+        $usernm = mysql_real_escape_string($usernm);
         $check = $mysql->fetch_assoc("SELECT user,password,public_salt FROM " . SQLMODSLOG . " WHERE user='$usernm'");
 
         if ($check === false) {
             //Username does not exist.
-            $passwd = mysql_real_escape_string($passwd);
-            mysql_call("INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$usernm','$passwd','" . BOARD_DIR . "','$ip','1')");
+            $this->storeBad($usernm, $passwd);
             $this->error(S_WRONGPASS);
         } else {
             //Username exists, hash given password and compare.
+            require_once(CORE_DIR . '/crypt/legacy.php');
+            $crypt = new SaguaroCryptLegacy;
+
             if (!$crypt->compare_hash($passwd, $check['password'], $check['public_salt'])) {
+                $this->storeBad($usernm, $passwd);
                 $this->error(S_WRONGPASS);
             } else {
-                $usernm = $check['user'];
-                $passwd = $check['password'];
-
-                setcookie('saguaro_auser', $usernm, 0);
-                setcookie('saguaro_apass', $passwd, 0);
+                setcookie('saguaro_auser', $check['user'], 0);
+                setcookie('saguaro_apass', $check['password'], 0);
             }
         }
 
-        return "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . " \">";
+        return "<META HTTP-EQUIV='refresh' content='0;URL=" . PHP_ASELF_ABS . " '>";
+    }
+
+    private function storeBad($user, $pass) {
+        global $mysql;
+
+        $user = mysql_real_escape_string($user);
+        $pass = mysql_real_escape_string($pass);
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        $mysql->query("INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$user','$pass','" . BOARD_DIR . "','$ip','1')");
     }
 
     function auth($pass) {
