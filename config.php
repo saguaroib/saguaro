@@ -206,7 +206,9 @@ $badfile = ["dummy", "dummy2"]; //Refused files (md5 hashes). Currently unused b
 
 include(CORE_DIR . "/lang/language.php");
 
-/*ini_set('display_errors',1);
-error_reporting(E_ALL & ~E_NOTICE);*/
+if (DEBUG_MODE == 1) {
+    ini_set('display_errors',1);
+    error_reporting(E_ALL & ~E_NOTICE);
+}
 
 ?>
