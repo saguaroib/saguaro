@@ -93,11 +93,11 @@ class SaguaroCryptLegacy {
         return [
             'CRYPT_SHA512' => [
                     'available' => (bool) CRYPT_SHA512,
-                    'form' => '$6$rounds=120000$PJSALT$'
+                    'form' => '$6$rounds=240000$PJSALT$'
                 ],
             'CRYPT_SHA256' => [
                     'available' => (bool) CRYPT_SHA256,
-                    'form' => '$5$rounds=120000$PJSALT$'
+                    'form' => '$5$rounds=240000$PJSALT$'
                 ],
             'CRYPT_BLOWFISH' => [
                     'available' => (bool) CRYPT_BLOWFISH,
