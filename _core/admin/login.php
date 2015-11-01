@@ -7,21 +7,32 @@ class Login {
     }
 
     function doLogin($usernm, $passwd) {
+        require_once(CORE_DIR . '/crypt/legacy.php');
+
+        global $mysql;
+        $crypt = new SaguaroCryptLegacy;
         $ip     = $_SERVER['REMOTE_ADDR'];
         $usernm = mysql_real_escape_string($usernm);
-        $passwd = mysql_real_escape_string($passwd);
 
-        if (!$query = mysql_call("SELECT user,password FROM " . SQLMODSLOG . " WHERE user='$usernm' and password='$passwd'")) {
-            $this->error("aye lmao ".S_WRONGPASS);
+        $check = $mysql->fetch_assoc("SELECT user,password,public_salt FROM " . SQLMODSLOG . " WHERE user='$usernm'");
+
+        if ($check === false) {
+            //Username does not exist.
+            $passwd = mysql_real_escape_string($passwd);
             mysql_call("INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$usernm','$passwd','" . BOARD_DIR . "','$ip','1')");
+            $this->error(S_WRONGPASS);
+        } else {
+            //Username exists, hash given password and compare.
+            if (!$crypt->compare_hash($passwd, $check['password'], $check['public_salt'])) {
+                $this->error(S_WRONGPASS);
+            } else {
+                $usernm = $check['user'];
+                $passwd = $check['password'];
+
+                setcookie('saguaro_auser', $usernm, 0);
+                setcookie('saguaro_apass', $passwd, 0);
+            }
         }
-
-        $hacky  = mysql_fetch_array($query);
-        $usernm = $hacky[0];
-        $passwd = $hacky[1];
-
-        setcookie('saguaro_auser', $usernm, 0);
-        setcookie('saguaro_apass', $passwd, 0);
 
         return "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . " \">";
     }
@@ -56,10 +67,12 @@ class Login {
                     '<tr><td>Username</td><td><input type="text" name="usernm"  style="width:100%" /></td></tr>'.
                     '<tr><td>Password</td><td><input type="password" name="passwd" style="width:100%" /></td></tr>';
 
-            if (RECAPTCHA) {
-                $temp .= "<tr><td colspan='2'><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></td></tr>";
-            } else {
-                $temp .= "<tr><td><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td><input type='text' name='num' size='20' placeholder='Captcha'></td></tr>";
+            if (SECURE_LOGIN) {
+                if (RECAPTCHA) {
+                    $temp .= "<tr><td colspan='2'><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></td></tr>";
+                } else {
+                    $temp .= "<tr><td><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td><input type='text' name='num' size='20' placeholder='Captcha'></td></tr>";
+                }
             }
 
             $temp .= "<tr><td colspan='2'><input type='submit' value='" . S_MANASUB . "'></td></tr></table>" .
@@ -68,11 +81,13 @@ class Login {
             echo $temp;
 
             if (isset($_POST['usernm']) && isset($_POST['passwd'])) {
-                require_once(CORE_DIR . '/general/captcha.php');
-                $captcha = new Captcha;
+                if (SECURE_LOGIN) {
+                    require_once(CORE_DIR . '/general/captcha.php');
+                    $captcha = new Captcha;
 
-                if ($captcha->isValid() !== true)
-                    $this->error(S_CAPFAIL);
+                    if ($captcha->isValid() !== true)
+                        $this->error(S_CAPFAIL);
+                }
 
                 $this->doLogin($_POST['usernm'], $_POST['passwd']);
                 echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_ASELF_ABS . "\">";

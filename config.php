@@ -21,12 +21,14 @@ define(SQLHOST, 'localhost');
 define(SQLDB, 'saguaro');   //Database used by image board.
 define(PREFIX, 'imgboard'); //Prefix to automatically use for the database tables.
 
+
+
 /*
     Something descriptive.
 */
 
 define(PANEL_PASS, 'CHANGEME');  //Janitor password  (CHANGE THIS YO)
-define(SITE_ROOT, 'MYSITE.COM'); //simplified site domain ONLY, EX: saguaro.org
+define(SITE_ROOT, 'mysite.com'); //simplified site domain ONLY, EX: saguaro.org
 define(SITE_SUFFIX, '');         //Domain suffix, ex: org, com, info, net. NO DOTS, ONLY LETTERS
 define(BOARDLIST, '');           //the text file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
 define(GLOBAL_NEWS, 'CHANGEME'); //Absolute html path to your global board news file, the contents of this file will be automatically
@@ -35,15 +37,17 @@ define(SALTFILE, 'salt');        //Name of the salt file, do not add a file exte
 //Basic settings
 define(NSFW_BOARD, false);    //Whether or not this is a NSFW(Red/Saguaba or blue/Sagurichan) board. Also affects mobile theme.
 define(SHOWTITLETXT, true);   //Show TITLE at top. False: hide title, True: display title (Setting this to 2 will show "/{your BOARD_DIR value}/ - {Your TITLE value}"
-define(SHOWTITLEIMG, false);      //Show image at top
+define(SHOWTITLEIMG, false);  //Show image at top
 define(TITLEIMG, '');         //Title image (point to an img rotating script if you want rotating banners)
 define(DATE_FORMAT, 'm/d/y'); //Formatting for the date in each post, see http://php.net/manual/en/function.date.php for different options
+
 
 /*
     Specialized board settings - a board with specific purpose
 */
 
 define(GIF_ONLY, false); //GIF upload only imageboard.
+
 
 /*
     Posting, threads, and images.
@@ -82,9 +86,9 @@ define(S_OMITT_NUM, 5);     //number of posts to display in each thread on the i
 
 //Captcha
 define(BOTCHECK, false);    //Use CAPTCHAs
-define(RECAPTCHA, false);   //Use reCaptcha instead of the default captcha. Requires the SITEKEY and SECRET to be set below.
-define(RECAPTCHA_SITEKEY, "");//reCaptcha public key.
-define(RECAPTCHA_SECRET, "");//reCaptcha secret key.
+define(RECAPTCHA, TRUE); //Use reCaptcha instead of the default captcha. Requires the SITEKEY and SECRET to be set below.
+define(RECAPTCHA_SITEKEY, "6LcP0Q0TAAAAAM4fwFHpj_v5Vipqdyq68EIuKHwF");//reCaptcha public key.
+define(RECAPTCHA_SECRET, "6LcP0Q0TAAAAAIDvwraDbiPIQD28DfDTvbIHalLZ");//reCaptcha secret key.
 
 //Images
 define(DUPE_CHECK, true); //whether or not to check for duplicate images
@@ -129,6 +133,16 @@ define(USE_ADS2, 0);                            //Use advertisements (below post
 define(ADS2, '<center>ads ads ads</center>');   //advertisement code (below post form)
 define(USE_ADS3, 0);                            //Use advertisements (bottom) (1: yes  0: no)
 define(ADS3, '<center>ads ads ads</center>');   //advertisement code (bottom)
+
+
+
+/*
+    Security settings.
+
+    The defaults here are recommended.
+*/
+
+define(SECURE_LOGIN, true); //Enable CAPTCHA on staff login page.
 
 
 

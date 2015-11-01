@@ -8,7 +8,7 @@
         Redirect back to page with a get to call it?
 */
 
-$autolock = true;
+$autolock = false;
 $lockout = "." . basename(__FILE__, ".php") . "_lockout";
 
 if (is_file($lockout)) {
@@ -55,7 +55,6 @@ if (is_file($lockout)) {
 
     $log .= "<br>";
 
-    $config_file_good = false;
     $mysql_good = false;
     $owner = "<strong>" . get_current_user() ."</strong>";
     $user = "<strong>" . posix_getpwuid(posix_geteuid())['name'] . "</strong>";
@@ -65,20 +64,20 @@ if (is_file($lockout)) {
 
     echo "<div class='box' id='title'>Saguaro Testing and Installation Utility</div>";
 
-    //Check to see if $config_file was included properly.
-    include($config_file);
+    //Check to see if $config_file and others were included properly.
+    $loaded = [];
+    $loaded['config'] = (bool) include($config_file);
+    $loaded['crypt'] = (bool) include(CORE_DIR . "/crypt/legacy.php");
     $loga = "<strong>\"$config_file\"</strong> from the same directory $mydir failed to be included properly, some tests may fail.<br>";
-    foreach (get_included_files() as $val) {
-        if (strrpos($val, $config_file)) {
-            $loga = "Successfully loaded <strong>\"$config_file\"</strong> from the same directory. $mydir<br>";
-            $config_file_good = true;
-        }
-    }
+    if ($loaded['config'])
+        $loga = "Successfully loaded <strong>\"$config_file\"</strong> from the same directory. $mydir<br>";
+        $loaded['config'] = true;
+
     $log .= $loga;
 
     echo "<div class='box' id='log'>$log</div>";
     if ($mode == 'uninstall') {
-        if ($config_file_good == true) {
+        if ($loaded['config'] == true) {
             $mysqli = new mysqli(SQLHOST, SQLUSER, SQLPASS);
 
             echo "<div class='box'>";
@@ -164,10 +163,73 @@ if (is_file($lockout)) {
             echo $temp;
         }
 
-        echo "</div><div class='box extra' id='mysql'>";
+        echo "</div>";
+        
+        echo "<div class='box extra' id='dirs'>";
+        //Create working directories.
+        if (!$loaded['config']) {
+            echo "Config was not loaded, cannot validate install files.";
+        } else {
+            $folders = [RES_DIR, IMG_DIR, THUMB_DIR];
+
+            foreach ($folders as $dir) {
+                $fdir = "<strong>$dir</strong>";
+
+                if (!is_dir($dir)) {
+                    echo "$fdir does not exist, creating... ";
+                    $status = mkdir($dir);
+                    echo ($status) ? $success : $fail;
+                } else {
+                    echo "$fdir already exists.<br>";
+                }
+
+                $perms = substr(sprintf('%o', fileperms($dir)), -4);
+
+                if ($perms !== "0777") {
+                    echo "Changing $fdir permissions from $perms to 0777... ";
+                    $status = chmod($dir, 0777);
+                    echo ($status) ? $success : $fail;
+                } else {
+                    echo "$fdir has the right permissions (0777).<br>";
+                }
+
+                clearstatcache();
+            }
+            
+            if (!is_dir(CORE_DIR)) {
+                echo "<strong>" . CORE_DIR . "</strong> does not exist or could not be located relative to $mydir. $fail";
+            } else {
+                echo "<strong>" . CORE_DIR . "</strong> exists.<br>";
+            }
+        }
+
+        //Create working files.
+        if (!$loaded['config']) {
+            echo 'Config was not loaded, cannot create working files.';
+        } else {
+            echo "<br>";
+
+            if (!defined(BOARDLIST) && BOARDLIST !== '') {
+                $bl = '<strong>BOARDLIST</strong> (' . BOARDLIST . ')';
+                $url = rawurlencode(BOARDLIST);
+
+                if (file_exists(BOARDLIST)) {
+                    echo "<a href='$url' target='_blank'>$bl</a> already exists, skipping.<br>";
+                } else {
+                    echo "Creating $bl... ";
+                    $test = file_put_contents(BOARDLIST, "[<a href='/a' />a</a> / <a href='/b' />b</a> / <a href='/c' />c</a>]");
+                    echo ($test > 0) ? "<a href='$url' target='_blank'>$success</a>" : $fail;
+                }
+            } else {
+                echo "<strong>BOARDLIST</strong> was empty or undefined, skipping.<br>";
+            }
+        }
+        }
+        echo "</div>";
 
         //Create MySQL database and tables.
-        if (!$config_file_good) {
+        echo "<div class='box extra' id='mysql'>";
+        if (!$loaded['config']) {
             echo "Config was not loaded, cannot initialize MySQL data.";
         } else {
             if (!$mysql_good) {
@@ -202,7 +264,7 @@ if (is_file($lockout)) {
                     $tables = [
                         SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, sticky int, permasage int, locked int, root  timestamp, resto int, board text",
                         SQLBANLOG => "num INT(25) PRIMARY KEY AUTO_INCREMENT, ip VARCHAR(25), active INT(1),  placedon VARCHAR(25), expires VARCHAR(25), board VARCHAR(50), type VARCHAR (2), reason VARCHAR(500), staffnotes VARCHAR(500) ",
-                        SQLMODSLOG => "user VARCHAR(25) PRIMARY KEY, password  VARCHAR(250), allowed  VARCHAR(250), denied  VARCHAR(250)",
+                        SQLMODSLOG => "user VARCHAR(25) PRIMARY KEY, password VARCHAR(250), allowed VARCHAR(250), denied VARCHAR(250), public_salt VARCHAR(256)",
                         SQLDELLOG => "postno VARCHAR(250) PRIMARY KEY, imgonly VARCHAR(25), board VARCHAR(250), name VARCHAR(250), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . "), img VARCHAR(250), filename VARCHAR(250), admin VARCHAR(100)", //Why does S_POSTLENGTH start with S_?
                         "reports" => "num VARCHAR(250) PRIMARY KEY, no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ip VARCHAR(250)",
                         "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)",
@@ -225,15 +287,22 @@ if (is_file($lockout)) {
                         mysqli_free_result($q);
                     }
 
-                    echo "<br>Creating default accounts:<br>";
+                    if ($loaded['crypt']) {
+                        $crypt = new SaguaroCryptLegacy;
+                        echo "<br>Creating default accounts:<br>";
 
-                    foreach ($defaults as $account) {
-                        $pass = ($autolock === true) ? "<span class='spoiler'>" . $account['pass'] . "</span>" : "";
-                        echo "<strong>" . $account['name'] . "</strong> $pass (<span class='info' title='Privileges'>" . $account['priv'] . "</span> / <span class='info' title='Denied'>" . $account['deny'] . "</span>) ";
-                        $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied) VALUES ('" . $account['name'] . "', '" . $account['pass'] . "', '" . $account['priv'] . "', '" . $account['deny'] . "')");
+                        foreach ($defaults as $account) {
+                            $password = $crypt->generate_hash($account['pass']); //Generate password hash and public salt with SaguaroCrypt.
 
-                        $unfail = (mysqli_errno($mysqli) == 1062) ? "<span class='fail'>ALREADY EXISTS</span><br>" : $fail;
-                        echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $unfail;
+                            //$pass = ($autolock === true) ? "<span class='spoiler'>" . $account['pass'] . "</span>" : "";
+                            echo "<strong>" . $account['name'] . "</strong> $pass (<span class='info' title='Privileges'>" . $account['priv'] . "</span> / <span class='info' title='Denied'>" . $account['deny'] . "</span>) ";
+
+                            $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, allowed, denied, public_salt) VALUES ('{$account['name']}', '{$password['hash']}', '{$account['priv']}', '{$account['deny']}', '{$password['public_salt']}')");
+                            $unfail = (mysqli_errno($mysqli) == 1062) ? "<span class='fail'>ALREADY EXISTS</span><br>" : $fail;
+                            echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $unfail;
+                        }
+                    } else {
+                        echo "<br><strong class='info' title='" . CORE_DIR ."/crypt/legacy.php'>SaguaroCrypt</strong> was not loaded, cannot create default accounts. <span class='info' title='SaguaroCrypt is used to encrypt passwords in the database.' style='font-style:italic;'>Why?</span>";
                     }
 
                 }
@@ -243,72 +312,11 @@ if (is_file($lockout)) {
         }
 
         echo "</div>";
-        echo "<div class='box extra' id='dirs'>";
-
-        //Create working directories.
-        if (!$config_file_good) {
-            echo "Config was not loaded, cannot validate install files.";
-        } else {
-            if (!is_dir(CORE_DIR)) {
-                echo "<strong>" . CORE_DIR . "</strong> does not exist or could not be located relative to $mydir. $fail";
-            } else {
-                echo "<strong>" . CORE_DIR . "</strong> exists.<br>";
-            }
-
-            $folders = [RES_DIR, IMG_DIR, THUMB_DIR];
-
-            foreach ($folders as $dir) {
-                $fdir = "<strong>$dir</strong>";
-
-                if (!is_dir($dir)) {
-                    echo "$fdir does not exist, creating... ";
-                    $status = mkdir($dir);
-                    echo ($status) ? $success : $fail;
-                } else {
-                    echo "$fdir already exists.<br>";
-                }
-
-                $perms = substr(sprintf('%o', fileperms($dir)), -4);
-
-                if ($perms !== "0777") {
-                    echo "Changing $fdir permissions from $perms to 0777... ";
-                    $status = chmod($dir, 0777);
-                    echo ($status) ? $success : $fail;
-                } else {
-                    echo "$fdir has the right permissions (0777).<br>";
-                }
-
-                clearstatcache();
-            }
-        }
-
-        //Create working files.
-        if (!$config_file_good) {
-            echo 'Config was not loaded, cannot create working files.';
-        } else {
-            echo "<br>";
-
-            if (!defined(BOARDLIST) && BOARDLIST !== '') {
-                $bl = '<strong>BOARDLIST</strong> (' . BOARDLIST . ')';
-                $url = rawurlencode(BOARDLIST);
-
-                if (file_exists(BOARDLIST)) {
-                    echo "<a href='$url' target='_blank'>$bl</a> already exists, skipping.<br>";
-                } else {
-                    echo "Creating $bl... ";
-                    $test = file_put_contents(BOARDLIST, "[<a href='/a' />a</a> / <a href='/b' />b</a> / <a href='/c' />c</a>]");
-                    echo ($test > 0) ? "<a href='$url' target='_blank'>$success</a>" : $fail;
-                }
-            } else {
-                echo "<strong>BOARDLIST</strong> was empty or undefined, skipping.<br>";
-            }
-        }
-    }
 
     //Additional edge-case settings we can't easily change.
     $extra = ['short_open_tag', 'file_uploads', 'max_file_uploads', 'upload_max_filesize', 'upload_tmp_dir', 'post_max_size', 'memory_limit'];
 
-    echo "</div><div class='box'>" .
+    echo "<div class='box'>" .
         "<center><strong>PHP Core Directives</strong></center><table>";
 
     foreach ($extra as $val) {
