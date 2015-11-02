@@ -25,8 +25,9 @@ class Login {
                 $this->storeBad($usernm, $passwd);
                 $this->error(S_WRONGPASS);
             } else {
-                setcookie('saguaro_auser', $check['user'], 0);
-                setcookie('saguaro_apass', $check['password'], 0);
+                //setcookie(name,value,expire,path,domain,secure,httponly);
+                setcookie('saguaro_auser', $check['user'], 0, '/', SITE_ROOT_BD, false, true);
+                setcookie('saguaro_apass', $check['password'], 0, '/', SITE_ROOT_BD, false, true);
             }
         }
 
