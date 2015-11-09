@@ -98,7 +98,6 @@ class Head {
     }
     
     function generateAdmin() {
-        function generateAdmin() {
         require_once(CORE_DIR . "/admin/report.php");
 
         $getReport = new Report;
