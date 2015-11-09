@@ -93,7 +93,7 @@ switch ($_GET['mode']) {
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
         break;
     case 'ban':
-        echo head();
+        head();
         require_once(CORE_DIR . "/admin/banish.php");
         $banish = new Banish;
         if ($banish->checkBan($_SERVER['REMOTE_ADDR'])) {
