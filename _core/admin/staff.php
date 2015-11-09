@@ -79,7 +79,7 @@ class Staff {
 
         while ( $row = $mysql->fetch_assoc( $active ) ) {
                 $j++;               
-                $class = ( $j % 2 ) ? "row1" : "row2"; //BG color
+                $class = 'row' . ($j % 2 + 1); //BG color
                 $temp .= "<tr class='$class'>";
                 $temp .= "<td>" . $row['user'] . "</td><td>" . $row['allowed'] . "</td><td>" . $row['denied'] . "</td>
                 <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=staff&deluse=" . $row['user'] . "';\" value=\"Delete User\" /></td>";
