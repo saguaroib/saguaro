@@ -71,10 +71,10 @@ class Staff {
         $j = 0;
         $temp = '';
         $temp .= "<br><br>[<a href='" . PHP_ASELF_ABS . "'>Back to Panel</a><input type='hidden' name='mode' value='admin'>]";
-        $temp .= "<input type=hidden name=pass value=\"$pass\">\n";
-        $temp .= "<div class="delbuttons">";
-        $temp .= "<table class="postlists"><br>";
-        $temp .=  "<tr class="postTable head"><th>User</th><th>Allowed permissions</th><th>Denied permission</th><th>Modify user</th>";
+        $temp .= "<input type=hidden name=pass value=\"$pass\">";
+        $temp .= "<div class='delbuttons'>";
+        $temp .= "<table class='postlists'><br>";
+        $temp .=  "<tr class='postTable head'><th>User</th><th>Allowed permissions</th><th>Denied permission</th><th>Modify user</th>";
         $temp .=  "</tr><form action='" . PHP_ASELF_ABS ."?mode=staff' method='get'>";
 
         while ( $row = $mysql->fetch_array( $active ) ) {
