@@ -4,7 +4,7 @@
 class Staff {
 
     function isStaff($user) {
-        //See if user exists in mod table
+        //See if user exists in mod table. Returns false if user is in table. Why does it do that.
         if (!mysql_query(" SELECT * FROM " . SQLMODSLOG . " WHERE user='" . $user . "'"))
             return true;           
         return false;
@@ -67,28 +67,24 @@ class Staff {
     function getStaff() {
         //Staff list for panel
         
-        $active = mysql_query(" SELECT * FROM " . SQLMODSLOG . "");
-        if ( !$result = mysql_call( "select * from " . SQLMODSLOG . "" ) )
-                echo S_SQLFAIL;
-        
-        if ( !$active ) 
+        if ( !$active = mysql_query("SELECT * FROM " . SQLMODSLOG . "")) 
             echo S_SQLFAIL;
         $j = 0;
         $temp = '';
-        echo "<br><br>[<a href='" . PHP_ASELF_ABS . "'>Back to Panel</a><input type=hidden name=mode value=admin>]";
-        echo "<input type=hidden name=pass value=\"$pass\">\n";
-        echo "<div class=\"delbuttons\">";
+        $temp .= "<br><br>[<a href='" . PHP_ASELF_ABS . "'>Back to Panel</a><input type=hidden name=mode value=admin>]";
+        $temp .= "<input type=hidden name=pass value=\"$pass\">\n";
+        $temp .= "<div class=\"delbuttons\">";
         $temp .= "<table class=\"postlists\"><br>";
         $temp .=  "<tr class=\"postTable head\"><th>User</th><th>Allowed permissions</th><th>Denied permission</th><th>Modify user</th>";
-        $temp .=  "</tr>\n<form action='" . PHP_ASELF_ABS ."?mode=staff' method='get'>";
+        $temp .=  "</tr><form action='" . PHP_ASELF_ABS ."?mode=staff' method='get'>";
 
         while ( $row = mysql_fetch_array( $active ) ) {
                 $j++;               
                 $class = ( $j % 2 ) ? "row1" : "row2"; //BG color
-                $temp .= "<tr class=$class>";
+                $temp .= "<tr class='" . $class. "'>";
                 $temp .= "<td>" . $row['user'] . "</td><td>" . $row['allowed'] . "</td><td>" . $row['denied'] . "</td>
-                <td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=staff&deluse=" . $row['user'] . "';\" value=\"Delete User\" /></td>";
-                $temp .= "</tr>\n";
+                <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=staff&deluse=" . $row['user'] . "';\" value=\"Delete User\" /></td>";
+                $temp .= "</tr>";
         }	
         $temp .= "</form><div class='managerBanner' >[<a href='#' onclick=\"toggle_visibility('userForm');\" style='color:white;text-align:center;'>Toggle New User Form</a>]</div>";
         $temp .= "<div><table id='userForm' style='text-align:center;display:none;'><br><hr style='width:50%;'>";
