@@ -77,7 +77,7 @@ class Staff {
         $temp .=  "<tr class="postTable head"><th>User</th><th>Allowed permissions</th><th>Denied permission</th><th>Modify user</th>";
         $temp .=  "</tr><form action='" . PHP_ASELF_ABS ."?mode=staff' method='get'>";
 
-        while ( $row = $mysql->array( $active ) ) {
+        while ( $row = $mysql->fetch_array( $active ) ) {
                 $j++;               
                 $class = ( $j % 2 ) ? "row1" : "row2"; //BG color
                 $temp .= "<tr class='" . $class. "'>";
