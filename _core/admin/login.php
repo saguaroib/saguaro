@@ -15,7 +15,8 @@ class Login {
         if ($check === false) {
             //Username does not exist.
             $this->storeBad($usernm, $passwd);
-            $this->error(S_WRONGPASS);
+            //$this->error(S_WRONGPASS);
+            return false;
         } else {
             //Username exists, hash given password and compare.
             require_once(CORE_DIR . '/crypt/legacy.php');
@@ -23,11 +24,13 @@ class Login {
 
             if (!$crypt->compare_hash($passwd, $check['password'], $check['public_salt'])) {
                 $this->storeBad($usernm, $passwd);
-                $this->error(S_WRONGPASS);
+                //$this->error(S_WRONGPASS);
+                return false;
             } else {
                 //setcookie(name,value,expire,path,domain,secure,httponly);
-                setcookie('saguaro_auser', $check['user']/, 0);//, '/', SITE_ROOT_BD, false, true);
+                setcookie('saguaro_auser', $check['user'], 0);//, '/', SITE_ROOT_BD, false, true);
                 setcookie('saguaro_apass', $check['password'], 0);//, '/', SITE_ROOT_BD, false, true);
+                return true;
             }
         }
 
@@ -44,29 +47,10 @@ class Login {
         $mysql->query("INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$user','$pass','" . BOARD_DIR . "','$ip','1')");
     }
 
-    function auth($pass) {
-        /*    if ($pass && $pass != PANEL_PASS)
-        error(S_WRONGPASS);*/
+    function auth() {
 
-        require_once(CORE_DIR . "/admin/report.php");
-
-        $getReport = new Report;
-        $active = $getReport->get_all_reports_board();
-
-        if (valid('janitor_board')) {
-            echo  head();
-            echo "<div class='panelOps' />[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]";
-            echo "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]";
-            if (valid('moderator')) {
-                echo "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' >Rebuild</a>]";
-                echo "[<a href='" . PHP_ASELF_ABS . "?mode=rebuildall' >Rebuild all</a>]";
-                echo "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $active . "</a>]";
-            }
-            echo "[<a href='" . PHP_ASELF . "?mode=logout'>" . S_LOGOUT . "</a>]";
-            echo "<div class='managerBanner' >" . S_MANAMODE . "</div>
-           </div>";
-            //echo "<form action='" . PHP_SELF . "' method='post' id='contrib' >";
-        } else { // Admin.php login
+        if (!valid('janitor_board')) {
+            // Admin.php login
             $temp = "" .
                 "<div align='center' vertical-align='middle'>" .
                 //echo "<input type='hidden' name=mode value=login>";

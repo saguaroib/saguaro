@@ -11,12 +11,14 @@ class Report {
 				$this->error('That post doesn\'t exist anymore.', $no);
 			if ( $this->report_post_isSticky( $no ) )
 				$this->error('Stop trying to report a sticky.', $no);
-			$this->report_check_ip( BOARD_DIR, $no );
+			if ($this->report_check_ip( BOARD_DIR, $no, $_SERVER['REMOTE_ADDR'] ))
+                $this->error('Please wait a while before reporting more posts.', $no);
 			$this->form_report( BOARD_DIR, $_GET['no'] );			//User passed checks, display form
 
 		} else {
 			//Report form has been filled out, POST'ed and can now be filed
-			$this->report_check_ip( BOARD_DIR, $_POST['no'] );
+			if ($this->report_check_ip( BOARD_DIR, $no, $_SERVER['REMOTE_ADDR'] )) //One last check
+                $this->error('Please wait a while before reporting more posts.', $no);
 			$this->report_submit( BOARD_DIR, $_POST['no'], $_POST['cat'] );
 		}
 		die( '</body></html>' );		
@@ -51,9 +53,13 @@ class Report {
             return true;
     }
     
-    function report_check_ip($board, $no ) {
+    function report_check_ip($board, $no, $ip ) {
         //I don't know what's going on here
         //Maybe check if the submitting user has already reported this ip? or is going on a reporting spree?
+        $query = mysql_query("SELECT * FROM reports WHERE ip='" . $ip. "' AND board='" . $board . "'");
+        if (mysql_num_rows($query) > 4) //Relax there, tattle tale
+            return true;
+        return false;
     }
     
     function report_submit( $board, $no, $type ) {
@@ -74,17 +80,19 @@ class Report {
         $ctype  = mysql_real_escape_string( $type );
         mysql_call( "INSERT INTO reports (`num`, `no`, `board`, `type`, `time`, `ip`) VALUES ( '" . rand() . "', '" . $cno . "', '" . $cboard . "', '" . $ctype . "', NOW(), '" . $host . "') " );
         
-        echo "<head><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/saguaba.css'/><script>function loaded(){window.setTimeout(CloseMe, 3000);}function CloseMe() {window.close();}</script></head><body onLoad='loaded()'>
+        echo "<head><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/" . $style . ".css'/><script>function loaded(){window.setTimeout(CloseMe, 3000);}function CloseMe() {window.close();}</script></head><body onLoad='loaded()'>
 	<center><font color=blue size=5>Report submitted! This window will close in 3 seconds...</b></font></center></body>";
     }
 	
 	function form_head($no) {
+        $style = (NSFW) ? "saguaba" : "sagurichan";
+
 		echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 		<html>
 		<head>
 		<title>Report Post #' . $no . '</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<link rel="stylesheet" type="text/css" href="' . CSS_PATH . '/saguaba.css"/>
+		<link rel="stylesheet" type="text/css" href="' . CSS_PATH . '/stylesheets/' . $style . '.css"/>
 		<style>fieldset { margin-right: 25px; }</style>
 		</head>';
 	}
@@ -123,10 +131,6 @@ class Report {
 		<div class="rules"><u>Note</u>: Submitting frivolous reports will result in a ban. When reporting, make sure that the post in question violates the global/board rules, or contains content illegal in the United States.</div>
 		</body>
 		</html>';
-
-	   /* if ($captcha->isValid() === false)
-			die(error(S_CAPFAIL, $dest));
-		}*/
 		
 	}
 	
@@ -154,7 +158,6 @@ class Report {
 	
     while ( $row = mysql_fetch_row( $active ) ) {
         $j++;
-		$path = realpath( "./" ) . '/' . IMG_DIR;
         list( $num, $no, $board, $type, $time, $ip ) = $row;
 		
 		switch ($type) {
@@ -171,17 +174,12 @@ class Report {
 				$type = 'Type Error';
 				break;
 		}
-		
-        if ( $ext && is_file( $path . $tim . $ext ) ) {
-            $clip     = "<a class=\"thumbnail\" target=\"_blank\" href=\"" . IMG_DIR . $tim . $ext . "\">" . $tim . $ext . "<span><img class='postimg' src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" width=\"100\" height=\"100\" /></span></a><br />";
-		}
 		$class = ( $j % 2 ) ? "row1" : "row2"; //BG color
-        echo "<br /><br /><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/img.css' />";
 
         echo "<tr class=$class><td><input type=radio name=\"$no\" value=delete></td><td><input type=radio name=\"$no\" value=clear></td>";
         echo "<td>$no</td><td>$clip</td><td>/$board/</td><td>$type</td><td>$ip</td>
 		<td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>";
-        echo "</tr>\n";
+        echo "</tr>";
     }
     //mysql_free_result( $active );
     //die( "</body></html>" );		
