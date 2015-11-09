@@ -4,7 +4,7 @@ class Staff {
 
     function isStaff($user) {
         //See if user exists in mod table. Returns false if user is in table. Why does it do that.
-        if (!$mysql->query(" SELECT `user` FROM " . SQLMODSLOG . " WHERE user='" . $user . "'"))
+        if (!$mysql->query(" SELECT `user` FROM " . SQLMODSLOG . " WHERE user='$user'"))
             return true;           
         return false;
     }
