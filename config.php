@@ -158,7 +158,7 @@ define(DEBUG_MODE, 0); //0: off, 1: on. Enabling this will display any SQL error
 
 //MySQL tables. Only change these if defaults are not desired.
 define(SQLLOG, PREFIX);            //Table for posting information.
-define(SQLBANLOG, 'bans');  //Table for ban information.
+define(SQLBANLOG, PREFIX.'_ban');  //Table for ban information, currently this is board specific please check out this wiki article to learn how to make saguaro have global bans: https://github.com/spootTheLousy/saguaro/wiki/Board-SQL-Table-relationship
 define(SQLMODSLOG, PREFIX.'_mod'); //Table for mod information (authentication).
 define(SQLDELLOG, PREFIX.'_del');  //Table for deleted information.
 
