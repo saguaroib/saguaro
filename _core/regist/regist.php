@@ -256,7 +256,7 @@ if (FORCED_ANON == 1) {
     $now  = '';
 }
 $com = wordwrap2($com, 100, "<br />");
-$com = preg_replace("!(^|>)(&gt;[^<]*)!", "\\1<font class=\"unkfunc\">\\2</font>", $com);
+$com = preg_replace("!(^|>)(>[^<]*)!", "\\1<font class=\"unkfunc\">\\2</font>", $com);
 
 $is_sage = stripos($email, "sage") !== FALSE;
 
