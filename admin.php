@@ -106,8 +106,10 @@ switch ($_GET['mode']) {
         head();
         require_once(CORE_DIR . "/admin/report.php");
         $getReport = new Report;
-        $active    = $getReport->get_all_reports_board();
-        $getReport->display_list();
+        if (isset($_GET['no']))
+            $getReport->reportClear($_GET['no']);
+        $active    = $getReport->reportGetAllBoard();
+        echo $getReport->reportList();
         break;
     case 'rebuild':
         require_once(CORE_DIR . "/log/rebuild.php");

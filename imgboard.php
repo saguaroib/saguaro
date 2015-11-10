@@ -72,7 +72,7 @@ switch ($mode) {
     case 'report':
         require_once(CORE_DIR . "/admin/report.php");
         $report = new Report;
-        $report->process();
+        $report->reportProcess();
         break;
     case 'usrdel':
         usrdel($no, $pwd);

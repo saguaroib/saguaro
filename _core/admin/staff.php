@@ -42,7 +42,7 @@ class Staff {
         $crypt = new SaguaroCryptLegacy;
         $salt = $crypt->generate_hash($pass2);
 
-        $mysql->query("INSERT INTO " . SQLMODSLOG . " (`user`, `password`, `public_salt`, `allowed`, `denied`) VALUES ('" . mysql_real_escape_string($user) . "', '" . $salt['hash'] . "', '" . $salt['public_salt'] . "', '" . $allowed . "', '" . $denied . "')");
+        mysql_query("INSERT INTO " . SQLMODSLOG . " (`user`, `password`, `public_salt`, `allowed`, `denied`) VALUES ('" . mysql_real_escape_string($user) . "', '" . $salt['hash'] . "', '" . $salt['public_salt'] . "', '" . $allowed . "', '" . $denied . "')");
     }
     
     function remStaff($targUser = '', $actUser, $actPass) {
@@ -56,7 +56,7 @@ class Staff {
         if ($_COOKIE['saguaro_auser'] == $targUser)
             error("You can't delete yourself!"); //oi ya cheeky shit ill bash yer fookin head in i sware on me mum
         
-        $mysql->query("DELETE FROM " . SQLMODSLOG . " WHERE user='" . $targUser ."'");
+        mysql_query("DELETE FROM " . SQLMODSLOG . " WHERE user='" . $targUser ."'");
     }
     
     function modifyStaff($targUser, $actUser, $actPass, $perms = array(), $self = 0) {
@@ -66,7 +66,7 @@ class Staff {
     function getStaff() {
         //Staff list for panel
         
-        if ( !$active = $mysql->query("SELECT * FROM " . SQLMODSLOG . "")) 
+        if ( !$active = mysql_query("SELECT * FROM " . SQLMODSLOG . "")) 
             echo S_SQLFAIL;
         $j = 0;
         $temp = '';
@@ -77,7 +77,7 @@ class Staff {
         $temp .=  "<tr class='postTable head'><th>User</th><th>Allowed permissions</th><th>Denied permission</th><th>Modify user</th>";
         $temp .=  "</tr><form action='" . PHP_ASELF_ABS ."?mode=staff' method='get'>";
 
-        while ( $row = $mysql->fetch_assoc( $active ) ) {
+        while ( $row = mysql_fetch_assoc( $active ) ) {
                 $j++;               
                 $class = 'row' . ($j % 2 + 1); //BG color
                 $temp .= "<tr class='$class'>";
