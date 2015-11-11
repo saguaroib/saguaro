@@ -74,6 +74,11 @@ switch ($mode) {
         $report = new Report;
         $report->reportProcess();
         break;
+    case 'catalog':
+        require_once(CORE_DIR . "/catalog/catalog.php");
+        $catalog = new Catalog;
+        echo $catalog->formatPage();
+        break;
     case 'usrdel':
         usrdel($no, $pwd);
     default:
