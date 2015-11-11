@@ -9,7 +9,6 @@ define(S_HEADSUB, 'No artificial sweeteners!'); //Board subtitle.
 define(S_DESCR, 'An imageboard powered by saguaro'); //meta description for this board
 
 
-
 /*
     MySQL information.
     The database and tables are created automatically using these values.
@@ -20,7 +19,6 @@ define(SQLHOST, 'localhost');
 
 define(SQLDB, 'saguaro');   //Database used by image board.
 define(PREFIX, 'imgboard'); //Prefix to automatically use for the database tables.
-
 
 
 /*
@@ -135,7 +133,6 @@ define(USE_ADS3, 0);                            //Use advertisements (bottom) (1
 define(ADS3, '<center>ads ads ads</center>');   //advertisement code (bottom)
 
 
-
 /*
     Security settings.
 
@@ -143,7 +140,6 @@ define(ADS3, '<center>ads ads ads</center>');   //advertisement code (bottom)
 */
 
 define(SECURE_LOGIN, true); //Enable CAPTCHA on staff login page.
-
 
 
 /*
@@ -156,7 +152,12 @@ define(SECURE_LOGIN, true); //Enable CAPTCHA on staff login page.
 //BEWARE: Debug mode can display sensitive data that could be exploited. Use with caution
 define(DEBUG_MODE, 0); //0: off, 1: on. Enabling this will display any SQL errors as well as making redirects between posting/log updates slower.s
 
-//MySQL tables. Only change these if defaults are not desired.
+/*MySQL tables. Only change these if defaults are not desired.
+
+By default, these tables are generated unique per-board. 
+To make boards share ban, user or deletion logs, delete "PREFIX." or check out the wiki page
+https://github.com/spootTheLousy/saguaro/wiki/Board-SQL-Table-relationship*/
+
 define(SQLLOG, PREFIX);            //Table for posting information.
 define(SQLBANLOG, PREFIX.'_ban');  //Table for ban information.
 define(SQLMODSLOG, PREFIX.'_mod'); //Table for mod information (authentication).
