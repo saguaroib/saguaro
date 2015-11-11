@@ -68,7 +68,7 @@ class Image {
             $imgsrc = "<img src='" . CSS_PATH. "/imgs/filedeleted-res.gif' alt='File deleted.'>";
         }
 
-        return "<a href='" . RES_DIR . $no /* . PHP_EXT  */ . "#" . $no . "'>" . $imgsrc . "</a>";
+        return "<a href='" . RES_DIR . $no /* . PHP_EXT  */ . ".html'>" . $imgsrc . "</a>";
     }
 }
 
