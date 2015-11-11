@@ -124,7 +124,7 @@ class Report {
     function reportForm($board, $no) {
         require_once(CORE_DIR . "/general/captcha.php");
         $captcha = new Captcha;
-        if (RECAPTCHA)
+        if (RECAPTCHA && defined(RECAPTCHA_SITEKEY))
             $temp .= "<div style='margin: 0px auto;display:block;' id='saguaroCaptchaContainer'><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY . "'></div>";
         else
             $temp .= "<div style='margin: 0px auto;display:block;' id='saguaroCaptchaContainer'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /><br><input type='text' name='num' size='20' placeholder='Captcha'></div>";
