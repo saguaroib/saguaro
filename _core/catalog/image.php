@@ -65,7 +65,7 @@ class Image {
             }
         } else {
             //Thumbnail does not exist, continue here.
-            $imgsrc = "<div>File deleted/unavailable.</div>";
+            $imgsrc = "<img src='" . CSS_PATH. "/imgs/filedeleted-res.gif' alt='File deleted.'>";
         }
 
         return "<a href='" . RES_DIR . $no /* . PHP_EXT  */ . "#" . $no . "'>" . $imgsrc . "</a>";
