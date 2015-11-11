@@ -3,35 +3,30 @@
 /*      
 
         Reports class. 
-        Eventually revisit this to make it do a less obscene amount of mysql calls per report
+        Eventually revisit this to make it do a less obscene amount of mysql calls per report.
+        Perhaps integrate the log cache to cut down on queries.
         
 */
 
 
 class Report {
     
-    
     function reportProcess() {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            $no = $_GET['no'];
+            $no = mysql_real_escape_string($_GET['no']);
             //Various checks in the popup window before form is filed
-            if ($this->reportPostExists($no))
-                $this->error('That post doesn\'t exist.', $no);
-            if ($this->reportIsCleared($no))
-                $this->error('This post has been reviewed and cleared.', $no);
-            if ($this->reportCheckIP(BOARD_DIR, $no, $_SERVER['REMOTE_ADDR']))
-                $this->error('Please wait a while before reporting more posts.', $no);
+            $this->reportPostExists($no);
+            $this->reportIsCleared($no);  
+            $this->reportCheckIP(BOARD_DIR, $no, $_SERVER['REMOTE_ADDR']);
             $this->reportForm(BOARD_DIR, $_GET['no']); //User passed checks, display form
-            
         } else {
             //Report form has been filled out, POST'ed and can now be filed
-            if ($this->reportCheckIP(BOARD_DIR, $no, $_SERVER['REMOTE_ADDR'])) //One last check
+            if ($this->reportCheckIP(BOARD_DIR, $no, $_SERVER['REMOTE_ADDR'])) //One last check for people trying to be sneaky.
                 $this->error('Please wait a while before reporting more posts.', $no);
             $this->reportSubmit(BOARD_DIR, $_POST['no'], $_POST['cat']);
         }
         die('</body></html>');
     }
-    
     
     function reportGetAllBoard($list = 0) {
         $query = mysql_query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type > 0");
@@ -52,25 +47,24 @@ class Report {
     //I won't dignify retards who report stickies with a SQL query, just give them the post not found error.
         $query = mysql_query("SELECT * FROM " . SQLLOG . " WHERE no='$no' AND sticky < 1 LIMIT 1");
         if (mysql_num_rows($query) < 1)
-            return true; 
-        mysql_free_result($query);
+            return $this->error("That post doesn't exist.", $no);
     }
     
     function reportIsCleared($no) {
         $query = mysql_query("SELECT `no`,`type` FROM reports WHERE no='" . $no . "' AND type='0' LIMIT 1");
         if (mysql_num_rows($query) > 0)
-            return true;
+            return $this->error('This post has been reviewed and cleared.', $no);
     }
 
     function reportClear($no) {
         
         if (!valid('moderator'))
-            die("Permission denied");
+            $this->error("Permission denied");
         
         $no = mysql_real_escape_string($no);
         if ($this->reportPostExists($no)) {
             @mysql_query("DELETE FROM reports WHERE no='$no'"); //How did you get there? Attempt to clear up the phantom report.
-            die("That report/post doesn't exist anymore!");
+            $this->error("That report/post doesn't exist anymore!");
         }
         //Set report type to inactive if it's been cleared by a mod. 
         //deletePost.php does the deletion when the post is pruned anyway
@@ -78,11 +72,14 @@ class Report {
     }
     
     function reportCheckIP($board, $no, $ip) {
+        $query = mysql_query("SELECT host FROM " . SQLLOG . " WHERE no='$no' AND host='$ip' LIMIT 1");
+        if (mysql_num_rows($query) > 0) //Trying to report own post
+            return $this->error("You can't report your own post!", $no);
+
         //Check if the submitting user has already reported this ip or is going on a reporting spree.
         $query = mysql_query("SELECT * FROM reports WHERE ip='" . $ip . "' AND board='" . $board . "'");
         if (mysql_num_rows($query) > 3 && !valid('janitor_board')) //Relax there, tattle tale
-            return true;
-        return false;
+            return $this->error('Please wait a while before reporting more posts.', $no);
     }
     
     function reportSubmit($board, $no, $type) {
@@ -95,9 +92,12 @@ class Report {
             die("<head><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/" . $style . ".css'/></head><body>
         <center><font color=blue size=5>You did not solve the captcha correctly.</b></font><br><br>[<a href='" . PHP_SELF . "?mode=report&no=" . $no . "'>Try again?</a>]</center></body>");
         }
-        //cat = 1: Rule violation
-        //cat = 2: Illegal content
-        //cat = 3: Advertising
+        /*cat = 1: Rule violation
+        cat = 2: Illegal content
+        cat = 3: Advertising
+        0 = Cleared by moderator, can't report it again. 
+        This is not a valid submit option. 
+        If the report isn't submitted with either cat 1,2 or 3, it is discarded */
         $host   = $_SERVER['REMOTE_ADDR'];
         $cboard = mysql_real_escape_string($board);
         $cno    = mysql_real_escape_string($no);
@@ -125,9 +125,9 @@ class Report {
         require_once(CORE_DIR . "/general/captcha.php");
         $captcha = new Captcha;
         if (RECAPTCHA)
-            $temp .= "<tr><td colspan='2'><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY . "'></td></tr>";
+            $temp .= "<div style='margin: 0px auto;display:block;' id='saguaroCaptchaContainer'><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY . "'></div>";
         else
-            $temp .= "<tr><td><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td><input type='text' name='num' size='20' placeholder='Captcha'></td></tr>";
+            $temp .= "<div style='margin: 0px auto;display:block;' id='saguaroCaptchaContainer'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /><br><input type='text' name='num' size='20' placeholder='Captcha'></div>";
         //Taken from parley who probably took it from 4chan anyway. Yolo.
         $this->reportFormHead($no);
         echo '
@@ -141,7 +141,6 @@ class Report {
 		<input type="radio" name="cat" value="3">Illegal content<br/>
 		<input type="radio" name="cat" value="1">Spam
 		</fieldset>
-		</td><td>
 		</td>
 		<td>' . $temp . '
 		</td></tr>
@@ -207,6 +206,5 @@ class Report {
         die("</body></html>");
     }
 }
-
 
 ?>
