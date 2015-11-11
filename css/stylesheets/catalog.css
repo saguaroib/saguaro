@@ -9,6 +9,7 @@
     vertical-align: top;
     max-height:250px;
     overflow:hidden;
+    margin-bottom: 5px;
 }
 
 .catalog_item > a {
@@ -33,6 +34,7 @@
     font-size:0.8em;
     line-height:1em;
     min-height: 1.3em;
+    word-break: break-word;
 }
 
 .postimg {
@@ -40,7 +42,4 @@
     max-height:150px;
     height:auto;
     width:auto;
-}
-span.comment {
-    word-break: break-word;
 }
