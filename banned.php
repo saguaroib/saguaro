@@ -98,6 +98,6 @@ if (!$type) {
                 <h3>This warn was issued for the IP address ' . $host . '</h3>' . $footer;
 } else
     echo '<p>You <b>' . $status . '</b> for the following reason: </p><br /><p><b>' . $reason . '</b></p><br /><hr />
-                <p>This ban will last <b>' . $length . ' /b>. It was placed on <b>' . $placed . '</b> and will expire: <b>' . $expires . '</b><br/><h3>This ban was issued for the IP address ' . $host . '</h3>' . $footer;
+                <p>This ban will last <b>' . $length . ' </b>. It was placed on <b>' . $placed . '</b> and will expire: <b>' . $expires . '</b><br/><h3>This ban was issued for the IP address ' . $host . '</h3>' . $footer;
 
 ?>
