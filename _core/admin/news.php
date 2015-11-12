@@ -32,7 +32,7 @@ class News {
         return error("There was an error updating the file.");
     }
     
-    function newsGetFile($file) {
+    private function newsGetFile($file) {
         //Get contents of file, otherwise return error message.
         $file = (file_exists($file)) ? file_get_contents(htmlspecialchars_decode($file)) : "File " . $file . " not found! Check your config setting for the file!";
         return $file;
