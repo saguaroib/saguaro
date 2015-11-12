@@ -119,6 +119,18 @@ switch ($_GET['mode']) {
         require_once(CORE_DIR . "/log/rebuild.php");
         rebuild(1);
         break;
+    case 'editNews':
+        echo head();
+        if (!valid('admin'))
+            error("Permission denied");
+        require_once(CORE_DIR . "/admin/news.php");
+        $news = new News; //lol
+        if (isset($_POST['update']) && isset($_POST['file']) /*|| isset($_POST['boardlist'])*/) {
+            echo "meme";
+            $news->newsUpdate($_POST['update'], $_POST['file']);
+        }
+        echo $news->newsPanel();
+        break;
     case 'staff':
         require_once(CORE_DIR . "/admin/staff.php");
         $staff = new Staff;
