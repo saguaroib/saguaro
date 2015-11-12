@@ -21,6 +21,9 @@
 class News {
     
     function newsUpdate($write, $file) {
+        
+        $write = htmlspecialchars($write);
+        
         if ($file === "boardlist")
             return file_put_contents(BOARDLIST, $write);
         if ($file === "globAnno");
@@ -31,7 +34,7 @@ class News {
     
     function newsGetFile($file) {
         //Get contents of file, otherwise return error message.
-        $file = (file_exists($file)) ? file_get_contents($file) : "File " . $file . " not found! Check your config setting for the file!";
+        $file = (file_exists($file)) ? file_get_contents(htmlspecialchars_decode($file)) : "File " . $file . " not found! Check your config setting for the file!";
         return $file;
     }
     
@@ -42,10 +45,10 @@ class News {
         $anno = $this->newsGetFile(GLOBAL_NEWS);
         
         $temp = "<br><div class='container' style='text-align:center;'><div class='managerBanner' >Edit Boardlist or Global announcements</div><br><br>";
-        $temp .= "<b>Edit HTML contents of your board list ( " . BOARDLIST . " )<br>";
+        $temp .= "<b>Edit HTML contents of your board list ( <font color='red'>" . BOARDLIST . "</font> )<br>";
         $temp .= "<form action='" . PHP_ASELF_ABS . "?mode=editNews' method='post'><input type='hidden' name='file' value='boardlist'><textarea name='update' cols='100' rows='15'/>" . $bl . "</textarea><br><input type='submit' value='Submit'>";
         $temp .= "<br><br><hr style='width:40%;'><br>";
-        $temp .= "<b>Edit HTML contents of your board news ( " . GLOBAL_NEWS . " ). For unique board announcements, reference uniuque filepaths in the config. <br>If you want all the board to share an announcement, reference the same filepath in the config.<br>";
+        $temp .= "<b>Edit HTML contents of your board news ( <font color='red'>" . GLOBAL_NEWS . "</font> ). For announcements unique to a board, reference unique filepaths in the config. <br>If you want all the boards to share an announcement, reference the same filepath in the config.<br>";
         $temp .= "<form action='" . PHP_ASELF_ABS . "?mode=editNews' method='post'><input type='hidden' name='file' value='globAnno'><textarea name='update' cols='100' rows='15'/>" . $anno . "</textarea><br><input type='submit' value='Submit'></div>";
 
         return $temp;
@@ -53,3 +56,5 @@ class News {
     }
     
 }
+
+?>
