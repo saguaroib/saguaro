@@ -88,7 +88,7 @@ class Staff {
         $temp .= "</form><div class='managerBanner' >[<a href='#' onclick=\"toggle_visibility('userForm');\" style='color:white;text-align:center;'>Toggle New User Form</a>]</div>";
         $temp .= "<div><table id='userForm' style='text-align:center;display:none;'><br><hr style='width:50%;'>";
         $temp .= "<form action='" . PHP_ASELF_ABS ."?mode=staff' method='post'><tr><td>New username: <input type='text' name='user' required></td>";
-        $temp .= "<td>New password: <input type='text' name='pwd1' required></td><td>Confirm password: <input type='text' name='pwd2' required></td>";
+        $temp .= "<td>New password: <input type='password' name='pwd1' required></td><td>Confirm password: <input type='text' name='password' required></td>";
         $temp .= "<td>Access level: <select name='action' required>
             <option value='' /></option>
             <option value='admin' />Admin</option>
