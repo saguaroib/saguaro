@@ -22,7 +22,8 @@ class News {
     
     function newsUpdate($write, $file) {
         
-        $write = htmlspecialchars($write);
+        $write = strip_tags($write, "<a><br><b><font>"); //This should strip any tags that aren't whitelisted here. SHOULD.
+        $write = htmlspecialchars($write); //fuck it why not use both
         
         if ($file === "boardlist")
             return file_put_contents(BOARDLIST, $write);
