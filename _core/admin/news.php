@@ -34,6 +34,9 @@ class News {
     }
     
     private function newsGetFile($file) {
+        
+        if ($file !== BOARDLIST || $file !== GLOBAL_NEWS)
+            return error("Read error.");
         //Get contents of file, otherwise return error message.
         $file = (file_exists($file)) ? file_get_contents(htmlspecialchars_decode($file)) : "File " . $file . " not found! Check your config setting for the file!";
         return $file;
