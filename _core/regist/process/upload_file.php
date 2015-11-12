@@ -28,7 +28,7 @@ if ($has_image) {
 
     clearstatcache(); // otherwise $dest looks like 0 bytes!
 
-    $upfile_name = CleanStr($upfile_name);
+    $upfile_name = $sanitize->CleanStr($upfile_name, 0);
     $fsize       = filesize($dest);
 
     if (!is_file($dest))

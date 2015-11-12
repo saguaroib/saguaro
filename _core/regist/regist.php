@@ -14,8 +14,9 @@ $upfile = $_FILES["upfile"]["tmp_name"];
 require_once('process/upload.php'); //Check prereq conditions for post processing
 
 global $my_log, $mysql, $path, $badstring, $badfile, $badip, $pwdc, $textonly;
-require_once("cleanstr.php");
-require_once("wordwrap.php");
+
+require_once(CORE_DIR . "/regist/sanitize.php");
+$sanitize = new Sanitize;
 
 if ($pwd == PANEL_PASS)
     $admin = $pwd;
@@ -39,7 +40,7 @@ if ($moderator) {
 }
 
 if (!$upfile && !$resto) { // allow textonly threads for moderators!
-    if (valid('textonly'))
+    if ($moderator) //They have the permission anyway, might as well remove the query until the user class is done.
         $textonly = 1;
 }
 
@@ -84,41 +85,20 @@ if ($resto) {
         error(S_NOTHREADERR, $dest);
 }
 
-/*    foreach ($badstring as $value) {
-if (ereg($value, $com) || ereg($value, $sub) || ereg($value, $name) || ereg($value, $email)) {
-error(S_STRREF, $dest);
-}
-;
-}*/
+if (!$name)
+    $name = S_ANONAME;
+if (!$com)
+    $com = S_ANOTEXT;
+if (!$sub)
+    $sub = S_ANOTITLE;
 
 // Form content check
-if (!$name || preg_match("/^[ |&#12288;|]*$/", $name))
-    $name = "";
-if (!$com || preg_match("/^[ |&#12288;|\t]*$/", $com))
-    $com = "";
-if (!$sub || preg_match("/^[ |&#12288;|]*$/", $sub))
-    $sub = "";
+$clean = $sanitize->process($name, $com, $sub, $email, $resto, $url, $dest, $moderator);
 
-if (!$resto && !$textonly && !is_file($dest) && !valid('moderator'))
+if (!$resto && !$textonly && !is_file($dest) && !$moderator)
     error(S_NOPIC, $dest);
-if (!$com && !is_file($dest) && !valid('moderator'))
+if (!$clean['com'] && !is_file($dest) && !$moderator)
     error(S_NOTEXT, $dest);
-
-$name = str_replace(S_MANAGEMENT, '"' . S_MANAGEMENT . '"', $name);
-$name = str_replace(S_DELETION, '"' . S_DELETION . '"', $name);
-
-if (strlen($com) > S_POSTLENGTH)
-    error(S_TOOLONG, $dest);
-if (strlen($name) > 100)
-    error(S_TOOLONG, $dest);
-if (strlen($email) > 100)
-    error(S_TOOLONG, $dest);
-if (strlen($sub) > 100)
-    error(S_TOOLONG, $dest);
-if (strlen($resto) > 10)
-    error(S_UNUSUAL, $dest);
-if (strlen($url) > 10)
-    error(S_UNUSUAL, $dest);
 
 // No, path, time, and url format
 srand((double) microtime() * 1000000);
@@ -126,9 +106,8 @@ if ($pwd == "") {
     if ($pwdc == "") {
         $pwd = rand();
         $pwd = substr($pwd, 0, 8);
-    } else {
+    } else
         $pwd = $pwdc;
-    }
 }
 
 $c_pass = $pwd;
@@ -143,11 +122,11 @@ $youbi  = array(
     S_SAT
 );
 $yd     = $youbi[date("w", $time)];
-if (SHOW_SECONDS == 1) {
+
+if (SHOW_SECONDS == 1) 
     $now = date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i:s", $time);
-} else {
+else 
     $now = date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i", $time);
-}
 
 if (DISP_ID) {
     //$rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
@@ -157,7 +136,7 @@ if (DISP_ID) {
     $idhtml = "<span class=\"posteruid\" id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
     mysql_real_escape_string($idhtml);
 
-    if ($email && DISP_ID == 1) {
+    if ($clean['email'] && DISP_ID == 1) {
         $now .= " (ID:" . $idhtml . " Heaven </span>)";
     } else {
         if (!$resto) {
@@ -177,96 +156,66 @@ if (COUNTRY_FLAGS && file_exists('geoiploc.php')) {
     $now .= " <img src=" . CSS_PATH . "flags/" . strtolower($country) . ".png /> ";
 }
 
-$c_name  = $name;
-$c_email = $email;
+$c_name  = $clean['name'];
+$c_email = $clean['email'];
 
 //Text plastic surgery (rorororor)
-$email = CleanStr($email);
-$email = preg_replace("[\r\n]", "", $email);
-$sub   = CleanStr($sub);
-$sub   = preg_replace("[\r\n]", "", $sub);
-$url   = CleanStr($url);
+$clean['email'] = $sanitize->CleanStr($clean['email'], 0); //Don't allow moderators to fuck with this
+$clean['email'] = preg_replace("[\r\n]", "", $clean['email']);
+$clean['sub']   = $sanitize->CleanStr($clean['sub'], 0); //Or this
+$clean['sub']   = preg_replace("[\r\n]", "", $clean['sub']);
+$url   = $sanitize->CleanStr($url, 0); //Or this
 $url   = preg_replace("[\r\n]", "", $url);
-$resto = CleanStr($resto);
+$resto = $sanitize->CleanStr($resto, 0); //Or this
 $resto = preg_replace("[\r\n]", "", $resto);
-$com   = CleanStr($com, 1);
+$clean['com']   = $sanitize->CleanStr($clean['com'], $moderator); //But they can with this.
+
 
 if (USE_BBCODE === true) {
     require_once(CORE_DIR . '/general/text_process/bbcode.php');
 
     $bbcode = new BBCode;
-    $com = $bbcode->format($com);
+    $clean['com'] = $bbcode->format($clean['com']);
 }
 
-if (SPOILERS == 1 && $spoiler) {
-    $sub = "SPOILER<>$sub";
-}
-// Standardize new character lines
-$com = str_replace("\r\n", "\n", $com);
-$com = str_replace("\r", "\n", $com);
-//$com = preg_replace("/\A([0-9A-Za-z]{10})+\Z/", "!s8AAL8z!", $com);
-// Continuous lines
-$com = preg_replace("/\n((&#12288;|)*\n){3,}/", "\n", $com);
+/*if (SPOILERS == 1 && $spoiler) {
+    $clean['sub'] = "SPOILER<>$clean['sub']";
+}*/
 
-if (!$admin && substr_count($com, "\n") > MAX_LINES)
-    error("Error: Too many lines.", $dest);
-
-$com = nl2br($com); //br is substituted before newline char
-
-$com = str_replace("\n", "", $com); //\n is erased
-// Continuous lines
-$com = preg_replace("/\n((&#12288;|)*\n){3,}/", "\n", $com);
-
-if (!$admin && substr_count($com, "\n") > MAX_LINES)
-    error("Error: Too many lines.", $dest);
-
-$name  = preg_replace("[\r\n]", "", $name);
-$names = iconv("UTF-8", "CP932//IGNORE", $name); // convert to Windows Japanese #&#65355;&#65345;&#65357;&#65353;
-require_once("tripcode.php");
+require_once("tripcode.php"); //This DOES the trip processing.
 
 $noko = 1;
-if (stripos($email, 'sage') || stripos($email, 'nokosage')) {
+if (stripos($clean['email'], 'sage') || stripos($clean['email'], 'nokosage'))
     $is_sage = true;
-} elseif (stripos($email, 'nonoko')) {
+elseif (stripos($clean['email'], 'nonoko')) {
     $is_sage = false;
     $noko = 0;
-} else {
+} else 
     $is_sage = false;
-}
-
-if (!$name)
-    $name = S_ANONAME;
-if (!$com)
-    $com = S_ANOTEXT;
-if (!$sub)
-    $sub = S_ANOTITLE;
 
 if ($moderator && isset($_POST['showCap'])) {
     if ($moderator == 1)
-        $name = '<span class="cap moderator" >' . $name . ' ## Mod </span>';
+        $clean['name'] = '<span class="cap moderator" >' . $clean['name'] . ' ## Mod </span>';
     if ($moderator == 2)
-        $name = '<span class="cap admin" >' . $name . ' ## Admin </span>';
+        $clean['name'] = '<span class="cap admin" >' . $clean['name'] . ' ## Admin </span>';
     if ($moderator == 3)
-        $name = '<span class="cap manager" >' . $name . ' ## Manager  </span>';
+        $clean['name'] = '<span class="cap manager" >' . $clean['name'] . ' ## Manager  </span>';
 }
 
 if (FORCED_ANON == 1) {
-    $name = S_ANONAME . " </span>$now<span>";
-    $sub  = '';
+    $clean['name'] = S_ANONAME . " </span>$now<span>";
+    $clean['sub']  = '';
     $now  = '';
 }
-$com = wordwrap2($com, 100, "<br />");
-$com = preg_replace("!(^|>)(>[^<]*)!", "\\1<font class=\"unkfunc\">\\2</font>", $com);
 
-$is_sage = stripos($email, "sage") !== FALSE;
+$clean['com'] = preg_replace("!(^|>)(>[^<]*)!", "\\1<font class=\"quote\">\\2</font>", $clean['com']);
 
-
-$may_flood = valid('floodbypass');
+$may_flood = ($moderator >= 1);
 
 if (!$may_flood) {
-    if ($com) {
+    if ($clean['com']) {
         // Check for duplicate comments
-        $query  = "select count(no)>0 from " . SQLLOG . " where com='" . mysql_real_escape_string($com) . "' " . "and host='" . mysql_real_escape_string($host) . "' " . "and time>" . ($time - RENZOKU_DUPE);
+        $query  = "select count(no)>0 from " . SQLLOG . " where com='" . mysql_real_escape_string($clean['com']) . "' " . "and host='" . mysql_real_escape_string($host) . "' " . "and time>" . ($time - RENZOKU_DUPE);
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU, $dest);
@@ -335,14 +284,14 @@ if ($resto) { //sage or age action
     $resline = $mysql->query("select sticky,permasage from " . SQLLOG . " where no=" . $resto);
     list($sticky, $permasage) = mysql_fetch_row($resline);
     mysql_free_result($resline);
-    if ((stripos($email, 'sage') === FALSE && $countres < MAX_RES && $sticky != "1" && $permasage != "1") || ($admin && $age && $sticky != "1")) {
+    if ((stripos($clean['email'], 'sage') === FALSE && $countres < MAX_RES && $sticky != "1" && $permasage != "1") || ($admin && $age && $sticky != "1")) {
         $query = "update " . SQLLOG . " set root=now() where no=$resto"; //age
         $mysql->query($query);
     }
 }
 
 //Main insert
-$query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) values (" . "'" . $now . "'," . "'" . mysql_real_escape_string($name) . "'," . "'" . mysql_real_escape_string($email) . "'," . "'" . mysql_real_escape_string($sub) . "'," . "'" . mysql_real_escape_string($com) . "'," . "'" . mysql_real_escape_string($host) . "'," . "'" . mysql_real_escape_string($pass) . "'," . "'" . $ext . "'," . (int) $W . "," . (int) $H . "," . (int) $TN_W . "," . (int) $TN_H . "," . "'" . $tim . "'," . (int) $time . "," . "'" . $md5 . "'," . (int) $fsize . "," . "'" . mysql_real_escape_string($upfile_name) . "'," . (int) $stickied . "," . (int) $permasage . "," . (int) $locked . "," . $rootqu . "," . (int) mysql_real_escape_string($resto) . ")";
+$query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) values (" . "'" . $now . "'," . "'" . mysql_real_escape_string($clean['name']) . "'," . "'" . mysql_real_escape_string($clean['email']) . "'," . "'" . mysql_real_escape_string($clean['sub']) . "'," . "'" . mysql_real_escape_string($clean['com']) . "'," . "'" . mysql_real_escape_string($host) . "'," . "'" . mysql_real_escape_string($pass) . "'," . "'" . $ext . "'," . (int) $W . "," . (int) $H . "," . (int) $TN_W . "," . (int) $TN_H . "," . "'" . $tim . "'," . (int) $time . "," . "'" . $md5 . "'," . (int) $fsize . "," . "'" . mysql_real_escape_string($upfile_name) . "'," . (int) $stickied . "," . (int) $permasage . "," . (int) $locked . "," . $rootqu . "," . (int) mysql_real_escape_string($resto) . ")";
 
 if (!$result = $mysql->query($query)) {
     echo S_SQLFAIL;
