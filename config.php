@@ -56,7 +56,6 @@ define(PAGE_DEF, 10); //Threads per page.
 define(PAGE_MAX, 10); //Maximum number of pages, posts that are pushed past the last page are deleted.
 define(LOG_MAX,  1500); //Maximum number of posts to store in the table.
 define(UPDATE_THROTTLING, false); //Leave this as 0 unless you recieve /a lot/ of traffic
-define(MAX_LINES_SHOWN, 20);      //Maximum number of user lines shown before they are abbreviated
 define(SHOW_BLOTTER, false);      //Added to the top of each board, ex: ex: http://yoursite.com/resources/globalnews.txt
 define(BLOTTER_PATH, 'CHANGEME'); //Absolute html path to your blotter file, this feature is experimental and still is not fully functional.
 
@@ -67,8 +66,8 @@ define(FORTUNE_TRIP, false); //Allows users to recieve a #fortune in the namefie
 
 define(FORCED_ANON, false); //Force anonymous on this board.
 define(DISP_ID, false);     //Display user IDs.
-define(BR_CHECK, 20);       //Max lines per post (0 = no limit)
-define(MAX_LINES, 50);      //Max # of lines allowed for a post
+define(MAX_LINES, 50);      //Max # of line breaks allowed for a post
+define(MAX_LINES_SHOWN, 20);      //Maximum number of user lines shown in the index before they are abbreviated
 define(S_POSTLENGTH, 3000); //Maximum character length of posts
 define(NOPICBOX, false);    //Whether or not to have the [No Picture] checkbox.
 

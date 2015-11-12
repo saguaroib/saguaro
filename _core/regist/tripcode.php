@@ -7,8 +7,8 @@
 */
 
 //start new tripcode crap
-list( $name ) = explode( "#", $name );
-$name = CleanStr( $name );
+list( $clean['name'] ) = explode( "#", $clean['name'] );
+$clean['name'] = $sanitize->CleanStr( $clean['name'] );
 
 if ( preg_match( "/\#+$/", $names ) ) {
     $names = preg_replace( "/\#+$/", "", $names );
@@ -17,7 +17,7 @@ if ( preg_match( "/\#/", $names ) ) {
     $names = str_replace( "&#", "&&", htmlspecialchars( $names ) ); // otherwise HTML numeric entities screw up explode()!
     list( $nametemp, $trip, $sectrip ) = str_replace( "&&", "&#", explode( "#", $names, 3 ) );
     $names = $nametemp;
-    $name .= "</span>";
+    $clean['name'] .= "</span>";
     
     if ( $trip != "" ) {
         if ( FORTUNE_TRIP == 1 && $trip == "fortune" ) {
@@ -44,26 +44,26 @@ if ( preg_match( "/\#/", $names ) ) {
             $com        = "<font color=$fortcol><b>Your fortune: " . $fortunes[$fortunenum] . "</b></font><br /><br />" . $com;
             $trip       = "";
             if ( $sectrip == "" ) {
-                if ( $name == "</span>" && $sectrip == "" )
-                    $name = S_ANONAME;
+                if ( $clean['name'] == "</span>" && $sectrip == "" )
+                    $clean['name'] = S_ANONAME;
                 else
-                    $name = str_replace( "</span>", "", $name );
+                    $clean['name'] = str_replace( "</span>", "", $clean['name'] );
             }
         } else if ( $trip == "fortune" ) {
             //remove fortune even if FORTUNE_TRIP is off
             $trip = "";
             if ( $sectrip == "" ) {
-                if ( $name == "</span>" && $sectrip == "" )
-                    $name = S_ANONAME;
+                if ( $clean['name'] == "</span>" && $sectrip == "" )
+                    $clean['name'] = S_ANONAME;
                 else
-                    $name = str_replace( "</span>", "", $name );
+                    $clean['name'] = str_replace( "</span>", "", $clean['name'] );
             }
             
         } else {
             
             $salt = strtr( preg_replace( "/[^\.-z]/", ".", substr( $trip . "H.", 1, 2 ) ), ":;<=>?@[\\]^_`", "ABCDEFGabcdef" );
             $trip = substr( crypt( $trip, $salt ), -10 );
-            $name .= " <span class='name postertrip'>!" . $trip;
+            $clean['name'] .= " <span class='name postertrip'>!" . $trip;
         }
     }
     
@@ -83,8 +83,8 @@ if ( preg_match( "/\#/", $names ) ) {
         $sha = base64_encode( pack( "H*", sha1( $sectrip . $salt ) ) );
         $sha = substr( $sha, 0, 11 );
         if ( $trip == "" )
-            $name .= " <span class='name postertrip'>";
-        $name .= "!!" . $sha;
+            $clean['name'] .= " <span class='name postertrip'>";
+        $clean['name'] .= "!!" . $sha;
     }
 }
 

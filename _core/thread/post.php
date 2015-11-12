@@ -97,7 +97,7 @@ class Post {
     }
 
     function abbreviate($str, $max_lines) {
-        $max_lines = (defined('MAX_LINES_SHOWN')) ? MAX_LINES_SHOWN : (defined('BR_CHECK')) ? BR_CHECK : ($max_lines) ? $max_lines : 20; //Pay no attention to the ternary.
+        $max_lines = (defined('MAX_LINES_SHOWN')) ? MAX_LINES_SHOWN : (defined('MAX_LINES')) ? MAX_LINES : ($max_lines) ? $max_lines : 20; //Pay no attention to the ternary.
         $lines = explode("<br />", $str); //This should probably be <br>
 
         if (count($lines) > $max_lines) {
