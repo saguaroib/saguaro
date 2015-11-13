@@ -11,7 +11,7 @@ This has been cobbled together from stuff I myself have written and the contribu
 #Why use Saguaro?
 Saguaro sports many competitive features not commonly found in other imageboard software:
 - Mobile browser support
-- ~~Read only JSON API~~ SOON.
+- ~~Read only JSON API~~ *Soon.*
 - A modular & customizable jQuery suite
 
 #Installation Dependencies 
@@ -24,16 +24,14 @@ Saguaro sports many competitive features not commonly found in other imageboard 
 - [Installing](//github.com/spootTheLousy/saguaro/wiki/Installing)
 - [Setting up multiple boards](//github.com/spootTheLousy/saguaro/wiki/Adding-multiple-boards)
 
-#Testing and Development
-- Setting up a basic [Development Environment.](//github.com/spootTheLousy/saguaro/wiki/Development-Environment)
-
-#Contributing
-- Check out our [wiki page on contributing and standards](//github.com/spootTheLousy/saguaro/wiki/Contributing)
-
 #Additional support
-- [API Documentation](//github.com/spootTheLousy/saguaro/wiki/API-Documentation) 
 - [The Wiki](//github.com/spootTheLousy/saguaro/wiki)
+- [API Documentation](//github.com/spootTheLousy/saguaro/wiki/API-Documentation) 
 - #saguaroimgboard @ irc.rizon.net
 
+#Testing, Development, and Contributing
+- Setting up a basic [Development Environment](//github.com/spootTheLousy/saguaro/wiki/Development-Environment)
+- [Contributing and standards](//github.com/spootTheLousy/saguaro/wiki/Contributing)
+
 #License
-While there is no official licensing info due to this being a fork of a fork [...], a lot of great people have worked on saguaro (in spirit) and leaving in credits (specifically in the page's footer, ***S_FOOT***) attributing them is very much appreciated
+While there is no official licensing info due to this being a fork of a fork [...], a lot of great people have worked on saguaro (in spirit) and leaving in credits (specifically in the page's footer, ***S_FOOT***) attributing them is very much appreciated.
