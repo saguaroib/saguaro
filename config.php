@@ -60,6 +60,9 @@ define(SHOW_BLOTTER, false);      //Added to the top of each board, ex: ex: http
 define(BLOTTER_PATH, 'CHANGEME'); //Absolute html path to your blotter file, this feature is experimental and still is not fully functional.
 
 // Post & Thread
+define(EVENT_STICKY_RES, 1500); //The number of replies allowed to an event sticky before self-pruning begins. 
+//These stickies self delete the oldest posts once the number of replies exceeds this amount.
+
 define(USE_BBCODE, false);  //Use BBcode
 define(DICE_ROLL, false);   //Allow users to roll /dice in the name field
 define(FORTUNE_TRIP, false); //Allows users to recieve a #fortune in the namefield
