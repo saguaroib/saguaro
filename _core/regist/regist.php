@@ -33,8 +33,11 @@ if (valid('moderator')) {
 }
 
 if ($moderator) {
-    if (isset($_POST['isSticky']))
+    if (isset($_POST['isSticky'])) {
         $stickied = 1;
+        if (isset($_POST['eventSticky'])) //Experimental feature.
+            $stickied = 2;
+    }
     if (isset($_POST['isLocked']))
         $locked = 1;
 }
@@ -309,6 +312,13 @@ setcookie("" . SITE_ROOT . "_pass", $c_pass, time() + 7 * 24 * 3600, '/', $cooki
 if (!$resto) {
     require_once('prune_old.php');
     prune_old();
+} else {//Event stickies
+    $eventStick = $mysql->query("SELECT sticky FROM " . SQLLOG . " WHERE no='$resto' AND sticky=2");
+    if (mysql_num_rows($eventStick) > 0) {
+        require_once('prune_old.php');
+        pruneThread($resto);
+    }
+    mysql_free_result($eventStick);
 }
 
 // thumbnail
