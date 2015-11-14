@@ -5,6 +5,12 @@ class Modify {
     function mod($no, $action = 'none') {
 
         switch ($action) {
+            case 'eventsticky':
+                $sqlValue = "sticky";
+                $rootnum  = "2027-07-07 00:00:00";
+                $sqlBool  = "'2', root='" . $rootnum . "'";
+                $verb     = "Stuck (event mode) ";
+                break;
             case 'sticky':
                 $sqlValue = "sticky";
                 $rootnum  = "2027-07-07 00:00:00";
