@@ -4,14 +4,15 @@
 */
 
 define(LANGUAGE, 'en-us');                      //Language to use. See "lang" folder for available languages.
-define(TITLE, 'Saguaro beta!');                 //Name of the board.
+define(TITLE, 'Saguaro Imageboard!');                 //Name of the board.
 define(S_HEADSUB, 'No artificial sweeteners!'); //Board subtitle.
 define(S_DESCR, 'An imageboard powered by saguaro'); //meta description for this board
 
 
 /*
     MySQL information.
-    The database and tables are created automatically using these values.
+    The database and tables are created automatically using these values. 
+    Scroll below to the  MySQL Advanced section for futher options 
 */
 define(SQLUSER, 'username');
 define(SQLPASS, 'password');
@@ -25,11 +26,11 @@ define(PREFIX, 'imgboard'); //Prefix to automatically use for the database table
     Something descriptive.
 */
 
-define(PANEL_PASS, 'CHANGEME');  //Janitor password  (CHANGE THIS YO)
-define(SITE_ROOT, 'mysite.com'); //simplified site domain ONLY, EX: saguaro.org
-define(SITE_SUFFIX, '');         //Domain suffix, ex: org, com, info, net. NO DOTS, ONLY LETTERS
+define(PANEL_PASS, 'CHANGEME');  //Staff action key  (CHANGE THIS YO)
+define(SITE_ROOT, 'mysite.com'); //simplified site domain ONLY (subdomains required if used), EX: saguaro.org | EX: boards.saguaro.org 
+define(SITE_SUFFIX, '');         //Domain suffix, ex: org, com, info, net, etc. NO DOTS, ONLY LETTERS
 define(BOARDLIST, '');           //the text file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
-define(GLOBAL_NEWS, 'CHANGEME'); //Absolute html path to your global board news file, the contents of this file will be automatically
+define(GLOBAL_NEWS, 'CHANGEME'); //Absolute html path to your global board news file. Appears below post form, above index body
 define(SALTFILE, 'salt');        //Name of the salt file, do not add a file extension for security
 
 //Basic settings
@@ -56,13 +57,10 @@ define(PAGE_DEF, 10); //Threads per page.
 define(PAGE_MAX, 10); //Maximum number of pages, posts that are pushed past the last page are deleted.
 define(LOG_MAX,  1500); //Maximum number of posts to store in the table.
 define(UPDATE_THROTTLING, false); //Leave this as 0 unless you recieve /a lot/ of traffic
-define(SHOW_BLOTTER, false);      //Added to the top of each board, ex: ex: http://yoursite.com/resources/globalnews.txt
-define(BLOTTER_PATH, 'CHANGEME'); //Absolute html path to your blotter file, this feature is experimental and still is not fully functional.
+define(SHOW_BLOTTER, false);      //Experimental. Added to the top of each board, ex: ex: http://yoursite.com/resources/globalnews.txt
+define(BLOTTER_PATH, 'CHANGEME'); //Experimental. Absolute html path to your blotter file, this feature is experimental and still is not fully functional.
 
 // Post & Thread
-define(EVENT_STICKY_RES, 1500); //The number of replies allowed to an event sticky before self-pruning begins. 
-//These stickies self delete the oldest posts once the number of replies exceeds this amount.
-
 define(USE_BBCODE, false);  //Use BBcode
 define(DICE_ROLL, false);   //Allow users to roll /dice in the name field
 define(FORTUNE_TRIP, false); //Allows users to recieve a #fortune in the namefield
@@ -80,34 +78,35 @@ define(PROXY_CHECK, true);  //Enable proxy check.
 define(RENZOKU, 10);        //Seconds between posts (floodcheck)
 define(RENZOKU2, 15);       //Seconds between image posts (floodcheck)
 define(MAX_RES, 500);       //Maximum thread bumps from posts.
-define(MAX_IMGRES, 300);    //Maximum thread bumps from images.
+define(MAX_IMGRES, 300);    //Maximum thread bumps from images
+define(EVENT_STICKY_RES, 1500); //The number of replies allowed to an event sticky before in-thread pruning begins. These stickies self delete the oldest posts once the number of replies exceeds this number.
 define(S_OMITT_NUM, 5);     //number of posts to display in each thread on the index.
-//Is this even referenced?! define(MANTHUMBS, '1');                                 //Display thumbnails in manager panel- you may want it off if you have too many images (1: yes  0: no)
 
 //Captcha
 define(BOTCHECK, false);    //Use CAPTCHAs
-define(RECAPTCHA, TRUE); //Use reCaptcha instead of the default captcha. Requires the SITEKEY and SECRET to be set below.
-define(RECAPTCHA_SITEKEY, "6LcP0Q0TAAAAAM4fwFHpj_v5Vipqdyq68EIuKHwF");//reCaptcha public key.
-define(RECAPTCHA_SECRET, "6LcP0Q0TAAAAAIDvwraDbiPIQD28DfDTvbIHalLZ");//reCaptcha secret key.
+define(RECAPTCHA, false); //Use reCaptcha instead of the default captcha. Requires the SITEKEY and SECRET to be set below.
+define(RECAPTCHA_SITEKEY, "");//reCaptcha public key.
+define(RECAPTCHA_SECRET, "");//reCaptcha secret key.
 
 //Images
 define(DUPE_CHECK, true); //whether or not to check for duplicate images
-define(MAX_KB, 2048); //Maximum upload size in KB
+define(MAX_KB, 3072); //Maximum upload size in KB
 
 //WebM
+define(ALLOW_WEBMS, false); //This feature currently has prequisites. Please visit https://github.com/spootTheLousy/saguaro/wiki/Supporting-WEBMs before enabling.
 define(ALLOW_AUDIO, false); //If true, allows WebMs containing an audio stream.
 define(MAX_DURATION, 60);   //The maximum duration allowed in seconds.
 
-//RePod's JS suite
+//RePod's JS suite. The majority of these should remain disabled until the suite is updated (as of 11-14-15)
 define(USE_JS_SETTINGS, 1); //Include the JS suite's settings - enables user side settings
 define(USE_IMG_HOVER, 1);   //Use image expansion on hover
 define(USE_IMG_TOOLBAR, 0); //Use the image search toolbars
 define(USE_IMG_EXP, 1);     //Use image expansion
-define(USE_UTIL_QUOTE, 1);  //Use utility quotes
+define(USE_UTIL_QUOTE, 0);  //Use utility quotes
 define(USE_INF_SCROLL, 0);  //Use infinite scroll
 define(USE_FORCE_WRAP, 1);  //Use forced post wrapping
-define(USE_UPDATER, 1);     //Use thread updater
-define(USE_THREAD_STATS, 1); //Use thread stats
+define(USE_UPDATER, 0);     //Use thread updater
+define(USE_THREAD_STATS, 0); //Use thread stats
 define(USE_EXTRAS, 1);      //Automatically include all .js files in JS_PATH/extra/
 
 
