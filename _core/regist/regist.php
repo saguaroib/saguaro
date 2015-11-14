@@ -287,11 +287,15 @@ if ($resto) { //sage or age action
     $resline = $mysql->query("select sticky,permasage from " . SQLLOG . " where no=" . $resto);
     list($sticky, $permasage) = mysql_fetch_row($resline);
     mysql_free_result($resline);
-    if ((stripos($clean['email'], 'sage') === FALSE && $countres < MAX_RES && $sticky != "1" && $permasage != "1") || ($admin && $age && $sticky != "1")) {
+    if ((stripos($clean['email'], 'sage') === FALSE && $countres < MAX_RES && $sticky < "1" && $permasage != "1") || ($admin && $age && $sticky < "1")) {
         $query = "update " . SQLLOG . " set root=now() where no=$resto"; //age
         $mysql->query($query);
     }
 }
+
+/*if (SPOILER && isset($spoiler));
+    $tim = "Spoiler Image"; //Save tim (thumbnail image) as spoiler image
+    */
 
 //Main insert
 $query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) values (" . "'" . $now . "'," . "'" . mysql_real_escape_string($clean['name']) . "'," . "'" . mysql_real_escape_string($clean['email']) . "'," . "'" . mysql_real_escape_string($clean['sub']) . "'," . "'" . mysql_real_escape_string($clean['com']) . "'," . "'" . mysql_real_escape_string($host) . "'," . "'" . mysql_real_escape_string($pass) . "'," . "'" . $ext . "'," . (int) $W . "," . (int) $H . "," . (int) $TN_W . "," . (int) $TN_H . "," . "'" . $tim . "'," . (int) $time . "," . "'" . $md5 . "'," . (int) $fsize . "," . "'" . mysql_real_escape_string($upfile_name) . "'," . (int) $stickied . "," . (int) $permasage . "," . (int) $locked . "," . $rootqu . "," . (int) mysql_real_escape_string($resto) . ")";
@@ -324,7 +328,7 @@ if (!$resto) {
 // thumbnail
 if ($has_image) {
     rename($dest, $path . $tim . $ext);
-    if (USE_THUMB) {
+    if (USE_THUMB) { //We'll still make the thumbnail even if its a spoiler image for user extensions.
         require_once("thumb.php");
         $tn_name = thumb($path, $tim, $ext, $resto);
         if (!$tn_name && $ext != ".pdf") {
