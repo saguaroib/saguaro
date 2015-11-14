@@ -287,7 +287,7 @@ if ($resto) { //sage or age action
     $resline = $mysql->query("select sticky,permasage from " . SQLLOG . " where no=" . $resto);
     list($sticky, $permasage) = mysql_fetch_row($resline);
     mysql_free_result($resline);
-    if ((stripos($clean['email'], 'sage') === FALSE && $countres < MAX_RES && $sticky < "1" && $permasage != "1") || ($admin && $age && $sticky < "1")) {
+    if ((stripos($clean['email'], 'sage') === FALSE && $countres < MAX_RES && $sticky < "0" && $permasage != "1") || ($admin && $age && $sticky < "0")) {
         $query = "update " . SQLLOG . " set root=now() where no=$resto"; //age
         $mysql->query($query);
     }
