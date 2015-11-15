@@ -24,7 +24,7 @@ class SaguaroMySQLi extends SaguaroQL {
         }
     }
 
-    function escapeString($string) {
+    function escape_string($string) {
         if (!$this->connection)
             return 'Not connected to a SQL database, cannot escape.';
 
