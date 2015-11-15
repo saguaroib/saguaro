@@ -192,6 +192,7 @@ class DelTable {
             $temp .= "<form action='admin.php' />
             <tr><td class='postblock'>Action</td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
             <option value='sticky' />Sticky</option>
+            <option value='eventsticky' />Event sticky</option>
             <option value='unsticky' />Unsticky</option>
             <option value='lock' />Lock</option>
             <option value='unlock' />Unlock</option>

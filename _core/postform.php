@@ -74,18 +74,19 @@ class PostForm {
         //File selection
         $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*|.webm' size='35'>";
 
-        if (NOPICBOX && !SPOILERS)
+        if (NOPICBOX && !SPOILER)
             $temp .= "[<label><input type='checkbox' name='textonly' value='on'>" . S_NOFILE . "</label>]</td></tr>";
 
-        /*if (SPOILERS) //Spoiler checkbox
-            $temp .= "[<label><input type='checkbox' name='spoiler' value='on'>" . S_SPOILERS . "</label>]</td></tr>";
-        else*/
+        if (SPOILER && !NOPICBOX) //Spoiler checkbox
+            $temp .= "[<label><input type='checkbox' name='spoiler' value='spoiler'>" . S_SPOILERS . "</label>]</td></tr>";
+        else
             $temp .= "</td></tr>";
 
         if ($admin) { //Admin-specific posting options
             $temp .= "<tr><td align='left' class='postblock' align='left'>
                 Options</td><td align='left'>
                 Sticky: <input type='checkbox' name='isSticky' value='isSticky'>
+                Event sticky: <input type='checkbox' name='eventSticky' value='eventSticky'>
                 Lock:<input type='checkbox' name='isLocked' value='isLocked'>
                 Capcode:<input type='checkbox' name='showCap' value='showCap'>
                 <tr><td class='postblock' align='left'>" . S_RESNUM . "</td><td align='left'><input type='text' name='resto' size='28'></td></tr>";

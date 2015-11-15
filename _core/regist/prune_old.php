@@ -2,7 +2,10 @@
 
 /*
 
-    This prunes old posts that are pushed off the bottom of last page, called once after each post is made in regist()
+    prune_old(): cleans up posts that are pushed off the bottom of last page, called once after each post is made in regist()
+    
+    pruneThread($no): Targets a specific thread, event stickies where once a certain 
+    number of replies are posted, oldest posts in the thread are automatically deleted.
 
     Used exclusively by regist();
 
@@ -65,6 +68,20 @@ function prune_old() {
             mysql_free_result($result);
         }
     }
+}
+
+function pruneThread($no) {
+    global $my_log;
+    $my_log->update_cache();
+    $maxreplies = EVENT_STICKY_RES;
+
+    $result      = mysql_call("SELECT no FROM " . SQLLOG . " WHERE resto='$no' ORDER BY time ASC");
+    $repcount = mysql_num_rows($result);
+    while ($row = mysql_fetch_array($result) and $repcount >= $maxreplies) {
+        delete_post($row['no'], 'trim', 0, 1, 0, 0); // imgonly=0, automatic=1, children=1
+        $repcount--;
+    }
+    mysql_free_result($result);
 }
 
 ?>
