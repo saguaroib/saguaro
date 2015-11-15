@@ -3,6 +3,7 @@
 class Staff {
 
     function isStaff($user) {
+        global $mysql;
         //See if user exists in mod table. Returns false if user is in table. Why does it do that.
         if (!$mysql->query(" SELECT `user` FROM " . SQLMODSLOG . " WHERE user='$user'"))
             return true;           
@@ -10,6 +11,7 @@ class Staff {
     }
     
     function addStaff($user = 0, $pass1 = 0, $pass2 = 0, $perm) {
+        global $mysql;
         //add staff member
         if (!valid('admin'))
             error("Permission denied");
@@ -42,10 +44,11 @@ class Staff {
         $crypt = new SaguaroCryptLegacy;
         $salt = $crypt->generate_hash($pass2);
 
-        mysql_query("INSERT INTO " . SQLMODSLOG . " (`user`, `password`, `public_salt`, `allowed`, `denied`) VALUES ('" . mysql_real_escape_string($user) . "', '" . $salt['hash'] . "', '" . $salt['public_salt'] . "', '" . $allowed . "', '" . $denied . "')");
+        $mysql->query("INSERT INTO " . SQLMODSLOG . " (`user`, `password`, `public_salt`, `allowed`, `denied`) VALUES ('" . mysql_real_escape_string($user) . "', '" . $salt['hash'] . "', '" . $salt['public_salt'] . "', '" . $allowed . "', '" . $denied . "')");
     }
     
     function remStaff($targUser = '', $actUser, $actPass) {
+        global $mysql;    
         //remove staff member
         $targUser = mysql_real_escape_string($targUser);
         
@@ -56,7 +59,7 @@ class Staff {
         if ($_COOKIE['saguaro_auser'] == $targUser)
             error("You can't delete yourself!"); //oi ya cheeky shit ill bash yer fookin head in i sware on me mum
         
-        mysql_query("DELETE FROM " . SQLMODSLOG . " WHERE user='" . $targUser ."'");
+        $mysql->query("DELETE FROM " . SQLMODSLOG . " WHERE user='" . $targUser ."'");
     }
     
     function modifyStaff($targUser, $actUser, $actPass, $perms = array(), $self = 0) {
@@ -64,9 +67,10 @@ class Staff {
     }
 
     function getStaff() {
+        global $mysql;
         //Staff list for panel
         
-        if ( !$active = mysql_query("SELECT * FROM " . SQLMODSLOG . "")) 
+        if ( !$active = $mysql->query("SELECT * FROM " . SQLMODSLOG . "")) 
             echo S_SQLFAIL;
         $j = 0;
         $temp = '';
