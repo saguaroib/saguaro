@@ -24,6 +24,10 @@ class SaguaroMySQL extends SaguaroQL {
         }
     }
 
+    function escapeString($string) {
+        return mysql_real_escape_string($string);
+    }
+
     private function sanitizeString($string) {
         return $string;
     }
