@@ -23,7 +23,14 @@ class SaguaroMySQLi extends SaguaroQL {
             echo S_SQLDBSF;
         }
     }
-    
+
+    function escapeString($string) {
+        if (!$this->connection)
+            return 'Not connected to a SQL database, cannot escape.';
+
+        return $this->connection->escape_string($string);
+    }
+
     private function sanitizeString($string) {
         return $string;
     }
@@ -41,14 +48,14 @@ class SaguaroMySQLi extends SaguaroQL {
         }
         return $ret;
     }
-    
+
     function result($string, $index = 0) {
         return $this->query($string);
     }
 
     function fetch_row($string) {
         if (!$string) return $this->last;
-        
+
         $this->last = $this->query($string)->fetch_row();
         return $this->last;
     }
@@ -59,17 +66,17 @@ class SaguaroMySQLi extends SaguaroQL {
         $this->last = $this->query($string)->fetch_array();
         return $this->last;
     }
-    
+
     function fetch_assoc($string) {
         if (!$string) return $this->last;
 
         $this->last = $this->query($string)->fetch_assoc();
         return $this->last;
     }
-    
+
     function num_rows($string) {
         if (!$string) return $this->last->num_rows;
-        
+
         $this->last = $this->query($string)->num_rows;
         return $this->last;
     }
