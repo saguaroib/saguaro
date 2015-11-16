@@ -8,7 +8,7 @@
         Redirect back to page with a get to call it?
 */
 
-$autolock = false;
+$autolock = true;
 $lockout = "." . basename(__FILE__, ".php") . "_lockout";
 
 if (is_file($lockout)) {
