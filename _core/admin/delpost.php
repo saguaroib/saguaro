@@ -4,6 +4,7 @@ require_once(CORE_DIR . "/log/log.php");
 
 class DeletePost extends Log {
     function userDel($no, $pwd) {
+        global $mysql;
         $host         = $_SERVER["REMOTE_ADDR"];
         $delno        = array();
         $rebuildindex = !(defined("STATIC_REBUILD") && STATIC_REBUILD);
@@ -38,7 +39,7 @@ class DeletePost extends Log {
     }
 
     function targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $allbyip = 0, $delhost = '') {
-        global $path;
+        global $path, $mysql;
 
         $this->update_cache();
         $log = $this->cache;
@@ -81,14 +82,14 @@ class DeletePost extends Log {
             $row['sub']      = mysql_real_escape_string($row['sub']);
             $row['com']      = mysql_real_escape_string($row['com']);
             $row['filename'] = mysql_real_escape_string($row['filename']);
-            mysql_call("INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . BOARD_DIR . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')");
+            $mysql->query("INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . BOARD_DIR . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')");
         }
         if ($allbyip && $delhost !== '') 
-            $result = mysql_call("select no,resto,tim,ext from " . SQLLOG . " where host='" . $delhost . "'");
+            $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where host='" . $delhost . "'");
         if ($row['resto'] == 0 && $children && !$imgonly && !$allbyip) // select thread and children
-            $result = mysql_call("select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno");
+            $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno");
         else // just select the post
-            $result = mysql_call("select no,resto,tim,ext from " . SQLLOG . " where no=$resno");
+            $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno");
         while ($delrow = mysql_fetch_array($result)) {
             // delete
             $path = realpath("./") . '/' . IMG_DIR;
@@ -105,7 +106,7 @@ class DeletePost extends Log {
                     unset($log[$delrow['resto']]['children'][$delrow['no']]);
                 unset($log[$delrow['no']]);
                 $log['THREADS'] = array_diff($log['THREADS'], array($delrow['no'])); // remove from THREADS
-                mysql_call("DELETE FROM reports WHERE no=" . $delrow['no']); // clear reports
+                $mysql->query("DELETE FROM reports WHERE no=" . $delrow['no']); // clear reports
                 if (USE_GZIP == 1)
                     @unlink(RES_DIR . $delrow['no'] . PHP_EXT . '.gz');
                 @unlink(RES_DIR . $delrow['no'] . PHP_EXT);
@@ -113,9 +114,9 @@ class DeletePost extends Log {
         }
         //delete from DB
         if ($row['resto'] == 0 && $children && !$imgonly) // delete thread and children
-            $result = mysql_call("delete from " . SQLLOG . " where no=$resno or resto=$resno");
+            $result = $mysql->query("delete from " . SQLLOG . " where no=$resno or resto=$resno");
         elseif (!$imgonly) // just delete the post
-            $result = mysql_call("delete from " . SQLLOG . " where no=$resno");
+            $result = $mysql->query("delete from " . SQLLOG . " where no=$resno");
         return $row['resto']; // so the caller can know what pages need to be rebuilt
     }
 }

@@ -2,8 +2,8 @@
 
 class Validation
 {
-    function verify( $action )
-    {
+    function verify( $action ) {
+        global $mysql;
         
         static $valid_cache; // the access level of the user
         $access_level = array(
@@ -17,11 +17,11 @@ class Validation
         if (!isset($valid_cache)) {
             $valid_cache = $access_level['none'];
             if (isset($_COOKIE['saguaro_auser']) && isset($_COOKIE['saguaro_apass'])) {
-                $user = mysql_real_escape_string($_COOKIE['saguaro_auser']);
-                $pass = mysql_real_escape_string($_COOKIE['saguaro_apass']);
+                $user = $mysql->escape_string($_COOKIE['saguaro_auser']);
+                $pass = $mysql->escape_string($_COOKIE['saguaro_apass']);
             }
             if ($user && $pass) {
-                $result = mysql_call("SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'");
+                $result = $mysql->query("SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'");
                 list($allow, $deny) = mysql_fetch_row($result);
                 mysql_free_result($result);
                 if ($allow) {
@@ -74,7 +74,7 @@ class Validation
                 }
                 // if they're a janitor on another board, check for illegal post unlock			
                 else if ($valid_cache >= $access_level['janitor']) {
-                    $query         = mysql_call("SELECT COUNT(*) from reports WHERE board='" . BOARD_DIR . "' AND no=$no AND cat=2");
+                    $query         = $mysql->query("SELECT COUNT(*) from reports WHERE board='" . BOARD_DIR . "' AND no=$no AND cat=2");
                     $illegal_count = mysql_result($query, 0, 0);
                     mysql_free_result($query);
                     return $illegal_count >= 3;
