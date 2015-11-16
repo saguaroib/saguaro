@@ -75,12 +75,10 @@ class Head {
         if (USE_FORCE_WRAP)   $dat .= '<script src="' . JS_PATH . '/force_post_wrap.js" type="text/javascript"></script>';
         if (USE_UPDATER)      $dat .= '<script src="' . JS_PATH . '/thread_updater.js" type="text/javascript"></script>';
         if (USE_THREAD_STATS) $dat .= '<script src="' . JS_PATH . '/thread_stats.js" type="text/javascript"></script>';
-        if (REPOD_EXTRA)      $dat .= '<script src="' . JS_PATH . '/extra/bgmod.js" type="text/javascript"></script>';
         if (USE_EXTRAS) {
             foreach (glob(JS_PATH . "/extra/*.js") as $path) {
                 $dat .= "<script src='$path' type='text/javascript'></script>";
             }
-            unset($path);
         }
 
         $dat .= EXTRA_SHIT . '</head><body class="is_index"><div class="beforePostform" />' . $titlebar . '
