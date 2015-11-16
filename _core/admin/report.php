@@ -12,8 +12,9 @@
 class Report {
     
     function reportProcess() {
+    	global $mysql;
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            $no = mysql_real_escape_string($_GET['no']);
+            $no = $mysql->escape_string($_GET['no']);
             //Various checks in the popup window before form is filed
             $this->reportPostExists($no);
             $this->reportIsCleared($no);  
@@ -29,10 +30,11 @@ class Report {
     }
     
     function reportGetAllBoard($list = 0) {
-        $query = mysql_query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type > 0");
+    	global $mysql;
+        $query = $mysql->query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type > 0");
         
         if (!$list) { //If the call is for the oldvalid() alert in admin.php, this will be 1.	
-            $active = mysql_num_rows($query);
+            $active = $mysql->num_rows($query);
             if ($active > 0)
                 $active = "<b><font color='red'/>$active Reports!</font></b>";
             else
@@ -44,45 +46,50 @@ class Report {
     }
     
     function reportPostExists($no) {
+    	global $mysql;
     //I won't dignify retards who report stickies with a SQL query, just give them the post not found error.
-        $query = mysql_query("SELECT * FROM " . SQLLOG . " WHERE no='$no' AND sticky < 1 LIMIT 1");
-        if (mysql_num_rows($query) < 1)
+        $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE no='$no' AND sticky < 1 LIMIT 1");
+        if ($mysql->num_rows($query) < 1)
             return $this->error("That post doesn't exist.", $no);
     }
     
     function reportIsCleared($no) {
-        $query = mysql_query("SELECT `no`,`type` FROM reports WHERE no='" . $no . "' AND type='0' LIMIT 1");
-        if (mysql_num_rows($query) > 0)
+    	global $mysql;
+        $query = $mysql->query("SELECT `no`,`type` FROM reports WHERE no='" . $no . "' AND type='0' LIMIT 1");
+        if ($mysql->num_rows($query) > 0)
             return $this->error('This post has been reviewed and cleared.', $no);
     }
 
     function reportClear($no) {
+    	global $mysql;
         
         if (!valid('moderator'))
             $this->error("Permission denied");
         
-        $no = mysql_real_escape_string($no);
+        $no = $mysql->escape_string($no);
         if ($this->reportPostExists($no)) {
-            @mysql_query("DELETE FROM reports WHERE no='$no'"); //How did you get there? Attempt to clear up the phantom report.
+            @$mysql->query("DELETE FROM reports WHERE no='$no'"); //How did you get there? Attempt to clear up the phantom report.
             $this->error("That report/post doesn't exist anymore!");
         }
         //Set report type to inactive if it's been cleared by a mod. 
         //deletePost.php does the deletion when the post is pruned anyway
-        mysql_query("UPDATE reports SET type='0' WHERE no='$no'");
+        $mysql->query("UPDATE reports SET type='0' WHERE no='$no'");
     }
     
     function reportCheckIP($board, $no, $ip) {
-        $query = mysql_query("SELECT host FROM " . SQLLOG . " WHERE no='$no' AND host='$ip' LIMIT 1");
-        if (mysql_num_rows($query) > 0) //Trying to report own post
+    	global $mysql;
+        $query = $mysql->query("SELECT host FROM " . SQLLOG . " WHERE no='$no' AND host='$ip' LIMIT 1");
+        if ($mysql->num_rows($query) > 0) //Trying to report own post
             return $this->error("You can't report your own post!", $no);
 
         //Check if the submitting user has already reported this ip or is going on a reporting spree.
-        $query = mysql_query("SELECT * FROM reports WHERE ip='" . $ip . "' AND board='" . $board . "'");
-        if (mysql_num_rows($query) > 3 && !valid('janitor_board')) //Relax there, tattle tale
+        $query = $mysql->query("SELECT * FROM reports WHERE ip='" . $ip . "' AND board='" . $board . "'");
+        if ($mysql->num_rows($query) > 3 && !valid('janitor_board')) //Relax there, tattle tale
             return $this->error('Please wait a while before reporting more posts.', $no);
     }
     
     function reportSubmit($board, $no, $type) {
+    	global $mysql;
         require_once(CORE_DIR . "/general/captcha.php");
         $captcha = new Captcha;
         
@@ -99,16 +106,17 @@ class Report {
         This is not a valid submit option. 
         If the report isn't submitted with either cat 1,2 or 3, it is discarded */
         $host   = $_SERVER['REMOTE_ADDR'];
-        $cboard = mysql_real_escape_string($board);
-        $cno    = mysql_real_escape_string($no);
-        $ctype  = mysql_real_escape_string($type);
-        mysql_call("INSERT INTO reports (`num`, `no`, `board`, `type`, `time`, `ip`) VALUES ( '" . rand() . "', '" . $cno . "', '" . $cboard . "', '" . $ctype . "', NOW(), '" . $host . "') ");
+        $cboard = $mysql->escape_string($board);
+        $cno    = $mysql->escape_string($no);
+        $ctype  = $mysql->escape_string($type);
+        $mysql->query("INSERT INTO reports (`num`, `no`, `board`, `type`, `time`, `ip`) VALUES ( '" . rand() . "', '" . $cno . "', '" . $cboard . "', '" . $ctype . "', NOW(), '" . $host . "') ");
         
         echo "<head><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/" . $style . ".css'/><script>function loaded(){window.setTimeout(CloseMe, 3000);}function CloseMe() {window.close();}</script></head><body onLoad='loaded()'>
 	<center><font color=blue size=5>Report submitted! This window will close in 3 seconds...</b></font></center></body>";
     }
     
     function reportFormHead($no) {
+    	global $mysql;
         $style = (NSFW) ? "saguaba" : "sagurichan";
         
         echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -122,6 +130,7 @@ class Report {
     }
     
     function reportForm($board, $no) {
+    	
         require_once(CORE_DIR . "/general/captcha.php");
         $captcha = new Captcha;
         if (RECAPTCHA && defined(RECAPTCHA_SITEKEY))
@@ -158,8 +167,8 @@ class Report {
     }
     
     function reportList() {
-        
-        if (!$active = mysql_query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type>0 ORDER BY `type` DESC "))
+        global $mysql;
+        if (!$active = $mysql->query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type>0 ORDER BY `type` DESC "))
             echo S_SQLFAIL;
         $j = 0;
         
@@ -168,11 +177,10 @@ class Report {
         $temp .= "<tr class=\"postTable head\"><th>Clear Report</th><th>Post Number</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
         $temp .= "</tr>";
         
-        while ($row = mysql_fetch_row($active)) {
+        while ($row = $mysql->fetch_array($active)) {
             $j++;
-            list($num, $no, $board, $type, $time, $ip) = $row;
-            
-            switch ($type) {
+
+            switch ($row['type']) {
                 case '1':
                     $type = 'Spam';
                     break;
@@ -188,9 +196,9 @@ class Report {
             }
             $class = ($j % 2) ? "row1" : "row2"; //BG color
             
-            $temp .= "<tr class='$class'><td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=reports&no=" . $no . "';\" value='Clear' /></td>";
-            $temp .= "<td>$no</td><td>/$board/</td><td>$type</td><td>$ip</td>
-            <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>";
+            $temp .= "<tr class='$class'><td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=reports&no=" . $row['no'] . "';\" value='Clear' /></td>";
+            $temp .= "<td>" . $row['no'] . "</td><td>/" . $row['board'] . "/</td><td>$type</td><td>" . $row['ip'] ." </td>
+            <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $row['no'] . "';\" value=\"Post Info\" /></td>";
             $temp .= "</tr>";
             $temp .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
             
