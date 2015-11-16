@@ -27,7 +27,7 @@ define(PREFIX, 'imgboard'); //Prefix to automatically use for the database table
 */
 
 define(PANEL_PASS, 'CHANGEME');  //Staff action key  (CHANGE THIS YO)
-define(SITE_ROOT, 'mysite.com'); //simplified site domain ONLY (subdomains required if used), EX: saguaro.org | EX: boards.saguaro.org 
+define(SITE_ROOT, 'CHANGEME.COM'); //simplified site domain ONLY (subdomains required if used), EX: saguaro.org | EX: boards.saguaro.org 
 define(SITE_SUFFIX, '');         //Domain suffix, ex: org, com, info, net, etc. NO DOTS, ONLY LETTERS
 define(BOARDLIST, '');           //the text file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
 define(GLOBAL_NEWS, 'CHANGEME'); //Absolute html path to your global board news file. Appears below post form, above index body
@@ -104,7 +104,6 @@ define(USE_IMG_TOOLBAR, 0); //Use the image search toolbars
 define(USE_IMG_EXP, 1);     //Use image expansion
 define(USE_UTIL_QUOTE, 0);  //Use utility quotes
 define(USE_INF_SCROLL, 0);  //Use infinite scroll
-define(USE_FORCE_WRAP, 1);  //Use forced post wrapping
 define(USE_UPDATER, 0);     //Use thread updater
 define(USE_THREAD_STATS, 0); //Use thread stats
 define(USE_EXTRAS, 1);      //Automatically include all .js files in JS_PATH/extra/
@@ -153,11 +152,13 @@ define(SECURE_LOGIN, true); //Enable CAPTCHA on staff login page.
 //BEWARE: Debug mode can display sensitive data that could be exploited. Use with caution
 define(DEBUG_MODE, 0); //0: off, 1: on. Enabling this will display any SQL errors as well as making redirects between posting/log updates slower.s
 
-/*MySQL tables. Only change these if defaults are not desired.
+/*
+MySQL tables. Only change these if defaults are not desired.
 
 By default, these tables are generated unique per-board. 
-To make boards share ban, user or deletion logs, delete "PREFIX." or check out the wiki page
-https://github.com/spootTheLousy/saguaro/wiki/Board-SQL-Table-relationship*/
+To share tables (login, bans, posts, etc.) between boards, delete PREFIX. or see the wiki page:
+https://github.com/spootTheLousy/saguaro/wiki/Board-SQL-Table-relationship
+*/
 
 define(SQLLOG, PREFIX);            //Table for posting information.
 define(SQLBANLOG, PREFIX.'_ban');  //Table for ban information.
