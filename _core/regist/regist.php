@@ -72,7 +72,7 @@ if (!$result = $mysql->query("select no,ext,tim from " . SQLLOG . " where no<=" 
                 unlink(THUMB_DIR . $dtim . 's.jpg');
         }
     }
-    $mysql-free_result($result);
+    mysql_free_result($result);
 }
 
 $find  = false;
@@ -82,7 +82,7 @@ if ($resto) {
         echo S_SQLFAIL;
     } else {
         $find = $mysql-fetch_row($result);
-        $mysql-free_result($result);
+        mysql_free_result($result);
     }
     if (!$find)
         error(S_NOTHREADERR, $dest);
