@@ -39,8 +39,6 @@ class Catalog {
         $this->parseReplies();
         $this->sortOPs();
 
-        $this->data = array_reverse($this->data); //Eh.
-
         foreach ($this->data as $entry) {
             $temp .= $this->generateOP($log[$entry['no']],$entry);
         }
@@ -49,29 +47,25 @@ class Catalog {
 
         return $temp;
     }
-    function sortOPs(/*$method = null*/) {
-        /*
-            Might not need this later if we change to a cached jQuery environment.
-            Does not sage/autosage into consideration.
-        */
+    function sortOPs() {
+        //Seperate stickies from non-stickies to process further.
+        $temp = ['sticky' => [], 'regular' => []];
+        
+        foreach ($this->data as $op) {           
+            if ($op['sticky'])
+                array_push($temp['sticky'],$op);
+            else
+                array_push($temp['regular'],$op);
+        }
 
-        $method = "last"; //($method) ? $method : "last"; //Default to "last".
-
-        //Scope please. Why can't I just $method!
-        function last_compare($a, $b) {
+        usort($temp['regular'], function($a, $b) {
             if ($a['last'] == $b['last']) { return 0; }
-            return ($a['last'] < $b['last']) ? -1 : 1;
-        }
-        function images_compare($a, $b) {
-            if ($a['images'] == $b['images']) { return 0; }
-            return ($a['images'] < $b['images']) ? -1 : 1;
-        }
-        function replies_compare($a, $b) {
-            if ($a['replies'] == $b['replies']) { return 0; }
-            return ($a['replies'] < $b['replies']) ? -1 : 1;
-        }
-
-        usort($this->data, $method . "_compare");
+            return ($a['last'] > $b['last']) ? -1 : 1;
+        });
+        
+        //Additional sticky processing...?
+        
+        $this->data = array_merge($temp['sticky'], $temp['regular']);
     }
     function generateOP($input,$stats) {
         $post = new Post;
@@ -89,7 +83,8 @@ class Catalog {
                     'no' => $entry['no'],
                     'replies' => 0,
                     'images' => 0,
-                    'last' => $entry['no']
+                    'last' => $entry['no'],
+                    'sticky' => $entry['sticky']
                 ];
         }
     }
