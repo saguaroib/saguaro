@@ -72,7 +72,6 @@ class Head {
         if (USE_IMG_EXP)      $dat .= '<script src="' . JS_PATH . '/image_expansion.js" type="text/javascript"></script>';
         if (USE_UTIL_QUOTE)   $dat .= '<script src="' . JS_PATH . '/utility_quotes.js" type="text/javascript"></script>';
         if (USE_INF_SCROLL)   $dat .= '<script src="' . JS_PATH . '/infinite_scroll.js" type="text/javascript"></script>';
-        if (USE_FORCE_WRAP)   $dat .= '<script src="' . JS_PATH . '/force_post_wrap.js" type="text/javascript"></script>';
         if (USE_UPDATER)      $dat .= '<script src="' . JS_PATH . '/thread_updater.js" type="text/javascript"></script>';
         if (USE_THREAD_STATS) $dat .= '<script src="' . JS_PATH . '/thread_stats.js" type="text/javascript"></script>';
         if (USE_EXTRAS) {
