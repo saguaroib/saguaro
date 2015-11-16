@@ -35,14 +35,14 @@ class Head {
 
         /* begin page content */
         $dat .= "<!DOCTYPE html><head>
-                <meta name='description' content='" . S_DESCR . "'/></meta>
-                <meta http-equiv='content-type'  content='text/html;charset=utf-8' /></meta>
-                <meta name='viewport' content='width=device-width, initial-scale=1'></meta>
-                <meta http-equiv='cache-control' content='max-age=0' />
-                <meta http-equiv='cache-control' content='no-cache' />
-                <meta http-equiv='expires' content='0' />
-                <meta http-equiv='expires' content='Tue, 01 Jan 1980 1:00:00 GMT' />
-                <meta http-equiv='pragma' content='no-cache' />
+                <meta name='description' content='" . S_DESCR . "'/>
+                <meta http-equiv='content-type'  content='text/html;charset=utf-8'/>
+                <meta name='viewport' content='width=device-width, initial-scale=1'/>
+                <meta http-equiv='cache-control' content='max-age=0'/>
+                <meta http-equiv='cache-control' content='no-cache'/>
+                <meta http-equiv='expires' content='0'/>
+                <meta http-equiv='expires' content='Tue, 01 Jan 1980 1:00:00 GMT'/>
+                <meta http-equiv='pragma' content='no-cache'/>
                 <link rel='shortcut icon' href='" . CSS_PATH . "imgs/favicon.ico'>
                 <title>" .  $this->info['page']['title'] ."</title>";
 
@@ -75,7 +75,8 @@ class Head {
         if (USE_UPDATER)      $dat .= '<script src="' . JS_PATH . '/thread_updater.js" type="text/javascript"></script>';
         if (USE_THREAD_STATS) $dat .= '<script src="' . JS_PATH . '/thread_stats.js" type="text/javascript"></script>';
         if (USE_EXTRAS) {
-            foreach (glob(JS_PATH . "/extra/*.js") as $path) {
+            foreach (glob(PLUG_PATH . "/jquery/extra/*.js") as $path) {
+                $path = JS_PATH . '/extra/' . basename($path);
                 $dat .= "<script src='$path' type='text/javascript'></script>";
             }
         }
