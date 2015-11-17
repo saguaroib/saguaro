@@ -4,7 +4,6 @@ include("config.php");
 require_once(CORE_DIR . "/mysql/mysql.php");
 $mysql = new SaguaroMySQL;
 $mysql->init();
-$con = $mysql->connection;
 
 $host   = $_SERVER['REMOTE_ADDR'];
 $deny = 0;

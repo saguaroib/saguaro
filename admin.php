@@ -5,16 +5,10 @@ require('config.php');
 require_once(CORE_DIR . "/mysql/mysql.php");
 $mysql = new SaguaroMySQL;
 $mysql->init();
-$con = $mysql->connection;
 
 require_once(CORE_DIR . "/admin/login.php");
 $login = new Login;
 $login->auth();
-
-function mysql_call($query) {
-    global $mysql;
-    return $mysql->query($query);
-}
 
 //Load and initialize Log.
 require_once(CORE_DIR . "/log/log.php");
