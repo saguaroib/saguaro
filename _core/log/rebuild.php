@@ -48,7 +48,7 @@ function rebuildqueue_take_all() {
             break;
     $q     = $mysql->query("SELECT no FROM rebuildqueue WHERE board='$board' AND ownedby=$uid");
     $posts = array();
-    while ($post = mysql_fetch_assoc($q))
+    while ($post = $mysql->fetch_assoc($q))
         $posts[] = $post['no'];
     return $posts;
 }
@@ -70,7 +70,7 @@ function rebuild($all = 0) {
 
     echo "Writing...\n";
     if ($all || !defined('CACHE_TTL')) {
-        while (list($no, $resto) = mysql_fetch_row($treeline)) {
+        while (list($no, $resto) = $mysql->fetch_row($treeline)) {
             if (!$resto) {
                 $my_log->update($no, 1);
                 echo "No.$no created.<br>\n";
