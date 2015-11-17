@@ -52,6 +52,10 @@ class SaguaroMySQLi extends SaguaroQL {
     function result($string, $index = 0) {
         return $this->query($string);
     }
+    
+    function free_result($res) {
+        return mysqli_free_result($res);
+    }
 
     function fetch_row($string) {
         if (!$string) return $this->last;
