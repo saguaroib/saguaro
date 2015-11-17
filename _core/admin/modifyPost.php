@@ -1,7 +1,6 @@
 <?php
 
 class Modify {
-
     function mod($no, $action = 'none') {
         global $mysql;
         
@@ -57,7 +56,7 @@ class Modify {
                 break;
         }
 
-        $mysql->query('UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . mysql_real_escape_string($no) . "' LIMIT 1");
+        $mysql->query('UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . ((int) $no) . "' LIMIT 1");
         
         $temp = head($dat);
         $temp .= $verb . " thread $no. Redirecting...<META HTTP-EQUIV=\"refresh\" content=\"1;URL=" . PHP_ASELF_ABS . "\">";
