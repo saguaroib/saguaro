@@ -9,7 +9,7 @@ class Login {
     function doLogin($usernm, $passwd) {
         global $mysql;
 
-        $usernm = mysql_real_escape_string($usernm);
+        $usernm = $mysql->escape_string($usernm);
         $check = $mysql->fetch_assoc("SELECT user,password,public_salt FROM " . SQLMODSLOG . " WHERE user='$usernm'");
 
         if ($check === false) {
@@ -40,8 +40,8 @@ class Login {
     private function storeBad($user, $pass) {
         global $mysql;
 
-        $user = mysql_real_escape_string($user);
-        $pass = mysql_real_escape_string($pass);
+        $user = $mysql->escape_string($user);
+        $pass = $mysql->escape_string($pass);
         $ip = $_SERVER['REMOTE_ADDR'];
 
         $mysql->query("INSERT INTO loginattempts (userattempt,passattempt,board,ip,attemptno) values('$user','$pass','" . BOARD_DIR . "','$ip','1')");
