@@ -31,6 +31,11 @@ repod.image_toolbar = {
             that.menu.close();
             $(this).removeClass("open").addClass("closed");
         });
+        
+        $(document).on("click", "div.menu a[data-cmd=report]", function(e) {
+            e.preventDefault();
+            that.report(this);
+        });
 	},
     menu: {
         open: function(a) {
@@ -55,15 +60,20 @@ repod.image_toolbar = {
         },
         getInfo: function(a) {
             return {
+                'no': $(a).find(".postInfo > input[type=checkbox]").attr("name"),
                 'image': $(a).find("div.fileThumb > a").attr("href"),
                 'thumb': $(a).find("div.fileThumb > a > img").attr("src")
             }
         },
         gen: function(a, target) {
-            var temp = $('<div />', {class: 'menu gen'}),
+            var temp = $('<div />', {class: 'menu gen reply'}),
                 info = this.getInfo(target);
-
+            
+            temp.append($('<div />').append($("<a />", {'data-cmd': 'report', 'data-target': info.no, 'href': '#', 'text': 'Report'})));
+                
             if (info.image) {
+                temp.append($('<hr />'));
+
                 var ext = {
                     'Google': '//www.google.com/searchbyimage?image_url={url}',
                     'IQDB': '//iqdb.org/?url={url}',
@@ -86,5 +96,10 @@ repod.image_toolbar = {
     },
 	format: function(a) {
 		return "<a data-target='"+$(a).attr("id")+"' href='#' class='menu closed'>▶</a>"
-	}
+	},
+    report: function(a) {
+        var no = $(a).data('target');
+        
+        console.log(no);
+    }
 };
