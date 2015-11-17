@@ -60,9 +60,9 @@ $lastno = mysql_result($mysql->query("select max(no) from " . SQLLOG), 0, 0);
 if (!$result = $mysql->query("select no,ext,tim from " . SQLLOG . " where no<=" . ($lastno - LOG_MAX))) {
     echo S_SQLFAIL;
 } else {
-    while ($resrow = $mysql-fetch_row($result)) {
+    while ($resrow = $mysql->fetch_row($result)) {
         list($dno, $dext, $dtim) = $resrow;
-        if (!$mysql-query("delete from " . SQLLOG . " where no=" . $dno)) {
+        if (!$mysql->query("delete from " . SQLLOG . " where no=" . $dno)) {
             echo S_SQLFAIL;
         }
         if ($dext) {
@@ -81,7 +81,7 @@ if ($resto) {
     if (!$result = $mysql->query("select * from " . SQLLOG . " where root>0 and no=$resto")) {
         echo S_SQLFAIL;
     } else {
-        $find = $mysql-fetch_row($result);
+        $find = $mysql->fetch_row($result);
         mysql_free_result($result);
     }
     if (!$find)
@@ -137,14 +137,14 @@ if (DISP_ID) {
     $color  = "inherit"; // Until unique IDs between threads get sorted out
     //Leave these quotes escaped for mysql
     $idhtml = "<span class=\"posteruid\" id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
-    $mysql-escape_string($idhtml);
+    $mysql->escape_string($idhtml);
 
     if ($clean['email'] && DISP_ID == 1) {
         $now .= " (ID:" . $idhtml . " Heaven </span>)";
     } else {
         if (!$resto) {
         //holy hell there has to be a better way to do this. i swear ill think of it soon
-        $idsalt = mysql_result($mysql-query("select max(no) from " . SQLLOG), 0, 0); 
+        $idsalt = mysql_result($mysql->query("select max(no) from " . SQLLOG), 0, 0); 
         $idsalt = $idsalt + 1;
         } else {
             $idsalt = $resto;
@@ -218,7 +218,7 @@ $may_flood = ($moderator >= 1);
 if (!$may_flood) {
     if ($clean['com']) {
         // Check for duplicate comments
-        $query  = "select count(no)>0 from " . SQLLOG . " where com='" . $mysql-escape_string($clean['com']) . "' " . "and host='" . $mysql-escape_string($host) . "' " . "and time>" . ($time - RENZOKU_DUPE);
+        $query  = "select count(no)>0 from " . SQLLOG . " where com='" . $mysql->escape_string($clean['com']) . "' " . "and host='" . $mysql->escape_string($host) . "' " . "and time>" . ($time - RENZOKU_DUPE);
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU, $dest);
@@ -227,7 +227,7 @@ if (!$may_flood) {
 
     if (!$has_image) {
         // Check for flood limit on replies
-        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU) . " " . "and host='" . $mysql-escape_string($host) . "' and resto>0";
+        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0";
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU, $dest);
@@ -236,7 +236,7 @@ if (!$may_flood) {
 
     if ($is_sage) {
         // Check flood limit on sage posts
-        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU_SAGE) . " " . "and host='" . $mysql-escape_string($host) . "' and resto>0 and permasage=1";
+        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU_SAGE) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0 and permasage=1";
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU, $dest);
@@ -245,7 +245,7 @@ if (!$may_flood) {
 
     if (!$resto) {
         // Check flood limit on new threads
-        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU3) . " " . "and host='" . $mysql-escape_string($host) . "' and root>0"; //root>0 == non-sticky
+        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU3) . " " . "and host='" . $mysql->escape_string($host) . "' and root>0"; //root>0 == non-sticky
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU3, $dest);
@@ -256,7 +256,7 @@ if (!$may_flood) {
 // Upload processing
 if ($has_image) {
     if (!$may_flood) {
-        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU2) . " " . "and host='" . $mysql-escape_string($host) . "' and resto>0";
+        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU2) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0";
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU2, $dest);
@@ -266,8 +266,8 @@ if ($has_image) {
     //Duplicate image check
     if (DUPE_CHECK) {
         $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
-        if ($mysql-num_rows($result)) {
-            list($dupeno, $duperesto) = $mysql-fetch_rows($result);
+        if ($mysql->num_rows($result)) {
+            list($dupeno, $duperesto) = $mysql->fetch_rows($result);
             if (!$duperesto)
                 $duperesto = $dupeno;
             error('<a href="' . DATA_SERVER . BOARD_DIR . "/res/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>', $dest);
@@ -298,7 +298,7 @@ if ($resto) { //sage or age action
     */
 
 //Main insert
-$query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) values (" . "'" . $now . "'," . "'" . $mysql-escape_string($clean['name']) . "'," . "'" . $mysql-escape_string($clean['email']) . "'," . "'" . $mysql-escape_string($clean['sub']) . "'," . "'" . $mysql-escape_string($clean['com']) . "'," . "'" . $mysql-escape_string($host) . "'," . "'" . $mysql-escape_string($pass) . "'," . "'" . $ext . "'," . (int) $W . "," . (int) $H . "," . (int) $TN_W . "," . (int) $TN_H . "," . "'" . $tim . "'," . (int) $time . "," . "'" . $md5 . "'," . (int) $fsize . "," . "'" . $mysql-escape_string($upfile_name) . "'," . (int) $stickied . "," . (int) $permasage . "," . (int) $locked . "," . $rootqu . "," . (int) $mysql-escape_string($resto) . ")";
+$query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) values (" . "'" . $now . "'," . "'" . $mysql->escape_string($clean['name']) . "'," . "'" . $mysql->escape_string($clean['email']) . "'," . "'" . $mysql->escape_string($clean['sub']) . "'," . "'" . $mysql->escape_string($clean['com']) . "'," . "'" . $mysql->escape_string($host) . "'," . "'" . $mysql->escape_string($pass) . "'," . "'" . $ext . "'," . (int) $W . "," . (int) $H . "," . (int) $TN_W . "," . (int) $TN_H . "," . "'" . $tim . "'," . (int) $time . "," . "'" . $md5 . "'," . (int) $fsize . "," . "'" . $mysql->escape_string($upfile_name) . "'," . (int) $stickied . "," . (int) $permasage . "," . (int) $locked . "," . $rootqu . "," . (int) $mysql->escape_string($resto) . ")";
 
 if (!$result = $mysql->query($query)) {
     echo S_SQLFAIL;
@@ -318,7 +318,7 @@ if (!$resto) {
     prune_old();
 } else {//Event stickies
     $eventStick = $mysql->query("SELECT sticky FROM " . SQLLOG . " WHERE no='$resto' AND sticky=2");
-    if ($mysql-num_rows($eventStick) > 0) {
+    if ($mysql->num_rows($eventStick) > 0) {
         require_once('prune_old.php');
         pruneThread($resto);
     }
@@ -343,7 +343,7 @@ $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
 if (!$result = $mysql->query("select max(no) from " . SQLLOG)) {
     echo S_SQLFAIL;
 }
-$hacky    = $mysql-fetch_array($result);
+$hacky    = $mysql->fetch_array($result);
 $insertid = (int) $hacky[0];
 mysql_free_result($result);
 
