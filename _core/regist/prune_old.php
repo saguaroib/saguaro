@@ -43,7 +43,7 @@ function prune_old() {
                 delete_post($row['no'], 'trim', 0, 1, 1, 0); // imgonly=0, automatic=1, children=1
                 $threadcount--;
             }
-            mysql_free_result($result);
+            $mysql->free_result($result);
             // Original max-posts method (note: cleans orphaned posts later than parent posts)
         } else {
             // make list of stickies
@@ -65,7 +65,7 @@ function prune_old() {
                 delete_post($row['no'], 'trim', 0, 1, 0, 0); // imgonly=0, automatic=1, children=0
                 $postcount--;
             }
-            mysql_free_result($result);
+            $mysql->free_result($result);
         }
     }
 }
@@ -81,7 +81,7 @@ function pruneThread($no) {
         delete_post($row['no'], 'trim', 0, 1, 0, 0); // imgonly=0, automatic=1, children=1
         $repcount--;
     }
-    mysql_free_result($result);
+    $mysql->free_result($result);
 }
 
 ?>
