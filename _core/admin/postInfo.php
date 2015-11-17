@@ -141,7 +141,7 @@ class DelTable {
                 $temp .=  "<td class='postimg' >$clip</td><td>" . calculate_age($time) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
                 $temp .=  "</tr>";
             }
-            mysql_free_result($result);
+            $mysql->free_result($result);
 
             $temp .=  "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
             //foot($dat);
@@ -204,7 +204,7 @@ class DelTable {
         } else
             $temp .= "</table></form>";
         $result = $mysql->query("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
-        $wew    = mysql_result($result, 0);
+        $wew    = $mysql->result($result, 0);
         if ($wew > 0)
             $alert = "<b><font color=\"FF101A\"> $wew ban(s) on record for $host!</font></b>";
         else
