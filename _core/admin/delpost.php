@@ -71,7 +71,7 @@ class DeletePost extends Log {
             }
         }
         if (isset($admindel) && $admindel) { // extra actions for admin user
-            $auser   = mysql_real_escape_string($_COOKIE['saguaro_auser']);
+            $auser   = $mysql->escape_string($_COOKIE['saguaro_auser']);
             $adfsize = ($row['fsize'] > 0) ? 1 : 0;
             $adname  = str_replace('</span> <span class="postertrip">!', '#', $row['name']);
             if ($imgonly) {
@@ -79,9 +79,9 @@ class DeletePost extends Log {
             } else {
                 $imgonly = 0;
             }
-            $row['sub']      = mysql_real_escape_string($row['sub']);
-            $row['com']      = mysql_real_escape_string($row['com']);
-            $row['filename'] = mysql_real_escape_string($row['filename']);
+            $row['sub']      = $mysql->escape_string($row['sub']);
+            $row['com']      = $mysql->escape_string($row['com']);
+            $row['filename'] = $mysql->escape_string($row['filename']);
             $mysql->query("INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . BOARD_DIR . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')");
         }
         if ($allbyip && $delhost !== '') 
@@ -90,7 +90,7 @@ class DeletePost extends Log {
             $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno");
         else // just select the post
             $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno");
-        while ($delrow = mysql_fetch_array($result)) {
+        while ($delrow = $mysql->fetch_assoc($result)) {
             // delete
             $path = realpath("./") . '/' . IMG_DIR;
             $delfile  = $path . $delrow['tim'] . $delrow['ext']; //path to delete
