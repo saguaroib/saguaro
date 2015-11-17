@@ -7,22 +7,84 @@ repod.image_toolbar = {
 		repod.infinite_scroll && repod.infinite_scroll.callme.push(repod.image_toolbar.update);
 		this.config = {
 			enabled: repod.suite_settings && !!repod_jsuite_getCookie("repod_image_search_enabled") ? repod_jsuite_getCookie("repod_image_search_enabled") === "true" : true,
-			selector: ".postimg"
+			selector: "div.post"
 		}
 		repod.suite_settings && repod.suite_settings.info.push({mode:'modern',menu:{category:'Images',read:this.config.enabled,variable:'repod_image_search_enabled',label:'Image search',hover:''}});
 		this.update();
 	},
 	update: function() {
-		if (repod.image_toolbar.config.enabled) {
-			$(repod.image_toolbar.config.selector).each(function() {
-				if ($(this).parent().siblings("span.filesize").find(".searchgoogle").length == 0) {
-					$(this).parent().siblings("span.filesize").append(repod.image_toolbar.format($(this)));
-				}
+        var that = this;
+		if (that.config.enabled) {
+			$(that.config.selector).each(function() {
+				$(this).find(".postInfo").append(that.format($(this)));
 			});
 		}
+
+        //Binds
+        $(document).on("click", "a.menu.closed", function(e) {
+            e.preventDefault();
+            that.menu.open(this);
+        });
+
+        $(document).on("click", "a.menu.open", function(e) {
+            e.preventDefault();
+            that.menu.close();
+            $(this).removeClass("open").addClass("closed");
+        });
 	},
+    menu: {
+        open: function(a) {
+            this.close(); //Close existing menu.
+            $(a).removeClass("closed").addClass("open");
+
+            var t = $(a).parent().parent().parent(),
+                o = $(a).position();
+
+            //Generate and display menu.
+            $('body').append(
+                $(this.gen(a, t)).css({
+                    'position': 'absolute',
+                    'top': (o.top + $(a).height()) + "px",
+                    'left': o.left + "px"
+                })
+            );
+        },
+        close: function() {
+            $(".menu.gen").remove();
+            $("a.menu.open").removeClass("open").addClass("closed");
+        },
+        getInfo: function(a) {
+            return {
+                'image': $(a).find("div.fileThumb > a").attr("href"),
+                'thumb': $(a).find("div.fileThumb > a > img").attr("src")
+            }
+        },
+        gen: function(a, target) {
+            var temp = $('<div />', {class: 'menu gen'}),
+                info = this.getInfo(target);
+
+            if (info.image) {
+                var ext = {
+                    'Google': '//www.google.com/searchbyimage?image_url={url}',
+                    'IQDB': '//iqdb.org/?url={url}',
+                    'Waifu2X': '//waifu2x.booru.pics/Home/fromlink?denoise=1&scale=2&url={url}'
+                }
+
+                $.each(ext, function(name, path) {
+                    var path2 = ((new RegExp("^"+location.protocol).test(info.image)) ? "" : location.protocol) + info.image,
+                        path = path.replace("{url}", path2),
+                        item = $('<div />').append(
+                                    $("<a />", {'text': name, 'href': path, 'target': '_blank'})
+                                );
+
+                    temp.append(item);
+                });
+            }
+
+            return temp[0].outerHTML;
+        }
+    },
 	format: function(a) {
-		var url = location.href.substring(0, location.href.lastIndexOf("/")) + "/" + $(a).parent().attr('href');
-		return " <a class='searchgoogle' href='http://www.google.com/searchbyimage?image_url="+ url +"'><img src='plugins/jquery/gis.jpg' alt='[Google]' /></a> <a class='searchiqdb' href='http://iqdb.org/?url="+ url +"'><img src='plugins/jquery/iqdb.jpg' alt='[IQDB]' /></a>";
+		return "<a data-target='"+$(a).attr("id")+"' href='#' class='menu closed'>▶</a>"
 	}
 };
