@@ -1,42 +1,22 @@
 <?php
 include("config.php");
 
-$con = mysql_connect(SQLHOST, SQLUSER, SQLPASS);
-
-if (!$con) {
-    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
-    exit;
-}
-
-$db_id = mysql_select_db(SQLDB, $con);
-if (!$db_id) {
-    echo S_SQLDBSF;
-}
-
-function mysql_call( $query ) {
-    $ret = mysql_query( $query );
-    if ( !$ret ) {
-	if ( DEBUG_MODE ) {
-	        echo "Error on query: " . $query . "<br />";
-	        echo mysql_error() . "<br />";
-    	} else {
-	        echo "MySQL error!<br />";
-    	}
-    }
-    return $ret;
-}
+require_once(CORE_DIR . "/mysql/mysql.php");
+$mysql = new SaguaroMySQL;
+$mysql->init();
+$con = $mysql->connection;
 
 $host   = $_SERVER['REMOTE_ADDR'];
 $deny = 0;
 require_once(CORE_DIR . "/admin/banish.php");
 
 $dis = new Banish;
-if ($dis->checkBan($host) ) 
+if ($dis->checkBan($host) )
 	$deny = 1;
 
 if ($deny) {
-	
-	$result = mysql_call("SELECT * FROM " . SQLBANLOG . " WHERE ip='" . $host . "' AND active <> 0 LIMIT 1");
+
+	$result = $mysql->query("SELECT * FROM " . SQLBANLOG . " WHERE ip='" . $host . "' AND active <> 0 LIMIT 1");
 	while($row = mysql_fetch_assoc($result)) {
 		$placed = $row['placedon'];
 		$board  = $row['board'];
@@ -44,25 +24,25 @@ if ($deny) {
 		$reason = $row['reason'];
 		$expires = $row['expires'];
 	}
-	
+
 	$length = ( ( ($expires - $placed ) / 60 ) / 60 ) / 24; //MATH SON
-	
+
     switch ($type) {
         case '1':
             $status = 'have been warned on: <b>/' . BOARD_DIR . '/ - ' . TITLE . '</b>';
-			mysql_call("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
+			$mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
 			$warned = 1;
             break;
         case '2':
             $status    = 'have been banned from: <b>/' . BOARD_DIR . '/ - ' . TITLE . '</b>';
-			if ( time() > $expires ) 
-				mysql_call("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
+			if ( time() > $expires )
+				$mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
             $expires   = date('F d, Y H:i', $expires) . " days";
             break;
         case '3':
             $status  = 'have been banned from <b>all boards</b>';
-			if ( time() > $expires ) 
-				mysql_call("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
+			if ( time() > $expires )
+				$mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
             $expires   = date('F d, Y H:i', $expires) . " days";
             break;
         case '4':
