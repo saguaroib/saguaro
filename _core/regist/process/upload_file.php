@@ -12,7 +12,7 @@ if ($has_image) {
         $countimgres = mysql_result($result, 0, 0);
         if ($countimgres > MAX_IMGRES)
             error("Max limit of " . MAX_IMGRES . " image replies has been reached.", $upfile);
-        mysql_free_result($result);
+        $mysql->free_result($result);
     }
 
     //upload processing
