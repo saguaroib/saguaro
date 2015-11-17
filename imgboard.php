@@ -28,12 +28,6 @@ $my_log = new Log;
 require_once(CORE_DIR . "/mysql/mysql.php");
 $mysql = new SaguaroMySQL;
 $mysql->init();
-$con = $mysql->connection;
-
-function mysql_call($query) {
-    global $mysql;
-    return $mysql->query($query);
-}
 
 extract($_POST, EXTR_SKIP);
 extract($_GET, EXTR_SKIP);
