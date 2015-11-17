@@ -2,7 +2,7 @@
 
 class Validation
 {
-    function verify( $action ) {
+    function verify($action) {
         global $mysql;
         
         static $valid_cache; // the access level of the user
@@ -13,7 +13,7 @@ class Validation
             'moderator' => 5,
             'manager' => 10,
             'admin' => 20
-        );
+       );
         if (!isset($valid_cache)) {
             $valid_cache = $access_level['none'];
             if (isset($_COOKIE['saguaro_auser']) && isset($_COOKIE['saguaro_apass'])) {
@@ -22,8 +22,8 @@ class Validation
             }
             if ($user && $pass) {
                 $result = $mysql->query("SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'");
-                list($allow, $deny) = mysql_fetch_row($result);
-                mysql_free_result($result);
+                list($allow, $deny) = $mysql->fetch_row($result);
+                $mysql->free_result($result);
                 if ($allow) {
                     $allows             = explode(',', $allow);
                     $seen_janitor_token = false;
@@ -33,7 +33,7 @@ class Validation
                     foreach ($allows as $token) {
                         if ($token == 'janitor')
                             $seen_janitor_token = true;
-                        /*  else if ( $token == 'manager' && $valid_cache < $access_level['manager'] )
+                        /*  else if ($token == 'manager' && $valid_cache < $access_level['manager'])
                         $valid_cache = $access_level['manager'];*/
                         else if ($token == 'admin' && $valid_cache < $access_level['admin'])
                             $valid_cache = $access_level['admin'];
