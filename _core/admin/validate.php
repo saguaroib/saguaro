@@ -75,8 +75,8 @@ class Validation
                 // if they're a janitor on another board, check for illegal post unlock			
                 else if ($valid_cache >= $access_level['janitor']) {
                     $query         = $mysql->query("SELECT COUNT(*) from reports WHERE board='" . BOARD_DIR . "' AND no=$no AND cat=2");
-                    $illegal_count = mysql_result($query, 0, 0);
-                    mysql_free_result($query);
+                    $illegal_count = $mysql->result($query, 0, 0);
+                    $mysql->free_result($query);
                     return $illegal_count >= 3;
                 }
             case 'reportflood':
