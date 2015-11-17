@@ -229,7 +229,7 @@ if (!$may_flood) {
         // Check for flood limit on replies
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0";
         $result = $mysql->query($query);
-        if (mysql_result($result, 0, 0))
+        if ($mysql->result($result, 0, 0))
             error(S_RENZOKU, $dest);
         $mysql->free_result($result);
     }
@@ -238,7 +238,7 @@ if (!$may_flood) {
         // Check flood limit on sage posts
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU_SAGE) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0 and permasage=1";
         $result = $mysql->query($query);
-        if (mysql_result($result, 0, 0))
+        if ($mysql->result($result, 0, 0))
             error(S_RENZOKU, $dest);
         $mysql->free_result($result);
     }
@@ -247,7 +247,7 @@ if (!$may_flood) {
         // Check flood limit on new threads
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU3) . " " . "and host='" . $mysql->escape_string($host) . "' and root>0"; //root>0 == non-sticky
         $result = $mysql->query($query);
-        if (mysql_result($result, 0, 0))
+        if ($mysql->result($result, 0, 0))
             error(S_RENZOKU3, $dest);
         $mysql->free_result($result);
     }
@@ -258,7 +258,7 @@ if ($has_image) {
     if (!$may_flood) {
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU2) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0";
         $result = $mysql->query($query);
-        if (mysql_result($result, 0, 0))
+        if ($mysql->result($result, 0, 0))
             error(S_RENZOKU2, $dest);
         $mysql->free_result($result);
     }
@@ -282,7 +282,7 @@ if ($stickied)
 //Bump processing
 if ($resto) { //sage or age action
     $resline  = $mysql->query("select count(no) from " . SQLLOG . " where resto=" . $resto);
-    $countres = mysql_result($resline, 0, 0);
+    $countres = $mysql->result($resline, 0, 0);
     $mysql->free_result($resline);
     $resline = $mysql->query("select sticky,permasage from " . SQLLOG . " where no=" . $resto);
     list($sticky, $permasage) = $mysql->fetch_row($resline);

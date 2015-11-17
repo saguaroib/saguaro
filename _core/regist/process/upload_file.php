@@ -9,7 +9,7 @@ if ($has_image) {
             echo S_SQLFAIL;
         }
 
-        $countimgres = mysql_result($result, 0, 0);
+        $countimgres = $mysql->result($result, 0, 0);
         if ($countimgres > MAX_IMGRES)
             error("Max limit of " . MAX_IMGRES . " image replies has been reached.", $upfile);
         $mysql->free_result($result);
