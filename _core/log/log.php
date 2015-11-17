@@ -60,7 +60,7 @@ class Log {
 
         $row = $mysql->fetch_array($result);
         $lastno = (int) $row[0];
-        mysql_free_result($result);
+        $mysql->free_result($result);
 
         $counttree = count($treeline);
         //$counttree=mysql_num_rows($treeline);
