@@ -11,7 +11,8 @@ repod.image_expansion = {
 		this.update();
 	},
 	update: function() {
-		this.config.enabled && $(document).on("click", this.config.selector, function(event) { repod.image_expansion.check_image(event,$(this)) });
+        var that = this;
+		this.config.enabled && $(document).on("click", this.config.selector, function(event) { that.check_image(event,$(this)) });
 	},
 	check_image: function(event,e) {
 		event.preventDefault();

@@ -13,9 +13,10 @@ repod.image_hover = {
 		this.update();
 	},
 	update: function() {
+        var that = this;
 		if (this.config.enabled) {
-			$(document).on("mouseover", this.config.selector, function() { repod.image_hover.display($(this)); });
-			$(document).on("mouseout", this.config.selector, function() { repod.image_hover.remove_display() });
+			$(document).on("mouseover", this.config.selector, function() { that.display($(this)); });
+			$(document).on("mouseout", this.config.selector, function() { that.remove_display() });
 		}
 	},
 	display: function(e) {
