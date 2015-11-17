@@ -54,7 +54,7 @@ $tim  = $time . substr(microtime(), 2, 3);
 require_once('process/upload_file.php'); //Process the uploaded file.
 
 //The last result number
-$lastno = mysql_result($mysql->query("select max(no) from " . SQLLOG), 0, 0);
+$lastno = $mysql->result($mysql->query("select max(no) from " . SQLLOG), 0, 0);
 
 // Number of log lines
 if (!$result = $mysql->query("select no,ext,tim from " . SQLLOG . " where no<=" . ($lastno - LOG_MAX))) {
@@ -72,7 +72,7 @@ if (!$result = $mysql->query("select no,ext,tim from " . SQLLOG . " where no<=" 
                 unlink(THUMB_DIR . $dtim . 's.jpg');
         }
     }
-    mysql_free_result($result);
+    $mysql->free_result($result);
 }
 
 $find  = false;
@@ -82,7 +82,7 @@ if ($resto) {
         echo S_SQLFAIL;
     } else {
         $find = $mysql->fetch_row($result);
-        mysql_free_result($result);
+        $mysql->free_result($result);
     }
     if (!$find)
         error(S_NOTHREADERR, $dest);
@@ -144,7 +144,7 @@ if (DISP_ID) {
     } else {
         if (!$resto) {
         //holy hell there has to be a better way to do this. i swear ill think of it soon
-        $idsalt = mysql_result($mysql->query("select max(no) from " . SQLLOG), 0, 0); 
+        $idsalt = $mysql->result($mysql->query("select max(no) from " . SQLLOG), 0, 0); 
         $idsalt = $idsalt + 1;
         } else {
             $idsalt = $resto;
@@ -220,9 +220,9 @@ if (!$may_flood) {
         // Check for duplicate comments
         $query  = "select count(no)>0 from " . SQLLOG . " where com='" . $mysql->escape_string($clean['com']) . "' " . "and host='" . $mysql->escape_string($host) . "' " . "and time>" . ($time - RENZOKU_DUPE);
         $result = $mysql->query($query);
-        if (mysql_result($result, 0, 0))
+        if ($mysql->result($result, 0, 0))
             error(S_RENZOKU, $dest);
-        mysql_free_result($result);
+        $mysql->free_result($result);
     }
 
     if (!$has_image) {
@@ -231,7 +231,7 @@ if (!$may_flood) {
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU, $dest);
-        mysql_free_result($result);
+        $mysql->free_result($result);
     }
 
     if ($is_sage) {
@@ -240,7 +240,7 @@ if (!$may_flood) {
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU, $dest);
-        mysql_free_result($result);
+        $mysql->free_result($result);
     }
 
     if (!$resto) {
@@ -249,7 +249,7 @@ if (!$may_flood) {
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU3, $dest);
-        mysql_free_result($result);
+        $mysql->free_result($result);
     }
 }
 
@@ -260,7 +260,7 @@ if ($has_image) {
         $result = $mysql->query($query);
         if (mysql_result($result, 0, 0))
             error(S_RENZOKU2, $dest);
-        mysql_free_result($result);
+        $mysql->free_result($result);
     }
 
     //Duplicate image check
@@ -272,7 +272,7 @@ if ($has_image) {
                 $duperesto = $dupeno;
             error('<a href="' . DATA_SERVER . BOARD_DIR . "/res/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>', $dest);
         }
-        mysql_free_result($result);
+        $mysql->free_result($result);
     }
 }
 
@@ -283,10 +283,10 @@ if ($stickied)
 if ($resto) { //sage or age action
     $resline  = $mysql->query("select count(no) from " . SQLLOG . " where resto=" . $resto);
     $countres = mysql_result($resline, 0, 0);
-    mysql_free_result($resline);
+    $mysql->free_result($resline);
     $resline = $mysql->query("select sticky,permasage from " . SQLLOG . " where no=" . $resto);
-    list($sticky, $permasage) = mysql_fetch_row($resline);
-    mysql_free_result($resline);
+    list($sticky, $permasage) = $mysql->fetch_row($resline);
+    $mysql->free_result($resline);
     if ((stripos($clean['email'], 'sage') === FALSE && $countres < MAX_RES && $sticky < "0" && $permasage != "1") || ($admin && $age && $sticky < "0")) {
         $query = "update " . SQLLOG . " set root=now() where no=$resto"; //age
         $mysql->query($query);
@@ -322,7 +322,7 @@ if (!$resto) {
         require_once('prune_old.php');
         pruneThread($resto);
     }
-    mysql_free_result($eventStick);
+    $mysql->free_result($eventStick);
 }
 
 // thumbnail
@@ -345,7 +345,7 @@ if (!$result = $mysql->query("select max(no) from " . SQLLOG)) {
 }
 $hacky    = $mysql->fetch_array($result);
 $insertid = (int) $hacky[0];
-mysql_free_result($result);
+$mysql->free_result($result);
 
 $deferred = false;
 // update html
