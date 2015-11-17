@@ -17,7 +17,7 @@ if ($dis->checkBan($host) )
 if ($deny) {
 
 	$result = $mysql->query("SELECT * FROM " . SQLBANLOG . " WHERE ip='" . $host . "' AND active <> 0 LIMIT 1");
-	while($row = mysql_fetch_assoc($result)) {
+	while($row = $mysql->fetch_assoc($result)) {
 		$placed = $row['placedon'];
 		$board  = $row['board'];
 		$type     = $row['type'];
