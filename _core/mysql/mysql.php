@@ -60,28 +60,32 @@ class SaguaroMySQL extends SaguaroQL {
     function fetch_row($string) {
         if (!$string) return $this->last;
 
-        $this->last = mysql_fetch_row($this->query($string));
+        $true = (is_resource($string)) ? $string : $this->query($string);
+        $this->last = mysql_fetch_row($true);
         return $this->last;
     }
 
     function fetch_array($string) {
         if (!$string) return $this->last;
 
-        $this->last = mysql_fetch_array($this->query($string));
+        $true = (is_resource($string)) ? $string : $this->query($string);
+        $this->last = mysql_fetch_array($true);
         return $this->last;
     }
 
     function fetch_assoc($string) {
         if (!$string) return $this->last;
 
-        $this->last = mysql_fetch_assoc($this->query($string));
+        $true = (is_resource($string)) ? $string : $this->query($string);
+        $this->last = mysql_fetch_assoc($true);
         return $this->last;
     }
 
     function num_rows($string) {
         if (!$string) return mysql_num_rows($this->last);
 
-        $this->last = mysql_num_rows($this->query($string));
+        $true = (is_resource($string)) ? $string : $this->query($string);
+        $this->last = mysql_num_rows($true);
         return $this->last;
     }
 }
