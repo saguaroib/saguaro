@@ -1,17 +1,12 @@
 <?php
 
-class Banish
-{
-    
-	//IP, active, placedon, board, type, reason, staffnotes
+class Banish {
 	
     function checkBan($ip) {
        global $mysql;
-		$query = $mysql->query("SELECT ip,active FROM " . SQLBANLOG . " WHERE ip='" . $mysql->escape_string($ip) . "' AND active <> '0' LIMIT 1"); 		//check if ban is in table
-		if ( !$query ) 		//if active ban exists, stop all further action
+		if ( $mysql->num_rows("SELECT ip, active FROM " . SQLBANLOG . " WHERE ip='" . $mysql->escape_string($ip) . "' AND active>0 LIMIT 1") > 0 ) 		//if active ban exists, stop all further action
 			return false;
-			
-		return true;		//Good to start processing	
+		return true;		//No active bans
     }
     
 	function postOptions($no, $ip, $expires, $banType, $perma, $pubreason, $staffnote, $custmess, $showbanmess, $afterban) {
