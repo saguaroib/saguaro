@@ -93,7 +93,8 @@ switch ($_GET['mode']) {
         if ($banish->checkBan($_SERVER['REMOTE_ADDR'])) {
             $banish->postOptions($no, $_SERVER['REMOTE_ADDR'], $_POST['banlength'], $_POST['banType'], $_POST['perma'], $_POST['pubreason'], $_POST['staffnote'], $_POST['custmess'], $_POST['showbanmess'], $_POST['afterban']);
             //gee i hope nobody saw this
-        }
+        } else 
+            error("That IP has an active ban!", 0);
         $banish->afterBan;
         break;
     case 'reports':
