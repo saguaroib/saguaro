@@ -203,10 +203,9 @@ class DelTable {
             </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></td></tr></table></form>";
         } else
             $temp .= "</table></form>";
-        $result = $mysql->query("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
-        $wew    = $mysql->result($result, 0);
-        if ($wew > 0)
-            $alert = "<b><font color=\"FF101A\"> $wew ban(s) on record for $host!</font></b>";
+        $alart = $mysql->num_rows("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
+        if ( $alart > 0)
+            $alert = "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>";
         else
             $alert = "No bans on record for IP $host";
         $temp .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
