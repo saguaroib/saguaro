@@ -4,7 +4,7 @@
         -webkit-text-size-adjust: 100%;
         -ms-text-size-adjust: 100%;
     }
-    .postMenuBtn {
+    .postButton {
         -webkit-transform: rotate(90deg);
         -moz-transform: rotate(90deg);
         -ms-transform: rotate(90deg);
@@ -14,7 +14,7 @@
         font-weight: bold;
         opacity: 1!important;
         height: 0.5em!important;
-        font-size: 16px;
+        font-size: 20px;
     }
     .dd-menu {
         font-size: 16px;
