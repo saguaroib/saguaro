@@ -25,7 +25,7 @@ function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, 
 }
 
 function prune_old() {
-    global $my_log;
+    global $my_log, $mysql;
     $my_log->update_cache();
 
     if (PAGE_MAX >= 1) {
@@ -37,25 +37,25 @@ function prune_old() {
             $exp_order = 'no';
             if (EXPIRE_NEGLECTED == 1)
                 $exp_order = 'root';
-            $result      = mysql_call("SELECT no FROM " . SQLLOG . " WHERE sticky=0 AND resto=0 ORDER BY $exp_order ASC");
-            $threadcount = mysql_num_rows($result);
-            while ($row = mysql_fetch_array($result) and $threadcount >= $maxthreads) {
+            $result      = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE sticky=0 AND resto=0 ORDER BY $exp_order ASC");
+            $threadcount = $mysql->num_rows($result);
+            while ($row = $mysql->fetch_array($result) and $threadcount >= $maxthreads) {
                 delete_post($row['no'], 'trim', 0, 1, 1, 0); // imgonly=0, automatic=1, children=1
                 $threadcount--;
             }
-            mysql_free_result($result);
+            $mysql->free_result($result);
             // Original max-posts method (note: cleans orphaned posts later than parent posts)
         } else {
             // make list of stickies
             $stickies = array(); // keys are stickied thread numbers
-            $result   = mysql_call("SELECT no from " . SQLLOG . " where sticky=1 and resto=0");
-            while ($row = mysql_fetch_array($result)) {
+            $result   = $mysql->query("SELECT no from " . SQLLOG . " where sticky=1 and resto=0");
+            while ($row = $mysql->fetch_array($result)) {
                 $stickies[$row['no']] = 1;
             }
 
-            $result    = mysql_call("SELECT no,resto,sticky FROM " . SQLLOG . " ORDER BY no ASC");
-            $postcount = mysql_num_rows($result);
-            while ($row = mysql_fetch_array($result) and $postcount >= $maxposts) {
+            $result    = $mysql->query("SELECT no,resto,sticky FROM " . SQLLOG . " ORDER BY no ASC");
+            $postcount = $mysql->num_rows($result);
+            while ($row = $mysql->fetch_array($result) and $postcount >= $maxposts) {
                 // don't delete if this is a sticky thread
                 if ($row['sticky'] == 1)
                     continue;
@@ -65,23 +65,23 @@ function prune_old() {
                 delete_post($row['no'], 'trim', 0, 1, 0, 0); // imgonly=0, automatic=1, children=0
                 $postcount--;
             }
-            mysql_free_result($result);
+            $mysql->free_result($result);
         }
     }
 }
 
 function pruneThread($no) {
-    global $my_log;
+    global $my_log, $mysql;
     $my_log->update_cache();
     $maxreplies = EVENT_STICKY_RES;
 
-    $result      = mysql_call("SELECT no FROM " . SQLLOG . " WHERE resto='$no' ORDER BY time ASC");
-    $repcount = mysql_num_rows($result);
-    while ($row = mysql_fetch_array($result) and $repcount >= $maxreplies) {
+    $result      = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE resto='$no' ORDER BY time ASC");
+    $repcount = $mysql->num_rows($result);
+    while ($row = $mysql->fetch_array($result) and $repcount >= $maxreplies) {
         delete_post($row['no'], 'trim', 0, 1, 0, 0); // imgonly=0, automatic=1, children=1
         $repcount--;
     }
-    mysql_free_result($result);
+    $mysql->free_result($result);
 }
 
 ?>

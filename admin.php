@@ -5,16 +5,10 @@ require('config.php');
 require_once(CORE_DIR . "/mysql/mysql.php");
 $mysql = new SaguaroMySQL;
 $mysql->init();
-$con = $mysql->connection;
 
 require_once(CORE_DIR . "/admin/login.php");
 $login = new Login;
 $login->auth();
-
-function mysql_call($query) {
-    global $mysql;
-    return $mysql->query($query);
-}
 
 //Load and initialize Log.
 require_once(CORE_DIR . "/log/log.php");
@@ -99,7 +93,8 @@ switch ($_GET['mode']) {
         if ($banish->checkBan($_SERVER['REMOTE_ADDR'])) {
             $banish->postOptions($no, $_SERVER['REMOTE_ADDR'], $_POST['banlength'], $_POST['banType'], $_POST['perma'], $_POST['pubreason'], $_POST['staffnote'], $_POST['custmess'], $_POST['showbanmess'], $_POST['afterban']);
             //gee i hope nobody saw this
-        }
+        } else 
+            error("That IP has an active ban!", 0);
         $banish->afterBan;
         break;
     case 'reports':

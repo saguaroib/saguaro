@@ -30,8 +30,8 @@ class Page {
     
     function foot() {
         require_once("foot.php");
-        
-        return Footer::format();
+        //$footer = new Footer;
+        return Footer::format();//$footer->format();//strict standards prefers <- over -> Footer::format(); for some reason 
     }
 
 }

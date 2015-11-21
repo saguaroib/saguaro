@@ -1,21 +1,16 @@
 <?php
 
-class Banish
-{
-    
-	//IP, active, placedon, board, type, reason, staffnotes
+class Banish {
 	
-    function checkBan($ip)
-    {
-		$ip = mysql_real_escape_string( $ip ) ;        //sanitize values
-		$query = mysql_call("SELECT ip,active FROM " . SQLBANLOG . " WHERE ip='" . $ip . "' AND active <> '0' LIMIT 1"); 		//check if ban is in table
-		if ( !$query ) 		//if active ban exists, stop all further action
+    function checkBan($ip) {
+       global $mysql;
+		if ( $mysql->num_rows("SELECT ip, active FROM " . SQLBANLOG . " WHERE ip='" . $mysql->escape_string($ip) . "' AND active>0 LIMIT 1") > 0 ) 		//if active ban exists, stop all further action
 			return false;
-			
-		return true;		//Good to start processing	
+		return true;		//No active bans
     }
     
 	function postOptions($no, $ip, $expires, $banType, $perma, $pubreason, $staffnote, $custmess, $showbanmess, $afterban) {
+        global $mysql;
 		//This will do the POST processing and pass it to applyBan
 		
 		$str = "+" . $expires . " day";
@@ -57,18 +52,18 @@ class Banish
 	
 	//function applyBan( $no, $ip, $length, $type, $pubreason, $staffnote, $custmess) {
 		
-		mysql_call( "INSERT INTO " . SQLBANLOG . " (ip, active, placedon, expires, board, type, reason, staffnotes) 
-		VALUES ('" . mysql_real_escape_string( $ip ) . "', 
+		$mysql->query( "INSERT INTO " . SQLBANLOG . " (ip, active, placedon, expires, board, type, reason, staffnotes) 
+		VALUES ('" . $mysql->escape_string( $ip ) . "', 
 		'1', 
 		UNIX_TIMESTAMP(),
-		'" . mysql_real_escape_string( $expires ) . "',
+		'" . $mysql->escape_string( $expires ) . "',
 		'" . BOARD_DIR . "', 
-		'" . mysql_real_escape_string( $banType ) . "', 
-		'" . mysql_real_escape_string( $pubreason ) . "', 
-		'" . mysql_real_escape_string( $staffnote ) . "' )");
+		'" . $mysql->escape_string( $banType ) . "', 
+		'" . $mysql->escape_string( $pubreason ) . "', 
+		'" . $mysql->escape_string( $staffnote ) . "' )");
 
 		if ($custmess)
-			mysql_call( "UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><b><font color=\"FF101A\">" . mysql_real_escape_string( $custmess ) . "</font></b>') where no='" . $no . "'");  
+			$mysql->query( "UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><b><font color=\"FF101A\">" . $mysql->escape_string( $custmess ) . "</font></b>') where no='" . $no . "'");  
 		
 	}
 	

@@ -3,6 +3,7 @@
 class DelTable {
     
     function displayTable($onlyimgdel) {
+        global $mysql;
         $delno   = array(
                  dummy
            );
@@ -15,12 +16,12 @@ class DelTable {
                 }
             }
             if ($delflag) {
-                if (!$result = mysql_call("select * from " . SQLLOG . "")) {
+                if (!$result = $mysql->query("select * from " . SQLLOG . "")) {
                     echo S_SQLFAIL;
                 }
                 $find = FALSE;
 
-                while ($row = mysql_fetch_row($result)) {
+                while ($row = $mysql->fetch_row($result)) {
                 list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto) = $row;
                     if ($onlyimgdel == 'on') {
                         delete_post($no, $pwd, 1, 1, 1, 0);
@@ -80,11 +81,11 @@ class DelTable {
             $temp .=  S_MDTABLE2;
             $temp .=  "</tr>";
 
-            if (!$result = mysql_call("select * from " . SQLLOG . " order by no desc")) {
+            if (!$result = $mysql->query("select * from " . SQLLOG . " order by no desc")) {
                 $temp .=  S_SQLFAIL;
             }
             $j = 0;
-            while ($row = mysql_fetch_row($result)) {
+            while ($row = $mysql->fetch_row($result)) {
                 $j++;
                 $path = realpath("./") . '/' . IMG_DIR;
                 $img_flag = FALSE;
@@ -140,7 +141,7 @@ class DelTable {
                 $temp .=  "<td class='postimg' >$clip</td><td>" . calculate_age($time) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
                 $temp .=  "</tr>";
             }
-            mysql_free_result($result);
+            $mysql->free_result($result);
 
             $temp .=  "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
             //foot($dat);
@@ -152,11 +153,12 @@ class DelTable {
     }
     
     function moreInfo($no) {
+        global $mysql;
         
-        if (!$result = mysql_call("SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'"))
+        if (!$result = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'"))
             echo S_SQLFAIL;
         
-        $row = mysql_fetch_row($result);
+        $row = $mysql->fetch_row($result);
         list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board, ) = $row;
         $temp = head();
         $temp .= "<table border='0' cellpadding='0' cellspacing='0'  />";
@@ -201,10 +203,9 @@ class DelTable {
             </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></td></tr></table></form>";
         } else
             $temp .= "</table></form>";
-        $result = mysql_call("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
-        $wew    = mysql_result($result, 0);
-        if ($wew > 0)
-            $alert = "<b><font color=\"FF101A\"> $wew ban(s) on record for $host!</font></b>";
+        $alart = $mysql->num_rows("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
+        if ( $alart > 0)
+            $alert = "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>";
         else
             $alert = "No bans on record for IP $host";
         $temp .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />

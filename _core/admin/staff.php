@@ -16,7 +16,7 @@ class Staff {
         if (!valid('admin'))
             error("Permission denied");
 
-         if ($this->isStaff(mysql_real_escape_string($user)))
+         if ($this->isStaff($mysql->escape_string($user)))
             error("This user already exists!");
             
         switch ($perm) {
@@ -44,13 +44,13 @@ class Staff {
         $crypt = new SaguaroCryptLegacy;
         $salt = $crypt->generate_hash($pass2);
 
-        $mysql->query("INSERT INTO " . SQLMODSLOG . " (`user`, `password`, `public_salt`, `allowed`, `denied`) VALUES ('" . mysql_real_escape_string($user) . "', '" . $salt['hash'] . "', '" . $salt['public_salt'] . "', '" . $allowed . "', '" . $denied . "')");
+        $mysql->query("INSERT INTO " . SQLMODSLOG . " (`user`, `password`, `public_salt`, `allowed`, `denied`) VALUES ('" . $mysql->escape_string($user) . "', '" . $salt['hash'] . "', '" . $salt['public_salt'] . "', '" . $allowed . "', '" . $denied . "')");
     }
     
     function remStaff($targUser = '', $actUser, $actPass) {
         global $mysql;    
         //remove staff member
-        $targUser = mysql_real_escape_string($targUser);
+        $targUser = $mysql->escape_string($targUser);
         
         if (!valid('admin'))
             error("Permission denied");
@@ -70,7 +70,7 @@ class Staff {
         global $mysql;
         //Staff list for panel
         
-        if ( !$active = $mysql->query("SELECT * FROM " . SQLMODSLOG . "")) 
+        if (!$active = $mysql->query("SELECT * FROM " . SQLMODSLOG . "")) 
             echo S_SQLFAIL;
         $j = 0;
         $temp = '';
@@ -81,7 +81,7 @@ class Staff {
         $temp .=  "<tr class='postTable head'><th>User</th><th>Allowed permissions</th><th>Denied permission</th><th>Modify user</th>";
         $temp .=  "</tr><form action='" . PHP_ASELF_ABS ."?mode=staff' method='get'>";
 
-        while ( $row = mysql_fetch_assoc( $active ) ) {
+        while ($row = $mysql->fetch_assoc($active)) {
                 $j++;               
                 $class = 'row' . ($j % 2 + 1); //BG color
                 $temp .= "<tr class='$class'>";
