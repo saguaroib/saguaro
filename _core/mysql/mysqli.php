@@ -51,12 +51,13 @@ class SaguaroMySQLi extends SaguaroQL {
 
     function result($string, $index = 0, $field = null) {
         //MySQLi has no compliment to mysql_result, so this is specifically for backwards compatability.
-        $string->data_seek($index);
+        $true = (is_resource($string)) ? $string : $this->query($string);
+        $string->data_seek($true);
         if ($field == null) {
-            return $string;
+            return $true;
         } else {
-            $datarow = $string->fetch_array();
-            return $datarow[$field];
+            $datarow = $true->fetch_array();
+            return $datarow[$true];
         }
     }
 

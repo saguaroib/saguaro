@@ -47,10 +47,11 @@ class SaguaroMySQL extends SaguaroQL {
     }
 
     function result($string, $index = 0, $field = null) {
+        $true = (is_resource($string)) ? $string : $this->query($string);
         if ($field == null)
-            return mysql_result($this->query($string), $index);
+            return mysql_result($true, $index);
         else
-            return mysql_result($this->query($string), $index, $field);
+            return mysql_result($true, $index, $field);
     }
 
     function free_result($res) {
