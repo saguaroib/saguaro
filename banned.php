@@ -5,46 +5,46 @@ require_once(CORE_DIR . "/mysql/mysql.php");
 $mysql = new SaguaroMySQL;
 $mysql->init();
 
-$host   = $_SERVER['REMOTE_ADDR'];
+$host = $_SERVER['REMOTE_ADDR'];
 
 require_once(CORE_DIR . "/admin/banish.php");
 
-$dis = new Banish;
+$dis  = new Banish;
 $deny = ($dis->checkBan($host)) ? 0 : 1; //no ban : is banned
 
 $status = "are not banned";
 if ($deny) {
-
-    $row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE ip='" . $host . "' AND active <> 0 LIMIT 1");
-	$length = ( ( ($row['expires'] - $row['placedon'] ) / 60 ) / 60 ) / 24; //MATH SON
-
+    
+    $row    = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE ip='" . $host . "' AND active <> 0 LIMIT 1");
+    $length = ((($row['expires'] - $row['placedon']) / 60) / 60) / 24; //MATH SON
+    
     switch ($row['type']) {
         case '1':
             $status = 'have been warned on: <b>/' . $row['board'] . '/ - ' . TITLE . '</b>';
-			$mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
+            $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
             break;
         case '2':
-            $status    = 'have been banned from: <b>/' . $row['board'] . '/ - ' . TITLE . '</b>';
-			if ( time() > $row['expires'] )
-				$mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
-            $row['expires']   = date('F d, Y H:i', $row['expires']) . " days";
+            $status = 'have been banned from: <b>/' . $row['board'] . '/ - ' . TITLE . '</b>';
+            if (time() > $row['expires'])
+                $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
+            $row['expires'] = date('F d, Y H:i', $row['expires']) . " days";
             break;
         case '3':
-            $status  = 'have been banned from <b>all boards</b>';
-			if ( time() > $row['expires'] )
-				$mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
-            $row['expires']   = date('F d, Y H:i', $row['expires']) . " days";
+            $status = 'have been banned from <b>all boards</b>';
+            if (time() > $row['expires'])
+                $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
+            $row['expires'] = date('F d, Y H:i', $row['expires']) . " days";
             break;
         case '4':
-            $status  = 'have been <b>permanently banned from all boards<b>';
+            $status = 'have been <b>permanently banned from all boards<b>';
             $length = '<b>forever</b>';
             break;
         default:
-            $status = 'are not banned';
-            $row['type']   = 0;
+            $status      = 'are not banned';
+            $row['type'] = 0;
             break;
-	}
-	$row['placedon'] = date('F d, Y H:i', $row['placedon']);
+    }
+    $row['placedon'] = date('F d, Y H:i', $row['placedon']);
 }
 
 echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
