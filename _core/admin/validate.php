@@ -1,7 +1,6 @@
 <?php
 
-class Validation
-{
+class Validation {
     function verify($action) {
         global $mysql;
         
@@ -22,7 +21,7 @@ class Validation
             }
             if ($user && $pass) {
                 list($allow, $deny) = $mysql->fetch_row("SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'");
-                $mysql->free_result($result);
+                //$mysql->free_result($result);
                 if ($allow) {
                     $allows             = explode(',', $allow);
                     $seen_janitor_token = false;
