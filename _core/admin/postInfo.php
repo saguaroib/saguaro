@@ -76,7 +76,7 @@ class DelTable {
             $temp .=  "<div class='delbuttons'><input type=submit value='" . S_ITDELETES . "'>";
             $temp .=  "<input type=reset value='" . S_MDRESET . "'>";
             $temp .=  "[<input type=checkbox name=onlyimgdel value=on><!--checked-->" . S_MDONLYPIC . "]</div>";
-            $temp .=  "<table class='postlists'>";
+            $temp .=  "<table class='postlists' style='border-collapse:collapse;' cellspacing='0' cellpadding='0'>";
             $temp .=  "<tr class='postTable head'>" . S_MDTABLE1;
             $temp .=  S_MDTABLE2;
             $temp .=  "</tr>";
