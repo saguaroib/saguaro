@@ -20,7 +20,7 @@ class Log {
     private $thread_cache = [];
 
     function update($resno = 0, $rebuild = 0) {
-        global $path;
+        global $path, $mysql;
 
         require_once(CORE_DIR . "/postform.php");
         require_once(CORE_DIR . "/page/head.php");
@@ -47,20 +47,20 @@ class Log {
             $treeline = array(
                  $resno
            );
-            //if(!$treeline=mysql_call("select * from ".SQLLOG." where root>0 and no=".$resno." order by root desc")){echo S_SQLFAIL;}
+            //if(!$treeline=$mysql->query("select * from ".SQLLOG." where root>0 and no=".$resno." order by root desc")){echo S_SQLFAIL;}
         } else {
             $treeline = $log['THREADS'];
-            //if(!$treeline=mysql_call("select * from ".SQLLOG." where root>0 order by root desc")){echo S_SQLFAIL;}
+            //if(!$treeline=$mysql->query("select * from ".SQLLOG." where root>0 order by root desc")){echo S_SQLFAIL;}
         }
 
         //Finding the last entry number
-        if (!$result = mysql_call("select max(no) from " . SQLLOG)) {
+        if (!$result = $mysql->query("select max(no) from " . SQLLOG)) {
             echo S_SQLFAIL;
         }
 
-        $row = mysql_fetch_array($result);
+        $row = $mysql->fetch_array($result);
         $lastno = (int) $row[0];
-        mysql_free_result($result);
+        $mysql->free_result($result);
 
         $counttree = count($treeline);
         //$counttree=mysql_num_rows($treeline);
@@ -269,7 +269,7 @@ class Log {
 
         if ($auto == false && !empty($this->cache)) { return; } //Automatically exit if the cache isn't empty.
 
-        global $ipcount, $mysql_unbuffered_reads, $lastno;
+        global $ipcount, $mysql_unbuffered_reads, $lastno, $mysql;
 
         $ips = [];
         $threads = []; // no's
@@ -277,11 +277,11 @@ class Log {
         $offset = 0;
         $lastno = 0;
 
-        mysql_call("SET read_buffer_size=1048576");
+        $mysql->query("SET read_buffer_size=1048576");
         $mysql_unbuffered_reads = 1;
-        $query = mysql_call("SELECT * FROM " . SQLLOG);
+        $query = $mysql->query("SELECT * FROM " . SQLLOG);
 
-        while ($row = mysql_fetch_assoc($query)) {
+        while ($row = $mysql->fetch_assoc($query)) {
             if ($row['no'] > $lastno) {
                 $lastno = $row['no'];
             }
@@ -321,8 +321,8 @@ class Log {
 
         }
 
-        $query = mysql_call("SELECT no FROM " . SQLLOG . " WHERE root>0 order by root desc");
-        while ($row = mysql_fetch_assoc($query)) {
+        $query = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE root>0 order by root desc");
+        while ($row = $mysql->fetch_assoc($query)) {
             if (isset($log[$row['no']]) && $log[$row['no']]['resto'] == 0) {
                 $threads[] = $row['no'];
             }

@@ -1,83 +1,50 @@
 <?php
 include("config.php");
 
-$con = mysql_connect(SQLHOST, SQLUSER, SQLPASS);
+require_once(CORE_DIR . "/mysql/mysql.php");
+$mysql = new SaguaroMySQL;
+$mysql->init();
 
-if (!$con) {
-    echo S_SQLCONF; //unable to connect to DB (wrong user/pass?)
-    exit;
-}
+$host = $_SERVER['REMOTE_ADDR'];
 
-$db_id = mysql_select_db(SQLDB, $con);
-if (!$db_id) {
-    echo S_SQLDBSF;
-}
-
-function mysql_call( $query ) {
-    $ret = mysql_query( $query );
-    if ( !$ret ) {
-	if ( DEBUG_MODE ) {
-	        echo "Error on query: " . $query . "<br />";
-	        echo mysql_error() . "<br />";
-    	} else {
-	        echo "MySQL error!<br />";
-    	}
-    }
-    return $ret;
-}
-
-$host   = $_SERVER['REMOTE_ADDR'];
-$deny = 0;
 require_once(CORE_DIR . "/admin/banish.php");
 
-$dis = new Banish;
-if ($dis->checkBan($host) ) 
-	$deny = 1;
+$dis  = new Banish;
+$deny = ($dis->checkBan($host)) ? 0 : 1; //no ban : is banned
 
+$status = "are not banned";
 if ($deny) {
-	
-	$result = mysql_call("SELECT * FROM " . SQLBANLOG . " WHERE ip='" . $host . "' AND active <> 0 LIMIT 1");
-	while($row = mysql_fetch_assoc($result)) {
-		$placed = $row['placedon'];
-		$board  = $row['board'];
-		$type     = $row['type'];
-		$reason = $row['reason'];
-		$expires = $row['expires'];
-	}
-	
-	$length = ( ( ($expires - $placed ) / 60 ) / 60 ) / 24; //MATH SON
-	
-    switch ($type) {
+    
+    $row    = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE ip='" . $host . "' AND active <> 0 LIMIT 1");
+    $length = ((($row['expires'] - $row['placedon']) / 60) / 60) / 24; //MATH SON
+    
+    switch ($row['type']) {
         case '1':
-            $status = 'have been warned on: <b>/' . BOARD_DIR . '/ - ' . TITLE . '</b>';
-			mysql_call("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
-			$warned = 1;
+            $status = 'have been warned on: <b>/' . $row['board'] . '/ - ' . TITLE . '</b>';
+            $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
             break;
         case '2':
-            $status    = 'have been banned from: <b>/' . BOARD_DIR . '/ - ' . TITLE . '</b>';
-			if ( time() > $expires ) 
-				mysql_call("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
-            $expires   = date('F d, Y H:i', $expires) . " days";
+            $status = 'have been banned from: <b>/' . $row['board'] . '/ - ' . TITLE . '</b>';
+            if (time() > $row['expires'])
+                $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
+            $row['expires'] = date('F d, Y H:i', $row['expires']) . " days";
             break;
         case '3':
-            $status  = 'have been banned from <b>all boards</b>';
-			if ( time() > $expires ) 
-				mysql_call("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
-            $expires   = date('F d, Y H:i', $expires) . " days";
+            $status = 'have been banned from <b>all boards</b>';
+            if (time() > $row['expires'])
+                $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
+            $row['expires'] = date('F d, Y H:i', $row['expires']) . " days";
             break;
         case '4':
-            $status  = 'have been <b>permanently banned from all boards<b>';
+            $status = 'have been <b>permanently banned from all boards<b>';
             $length = '<b>forever</b>';
             break;
         default:
-            $status = 'are not banned';
-            $type   = 0;
+            $status      = 'are not banned';
+            $row['type'] = 0;
             break;
-	}
-	$placed = date('F d, Y H:i', $placed);
-} else {
-    $type   = 0;
-    $status = 'are not banned';
+    }
+    $row['placedon'] = date('F d, Y H:i', $row['placedon']);
 }
 
 echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -89,15 +56,15 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www
 
 $footer = '<div class="footer"><h2><center>[<a href="' . PHP_SELF . '"/>Return</a>]</center></h2></div></div></body></html>';
 
-if (!$type) {
+if ($row['active'] < 1) {
     //not banned, display the footer, hope the user goes away and doesn't try to talk to me
-    echo '<p>You are not banned from posting on board: <b>/' . BOARD_DIR . '/ - ' . TITLE . '</b>' . $footer;
-} else if ($warned) {
-    echo '<p>You ' . $status . ' for the following reason: </p><br /><p><b>' . $reason . '</b></p><br /><hr />
-                <p><a href="//' . SITE_ROOT . '/' . RULES . '#' . BOARD_DIR . '" />Please review the board rules</a> and be aware that further rule violations can result in an extended ban.</p><br />
+    echo '<p>You have no active bans on record.</b>' . $footer;
+} else if ($row['type'] < 2) {
+    echo '<p>You ' . $status . ' for the following reason: </p><br /><p><b>' . $row['reason'] . '</b></p><br /><hr />
+                <p><a href="//' . SITE_ROOT . '/' . RULES . '#' . $row['board'] . '" />Please review the board rules</a> and be aware that further rule violations can result in an extended ban.</p><br />
                 <h3>This warn was issued for the IP address ' . $host . '</h3>' . $footer;
 } else
-    echo '<p>You <b>' . $status . '</b> for the following reason: </p><br /><p><b>' . $reason . '</b></p><br /><hr />
-                <p>This ban will last <b>' . $length . ' </b>. It was placed on <b>' . $placed . '</b> and will expire: <b>' . $expires . '</b><br/><h3>This ban was issued for the IP address ' . $host . '</h3>' . $footer;
+    echo '<p>You <b>' . $status . '</b> for the following reason: </p><br /><p><b>' . $row['reason'] . '</b></p><br /><hr />
+                <p>This ban will last <b>' . $length . ' </b>. It was placed on <b>' . $row['placedon'] . '</b> and will expire: <b>' . $row['expires'] . '</b><br/><h3>This ban was issued for the IP address ' . $host . '</h3>' . $footer;
 
 ?>
