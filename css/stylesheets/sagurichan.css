@@ -114,10 +114,16 @@ hr {
     text-align: center;
 }
 .postlists {
+    border-collapse: collapse;
     background: #FFFFFF;
     width: 100%;
     padding: 0px;
     color: #000000;
+}
+.postlists td {
+    border: 1px solid black;
+    padding: 0px 1px;
+    text-align: center;
 }
 .row1 {
     background: #9AD2F6;

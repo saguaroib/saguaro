@@ -140,10 +140,16 @@ hr {
     padding-bottom: 4px;
 }
 .postTable.head {
+    border-collapse: collapse;
     background: #AF0A0F;
     color: #FFFFEE;
     font-size: 14px;
     padding: 0px;
+    text-align: center;
+}
+.postlists td{
+    border: 1px solid black;
+    padding: 0px 1px;
     text-align: center;
 }
 .postlists {
@@ -230,7 +236,8 @@ hr {
     color:#800;
 }
 .pages td {
-    border:none;padding:1px 5px;
+    border:none;
+    padding:1px 5px;
 }
 .postInfoM {
     display: none;
