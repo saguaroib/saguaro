@@ -28,6 +28,10 @@ a.qu:visited {
 form {
     margin: 0px 0px 0px 0px;
 }
+.postButton {
+    font-size: 26px;
+    font-weight: 700;
+}
 /*^ new to saguaro ^*/
 
 a {
@@ -140,6 +144,7 @@ hr {
     color: #FFFFEE;
     font-size: 14px;
     padding: 0px;
+    text-align: center;
 }
 .postlists {
     background: #FFFFFF;
