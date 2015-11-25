@@ -41,7 +41,7 @@ class DeletePost extends Log {
     function targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $allbyip = 0, $delhost = '') {
         global $path, $mysql;
 
-        $this->update_cache();
+        $this->update_cache(true);
         $log = $this->cache;
         $resno = intval($resno);
 
