@@ -3,7 +3,7 @@
 require_once(CORE_DIR . "/log/log.php");
 
 class DeletePost extends Log {
-    function userDel($no, $pwd) {
+    function userDel($no, $pwd, $onlyimgdel) {
         global $mysql;
         $host         = $_SERVER["REMOTE_ADDR"];
         $delno        = array();
@@ -74,11 +74,8 @@ class DeletePost extends Log {
             $auser   = $mysql->escape_string($_COOKIE['saguaro_auser']);
             $adfsize = ($row['fsize'] > 0) ? 1 : 0;
             $adname  = str_replace('</span> <span class="postertrip">!', '#', $row['name']);
-            if ($imgonly) {
-                $imgonly = 1;
-            } else {
-                $imgonly = 0;
-            }
+            $imgonly = ($imgonly =="on") ? 1 : 0;
+            
             $row['sub']      = $mysql->escape_string($row['sub']);
             $row['com']      = $mysql->escape_string($row['com']);
             $row['filename'] = $mysql->escape_string($row['filename']);
