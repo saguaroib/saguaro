@@ -51,11 +51,11 @@ function error($mes, $dest, $fancy = 0) {
 }
 
 /* user image deletion */
-function usrdel($no, $pwd) {
+function usrdel($no, $pwd, $onlyimgdel) {
     global $path, $pwdc, $onlyimgdel;
     require_once(CORE_DIR . "/admin/delpost.php");
     $del = new DeletePost;
-    $del->userDel($no, $pwd);
+    $del->userDel($no, $pwd, $onlyimgdel);
 }
 
 /*-----------Main-------------*/
@@ -74,7 +74,7 @@ switch ($mode) {
         echo $catalog->formatPage();
         break;
     case 'usrdel':
-        usrdel($no, $pwd);
+        usrdel($no, $pwd, $onlyimgdel);
     default:
         if ($res) {
             require_once(CORE_DIR . "/general/resredir.php");
