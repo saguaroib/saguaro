@@ -85,7 +85,7 @@ class Head {
                 <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : ''). '</div>
                 <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
                 </span><div class="boardBanner">' . $bannerImg . $boardTitle . '</div>' . $headSub . '
-                <a href="#top"></a>';
+                <a href="top"></a>';
 
         if (USE_ADS1) {
             $dat .= ADS1 . '<hr>';
