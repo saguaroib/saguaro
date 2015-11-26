@@ -77,9 +77,9 @@ class PostForm {
         if (NOPICBOX && !SPOILER)
             $temp .= "[<label><input type='checkbox' name='textonly' value='on'>" . S_NOFILE . "</label>]</td></tr>";
 
-        if (SPOILER && !NOPICBOX) //Spoiler checkbox
+        /*if (SPOILER && !NOPICBOX) //Spoiler checkbox
             $temp .= "[<label><input type='checkbox' name='spoiler' value='spoiler'>" . S_SPOILERS . "</label>]</td></tr>";
-        else
+        else*/
             $temp .= "</td></tr>";
 
         if ($admin) { //Admin-specific posting options
