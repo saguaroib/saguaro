@@ -83,3 +83,11 @@ function toggle_visibility(id) {
        else
           e.style.display = 'block';
 }
+
+function swap(div,div2) {
+	var el = document.getElementById(div);
+	var el2 = document.getElementById(div2);
+	var tmp = el.style.display;
+	el.style.display = el2.style.display;
+	el2.style.display = tmp;
+}
