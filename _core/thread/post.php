@@ -36,7 +36,7 @@ class Post {
         
         }
 
-        $com = $this->abbr($com, MAX_LINES_SHOWN);
+        $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $no); //lol
         $com = $this->auto_link($com, $no);
 
         //$temp .= "<br>";
@@ -71,8 +71,8 @@ class Post {
         $image->inIndex = $this->inIndex;
         $temp .= $image->format($this->data);
 
-        $com = $this->abbr($com, MAX_LINES_SHOWN);
-        $com = $this->auto_link($com, $resno);
+        $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $resto); //yeah sure whatever
+        $com = $this->auto_link($com, $resno); 
 
         $temp .= "<blockquote class='postMessage' id='m$no'>$com</blockquote>";
 
@@ -81,14 +81,14 @@ class Post {
         return $temp;
     }
 
-    function abbr($str, $max_lines) {
+    function abbr($str, $max_lines, $no = 0, $resto = 0) {
         if ($this->inIndex) {
             $com = $str;
 
             list($com, $abbreviated) = $this->abbreviate($str, $max_lines);
-
+            $num = ($resto) ? $resto : $no; //I'm probably shitting something up here, i don't know
             if (isset($abbreviated) && $abbreviated)
-                $com .= "<br><br><span class='abbr'>Comment too long. Click <a href='" . RES_DIR . ($resto ? $resto : $no) . PHP_EXT . "#$no'>here</a> to view the full text.</span>";
+                $com .= "<br><br><span class='abbr'>Comment too long. Click <a href='" . RES_DIR . $num . PHP_EXT . "#$no'>here</a> to view the full text.</span>";
 
             return $com;
         } else {
