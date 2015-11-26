@@ -1,5 +1,6 @@
 #Saguaro Imageboard
-###<a href='http://saguaroimgboard.tk' target='_blank'>Take a look at our demo boards!</a>
+[Take a look at our demo boards!](http://saguaroimgboard.tk)
+
 *something-or-other*    
 
 *A branch of ye olden futallaby-plus, which was a branch of futallaby, which was a branch/translation of futaba which was...*
@@ -19,7 +20,7 @@ Saguaro sports many competitive features not commonly found in other imageboard 
 - PHP >= 4.2.x (PHP 5 or newer is also recommended)
 - MySQL >= 4.0 
 - GD 2.x
-- FFmpeg or libav (avconv) for WebM 
+- FFmpeg or libav (avconv) for WebMs
 
 **Additional installation resources:**
 - [Installing](//github.com/spootTheLousy/saguaro/wiki/Installing)
