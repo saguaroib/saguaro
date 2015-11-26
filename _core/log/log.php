@@ -267,7 +267,7 @@ class Log {
         //For porting purposes, the code was copied, formatted, and then just made to store the result in $this->cache.
         //However, it still needs to be rewritten.
 
-        if ($auto == false && !empty($this->cache)) { return; } //Automatically exit if the cache isn't empty.
+        //if ($auto == false && !empty($this->cache)) { return; } //Automatically exit if the cache isn't empty.
 
         global $ipcount, $mysql_unbuffered_reads, $lastno, $mysql;
 
