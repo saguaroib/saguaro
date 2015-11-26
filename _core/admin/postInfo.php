@@ -102,7 +102,7 @@ class DelTable {
                 $com = str_replace("<br />", " ", $com);
                 $com = htmlspecialchars($com);
                 if (strlen($com) > 20)
-                    $com = substr($com, 0, 18) . "...";
+                    $trunccom = substr($com, 0, 18) . "...";
                 if (strlen($fname) > 10)
                     $fname = substr($fname, 0, 40) . "..." . $ext;
                 // Link to the picture
@@ -137,7 +137,7 @@ class DelTable {
                     $warnSticky = "<b><font color=\"FF101A\">(Sticky)</font></b>";
                 $temp .=  "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
                 $temp .=  "<td>$no</td><td>$resdo</td><td>$now</td><td>$sub</td>";
-                $temp .=  "<td>$name</b></td><td>$com</td>";
+                $temp .=  "<td>$name</b></td><td><span title='Double-click to preview full comment' ondblclick='swap(\"trunc$no\", \"full$no\")' id='trunc$no'>$trunccom</span><span ondblclick='swap(\"full$no\", \"trunc$no\")' id='full$no' style='display:none;'>$com</span></td>";
                 $temp .=  "<td class='postimg' >$clip</td><td>" . calculate_age($time) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
                 $temp .=  "</tr>";
             }
