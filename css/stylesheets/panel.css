@@ -1,0 +1,262 @@
+/*Saguaba*/
+
+.managerBanner {
+    background: #EEAA88;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+}
+.dellist {
+    text-align: center;
+}
+.delbuttons {
+    text-align: center;
+    padding-bottom: 4px;
+}
+.postTable.head {
+    border-collapse: collapse;
+    background: #AF0A0F;
+    color: #FFFFEE;
+    font-size: 14px;
+    padding: 0px;
+    text-align: center;
+}
+.postlists td {
+    border: 1px solid black;
+    padding: 0px 1px;
+    text-align: center;
+}
+.postlists {
+    background: #FFFFFF;
+    width: 100%;
+    padding: 0px;
+    color: #800000;
+}
+.row1 {
+    background: #EEAA88;
+    font-size: 10pt;
+    color: #800000;
+}
+.row2 {
+    background: #FFFFFF;
+    font-size: 10pt;
+    color: #800000;
+}
+/*Sagurichan*/
+
+.managerBanner {
+    background: #9988EE;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+}
+.dellist {
+    text-align: center;
+}
+.delbuttons {
+    text-align: center;
+    padding-bottom: 4px;
+}
+.postTable.head {
+    background: #0F8FE1;
+    color: #000000;
+    font-size: 14px;
+    padding: 0px;
+    text-align: center;
+}
+.postlists {
+    border-collapse: collapse;
+    background: #FFFFFF;
+    width: 100%;
+    padding: 0px;
+    color: #000000;
+}
+.postlists td {
+    border: 1px solid black;
+    padding: 0px 1px;
+    text-align: center;
+}
+.row1 {
+    background: #9AD2F6;
+    font-size: 10pt;
+    color: #000000;
+}
+.row2 {
+    background: #FFFFFF;
+    font-size: 10pt;
+    color: #000000;
+}
+/*Tomorrow*/
+
+.managerBanner {
+    background: #FF0000;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+    border-radius: 20px;
+}
+.dellist {
+    text-align: center;
+}
+.delbuttons {
+    text-align: center;
+    padding-bottom: 4px;
+}
+.postTable.head {
+    background: #595959;
+    color: #FFFFEE;
+    font-size: 14px;
+    padding: 0px;
+    text-align: center;
+}
+.postlists {
+    border-collapse: collapse;
+    background: #FFFFFF;
+    width: 100%;
+    padding: 0px;
+}
+.postlist td {
+    border: 1px solid black;
+    padding: 0px 1px;
+    text-align: center;
+}
+th {} .row1 {
+    background: #A6A6A6;
+    font-size: 10pt;
+    color: #000000;
+}
+.row2 {
+    background: #F9F9F9;
+    font-size: 10pt;
+    color: #000000;
+}
+/*
+    Post info page specific CSS.
+*/
+
+.section table {
+    font-size: 10pt;
+}
+div#container {
+    max-width: 100%;
+    width: 100%;
+}
+div#left {
+    display: inline-block;
+    max-width: 250px;
+    margin: 0 10 0 5px;
+    float: left;
+    overflow: hidden;
+}
+div#left select {
+    width: auto;
+}
+div#right {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 10px;
+    position: absolute;
+}
+div.preview_holder {
+    background-color: #434343;
+    background-image: linear-gradient(#434343, #282828);
+}
+img.preview {
+    width: 100%;
+    background-color: transparent;
+    /* https://codepen.io/jasonadelia/pen/DnrAe */
+    /*background-image: linear-gradient(0deg,transparent 24%,rgba(255,255,255,.05) 25%,rgba(255,255,255,.05) 26%,transparent 27%,transparent 74%,rgba(255,255,255,.05) 75%,rgba(255,255,255,.05) 76%,transparent 77%,transparent),linear-gradient(90deg,transparent 24%,rgba(255,255,255,.05) 25%,rgba(255,255,255,.05) 26%,transparent 27%,transparent 74%,rgba(255,255,255,.05) 75%,rgba(255,255,255,.05) 76%,transparent 77%,transparent);
+    background-size:12% 12%;*/
+    /* http://lea.verou.me/css3patterns/#blueprint-grid */
+    
+    background-color: #269;
+    background-image: linear-gradient(white 2px, transparent 2px), linear-gradient(90deg, white 2px, transparent 2px), linear-gradient(rgba(255, 255, 255, .3) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .3) 1px, transparent 1px);
+    background-size: 33.33% 33.33%, 33.33% 33.33%, 5.555% 5.555%, 5.555% 5.555%;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px
+}
+img.preview:hover {
+    background: #FFF url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAQMAAADaua+7AAAABlBMVEXj4+OwsLB082AeAAAAAnRSTlOzs+sT0nUAAAATSURBVAjXY/j/gYEkzMD/nxQMALcpI92VPFGdAAAAAElFTkSuQmCC);
+}
+.section {
+    border-left: 2px solid black;
+    margin-top: 1em;
+    position: relative;
+}
+.section .info:first-child {
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+.section .info {
+    padding: 3 4px;
+}
+.section .info:nth-child(2n+2) {
+    background-color: #c4d1ff;
+}
+.icon {
+    padding: 0 2px;
+}
+.icon {
+    float: right;
+}
+.overflow {
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+}
+.inlinfo {
+    font-style: italic;
+    text-align: right;
+}
+/*Panel thumnail styling*/
+/*Credits: Dynamic Drive CSS Library */
+/*URL: http://www.dynamicdrive.com/style/ */
+
+.gallerycontainer {
+    position: relative;
+    /*Add a height attribute and set to largest image's height to prevent overlaying*/
+}
+.thumbnail img {
+    border: 1px solid white;
+    margin: 0 5px 5px 0;
+}
+.thumbnail:hover {
+    background-color: transparent;
+}
+.thumbnail:hover img {
+    border: 1px solid blue;
+}
+.thumbnail span {
+    /*CSS for enlarged image*/
+    
+    position: absolute;
+    background-color: lightyellow;
+    padding: 5px;
+    /*right: -1000px;*/
+    
+    border: 1px dashed gray;
+    visibility: hidden;
+    color: black;
+    text-decoration: none;
+}
+.thumbnail span img {
+    /*CSS for enlarged image*/
+    
+    border-width: 0;
+    padding: 2px;
+}
+.thumbnail:hover span {
+    /*CSS for enlarged image*/
+    
+    visibility: visible;
+    /*top: 0;*/
+    
+    right: 230px;
+    /*position where enlarged image should offset horizontally */
+    
+    z-index: 50;
+}
