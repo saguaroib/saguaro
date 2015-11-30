@@ -98,39 +98,11 @@ a:hover {
 		width:100%;
 		color:#ffffff;
 }
-.dellist {
-		background:inherit;
-		text-align:center;
-}
-.delbuttons {
-		background:inherit;
-		text-align:center;
-		padding-bottom:4px;
-}
-.managehead {
-		background:#0F8FE1;
-		color:#800000;
-		font-family:sans-serif;
-		font-size:14px;
-		padding:0px;
-}
 .postlists {
 		background:#FFFFFF;
 		width:100%;
 		padding:0px;
 		color:#800000;
-}
-.row1 {
-		background:#9AD2F6;
-		font-family:sans-serif;
-		font-size:12px;
-		color:#800000;
-}
-.row2 {
-        background:#FFFFFF;
-        font-family:sans-serif;
-        font-size:12px;
-        color:#800000;
 }
 .unkfunc {
 		background:inert;

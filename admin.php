@@ -87,15 +87,11 @@ switch ($_GET['mode']) {
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
         break;
     case 'ban':
-        head();
         require_once(CORE_DIR . "/admin/banish.php");
         $banish = new Banish;
-        if ($banish->checkBan($_SERVER['REMOTE_ADDR'])) {
+        if (isset($no) && isset($_SERVER['REMOTE_ADDR']) && isset($_POST['banlength']) && isset($_POST['banType']) && isset($_POST['perma']) && isset($_POST['pubreason']) && isset($_POST['staffnote']) && isset($_POST['custmess']) && isset($_POST['showbanmess']) && isset($_POST['afterban']));
             $banish->postOptions($no, $_SERVER['REMOTE_ADDR'], $_POST['banlength'], $_POST['banType'], $_POST['perma'], $_POST['pubreason'], $_POST['staffnote'], $_POST['custmess'], $_POST['showbanmess'], $_POST['afterban']);
-            //gee i hope nobody saw this
-        } else 
-            error("That IP has an active ban!", 0);
-        $banish->afterBan;
+        $banish->form($_GET['ip'], $_GET['no']);
         break;
     case 'reports':
         head();
