@@ -93,48 +93,6 @@ hr {
     text-align: center;
     font-size: 12px;
 }
-.managerBanner {
-    background: #9988EE;
-    text-align: center;
-    width: 100%;
-    color: #ffffff;
-}
-.dellist {
-    text-align: center;
-}
-.delbuttons {
-    text-align: center;
-    padding-bottom: 4px;
-}
-.postTable.head {
-    background: #0F8FE1;
-    color: #000000;
-    font-size: 14px;
-    padding: 0px;
-    text-align: center;
-}
-.postlists {
-    border-collapse: collapse;
-    background: #FFFFFF;
-    width: 100%;
-    padding: 0px;
-    color: #000000;
-}
-.postlists td {
-    border: 1px solid black;
-    padding: 0px 1px;
-    text-align: center;
-}
-.row1 {
-    background: #9AD2F6;
-    font-size: 10pt;
-    color: #000000;
-}
-.row2 {
-    background: #FFFFFF;
-    font-size: 10pt;
-    color: #000000;
-}
 .quote {
     color: #789922;
     text-decoration: none;
