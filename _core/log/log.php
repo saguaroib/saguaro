@@ -43,6 +43,8 @@ class Log {
             }
         }
 
+        $form = ($log[$resno]['locked']) ? $postform->format($resno, 0, 1) : $postform->format($resno, 0, 0);
+        
         if ($resno) {
             $treeline = array(
                  $resno
@@ -66,7 +68,7 @@ class Log {
         //$counttree=mysql_num_rows($treeline);
         if (!$counttree) {
             $logfilename = PHP_SELF2;
-            $dat = $head->generate() . $postform->format($resno);
+            $dat = $head->generate() . $form;
 
             $this->print_page($logfilename, $dat);
         }
@@ -115,7 +117,7 @@ class Log {
         for ($page = 0; $page < $counttree; $page += PAGE_DEF) {
             $head->info['page']['title'] = "/" . BOARD_DIR . "/" . (($resno && !empty($log[$resno]['sub'])) ? " - " . $log[$resno]['sub'] : '') . " - " . TITLE;
             $dat = $head->generate();
-            $dat .= $postform->format($resno);
+            $dat .= $form;
             if (!$resno) {
                 $st = $page;
             }
