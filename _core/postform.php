@@ -13,7 +13,7 @@
 */
 
 class PostForm {
-    function format($resno = null, $admin = false) {
+    function format($resno = null, $admin = false, $locked = 0) {
         //echo debug_backtrace()[1]['function'];
 
         $resno = (is_numeric($resno)) ? $resno : null;
@@ -21,84 +21,86 @@ class PostForm {
 
         $maxbyte = MAX_KB * 1024;
         $temp = "";
+        if (!$locked) {
+            if ($resno) $temp .= "<div class='theader'>" . S_POSTING . "</div>\n";
 
-        if ($resno) $temp .= "<div class='theader'>" . S_POSTING . "</div>\n";
+            $temp .= "<div class='postForm' align='center'><div class='postarea'>";
+            $temp .= "<form id='contribform' action='" . PHP_SELF_ABS . "' method='post' name='contrib' enctype='multipart/form-data'>";
 
-        $temp .= "<div class='postForm' align='center'><div class='postarea'>";
-        $temp .= "<form id='contribform' action='" . PHP_SELF_ABS . "' method='post' name='contrib' enctype='multipart/form-data'>";
+            if ($admin) {
+                $name = "";
 
-        if ($admin) {
-            $name = "";
+                if (valid('moderator')) {
+                    $name = '<span style="color:#770099;font-weight:bold;">Anonymous ## Mod</span>';
+                }
+                if (valid('admin')) {
+                    $name = '<span style="color:#FF101A;font-weight:bold;">Anonymous ## Admin</span>';
+                }
+                if (valid('manager')) {
+                    $name = '<span style="color:#2E2EFE;font-weight:bold;">Anonymous ## Manager</span>';
+                }
 
-            if (valid('moderator')) {
-                $name = '<span style="color:#770099;font-weight:bold;">Anonymous ## Mod</span>';
+                $temp .= "<em>" . S_NOTAGS . " Posting as</em>: " . $name;
+                $temp .= "<input type='hidden' name='admin' value='" . PANEL_PASS . "'>";
             }
-            if (valid('admin')) {
-                $name = '<span style="color:#FF101A;font-weight:bold;">Anonymous ## Admin</span>';
+
+            $temp .= "<input type='hidden' name='mode' value='regist'><input type='hidden' name='MAX_FILE_SIZE' value='" . $maxbyte . "'>";
+
+            if ($resno)
+                $temp .= "<input type='hidden' name='resto' value='" . $resno . "'>";
+
+            $temp .= "<table>";
+
+            if (!FORCED_ANON) //Name
+                $temp .= "<tr><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28'></td></tr>";
+
+            $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'>";
+
+            if (!$resno) //Subject if a new thread.
+                 $temp .= "</td></tr><tr><td class='postblock' align='left'>" . S_SUBJECT . "</td><td align='left'><input type='text' name='sub' size='35'>";
+
+            $temp .= "<input type='submit' value='" . S_SUBMIT . "'></td></tr>";
+
+            $temp .= "<tr><td class='postblock' align='left'>" . S_COMMENT . "</td><td align='left'><textarea name='com' cols='34' rows='4'></textarea></td></tr>";
+
+            if (BOTCHECK && !$admin) { //Captcha
+                if (RECAPTCHA) {
+                    $temp .= "<tr><td class='postblock' align='left'>Verification</td><td><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></div></tr>";
+                } else {
+                    $temp .= "<tr><td class='postblock' align='left'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
+                }
             }
-            if (valid('manager')) {
-                $name = '<span style="color:#2E2EFE;font-weight:bold;">Anonymous ## Manager</span>';
+
+            //File selection
+            $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*|.webm' size='35'>";
+
+            if (NOPICBOX && !SPOILER)
+                $temp .= "[<label><input type='checkbox' name='textonly' value='on'>" . S_NOFILE . "</label>]</td></tr>";
+
+            /*if (SPOILER && !NOPICBOX) //Spoiler checkbox
+                $temp .= "[<label><input type='checkbox' name='spoiler' value='spoiler'>" . S_SPOILERS . "</label>]</td></tr>";
+            else*/
+                $temp .= "</td></tr>";
+
+            if ($admin) { //Admin-specific posting options
+                $temp .= "<tr><td align='left' class='postblock' align='left'>
+                    Options</td><td align='left'>
+                    Sticky: <input type='checkbox' name='isSticky' value='isSticky'>
+                    Event sticky: <input type='checkbox' name='eventSticky' value='eventSticky'>
+                    Lock:<input type='checkbox' name='isLocked' value='isLocked'>
+                    Capcode:<input type='checkbox' name='showCap' value='showCap'>
+                    <tr><td class='postblock' align='left'>" . S_RESNUM . "</td><td align='left'><input type='text' name='resto' size='28'></td></tr>";
             }
 
-            $temp .= "<em>" . S_NOTAGS . " Posting as</em>: " . $name;
-            $temp .= "<input type='hidden' name='admin' value='" . PANEL_PASS . "'>";
-        }
+            //Deletion password entry
+            $temp .= "<tr><td align='left' class='postblock' align='left'>" . S_DELPASS . "</td><td align='left'><input type='password' name='pwd' size='8' maxlength='8' value='' />" . S_DELEXPL . "</td></tr>";
 
-        $temp .= "<input type='hidden' name='mode' value='regist'><input type='hidden' name='MAX_FILE_SIZE' value='" . $maxbyte . "'>";
-
-        if ($resno)
-            $temp .= "<input type='hidden' name='resto' value='" . $resno . "'>";
-
-        $temp .= "<table>";
-
-        if (!FORCED_ANON) //Name
-            $temp .= "<tr><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28'></td></tr>";
-
-        $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'>";
-
-        if (!$resno) //Subject if a new thread.
-             $temp .= "</td></tr><tr><td class='postblock' align='left'>" . S_SUBJECT . "</td><td align='left'><input type='text' name='sub' size='35'>";
-
-        $temp .= "<input type='submit' value='" . S_SUBMIT . "'></td></tr>";
-
-        $temp .= "<tr><td class='postblock' align='left'>" . S_COMMENT . "</td><td align='left'><textarea name='com' cols='34' rows='4'></textarea></td></tr>";
-
-        if (BOTCHECK && !$admin) { //Captcha
-            if (RECAPTCHA) {
-                $temp .= "<tr><td class='postblock' align='left'>Verification</td><td><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></div></tr>";
-            } else {
-                $temp .= "<tr><td class='postblock' align='left'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
-            }
-        }
-
-        //File selection
-        $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*|.webm' size='35'>";
-
-        if (NOPICBOX && !SPOILER)
-            $temp .= "[<label><input type='checkbox' name='textonly' value='on'>" . S_NOFILE . "</label>]</td></tr>";
-
-        /*if (SPOILER && !NOPICBOX) //Spoiler checkbox
-            $temp .= "[<label><input type='checkbox' name='spoiler' value='spoiler'>" . S_SPOILERS . "</label>]</td></tr>";
-        else*/
-            $temp .= "</td></tr>";
-
-        if ($admin) { //Admin-specific posting options
-            $temp .= "<tr><td align='left' class='postblock' align='left'>
-                Options</td><td align='left'>
-                Sticky: <input type='checkbox' name='isSticky' value='isSticky'>
-                Event sticky: <input type='checkbox' name='eventSticky' value='eventSticky'>
-                Lock:<input type='checkbox' name='isLocked' value='isLocked'>
-                Capcode:<input type='checkbox' name='showCap' value='showCap'>
-                <tr><td class='postblock' align='left'>" . S_RESNUM . "</td><td align='left'><input type='text' name='resto' size='28'></td></tr>";
-        }
-
-        //Deletion password entry
-        $temp .= "<tr><td align='left' class='postblock' align='left'>" . S_DELPASS . "</td><td align='left'><input type='password' name='pwd' size='8' maxlength='8' value='' />" . S_DELEXPL . "</td></tr>";
-
-        if (!$admin) //Show rules for non-admin
-            $temp .= "<tr><td colspan='2'><div align='left' class='rules'>" . S_RULES . "</div></td></tr></table></form></div></div><hr>";
-        else
-            $temp .= '</table></form></div></div>';
+            if (!$admin) //Show rules for non-admin
+                $temp .= "<tr><td colspan='2'><div align='left' class='rules'>" . S_RULES . "</div></td></tr></table></form></div></div><hr>";
+            else
+                $temp .= '</table></form></div></div>';
+        } else 
+            $temp .= "<br><br><br><div style='text-align:center;font-size:24px;font-color:blue;'>This thread is locked.<br><br></div><br><br><hr>";
 
         if (file_exists(GLOBAL_NEWS)) {
             $news = file_get_contents(GLOBAL_NEWS);
@@ -116,6 +118,7 @@ class PostForm {
 
         return $temp;
     }
+    
 }
 
 ?>
