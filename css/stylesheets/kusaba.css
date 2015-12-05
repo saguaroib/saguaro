@@ -40,6 +40,12 @@ a:hover {
     font-family: serif;
     text-decoration: underline;
 }
+.adminbar {
+    background: inherit;
+    clear: both;
+    float: right;
+    text-align: right;
+}
 .logo {
     background: inherit;
     clear: both;
@@ -104,6 +110,31 @@ a:hover {
     background: inherit;
     padding-bottom: 4px;
     text-align: center;
+}
+.managehead {
+    background: none repeat scroll 0 0 #0F8FE1;
+    color: #800000;
+    font-family: sans-serif;
+    font-size: 14px;
+    padding: 0;
+}
+.postlists {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #800000;
+    padding: 0;
+    width: 100%;
+}
+.row1 {
+    background: none repeat scroll 0 0 #9AD2F6;
+    color: #800000;
+    font-family: sans-serif;
+    font-size: 12px;
+}
+.row2 {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #800000;
+    font-family: sans-serif;
+    font-size: 12px;
 }
 .unkfunc {
     color: #789922;

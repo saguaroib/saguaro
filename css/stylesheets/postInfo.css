@@ -1,0 +1,98 @@
+body {
+    background: #EEF2FF url(fade-blue.png) top center repeat-x;
+    font-size: 10pt;
+    color: #000000;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/*
+
+    Post info page specific CSS.
+
+*/
+
+.section table { font-size: 10pt; }
+
+div#container {
+    max-width:100%;
+    width:100%;
+}
+
+div#left {
+    display:inline-block;
+    max-width:250px;
+    margin:0 10 0 5px;
+    float:left;
+    overflow:hidden;
+}
+
+div#left select {
+    width:auto;
+}
+
+div#right {
+    display:inline-block;
+    vertical-align:top;
+    margin-right:10px;
+    position:absolute;
+}
+
+div.preview_holder {
+    background-color: #434343;
+    background-image:linear-gradient(#434343, #282828);
+}
+
+img.preview {
+    width:100%;
+    background-color: transparent;
+
+    /* https://codepen.io/jasonadelia/pen/DnrAe */
+    /*background-image: linear-gradient(0deg,transparent 24%,rgba(255,255,255,.05) 25%,rgba(255,255,255,.05) 26%,transparent 27%,transparent 74%,rgba(255,255,255,.05) 75%,rgba(255,255,255,.05) 76%,transparent 77%,transparent),linear-gradient(90deg,transparent 24%,rgba(255,255,255,.05) 25%,rgba(255,255,255,.05) 26%,transparent 27%,transparent 74%,rgba(255,255,255,.05) 75%,rgba(255,255,255,.05) 76%,transparent 77%,transparent);
+    background-size:12% 12%;*/
+
+    /* http://lea.verou.me/css3patterns/#blueprint-grid */
+    background-color:#269;
+    background-image: linear-gradient(white 2px, transparent 2px),
+    linear-gradient(90deg, white 2px, transparent 2px),
+    linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
+    background-size:33.33% 33.33%, 33.33% 33.33%, 5.555% 5.555%, 5.555% 5.555%;
+    background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
+}
+img.preview:hover {
+    background: #FFF url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAQMAAADaua+7AAAABlBMVEXj4+OwsLB082AeAAAAAnRSTlOzs+sT0nUAAAATSURBVAjXY/j/gYEkzMD/nxQMALcpI92VPFGdAAAAAElFTkSuQmCC);
+}
+
+.section {
+    border-left: 2px solid black;
+    margin-top: 1em;
+    position: relative;
+}
+
+.section .info:first-child {
+    background-color:#000;
+    color:#fff;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.section .info {
+    padding:3 4px;
+}
+
+.section .info:nth-child(2n+2) {
+    background-color:#c4d1ff;
+}
+
+.icon  { padding:0 2px; }
+.icon { float:right; }
+.overflow {
+    max-width:80%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    display:inline-block;
+    white-space:nowrap;
+}
+
+.inlinfo { font-style:italic; text-align:right; }

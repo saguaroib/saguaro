@@ -203,6 +203,40 @@ class DelTable {
             </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></td></tr></table></form>";
         } else
             $temp .= "</table></form>";
+        $alart = $mysql->num_rows("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
+        if ( $alart > 0)
+            $alert = "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>";
+        else
+            $alert = "No bans on record for IP $host";
+        $temp .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
+        <input type='hidden' name='no' value='$no' />
+        <input type='hidden' name='ip' value='$host' />
+        <center><th class='postblock'><b>Ban panel</b></th></center>
+        <tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
+        <tr><td class='postblock'>Unban in:</td><td><input type='number' min='0' size='4' name='banlength'  /> days</td></tr>
+        <center><tr><td class='postblock'>Ban type:</td><td></center>
+            <select name='banType' />
+            <option value='warn' />Warning only</option>
+            <option value='thisboard' />This board - /" . BOARD_DIR . "/ </option>
+            <option value='global' />All boards</option>
+            <option value='perma' />Permanent - All boards</option>
+            </select>
+        </td></tr>
+        <tr><td class='postblock'>Public reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
+        <tr><td class='postblock'>Staff notes:</td><td><input type='text' name='staffnote' /></td></tr>
+        <tr><td class='postblock'>Append user's comment:</td><td><input type='text' name='custmess' placeholder='Leave blank for USER WAS BAN etc.' /> [ Show message<input type='checkbox' name='showbanmess' /> ] </td></tr>
+        <tr><td class='postblock'>After-ban options:</td><td>
+            <select name='afterban' />
+            <option value='none' />None</option>
+            <option value='delpost' />Delete this post</option>
+            <option value='delallbyip' />Delete all by this IP</option>
+            <option value='delimgonly' />Delete image only</option>
+            </select>
+        </td></tr>";
+        if (valid('admin'))
+            $temp .= "
+            <tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";
+        $temp .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form><br><hr>";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br>";
         
         echo $temp;

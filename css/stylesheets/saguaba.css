@@ -126,6 +126,48 @@ hr {
     text-align: center;
     font-size: 12px;
 }
+.managerBanner {
+    background: #EEAA88;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+}
+.dellist {
+    text-align: center;
+}
+.delbuttons {
+    text-align: center;
+    padding-bottom: 4px;
+}
+.postTable.head {
+    border-collapse: collapse;
+    background: #AF0A0F;
+    color: #FFFFEE;
+    font-size: 14px;
+    padding: 0px;
+    text-align: center;
+}
+.postlists td{
+    border: 1px solid black;
+    padding: 0px 1px;
+    text-align: center;
+}
+.postlists {
+    background: #FFFFFF;
+    width: 100%;
+    padding: 0px;
+    color: #800000;
+}
+.row1 {
+    background: #EEAA88;
+    font-size: 10pt;
+    color: #800000;
+}
+.row2 {
+    background: #FFFFFF;
+    font-size: 10pt;
+    color: #800000;
+}
 .quote {
     color: #789922;
     text-decoration: none;
