@@ -116,8 +116,20 @@ class Head {
                     <link rel='shortcut icon' href='" . CSS_PATH . "imgs/favicon.ico'>
                     <title>" . $this->info['page']['title'] . "</title>";
         
-        $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . "/panel.css' title='Admin Panel' />";
+        //$dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . "/panel.css' title='Admin Panel' />";
 
+        if (NSFW) {
+            $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
+                <link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/mobile.css' title='mobile' />
+                <link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />";
+        } else {
+            $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />
+            <link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/mobile.css' title='mobile' />
+            <link class='togglesheet' rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />";
+        }
+        //<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS4 . "' title='Burichan'/> RIP Burichan 1862-2015
+        $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";        
+        
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>";
         
