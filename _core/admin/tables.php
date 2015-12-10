@@ -1,10 +1,10 @@
 <?php
 
-class DelTable {
+class Table {
     
-    function displayTable($onlyimgdel) {
+    function display($type = 0, $resource = 0) {
         global $mysql;
-        $delno   = array(
+            $delno   = array(
                  dummy
            );
             $delflag = FALSE;
@@ -31,10 +31,9 @@ class DelTable {
                         }
                     }
                 }
+                echo '<meta http-equiv="refresh" content="0; url=' . PHP_ASELF_ABS . '?mode=all">';
             }
-
-            function calculate_age($timestamp, $comparison = '')
-            {
+            function calculate_age($timestamp, $comparison = '') {
                 $units = array(
                      'second' => 60,
                     'minute' => 60,
@@ -65,46 +64,68 @@ class DelTable {
 
             }
 
+            if ($resource)
+                $mysql->escape_string($resource);
+                
+            if ($type === 'res') {
+                $banner = "<div class='managerBanner'>" . S_DELRES . $resource . "</div>";
+                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE resto='$resource' OR no='$resource' OR host='$resource' ORDER BY time ASC");
+            }
+            
+            if ($type === 'all') {
+                $banner = "<div class='managerBanner'>" . S_DELALL . "</div>";
+                $query = $mysql->query("SELECT * FROM " . SQLLOG . " ORDER BY no DESC");
+            }
+            
+            if ($type === 'ip') {
+                $banner = "<div class='managerBanner'>" . S_DELIP . $resource . "</div>";
+                $hostno = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$resource' ");
+                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE host='$hostno' ORDER BY NO DESC");
+            }
+            
+            if ($type === 'ops') {
+                $banner = "<div class='managerBanner'>" . S_DELOPS . "</div>";
+                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE resto='0' ORDER BY time DESC");
+            }            
 
             // Deletion screen display
-            $temp .= "<form action='" . PHP_ASELF . "' method='post' id='delForm'>
-    <input type=hidden name=admin value=del checked>";
+            $temp .=  $banner;
+            $temp .= '<br><form action="' . PHP_ASELF . '" method="get|" id="delForm"><input type="hidden" name="mode" value="res">
+            <input type="text" name="no" placeholder="Post # or IP" required><input type="submit" value="Search">
+            <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=ops\';" value="Only opening posts">
+            <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=all\';" value="View all"></form>';
+            $temp .= "<form action='" . PHP_ASELF . "?mode=del' method='post' id='delForm'><input type=hidden name=admin value=del checked>";
             $temp .=  "<input type=hidden name=mode value=admin>";
             $temp .=  "<input type=hidden name=admin value=del>";
             $temp .=  "<input type=hidden name=pass value='$pass'>";
-            $temp .=  "<div class='managerBanner'>" . S_DELLIST . "</div>";
             $temp .=  "<div class='delbuttons'><input type=submit value='" . S_ITDELETES . "'>";
             $temp .=  "<input type=reset value='" . S_MDRESET . "'>";
-            $temp .=  "[<input type=checkbox name=onlyimgdel value=on><!--checked-->" . S_MDONLYPIC . "]</div>";
-            $temp .=  "<table class='postlists' style='border-collapse:collapse;' cellspacing='0' cellpadding='0'>";
+            $temp .=  "[<input type=checkbox name=onlyimgdel value=on>" . S_MDONLYPIC . "]</div><br>";
+            $temp .=  "<table cellpadding='0' cellspacing='0' class='postlists' style='border-collapse:collapse;' cellspacing='0' cellpadding='0'>";
             $temp .=  "<tr class='postTable head'>" . S_MDTABLE1;
             $temp .=  S_MDTABLE2;
             $temp .=  "</tr>";
 
-            if (!$result = $mysql->query("select * from " . SQLLOG . " order by no desc")) {
-                $temp .=  S_SQLFAIL;
-            }
+            
+            if (!$query) 
+                error(S_SQLFAIL);
+                
             $j = 0;
-            while ($row = $mysql->fetch_row($result)) {
+            while ($row = $mysql->fetch_row($query)) {
                 $j++;
                 $path = realpath("./") . '/' . IMG_DIR;
                 $img_flag = FALSE;
                 list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto) = $row;
                 // Format
-                /*$now = ereg_replace('.{2}/(.*)$', '\1', $now);
-                $now = ereg_replace('\(.*\)', ' ', $now);*/
-                if (strlen($name) > 10)
-                    $name = substr($name, 0, 9) . "...";
-                if (strlen($sub) > 10)
-                    $sub = substr($sub, 0, 9) . "...";
-                if ($email)
-                    $name = "<a href=\"mailto:$email\">$name</a>";
+                $now = ereg_replace('.{2}/(.*)$', '\1', $now);
+                $now = ereg_replace('\(.*\)', ' ', $now);
+                $name = (strlen($name) > 10) ? substr($name, 0, 9) . "..." : $name;
+                $name = ($email) ? "<a href=\"mailto:$email\">$name</a>" : $name;
+                $sub = (strlen($sub) > 10) ? substr($sub, 0, 9) . "..." : $sub;
                 $com = str_replace("<br />", " ", $com);
                 $com = htmlspecialchars($com);
-                if (strlen($com) > 20)
-                    $trunccom = substr($com, 0, 18) . "...";
-                if (strlen($fname) > 10)
-                    $fname = substr($fname, 0, 40) . "..." . $ext;
+                $trunccom = substr($com, 0, 18) . "...";
+                $fname =  (strlen($fname) > 10) ? substr($fname, 0, 40) : $fname;
                 // Link to the picture
                 if ($ext && is_file($path . $tim . $ext)) {
                     $img_flag = TRUE;
@@ -122,31 +143,32 @@ class DelTable {
                     $all += $asize; //total calculation
                     $md5 = substr($md5, 0, 10);
                 } else {
-                    $clip = "[No file]";
+                    $clip = S_NOFILE;
                     $size = 0;
                     $md5  = "";
                 }
+                
                 $class = ($j % 2) ? "row1" : "row2"; //BG color
-
-                if ($resto == '0')
-                    $resdo = '<b>OP(<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . '#' . $no . '" target="_blank" />' . $no . '</a>)</b>';
-                else
-                    $resdo = '<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $resto . PHP_EXT . '#' . $no . '" target="_blank" />' . $resto . '</a>';
-                $warnSticky = '';
-                if ($sticky == '1')
-                    $warnSticky = "<b><font color=\"FF101A\">(Sticky)</font></b>";
-                $temp .=  "<tr class=$class><td><input type=checkbox name=\"$no\" value=delete>$warnSticky</td>";
-                $temp .=  "<td>$no</td><td>$resdo</td><td>$now</td><td>$sub</td>";
+                $altClass = ($j % 2) ? "row2" : "row1"; //lol
+                $resdo = ($resto) ? 'Reply to thread' : 'Opening post';
+                $ssno = ($resto) ? $resto : $no;
+                $linknum = /*($resto) ?*/ '<a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a>';// : '<b><a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a></b>';
+                $sno = ($sticky) ? "<b><font color=\"FF101A\">$linknum</font></b>" : $linknum;
+                $threadmode = ($resto) ? $resto : $no;    
+                //Actual panel html
+                $temp .=  "<tr class='$class'><td><input type=checkbox name=\"$no\" value=delete></td>";
+                $temp .=  "<td colspan='1'>$sno</td><td>$now</td><td>$sub</td>";
                 $temp .=  "<td>$name</b></td><td><span title='Double-click to preview full comment' ondblclick='swap(\"trunc$no\", \"full$no\")' id='trunc$no'>$trunccom</span><span ondblclick='swap(\"full$no\", \"trunc$no\")' id='full$no' style='display:none;'>$com</span></td>";
-                $temp .=  "<td class='postimg' >$clip</td><td>" . calculate_age($time) . "</td><td><input type=\"button\" text-align=\"center\" onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"Post Info\" /></td>\n";
-                $temp .=  "</tr>";
-            }
-            $mysql->free_result($result);
-
+                $temp .=  "<td class='postimg' >$clip</td><td>" . calculate_age($time) . "</td><td><input type='button' value='More' onclick='more(\"" . $no . "a\",\"" . $no . "b\");'></td>";
+                $temp .=  "</tr><tr id='" . $no . "a' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td><td colspan='2' align='left'><b>$resdo</b></td><td colspan='5'>&nbsp;</td>";
+                $temp .=  "</tr><tr id='" . $no . "b' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td>
+                <td colspan='2'><a href='" . PHP_SELF_ABS . "?res=$ssno'>$ssno</a><td colspan='2'>&nbsp;</td></td>
+                <td colspan='4' align='center'><input value='All posts by this IP' onclick=\"location.href='?mode=ip&no=$no';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='View in threadmode' onclick=\"location.href='?mode=res&no=$threadmode';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Delete everything by this IP' onclick=\"popup('admin=delall&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Ban user' onclick=\"popup('admin=ban&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"More info\" /></td>";                
+            }//
+            //$mysql->free_result($result);
             $temp .=  "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
-            //foot($dat);
             $all = (int) ($all / 1024);
-            $temp .=  "<div align='center'/>[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]</div>";
+            //$temp .=  "<div align='center'/>[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]</div>";
             $temp .= "</body></html>";
 
             echo $temp;
@@ -160,7 +182,7 @@ class DelTable {
         
         $row = $mysql->fetch_row($result);
         list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board, ) = $row;
-        $temp = head();
+        $temp = head(0);
         $temp .= "<table border='0' cellpadding='0' cellspacing='0'  />";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br><hr><br>";
         if ($sticky || $locked || $permasage) {

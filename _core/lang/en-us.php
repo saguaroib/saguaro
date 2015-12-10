@@ -83,7 +83,7 @@ $S_DELLIST = 'Deletion Panel';                                  //Prints sub-hea
 $S_ITDELETES = 'Delete';                                        //Defines for deletion button in Management Panel
 $S_MDRESET = 'Reset';                                           //Defines name for field reset button in Management Panel
 $S_MDONLYPIC = 'File Only';                                     //Sets whether or not to delete only file, or entire post/thread
-$S_MDTABLE1 = '<th></th><th>#</th><th>Reply to</th><th>Time</th><th>Subject</th>'; //Explains field names for Management Panel (Delete?->Subject)
+$S_MDTABLE1 = '<th></th><th>#</th><th>Time</th><th>Subject</th>'; //Explains field names for Management Panel (Delete?->Subject)
 $S_MDTABLE2 = '<th>Name</th><th>Comment</th><th>Image</th><th>Age</th><th>More</th>'; //Explains names for Management Panel (Name->md5)
 $S_RESET = 'Reset';                                             //Sets name for field reset button (global)
 $S_IMGSPACEUSAGE = 'Space used :';                              //Prints space used KB by the board under Management Panel
@@ -105,5 +105,12 @@ $S_CAPFAIL = 'Error: You forgot to solve the CAPTCHA. Please try again.';
 $S_THREADLOCKED = 'You cannot reply to a locked thread.';
 $S_LOGOUT = 'Logout';
 $S_SPOILERS = 'Spoiler Image';
+
+$S_NOPERM = 'Permission denied!';
+$S_NOFILE = '---';
+$S_DELRES = 'Deletion mode: Viewing thread #';
+$S_DELALL = 'Deletion mode: All';
+$S_DELIP = 'Deletion mode: Viewing all posts by IP from #';
+$S_DELOPS = 'Deletion mode: All opening posts (OPs)';
 
 ?>
