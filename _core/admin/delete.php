@@ -2,7 +2,7 @@
 
 require_once(CORE_DIR . "/log/log.php");
 
-class DeletePost extends Log {
+class Delete extends Log {
     function userDel($no, $pwd, $onlyimgdel) {
         global $mysql;
         $host         = $_SERVER["REMOTE_ADDR"];
@@ -37,7 +37,7 @@ class DeletePost extends Log {
         if ($rebuildindex)
             $this->update(0, 1); // update the index page last
     }
-
+    
     function targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $allbyip = 0, $delhost = '') {
         global $path, $mysql;
 

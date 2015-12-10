@@ -48,6 +48,12 @@ class Login {
     }
 
     function auth() {
+    
+        /*function isAuthed($pass) {
+            $good->auth($pass);
+            if (isset($_POST['usernm']) && isset($_POST['passwd']))
+                $good->doLogin($_POST['usernm'], $_POST['passwd']);
+        }*/
 
         if (!valid('janitor_board')) {
             // Admin.php login
