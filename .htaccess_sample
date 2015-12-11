@@ -12,3 +12,18 @@ RewriteRule banned banned.php [NC]
 
 #RewriteRule friendly_pcre target
 #Flags: http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewriteflags
+
+#Prevent accidental dumps. Just in case.
+<Files config.php>
+Deny from all
+</Files>
+
+#MORE anti-caching measures.
+<IfModule mod_headers.c>
+<Files *.html>
+Header add Expires "Mon, 26 Jul 1997 05:00:00 GMT"
+Header add Pragma "no-cache"
+Header add Cache-Control "max-age=0; must-revalidate; no-cache"
+Header unset Vary
+</Files>
+</IfModule>
