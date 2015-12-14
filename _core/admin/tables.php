@@ -60,18 +60,19 @@ class Table {
             }            
 
             // Deletion screen display
-            $temp .=  $banner;
+            $temp .= "<div class='managerBanner'>" . S_MANAMODE . "</div>" . $banner;
             $temp .= '<br><form action="' . PHP_ASELF . '" method="get" id="delForm"><input type="hidden" name="mode" value="res">
             <input type="text" name="no" placeholder="Post # or IP" required><input type="submit" value="Search">
             <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=ops\';" value="Only opening posts">
             <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=all\';" value="View all"></form>';
             $temp .= "<form action='" . PHP_ASELF . "?mode=del' method='post' id='delForm'><input type=hidden name=admin value=del checked>";
-            $temp .=  "<input type=hidden name=mode value=admin>";
+            /*$temp .=  "<input type=hidden name=mode value=admin>";
             $temp .=  "<input type=hidden name=admin value=del>";
             $temp .=  "<input type=hidden name=pass value='$pass'>";
             $temp .=  "<div class='delbuttons'><input type=submit value='" . S_ITDELETES . "'>";
             $temp .=  "<input type=reset value='" . S_MDRESET . "'>";
-            $temp .=  "[<input type=checkbox name=onlyimgdel value=on>" . S_MDONLYPIC . "]</div><br>";
+            $temp .=  "[<input type=checkbox name=onlyimgdel value=on>" . S_MDONLYPIC . "]</div><br>";*/
+            $temp .= "<br>";
             $temp .=  "<table cellpadding='0' cellspacing='0' class='postlists' style='border-collapse:collapse;' cellspacing='0' cellpadding='0'>";
             $temp .=  "<tr class='postTable head'>" . S_MDTABLE1;
             $temp .=  S_MDTABLE2;
@@ -119,6 +120,9 @@ class Table {
                     $md5  = "";
                 }
                 
+                if (!valid('moderator'))
+                    $host ='###.###.###.###';
+                
                 $class = ($j % 2) ? "row1" : "row2"; //BG color
                 $altClass = ($j % 2) ? "row2" : "row1"; //lol
                 $resdo = ($resto) ? 'Reply to thread' : 'Opening post';
@@ -127,11 +131,12 @@ class Table {
                 $sno = ($sticky) ? "<b><font color=\"FF101A\">$linknum</font></b>" : $linknum;
                 $threadmode = ($resto) ? $resto : $no;    
                 //Actual panel html
-                $temp .=  "<tr class='$class'><td><input value='x' onclick=\"location.href='?mode=adel&no=$no';\" type='button'></td>";
+                //$temp .=  "<tr class='$class'><td><input type=checkbox name=\"$no\" value=delete></td>"; //<input value='x' alt='Delete post' onclick=\"location.href='?mode=adel&no=$no';\" type='button'>
+                $temp .=  "<tr class='$class'><td><input value='x' alt='Delete post' onclick=\"location.href='?mode=adel&no=$no';\" type='button'></td>";          
                 $temp .=  "<td colspan='1'>$sno</td><td>$now</td><td>$sub</td>";
                 $temp .=  "<td>$name</b></td><td><span title='Double-click to preview full comment' ondblclick='swap(\"trunc$no\", \"full$no\")' id='trunc$no'>$trunccom</span><span ondblclick='swap(\"full$no\", \"trunc$no\")' id='full$no' style='display:none;'>$com</span></td>";
-                $temp .=  "<td class='postimg' >$clip</td><td>" . calculate_age($time) . "</td><td><input type='button' value='More' onclick='more(\"" . $no . "a\",\"" . $no . "b\");'></td>";
-                $temp .=  "</tr><tr id='" . $no . "a' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td><td colspan='2' align='left'><b>$resdo</b></td><td colspan='5'>&nbsp;</td>";
+                $temp .=  "<td class='postimg' >$clip</td><td>$host</td><td>" . calculate_age($time) . "</td><td><input type='button' value='More' onclick='more(\"" . $no . "a\",\"" . $no . "b\");'></td>";
+                $temp .=  "</tr><tr id='" . $no . "a' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td><td colspan='2' align='left'><b>$resdo</b></td><td colspan='6'>&nbsp;</td>";
                 $temp .=  "</tr><tr id='" . $no . "b' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td>
                 <td colspan='2'><a href='" . PHP_SELF_ABS . "?res=$ssno'>$ssno</a><td colspan='2'>&nbsp;</td></td>
                 <td colspan='4' align='center'><input value='All posts by this IP' onclick=\"location.href='?mode=ip&no=$no';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='View in threadmode' onclick=\"location.href='?mode=res&no=$threadmode';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Delete everything by this IP' onclick=\"popup('admin=delall&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Ban user' onclick=\"popup('admin=ban&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"More info\" /></td>";                
