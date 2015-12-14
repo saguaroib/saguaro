@@ -226,7 +226,7 @@ if (!$may_flood) {
         $mysql->free_result($result);
     }
 
-    if ($saged) {
+    if ($sageThis) {
         // Check flood limit on sage posts
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU_SAGE) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0 and permasage=1";
         $result = $mysql->query($query);
@@ -277,7 +277,7 @@ if ($stickied)
 if ($resto) { 
     $countres = $mysql->result("SELECt COUNT(no) FROM " . SQLLOG . " where resto=" . $resto, 0, 0);
     $stat = $mysql->fetch_assoc("SELECT sticky,permasage FROM " . SQLLOG . " WHERE no=" . $resto);
-    if (!$sageThis /*&& $countres < MAX_RES*/ && !$stat['sticky'] && !$stat['permasage']) //|| ($admin && $age && $sticky < "0"))
+    if (!$sageThis && $countres < MAX_RES && !$stat['sticky'] && !$stat['permasage']) //|| ($admin && $age && $sticky < "0"))
         $mysql->query("UPDATE " . SQLLOG . " SET root=now() WHERE  no='$resto'"); //Bump
 }
 
