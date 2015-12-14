@@ -39,8 +39,8 @@ ignore_user_abort(TRUE);
 // check whether the current user can perform $action (on $no, for some actions)
 // board-level access is cached in $valid_cache.
 function valid($action = 'moderator', $no = 0) {
-    require_once(CORE_DIR . "/admin/validate.php");
-    $validate = new Validation;
+    require_once(CORE_DIR . "/admin/valid.php");
+    $validate = new Valid;
     return $validate->verify($action);
 }
 
@@ -53,8 +53,8 @@ function error($mes, $dest, $fancy = 0) {
 /* user image deletion */
 function usrdel($no, $pwd, $onlyimgdel) {
     global $path, $pwdc, $onlyimgdel;
-    require_once(CORE_DIR . "/admin/delpost.php");
-    $del = new DeletePost;
+    require_once(CORE_DIR . "/admin/delete.php");
+    $del = new Delete;
     $del->userDel($no, $pwd, $onlyimgdel);
 }
 

@@ -95,13 +95,13 @@ class Head {
         return $dat;
     }
     
-    function generateAdmin() {
+    function generateAdmin($noHead = 0) {
         require_once(CORE_DIR . "/admin/report.php");
 
         $getReport = new Report;
         
-        $boardTitle = (SHOWTITLETXT > 0) ? "<div class='boardTitle'>" . $this->info['page']['title'] . "</div><div class='boardSubtitle'>" . S_HEADSUB . "</div><hr>" : '';
-        $bannerImg .= (SHOWTITLEIMG) ? '<img class="bannerImg" src="' . TITLEIMG . '" onclick="this.src=this.src;" alt="' . TITLE . '" /><br>' : '';
+        $boardTitle = (SHOWTITLETXT > 0 && !$noHead) ? "<div class='boardTitle'>" . $this->info['page']['title'] . "</div><div class='boardSubtitle'>" . S_HEADSUB . "</div><hr>" : '';
+        $bannerImg .= (SHOWTITLEIMG && !$noHead) ? '<img class="bannerImg" src="' . TITLEIMG . '" onclick="this.src=this.src;" alt="' . TITLE . '" /><br>' : '';
         
         /* begin page content */
         $dat = "<!DOCTYPE html><head>
@@ -131,23 +131,25 @@ class Head {
         $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";        
         
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
-                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>";
+                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script></head>";
         
-        $dat .= '</head><div class="beforePostform" />' . $titlebar . '
-                <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : '') . '</div>
-                <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
-                </span><div class="boardBanner">' . $bannerImg . $boardTitle . '</div>';            
-        
-        $dat .= "<div class='panelOps' style='text-align:left;' />[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>]";
-        $dat .= "[<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]";
-        if (valid('moderator')) {
-            $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' >Rebuild</a>]";
-            $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuildall' >Rebuild all</a>]";
-            $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->reportGetAllBoard() . "</a>]";
+        if (!$noHead) {
+            $dat .= '<div class="beforePostform" />' . $titlebar . '
+                    <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : '') . '</div>
+                    <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
+                    </span><div class="boardBanner">' . $bannerImg . $boardTitle . '</div>';            
+            
+            $dat .= "<div class='panelOps' style='text-align:left;' />[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>][<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]";
+
+            if (valid('moderator')) {
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=all' >Deletion panel</a>]";
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' >Rebuild all</a>]";
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->reportGetAllBoard() . "</a>]";
+            }
+            if (valid('admin'))
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=staff' >Users</a>]";
+            $dat .= "[<a href='" . PHP_ASELF . "?mode=logout'>" . S_LOGOUT . "</a>]";
         }
-        if (valid('admin'))
-            $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=staff' >Manage users</a>]";
-        $dat .= "[<a href='" . PHP_ASELF . "?mode=logout'>" . S_LOGOUT . "</a>]";
         return $dat;
     } 
 }

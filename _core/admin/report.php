@@ -172,7 +172,7 @@ class Report {
             echo S_SQLFAIL;
         $j = 0;
         
-        $temp .= "<br><br>[<a href='" . PHP_ASELF_ABS . "' >Back to Panel</a>]<br><br><div class='managerBanner'>Active reports for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
+        $temp .= "<br><br><div class='managerBanner'>Active reports for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
         $temp .= "<table class='postlists'>";
         $temp .= "<tr class=\"postTable head\"><th>Clear Report</th><th>Post Number</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
         $temp .= "</tr>";
