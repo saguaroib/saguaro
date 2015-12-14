@@ -4,35 +4,6 @@ class Table {
     
     function display($type = 0, $resource = 0) {
         global $mysql;
-            $delno   = array(
-                 dummy
-           );
-            $delflag = FALSE;
-            reset($_POST);
-            while ($item = each($_POST)) {
-                if ($item[1] == 'delete') {
-                    array_push($delno, $item[0]);
-                    $delflag = TRUE;
-                }
-            }
-            if ($delflag) {
-                if (!$result = $mysql->query("select * from " . SQLLOG . "")) {
-                    echo S_SQLFAIL;
-                }
-                $find = FALSE;
-
-                while ($row = $mysql->fetch_row($result)) {
-                list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto) = $row;
-                    if ($onlyimgdel == 'on') {
-                        delete_post($no, $pwd, 1, 1, 1, 0);
-                    } else {
-                        if (array_search($no, $delno)) { //It is empty when deleting
-                            delete_post($no, $pwd, 0, 1, 1, 0);
-                        }
-                    }
-                }
-                echo '<meta http-equiv="refresh" content="0; url=' . PHP_ASELF_ABS . '?mode=all">';
-            }
             function calculate_age($timestamp, $comparison = '') {
                 $units = array(
                      'second' => 60,
@@ -90,7 +61,7 @@ class Table {
 
             // Deletion screen display
             $temp .=  $banner;
-            $temp .= '<br><form action="' . PHP_ASELF . '" method="get|" id="delForm"><input type="hidden" name="mode" value="res">
+            $temp .= '<br><form action="' . PHP_ASELF . '" method="get" id="delForm"><input type="hidden" name="mode" value="res">
             <input type="text" name="no" placeholder="Post # or IP" required><input type="submit" value="Search">
             <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=ops\';" value="Only opening posts">
             <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=all\';" value="View all"></form>';
@@ -156,7 +127,7 @@ class Table {
                 $sno = ($sticky) ? "<b><font color=\"FF101A\">$linknum</font></b>" : $linknum;
                 $threadmode = ($resto) ? $resto : $no;    
                 //Actual panel html
-                $temp .=  "<tr class='$class'><td><input type=checkbox name=\"$no\" value=delete></td>";
+                $temp .=  "<tr class='$class'><td><input value='x' onclick=\"location.href='?mode=adel&no=$no';\" type='button'></td>";
                 $temp .=  "<td colspan='1'>$sno</td><td>$now</td><td>$sub</td>";
                 $temp .=  "<td>$name</b></td><td><span title='Double-click to preview full comment' ondblclick='swap(\"trunc$no\", \"full$no\")' id='trunc$no'>$trunccom</span><span ondblclick='swap(\"full$no\", \"trunc$no\")' id='full$no' style='display:none;'>$com</span></td>";
                 $temp .=  "<td class='postimg' >$clip</td><td>" . calculate_age($time) . "</td><td><input type='button' value='More' onclick='more(\"" . $no . "a\",\"" . $no . "b\");'></td>";

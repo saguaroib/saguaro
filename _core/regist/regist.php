@@ -95,12 +95,9 @@ if (!$com)
 if (!$sub)
     $sub = S_ANOTITLE;
 
-// Form content check
-$clean = $sanitize->process($name, $com, $sub, $email, $resto, $url, $dest, $moderator);
-
 if (!$resto && !$textonly && !is_file($dest) && !$moderator)
     error(S_NOPIC, $dest);
-if (!$clean['com'] && !is_file($dest) && !$moderator)
+if (!$com && !is_file($dest) && !$moderator)
     error(S_NOTEXT, $dest);
 
 // No, path, time, and url format
@@ -126,10 +123,7 @@ $youbi  = array(
 );
 $yd     = $youbi[date("w", $time)];
 
-if (SHOW_SECONDS == 1) 
-    $now = date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i:s", $time);
-else 
-    $now = date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i", $time);
+$now = (SHOW_SECONDS == 1)  ? date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i:s", $time) : date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i", $time);
 
 if (DISP_ID) {
     //$rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
@@ -139,7 +133,7 @@ if (DISP_ID) {
     $idhtml = "<span class=\"posteruid\" id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
     $mysql->escape_string($idhtml);
 
-    if ($clean['email'] && DISP_ID == 1) {
+    if ($email && DISP_ID == 1) {
         $now .= " (ID:" . $idhtml . " Heaven </span>)";
     } else {
         if (!$resto) {
@@ -159,20 +153,30 @@ if (COUNTRY_FLAGS && file_exists('geoiploc.php')) {
     $now .= " <img src=" . CSS_PATH . "flags/" . strtolower($country) . ".png /> ";
 }
 
-$c_name  = $clean['name'];
-$c_email = $clean['email'];
+$c_name  = $name;
+$c_email = $email;
 
+if (strpos($email,'sage') !== false || strpos($email,'nokosage') !== false)
+    $sageThis = true;
+
+if (strpos($email,'nokosage') !== false || strpos($email,'noko') !== false)
+    $noko = true;
+
+require_once("tripcode.php"); //This DOES the trip processing.
+
+//Text sanitizing
 //Text plastic surgery (rorororor)
-$clean['email'] = $sanitize->CleanStr($clean['email'], 0); //Don't allow moderators to fuck with this
-$clean['email'] = preg_replace("[\r\n]", "", $clean['email']);
-$clean['sub']   = $sanitize->CleanStr($clean['sub'], 0); //Or this
-$clean['sub']   = preg_replace("[\r\n]", "", $clean['sub']);
+$email = $sanitize->CleanStr($email, 0); //Don't allow moderators to fuck with this
+$email = preg_replace("[\r\n]", "", $email);
+$sub   = $sanitize->CleanStr($sub, 0); //Or this
+$sub   = preg_replace("[\r\n]", "", $sub);
 $url   = $sanitize->CleanStr($url, 0); //Or this
 $url   = preg_replace("[\r\n]", "", $url);
 $resto = $sanitize->CleanStr($resto, 0); //Or this
 $resto = preg_replace("[\r\n]", "", $resto);
-$clean['com']   = $sanitize->CleanStr($clean['com'], $moderator); //But they can with this.
+$com   = $sanitize->CleanStr($com, $moderator); //But they can with this.
 
+$clean = $sanitize->process($name, $com, $sub, $email, $resto, $url, $dest, $moderator);
 
 if (USE_BBCODE === true) {
     require_once(CORE_DIR . '/general/text_process/bbcode.php');
@@ -181,20 +185,8 @@ if (USE_BBCODE === true) {
     $clean['com'] = $bbcode->format($clean['com']);
 }
 
-/*if (SPOILERS == 1 && $spoiler) {
-    $clean['sub'] = "SPOILER<>$clean['sub']";
-}*/
-
-require_once("tripcode.php"); //This DOES the trip processing.
-
-$noko = 1;
-if (stripos($clean['email'], 'sage') || stripos($clean['email'], 'nokosage'))
-    $is_sage = true;
-elseif (stripos($clean['email'], 'nonoko')) {
-    $is_sage = false;
-    $noko = 0;
-} else 
-    $is_sage = false;
+if (SPOILERS && $spoiler)
+    $clean['sub'] = "SPOILER<>" . $clean['sub'];
 
 if ($moderator && isset($_POST['showCap'])) {
     if ($moderator == 1)
@@ -234,7 +226,7 @@ if (!$may_flood) {
         $mysql->free_result($result);
     }
 
-    if ($is_sage) {
+    if ($saged) {
         // Check flood limit on sage posts
         $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU_SAGE) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0 and permasage=1";
         $result = $mysql->query($query);
@@ -277,31 +269,44 @@ if ($has_image) {
 }
 
 $rootqu = $resto ? "0" : "now()";
+
 if ($stickied)
     $rootqu = '20270727070707';
+
 //Bump processing
-if ($resto) { //sage or age action
-    $resline  = $mysql->query("select count(no) from " . SQLLOG . " where resto=" . $resto);
-    $countres = $mysql->result($resline, 0, 0);
-    $mysql->free_result($resline);
-    $resline = $mysql->query("select sticky,permasage from " . SQLLOG . " where no=" . $resto);
-    list($sticky, $permasage) = $mysql->fetch_row($resline);
-    $mysql->free_result($resline);
-    if ((stripos($clean['email'], 'sage') === FALSE && $countres < MAX_RES && $sticky < "0" && $permasage != "1") || ($admin && $age && $sticky < "0")) {
-        $query = "update " . SQLLOG . " set root=now() where no=$resto"; //age
-        $mysql->query($query);
-    }
+if ($resto) { 
+    $countres = $mysql->result("SELECt COUNT(no) FROM " . SQLLOG . " where resto=" . $resto, 0, 0);
+    $stat = $mysql->fetch_assoc("SELECT sticky,permasage FROM " . SQLLOG . " WHERE no=" . $resto);
+    if (!$sageThis /*&& $countres < MAX_RES*/ && !$stat['sticky'] && !$stat['permasage']) //|| ($admin && $age && $sticky < "0"))
+        $mysql->query("UPDATE " . SQLLOG . " SET root=now() WHERE  no='$resto'"); //Bump
 }
 
-/*if (SPOILER && isset($spoiler));
-    $tim = "Spoiler Image"; //Save tim (thumbnail image) as spoiler image
-    */
-
 //Main insert
-$query = "insert into " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) values (" . "'" . $now . "'," . "'" . $mysql->escape_string($clean['name']) . "'," . "'" . $mysql->escape_string($clean['email']) . "'," . "'" . $mysql->escape_string($clean['sub']) . "'," . "'" . $mysql->escape_string($clean['com']) . "'," . "'" . $mysql->escape_string($host) . "'," . "'" . $mysql->escape_string($pass) . "'," . "'" . $ext . "'," . (int) $W . "," . (int) $H . "," . (int) $TN_W . "," . (int) $TN_H . "," . "'" . $tim . "'," . (int) $time . "," . "'" . $md5 . "'," . (int) $fsize . "," . "'" . $mysql->escape_string($upfile_name) . "'," . (int) $stickied . "," . (int) $permasage . "," . (int) $locked . "," . $rootqu . "," . (int) $mysql->escape_string($resto) . ")";
+$query = "INSERT INTO " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) VALUES (" . "'" . $now . "',"
+ . "'" . $mysql->escape_string($clean['name']) . "'," 
+ . "'" . $mysql->escape_string($clean['email']) . "',"
+ . "'" . $mysql->escape_string($clean['sub']) . "'," 
+ . "'" . $mysql->escape_string($clean['com']) . "'," 
+ . "'" . $mysql->escape_string($host) . "'," 
+ . "'" . $mysql->escape_string($pass) . "'," 
+ . "'" . $ext . "',"
+ . (int) $W . ","
+ . (int) $H . ","
+ . (int) $TN_W . "," 
+ . (int) $TN_H . "," 
+ . "'" . $tim . "',"
+ . (int) $time . ","
+ . "'" . $md5 . "',"
+ . (int) $fsize . ","
+ . "'" . $mysql->escape_string($upfile_name) . "',"
+ . (int) $stickied . ","
+ . (int) $permasage . ","
+ . (int) $locked . ","
+ . $rootqu . ","
+ . (int) $mysql->escape_string($resto) . ")";
 
 if (!$result = $mysql->query($query)) {
-    echo S_SQLFAIL;
+    echo E_REGFAILED;
 } //post registration
 
 $cookie_domain = '.' . SITE_ROOT . '';
@@ -349,15 +354,14 @@ $mysql->free_result($result);
 
 $deferred = false;
 // update html
-if ($resto) {
+if ($resto)
     $deferred = $my_log->update($resto, $static_rebuild);
-} else {
+else 
     $deferred = $my_log->update($insertid, $static_rebuild);
-}
 
 if ($noko && !$resto) {
     $redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $insertid . PHP_EXT;
-} else if ($noko == 1) {
+} else if ($noko) {
     $redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $resto . PHP_EXT . '#' . $insertid;
 } else {
     $redirect = PHP_SELF2_ABS;
