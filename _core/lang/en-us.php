@@ -113,4 +113,7 @@ $S_DELALL = 'Deletion mode: All';
 $S_DELIP = 'Deletion mode: Viewing all posts by IP from #';
 $S_DELOPS = 'Deletion mode: All opening posts (OPs)';
 
+//Introducing...new system error strings!
+$E_REGFAILED = 'Post registration failed!';
+
 ?>
