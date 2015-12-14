@@ -41,22 +41,26 @@ class Table {
             if ($type === 'res') {
                 $banner = "<div class='managerBanner'>" . S_DELRES . $resource . "</div>";
                 $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE resto='$resource' OR no='$resource' OR host='$resource' ORDER BY time ASC");
+                $mode = 'res';
             }
             
             if ($type === 'all') {
                 $banner = "<div class='managerBanner'>" . S_DELALL . "</div>";
                 $query = $mysql->query("SELECT * FROM " . SQLLOG . " ORDER BY no DESC");
+                $mode = 'all';
             }
             
             if ($type === 'ip') {
                 $banner = "<div class='managerBanner'>" . S_DELIP . $resource . "</div>";
                 $hostno = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$resource' ");
                 $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE host='$hostno' ORDER BY NO DESC");
+                $mode = 'ip';
             }
             
             if ($type === 'ops') {
                 $banner = "<div class='managerBanner'>" . S_DELOPS . "</div>";
                 $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE resto='0' ORDER BY time DESC");
+                $mode = 'ops';
             }            
 
             // Deletion screen display
@@ -130,16 +134,18 @@ class Table {
                 $linknum = /*($resto) ?*/ '<a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a>';// : '<b><a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a></b>';
                 $sno = ($sticky) ? "<b><font color=\"FF101A\">$linknum</font></b>" : $linknum;
                 $threadmode = ($resto) ? $resto : $no;    
+                $delim = ($size) ? "<td colspan='2'>&nbsp;</td><td colspan='1'>[<b><a href='?mode=adel&no=$no&imgonly=1&refer=$mode'>Delete image?</a>]</b></td><td colspan='3'>&nbsp;</td>" : "<td colspan='6'>&nbsp;</td>";
+                
                 //Actual panel html
                 //$temp .=  "<tr class='$class'><td><input type=checkbox name=\"$no\" value=delete></td>"; //<input value='x' alt='Delete post' onclick=\"location.href='?mode=adel&no=$no';\" type='button'>
-                $temp .=  "<tr class='$class'><td><input value='x' alt='Delete post' onclick=\"location.href='?mode=adel&no=$no';\" type='button'></td>";          
+                $temp .=  "<tr class='$class'><td><input value='x' alt='Delete post' onclick=\"location.href='?mode=adel&no=$no&refer=$mode';\" type='button'></td>";          
                 $temp .=  "<td colspan='1'>$sno</td><td>$now</td><td>$sub</td>";
                 $temp .=  "<td>$name</b></td><td><span title='Double-click to preview full comment' ondblclick='swap(\"trunc$no\", \"full$no\")' id='trunc$no'>$trunccom</span><span ondblclick='swap(\"full$no\", \"trunc$no\")' id='full$no' style='display:none;'>$com</span></td>";
                 $temp .=  "<td class='postimg' >$clip</td><td>$host</td><td>" . calculate_age($time) . "</td><td><input type='button' value='More' onclick='more(\"" . $no . "a\",\"" . $no . "b\");'></td>";
-                $temp .=  "</tr><tr id='" . $no . "a' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td><td colspan='2' align='left'><b>$resdo</b></td><td colspan='6'>&nbsp;</td>";
+                $temp .=  "</tr><tr id='" . $no . "a' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td><td colspan='2' align='left'><b>$resdo</b></td>$delim";
                 $temp .=  "</tr><tr id='" . $no . "b' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td>
                 <td colspan='2'><a href='" . PHP_SELF_ABS . "?res=$ssno'>$ssno</a><td colspan='2'>&nbsp;</td></td>
-                <td colspan='4' align='center'><input value='All posts by this IP' onclick=\"location.href='?mode=ip&no=$no';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='View in threadmode' onclick=\"location.href='?mode=res&no=$threadmode';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Delete everything by this IP' onclick=\"popup('admin=delall&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Ban user' onclick=\"popup('admin=ban&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"More info\" /></td>";                
+                <td colspan='4' align='center'><input value='View all by this IP' onclick=\"location.href='?mode=ip&no=$no';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='View in threadmode' onclick=\"location.href='?mode=res&no=$threadmode';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Delete everything by this IP' onclick=\"popup('admin=delall&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Ban user' onclick=\"popup('admin=ban&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"More info\" /></td>";                
             }//
             //$mysql->free_result($result);
             $temp .=  "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
