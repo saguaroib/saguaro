@@ -49,7 +49,7 @@ function valid($action = 'moderator', $no = 0) {
 function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1) {
     require_once(CORE_DIR . "/log/log.php");
     require_once(CORE_DIR . "/admin/delete.php");
-    $remove = new DeletePost;
+    $remove = new Delete;
     $remove->targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1);
 }
 
@@ -89,6 +89,14 @@ switch ($_GET['mode']) {
         echo $staff->getStaff();
         if (isset($_POST['user']) && isset($_POST['pwd1']) && isset($_POST['pwd2']) && isset($_POST['action']))
             $staff->addStaff($_POST['user'], $_POST['pwd1'], $_POST['pwd2'], $_POST['action']);
+        break;
+    case 'adel':
+        if (!valid('janitor'))
+                error(S_NOPERM);
+        $no = $mysql->escape_string($_GET['no']);
+        $imonly = ($_GET['imgonly'] == '1') ? 0 : 1;
+        delete_post($no, 0, $imonly, 0,1,1);
+        echo '<meta http-equiv="refresh" content="0; url=' . PHP_ASELF_ABS . '?mode=' . $_GET['refer'] . '" />';
         break;
     case 'ban':
         if (!valid('moderator'))

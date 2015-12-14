@@ -53,7 +53,7 @@ class Delete extends Log {
         $row       = $log[$resno];
         // check password- if not ok, check admin status (and set $admindel if allowed)
         $delete_ok = ($automatic || (substr(md5($pwd), 2, 8) == $row['pwd']) || ($row['host'] == $_SERVER['REMOTE_ADDR']));
-        if (valid('janitor_board') && !$automatic) {
+        if (valid('janitor') && !$automatic) {
             $delete_ok = $admindel = valid('delete', $resno);
         }
         if (!$delete_ok)
@@ -74,7 +74,7 @@ class Delete extends Log {
             $auser   = $mysql->escape_string($_COOKIE['saguaro_auser']);
             $adfsize = ($row['fsize'] > 0) ? 1 : 0;
             $adname  = str_replace('</span> <span class="postertrip">!', '#', $row['name']);
-            $imgonly = ($imgonly =="on") ? 1 : 0;
+            $imgonly = ($imgonly) ? 1 : 0;
             
             $row['sub']      = $mysql->escape_string($row['sub']);
             $row['com']      = $mysql->escape_string($row['com']);
