@@ -36,7 +36,7 @@ if (PROXY_CHECK && preg_match("/^(mail|ns|dns|ftp|prox|pc|[^\.]\.[^\.]$)/", $hos
 }
 
 //Check if user is banned
-require_once(CORE_DIR . "/admin/banish.php");
+require_once(CORE_DIR . "/admin/bans.php");
 $checkban = new Banish;
 if (!$checkban->checkBan($_SERVER["REMOTE_ADDR"]))
     error(S_BADHOST, $upfile);

@@ -1,6 +1,6 @@
 <?php
 
-class Validation {
+class Valid {
     function verify($action) {
         global $mysql;
         
