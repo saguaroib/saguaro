@@ -32,7 +32,7 @@ class News {
         return error(S_UPDERR);
     }
     
-    function newsGetFile($file) {
+    private function newsGetFile($file) {
         //Get contents of file, otherwise return error message. 
         if ($file == 1) {
             $get = BOARDLIST;
