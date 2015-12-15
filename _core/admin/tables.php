@@ -98,8 +98,9 @@ class Table {
                 $name = (strlen($name) > 10) ? substr($name, 0, 9) . "..." : $name;
                 $name = ($email) ? "<a href=\"mailto:$email\">$name</a>" : $name;
                 $sub = (strlen($sub) > 10) ? substr($sub, 0, 9) . "..." : $sub;
-                $com = str_replace("<br />", " ", $com);
-                $com = htmlspecialchars($com);
+                $com = str_replace("<br />", "\n", $com);
+                $com = htmlspecialchars_decode($com);
+                $com = strip_tags($com);
                 $trunccom = substr($com, 0, 18) . "...";
                 $fname =  (strlen($fname) > 10) ? substr($fname, 0, 40) : $fname;
                 // Link to the picture
