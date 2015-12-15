@@ -133,6 +133,16 @@ switch ($_GET['mode']) {
         $active    = $getReport->reportGetAllBoard();
         echo $getReport->reportList();
         break;
+    case 'news':
+        head(0);
+        if (!valid('admin'))
+            error(S_NOPERM);
+        require_once(CORE_DIR . "/admin/news.php");
+        $news = new News; //lol
+        if (isset($_POST['update']) && isset($_POST['file']) || isset($_POST['boardlist']))
+            $news->newsUpdate($_POST['update'], $_POST['file']);
+        echo $news->newsPanel();
+        break;
     default:
         head(0);
         aform($post = '', 0, 1);

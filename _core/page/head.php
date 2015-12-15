@@ -146,8 +146,10 @@ class Head {
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' >Rebuild all</a>]";
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->reportGetAllBoard() . "</a>]";
             }
-            if (valid('admin'))
+            if (valid('admin')) {
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=staff' >Users</a>]";
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=news' >Edit News/Boardlist</a>]";
+            }
             $dat .= "[<a href='" . PHP_ASELF . "?mode=logout'>" . S_LOGOUT . "</a>]";
         }
         return $dat;
