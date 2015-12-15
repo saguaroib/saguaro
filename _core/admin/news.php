@@ -56,7 +56,7 @@ class News {
         $temp .= "<b>Edit HTML contents of your board list ( " . BOARDLIST . " )<br>";
         $temp .= "<form action='" . PHP_ASELF_ABS . "?mode=editNews' method='post'><input type='hidden' name='file' value='boardlist'><textarea name='update' cols='100' rows='15'/>" . $bl . "</textarea><br><input type='submit' value='Submit'></form>";
         $temp .= "<br><br><hr style='width:40%;'><br>";
-        $temp .= "<b>Edit HTML contents of your board news ( " . GLOBAL_NEWS . " ). For unique board announcements, reference uniuque filepaths in the config. <br>If you want all the board to share an announcement, reference the same filepath in the config.<br>";
+        $temp .= "<b>Edit HTML contents of your board news ( " . GLOBAL_NEWS . " ). For unique board announcements, reference different filepaths in the config. <br>If you want all the boards to share an announcement, reference the same filepath in the config.<br>";
         $temp .= "<form action='" . PHP_ASELF_ABS . "?mode=editNews' method='post'><input type='hidden' name='file' value='globAnno'><textarea name='update' cols='100' rows='15'/>" . $anno . "</textarea><br><input type='submit' value='Submit'></div></form>";
 
         return $temp;
