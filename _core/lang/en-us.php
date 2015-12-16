@@ -112,6 +112,7 @@ $S_DELRES = 'Deletion mode: Viewing thread #';
 $S_DELALL = 'Deletion mode: All';
 $S_DELIP = 'Deletion mode: Viewing all posts by IP from #';
 $S_DELOPS = 'Deletion mode: All opening posts (OPs)';
+$S_UPDERR = 'File could not be updated!';
 
 //Introducing...new system error strings!
 $E_REGFAILED = 'Post registration failed!';
