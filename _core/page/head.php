@@ -142,12 +142,14 @@ class Head {
             $dat .= "<div class='panelOps' style='text-align:left;' />[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>][<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]";
 
             if (valid('moderator')) {
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=all' >Deletion panel</a>]";
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' >Rebuild all</a>]";
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=all' >Deletion panel</a>]";
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->reportGetAllBoard() . "</a>]";
             }
-            if (valid('admin'))
+            if (valid('admin')) {
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=staff' >Users</a>]";
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=news' >Edit News/Boardlist</a>]";
+            }
             $dat .= "[<a href='" . PHP_ASELF . "?mode=logout'>" . S_LOGOUT . "</a>]";
         }
         return $dat;
