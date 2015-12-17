@@ -7,7 +7,7 @@ $mysql->init();
 
 $host = $_SERVER['REMOTE_ADDR'];
 
-require_once(CORE_DIR . "/admin/banish.php");
+require_once(CORE_DIR . "/admin/bans.php");
 
 $dis  = new Banish;
 $deny = ($dis->checkBan($host)) ? 0 : 1; //no ban : is banned
@@ -54,7 +54,7 @@ echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www
 <div class="container">
 <div class="header"></a><h1>You <b>' . $status . '.</b></h1></div>';
 
-$footer = '<div class="footer"><h2><center>[<a href="' . PHP_SELF . '"/>Return</a>]</center></h2></div></div></body></html>';
+$footer = '<div class="footer"><h2><center>[<a href="' . PHP_SELF2 . '"/>Return</a>]</center></h2></div></div></body></html>';
 
 if ($row['active'] < 1) {
     //not banned, display the footer, hope the user goes away and doesn't try to talk to me
