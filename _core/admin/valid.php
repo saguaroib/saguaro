@@ -7,8 +7,8 @@ class Valid {
         static $valid_cache; // the access level of the user
         $access_level = array(
             'none' => 0,
-            'janitor' => 1,
-            'janitor_this_board' => 2,
+            'janitor_board' => 1,
+            'janitor' => 2,
             'moderator' => 5,
             'manager' => 10,
             'admin' => 20
@@ -35,8 +35,8 @@ class Valid {
                         $valid_cache = $access_level['manager'];*/
                         else if ($token == 'admin' && $valid_cache < $access_level['admin'])
                             $valid_cache = $access_level['admin'];
-                        else if (($token == BOARD_DIR || $token == 'all') && $valid_cache < $access_level['janitor_this_board'])
-                            $valid_cache = $access_level['janitor_this_board']; // or could be moderator, will be increased in next step
+                        else if (($token == BOARD_DIR || $token == 'all') && $valid_cache < $access_level['janitor_board'])
+                            $valid_cache = $access_level['janitor_board']; // or could be moderator, will be increased in next step
                     }
                     // now we can set moderator or janitor status 
                     if (!$seen_janitor_token) {
@@ -62,12 +62,14 @@ class Valid {
                 return $valid_cache >= $access_level['admin'];
             case 'textonly':
                 return $valid_cache >= $access_level['moderator'];
-            case 'janitor_board':
+            case 'janitor':
                 return $valid_cache >= $access_level['janitor'];
-            /*case 'manager':
-            return $valid_cache >= $access_level['manager'];*/
+            case 'janitor_board':
+                return $valid_cache >= $access_level['janitor_board'];
+            case 'manager':
+            return $valid_cache >= $access_level['manager'];
             case 'delete':
-                if ($valid_cache >= $access_level['janitor_this_board']) {
+                if ($valid_cache >= $access_level['janitor_board']) {
                     return true;
                 }
                 // if they're a janitor on another board, check for illegal post unlock			

@@ -14,23 +14,31 @@ class Staff {
         global $mysql;
         //add staff member
         if (!valid('admin'))
-            error("Permission denied");
+            error(S_NOPERM);
 
          if ($this->isStaff($mysql->escape_string($user)))
             error("This user already exists!");
             
         switch ($perm) {
             case 'admin':
-                $allowed = 'janitor_board,moderator,admin';
+                $allowed = 'all';
                 $denied = 'none';
+                break;
+            case 'manager':
+                $allowed = 'janitor_board,janitor,moderator,manager';
+                $denied = 'admin';
                 break;
             case 'mod':
                 $allowed = 'janitor_board,moderator';
-                $denied = 'admin';
+                $denied = 'manager,admin';
                 break;
             case 'janitor':
-                $allowed = 'janitor_board';
-                $denied = 'moderator, admin';
+                $allowed = 'janitor_board,janitor';
+                $denied = 'moderator,manager,admin';
+                break;
+            case 'janitor_board':
+                $allowed = 'janitor_board,' . BOARD_DIR;
+                $denied = 'moderator,manager,admin';
                 break;
             default:
                 error("Attempted to set unknown permission type.");
@@ -55,7 +63,7 @@ class Staff {
         if (!valid('admin'))
             error("Permission denied");
         if ($this->isStaff($targUser))
-            error("User doesn't exist! (GET error?");
+            error("User doesn't exist! (GET error?)");
         if ($_COOKIE['saguaro_auser'] == $targUser)
             error("You can't delete yourself!"); //oi ya cheeky shit ill bash yer fookin head in i sware on me mum
         
@@ -96,8 +104,10 @@ class Staff {
         $temp .= "<td>Access level: <select name='action' required>
             <option value='' /></option>
             <option value='admin' />Admin</option>
+            <option value='manager' />Manager</option>
             <option value='mod' />Moderator</option>
-            <option value='janitor' />Janitor</option>
+            <option value='janitor' />Global Janitor</option>
+            <option value='janitor_board' />Janitor (/" . BOARD_DIR . "/ only)</option>
             </select></td><td><input type='submit' value='Submit'/></td></tr></table></div>";
         return $temp;
     }
