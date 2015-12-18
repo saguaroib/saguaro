@@ -30,15 +30,12 @@ class PostForm {
         if ($admin) {
             $name = "";
 
-            if (valid('moderator')) {
+            if (valid('moderator')) 
                 $name = '<span style="color:#770099;font-weight:bold;">Anonymous ## Mod</span>';
-            }
-            if (valid('admin')) {
-                $name = '<span style="color:#FF101A;font-weight:bold;">Anonymous ## Admin</span>';
-            }
-            if (valid('manager')) {
+            if (valid('manager'))
                 $name = '<span style="color:#2E2EFE;font-weight:bold;">Anonymous ## Manager</span>';
-            }
+            if (valid('admin'))
+                $name = '<span style="color:#FF101A;font-weight:bold;">Anonymous ## Admin</span>';
 
             $temp .= "<em>" . S_NOTAGS . " Posting as</em>: " . $name;
             $temp .= "<input type='hidden' name='admin' value='" . PANEL_PASS . "'>";
