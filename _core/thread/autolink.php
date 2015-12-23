@@ -55,20 +55,18 @@ function normalize_links( $proto ) {
 
 function intraboard_link_cb( $m ) {
     global $intraboard_cb_resno, $my_log;
-    $my_log->update();
     $no = (int) $m[1];
-    $lookup = (int) $my_log->cache[$no]['resto'];
-    $resno = $intraboard_cb_resno;
-    if ( isset( $lookup ) ) {
-        $resto  = $log[$no]['resto'];
-        $resdir = ( $resno ? '' : '' );
+    $resto  = $my_log->cache[$no]['resto'];
+    $resno = (int) $intraboard_cb_resno;
+    if ( isset( $resto ) ) {
+        $resdir = RES_DIR; 
         $ext    = PHP_EXT;
         if ( $resno && $resno == $resto ) // linking to a reply in the same thread
-            return "<a href=\"#$no\" class=\"quotelink\" onClick=\"replyhl('$no');\">>>$no</a>";
+            return "<a href='#$no' class='quotelink' onClick=\"replyhl('$no');\">>>$no</a>";
         elseif ( $resto == 0 ) // linking to a thread
-            return "<a href=\"$resdir$no$ext#$no\" class=\"quotelink\">>>$no</a>";
+            return "<a href='$resdir$no$ext#$no' class='quotelink'>>>$no</a>";
         else // linking to a reply in another thread
-            return "<a href=\"$resdir$resto$ext#$no\" class=\"quotelink\">>>$no</a>";
+            return "<a href='$resdir$resto$ext#$no' class='quotelink'>>>$no</a>";
     }
     return $m[0];
 }
