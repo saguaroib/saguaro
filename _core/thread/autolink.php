@@ -61,7 +61,7 @@ function intraboard_link_cb( $m ) {
     $resno = $intraboard_cb_resno;
     if ( isset( $lookup ) ) {
         $resto  = $log[$no]['resto'];
-        $resdir = ( $resno ? '' : RES_DIR );
+        $resdir = ( $resno ? '' : '' );
         $ext    = PHP_EXT;
         if ( $resno && $resno == $resto ) // linking to a reply in the same thread
             return "<a href=\"#$no\" class=\"quotelink\" onClick=\"replyhl('$no');\">>>$no</a>";
@@ -91,17 +91,18 @@ function interboard_link_cb( $m ) {
     $url = DATA_SERVER . $m[1] . '/' . PHP_SELF . ( $m[2] ? ( '?res=' . $m[2] ) : "" );
     return "<a href=\"$url\" class=\"quotelink\">{$m[0]}</a>";
 }
-function interboard_rs_link_cb( $m ) {
+
+/*function interboard_rs_link_cb( $m ) {
     // $m[1] might be a url-encoded query string, or might be manual-typed text
     // so we'll normalize it to raw text first and then re-encode it
     $lsearchquery = urlencode( urldecode( $m[1] ) );
     return "<a href=\"http://rs." . SITE_ROOT . "./?s=$lsearchquery\" class=\"quotelink\">{$m[0]}</a>";
-}
+}*/
 
 function interboard_links( $proto ) {
     $boards = "an?|cm?|fa|fit|gif|h[cr]?|[bdefgkmnoprstuvxy]|wg?|ic?|y|cgl|c[ko]|mu|po|t[gv]|toy|test2|trv|jp|r9k|sp";
     $proto  = preg_replace_callback( '@>>>/(' . $boards . ')/([0-9]*)@i', 'interboard_link_cb', $proto );
-    $proto  = preg_replace_callback( '@>>>/rs/([^\s<>]+)@', 'interboard_rs_link_cb', $proto );
+    //$proto  = preg_replace_callback( '@>>>/rs/([^\s<>]+)@', 'interboard_rs_link_cb', $proto );
     return $proto;
 }
 
