@@ -38,9 +38,9 @@ function normalize_link_cb( $m ) {
     if ( $subdomain == 'www' || $subdomain == 'static' || $subdomain == 'content' )
         return $original;
     if ( $board == BOARD_DIR )
-        return "&gt;&gt;$no";
+        return ">>$no";
     else
-        return "&gt;&gt;&gt;/$board/$no";
+        return ">>>/$board/$no";
 }
 function normalize_links( $proto ) {
     // change http://xxx.[[site]/board/res/no links into plaintext >># or >>>/board/#
@@ -49,24 +49,26 @@ function normalize_links( $proto ) {
     
     $proto = preg_replace_callback( '@http://([A-za-z]*)[.]' . SITE_ROOT . '[.]' . SITE_SUFFIX . '/(\w+)/(?:res/(\d+)[.]html(?:#q?(\d+))?|\w+.php[?]res=(\d+)(?:#(\d+))?|)(?=[\s.<!?,]|$)@i', 'normalize_link_cb', $proto );
     // rs.[site].info to >>>rs/query+string
-    $proto = preg_replace( '@http://rs[.]' . SITE_ROOT . '[.]' . SITE_SUFFIX . '/\?s=([a-zA-Z0-9$_.+-]+)@i', '&gt;&gt;&gt;/rs/$1', $proto );
+    $proto = preg_replace( '@http://rs[.]' . SITE_ROOT . '[.]' . SITE_SUFFIX . '/\?s=([a-zA-Z0-9$_.+-]+)@i', '>>>/rs/$1', $proto );
     return $proto;
 }
 
 function intraboard_link_cb( $m ) {
-    global $intraboard_cb_resno, $log;
-    $no    = $m[1];
+    global $intraboard_cb_resno, $my_log;
+    $my_log->update();
+    $no = (int) $m[1];
+    $lookup = (int) $my_log->cache[$no]['resto'];
     $resno = $intraboard_cb_resno;
-    if ( isset( $log[$no] ) ) {
+    if ( isset( $lookup ) ) {
         $resto  = $log[$no]['resto'];
         $resdir = ( $resno ? '' : RES_DIR );
         $ext    = PHP_EXT;
         if ( $resno && $resno == $resto ) // linking to a reply in the same thread
-            return "<a href=\"#$no\" class=\"quotelink\" onClick=\"replyhl('$no');\">&gt;&gt;$no</a>";
+            return "<a href=\"#$no\" class=\"quotelink\" onClick=\"replyhl('$no');\">>>$no</a>";
         elseif ( $resto == 0 ) // linking to a thread
-            return "<a href=\"$resdir$no$ext#$no\" class=\"quotelink\">&gt;&gt;$no</a>";
+            return "<a href=\"$resdir$no$ext#$no\" class=\"quotelink\">>>$no</a>";
         else // linking to a reply in another thread
-            return "<a href=\"$resdir$resto$ext#$no\" class=\"quotelink\">&gt;&gt;$no</a>";
+            return "<a href=\"$resdir$resto$ext#$no\" class=\"quotelink\">>>$no</a>";
     }
     return $m[0];
 }
@@ -75,7 +77,7 @@ function intraboard_links( $proto, $resno ) {
     
     $intraboard_cb_resno = $resno;
     
-    $proto = preg_replace_callback( '/&gt;&gt;([0-9]+)/', 'intraboard_link_cb', $proto );
+    $proto = preg_replace_callback( '/>>([0-9]+)/', 'intraboard_link_cb', $proto );
     return $proto;
 }
 
@@ -98,8 +100,8 @@ function interboard_rs_link_cb( $m ) {
 
 function interboard_links( $proto ) {
     $boards = "an?|cm?|fa|fit|gif|h[cr]?|[bdefgkmnoprstuvxy]|wg?|ic?|y|cgl|c[ko]|mu|po|t[gv]|toy|test2|trv|jp|r9k|sp";
-    $proto  = preg_replace_callback( '@&gt;&gt;&gt;/(' . $boards . ')/([0-9]*)@i', 'interboard_link_cb', $proto );
-    $proto  = preg_replace_callback( '@&gt;&gt;&gt;/rs/([^\s<>]+)@', 'interboard_rs_link_cb', $proto );
+    $proto  = preg_replace_callback( '@>>>/(' . $boards . ')/([0-9]*)@i', 'interboard_link_cb', $proto );
+    $proto  = preg_replace_callback( '@>>>/rs/([^\s<>]+)@', 'interboard_rs_link_cb', $proto );
     return $proto;
 }
 
