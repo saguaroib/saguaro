@@ -28,7 +28,7 @@ repod.thread_updater = {
 		this.update();
 	},
 	update: function() {
-		if (repod.thread_updater.config.enabled && $("span.op_post > a[title='Quote']").length == 1) {
+		if (repod.thread_updater.config.enabled && $("div.post op > a[title='Quote']").length == 1) {
 			$("a:contains('Return')").after(" / <input type='checkbox' id='updater_checkbox' "+((repod.thread_updater.config.auto_update) ? "checked" : "")+"></input> <label for='updater_checkbox'>Auto</label> <a class='update_button' href=''>Update</a> <span class='updater_timer'></span> <span class='updater_status'></span>");
 		}
 		$("a.update_button").on("click",function(e) { e.preventDefault(); repod.thread_updater.load_thread_url(); });
@@ -69,10 +69,10 @@ repod.thread_updater = {
 		var do_scroll = ($(window).scrollTop() + $(window).height() == repod_jsuite_getDocHeight()) ? true : false;
 		$.ajax({url:url,success:function(result){
 			var counter = 0;
-			$(result).find('span.thread > table').each(function(){
-				if (!$("a[href='javascript:insert('>>"+$(this).find("a.qu[title='Quote']").text()+"')']:first").length) {
+			$(result).find('div.thread > postContainer replyContainer').each(function(){
+				if (!$("a[href='javascript:insert('>>"+$(this).find("a.quotejs[title='Quote']").text()+"')']:first").length) {
 					counter++; repod.thread_updater.advanced.total_new++; document.title = "("+repod.thread_updater.advanced.total_new+") "+repod.thread_updater.advanced.base_title;
-					$("body > form > span.thread").append($(this));
+					$("body > form > div.thread").append($(this));
 				}
 			});
 			if (counter > 0) {

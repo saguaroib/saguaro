@@ -16,5 +16,5 @@ repod.thread_stats = {
 			$("span#repod_thread_stats_container").html(repod.thread_stats.format());
 		}
 	},
-	format: function() { return "[" + $("td.reply").length + " replies] [" + $("td.reply > a > img.postimg").length + " images]"; }
+	format: function() { return "[" + $("div.postContainer replyContainer").length + " replies] [" + $("div.postContainer replyContainer > post reply > file > fileThumb > a > img.postimg").length + " images]"; }
 };
