@@ -102,15 +102,19 @@ if (!$com && !is_file($dest) && !$moderator)
 
 // No, path, time, and url format
 srand((double) microtime() * 1000000);
+
 if ($pwd == "") {
-    if ($pwdc == "") {
+    $pwd = $_COOKIE['saguaro_pass'];
+    if ($pwd == "") {
         $pwd = rand();
         $pwd = substr($pwd, 0, 8);
-    } else
-        $pwd = $pwdc;
+    }
 }
 
 $c_pass = $pwd;
+$c_name = ($name !== S_ANONAME) ? false : $name; //Don't set cookies for Anonymous
+$c_email = $email;
+
 $pass   = ($pwd) ? substr(md5($pwd), 2, 8) : "*";
 $youbi  = array(
      S_SUN,
@@ -147,14 +151,11 @@ if (DISP_ID) {
     }
 }
 
-if (COUNTRY_FLAGS && file_exists('geoiploc.php')) {
-    require_once(CORE_DIR . "/regist/geoiploc.php");
-    $country = getCountryFromIP($host, "CTRY");
-    $now .= " <img src=" . CSS_PATH . "flags/" . strtolower($country) . ".png /> ";
+if (file_exists('geoiploc.php')) {
+    require_once("geoiploc.php");
+    $country = strtolower(getCountryFromIP($host, "CTRY"));
+    $now .= " <img src='" . CSS_PATH . "/imgs/flags.png' class='f-$country' /> ";
 }
-
-$c_name  = $name;
-$c_email = $email;
 
 if (strpos($email,'sage') !== false || strpos($email,'nokosage') !== false)
     $sageThis = true;
@@ -310,13 +311,18 @@ if (!$result = $mysql->query($query)) {
 } //post registration
 
 $cookie_domain = '.' . SITE_ROOT . '';
-//Cookies
-setrawcookie("" . SITE_ROOT . "_name", rawurlencode($c_name), time() + ($c_name ? (7 * 24 * 3600) : -3600), '/', $cookie_domain);
-if (($c_email != "sage") && ($c_email != "age")) {
-    setcookie("" . SITE_ROOT . "_email", $c_email, time() + ($c_email ? (7 * 24 * 3600) : -3600), '/', $cookie_domain); // 1 week cookie expiration
-}
-setcookie("" . SITE_ROOT . "_pass", $c_pass, time() + 7 * 24 * 3600, '/', $cookie_domain); // 1 week cookie expiration
 
+//Begin cookies
+if ($c_name) //Name
+    setrawcookie("saguaro_name", rawurlencode($c_name), time() + ($c_name ? (7 * 24 * 3600) : -3600), '/', $cookie_domain);
+
+if (($c_email != "sage") && ($c_email != "age")) //Email
+    setcookie("saguaro_email", $c_email, time() + ($c_email ? (7 * 24 * 3600) : -3600), '/', $cookie_domain); // 1 week cookie expiration
+
+//Pass
+setcookie("saguaro_pass", $c_pass, time() + 7 * 24 * 3600, '/', $cookie_domain); // 1 week cookie expiration
+
+//End cookies
 
 if (!$resto) {
     require_once('prune_old.php');

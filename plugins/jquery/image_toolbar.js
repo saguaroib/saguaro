@@ -50,7 +50,10 @@ repod.image_toolbar = {
                 $(this.gen(a, t)).css({
                     'position': 'absolute',
                     'top': (o.top + $(a).height()) + "px",
-                    'left': o.left + "px"
+                    'left': o.left + "px",
+                    'border': '1px solid black',
+                    'padding': '3px',
+                    'margin': '3px'
                 })
             );
         },
@@ -69,7 +72,7 @@ repod.image_toolbar = {
             var temp = $('<div />', {class: 'menu gen reply'}),
                 info = this.getInfo(target);
             
-            temp.append($('<div />').append($("<a />", {'data-cmd': 'report', 'data-target': info.no, 'href': '#', 'text': 'Report'})));
+            temp.append($('<div />').append($("<a />", {'data-cmd': 'report', 'data-target': info.no, 'href': '#', 'text': 'Report this post'})));
                 
             if (info.image) {
                 temp.append($('<hr />'));
