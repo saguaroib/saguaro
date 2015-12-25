@@ -11,6 +11,6 @@ repod.hide_images = {
 		this.update();
 	},
 	update: function() {
-		repod.hide_images.config.enabled && $("td.reply:not(:has(a > img.postimg))").closest("table").css("display","none");
+		repod.hide_images.config.enabled && $("div.postContainer.replyContainer:not(:has(img))").css("display","none");
 	}
 };
