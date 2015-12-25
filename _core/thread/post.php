@@ -29,9 +29,9 @@ class Post {
         if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/imgs/locked.gif" alt="closed"> ';
 
         if (!$this->inIndex) {
-            $temp .= "<a href='#$no' class='quotejs' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon </div>";
+            $temp .= "<a href='#$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon </div>";
         } else {
-            $temp .= "  <a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='quotejs' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]</div>";
+            $temp .= "  <a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]</div>";
             $temp .= "<div class='postLink mobile' > $stickyicon &nbsp; <a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a></div>";
         
         }
@@ -62,9 +62,9 @@ class Post {
         $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span> ";
 
         if (!$this->inIndex) {
-            $temp .= "<a href='#$no' class='quotejs' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></span></div>";
+            $temp .= "<a href='#$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></span></div>";
         } else {
-            $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' class='quotejs' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
+            $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' class='permalink' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
             $temp .= "<div class='postLink mobile' > $stickyicon &nbsp;</div>";
         }
 
