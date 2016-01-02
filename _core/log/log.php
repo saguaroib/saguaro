@@ -263,12 +263,14 @@ class Log {
         return false;
     }
 
-    function update_cache($auto = false) {
+    function update_cache($revalidate = false) {
         //For porting purposes, the code was copied, formatted, and then just made to store the result in $this->cache.
         //However, it still needs to be rewritten.
 
-        //if ($auto == false && !empty($this->cache)) { return; } //Automatically exit if the cache isn't empty.
-
+        //Automatically exit if the cache isn't empty.
+        if (!empty($this->cache) && $revalidate == false)    //If cache isn't empty, continue. If no request to rebuild cache, continue
+            return true; //Otherwise doesn't need to be updated.
+        
         global $ipcount, $mysql_unbuffered_reads, $lastno, $mysql;
 
         $ips = [];
