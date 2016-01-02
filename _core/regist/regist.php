@@ -112,7 +112,6 @@ if ($pwd == "") {
 }
 
 $c_pass = $pwd;
-$c_name = ($name !== S_ANONAME) ? false : $name; //Don't set cookies for Anonymous
 $c_email = $email;
 
 $pass   = ($pwd) ? substr(md5($pwd), 2, 8) : "*";
@@ -313,8 +312,8 @@ if (!$result = $mysql->query($query)) {
 $cookie_domain = '.' . SITE_ROOT . '';
 
 //Begin cookies
-if ($c_name) //Name
-    setrawcookie("saguaro_name", rawurlencode($c_name), time() + ($c_name ? (7 * 24 * 3600) : -3600), '/', $cookie_domain);
+/*if ($c_name) //Name
+    setrawcookie("saguaro_name", rawurlencode($c_name), time() + ($c_name ? (7 * 24 * 3600) : -3600), '/', $cookie_domain);*/
 
 if (($c_email != "sage") && ($c_email != "age")) //Email
     setcookie("saguaro_email", $c_email, time() + ($c_email ? (7 * 24 * 3600) : -3600), '/', $cookie_domain); // 1 week cookie expiration
