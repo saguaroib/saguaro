@@ -15,7 +15,7 @@ function insert(text) {
 
 function l(e) {
     var P = getCookie("saguaro_pass"),
-        N = getCookie("saguaro_name"),
+        //N = getCookie("saguaro_name"),
         E = getCookie("saguaro_email"),
         i;
     with(document) {
@@ -23,9 +23,9 @@ function l(e) {
             if (document.forms.contrib) {
                 document.forms.contrib.pwd.value = P;
             }
-            if (document.forms.contrib.name) {
-                document.forms.contrib.name.value = N;
-            }
+            /*if (document.forms.contrib.name) {
+                //document.forms.contrib.name.value = N;
+            }*/
             if (document.forms.delform.pwd) {
                 document.forms.delform.pwd.value = P;
             }
