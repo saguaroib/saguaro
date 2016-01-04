@@ -18,7 +18,7 @@ repod.utility_quotes = {
 			div_class: "hover_post"
 		}
 		this.config = {
-			in_thread: ($("span.op_post").length == 1) ? true : false
+			in_thread: ($("div.post op").length == 1) ? true : false
 		}
 		if (repod.suite_settings) {
 			repod.suite_settings.info.push({menu:{category:'Quotes & Replying',read:this.backlinks.config.enabled,variable:'repod_utility_quotes_hover',label:'Quote preview',hover:'Enable inline quote previews'}});
@@ -37,13 +37,13 @@ repod.utility_quotes = {
 			$("a:contains('>>'):not(.inline_quote)").attr("class","inline_quote");
 			if (repod.utility_quotes.backlinks.config.enabled) {
 				var prefix = repod.utility_quotes.backlinks.config.prefix;
-				$("a.qu:odd").each(function () {
+				$("a.quotejs:odd").each(function () {
 					var this_post = $(this).text();
 					var num = $("a.inline_quote:not('.backlink')").filter(function(index) { return $(this).text() === ">>"+this_post; }).length; //http://stackoverflow.com/a/6673805
 					if (num > 0) {
 						if ($("#"+prefix+this_post).length == 0) { $(this).after(" <div style='display:inline; font-size: 0.8em !important;' class='backlinks' id='bl_"+this_post+"'>Replies: </div>"); }
 						$("a.inline_quote:not('.backlink')").filter(function(index) { return $(this).text() === ">>"+this_post; }).each(function () {
-							var target_post = $(this).parent().parent().parent().children("a.qu:odd").text();
+							var target_post = $(this).parent().parent().parent().children("a.quotejs:odd").text();
 							if (target_post.length !== 0 && $("a[href='#"+target_post+"']").length == 0) { $("#bl_"+this_post).append("<a href='#"+target_post+"' class='inline_quote backlink'>&gt;&gt;"+target_post+"</a> "); }
 						});
 					}

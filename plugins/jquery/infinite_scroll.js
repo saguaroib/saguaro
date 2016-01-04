@@ -22,7 +22,7 @@ repod.infinite_scroll = {
 			page_num.find('a').remove();
 			repod.infinite_scroll.config.page_num = parseInt(page_num.text().replace(/\D/g,''));
 			repod.infinite_scroll.config.max_page_num = parseInt(max_page_num.find('a').last().text().replace(/\D/g,''));
-			repod.infinite_scroll.config.last_thread_count = $('span.thread').length;
+			repod.infinite_scroll.config.last_thread_count = $('div.thread').length;
 			function getDocHeight() {
 				var D = document;
 				return Math.max(
@@ -46,9 +46,9 @@ repod.infinite_scroll = {
 	},
 	load_page_url: function(url) {
 		$.ajax({url:url,success:function(result){
-			$(result).find('span.thread').each(function(){ $('span.thread').last().after($(this)).after("<br clear='left' /><hr />"); });
-			$('span.thread:eq('+(repod.infinite_scroll.config.last_thread_count)+')').prepend("<span style='position:absolute; right:3px;'>[Page "+repod.infinite_scroll.config.page_num+"]</span>");
-			repod.infinite_scroll.config.last_thread_count = $('span.thread').length;
+			$(result).find('div.thread').each(function(){ $('div.thread').last().after($(this)).after("<br clear='left' /><hr />"); });
+			$('div.thread:eq('+(repod.infinite_scroll.config.last_thread_count)+')').prepend("<span style='position:absolute; right:3px;'>[Page "+repod.infinite_scroll.config.page_num+"]</span>");
+			repod.infinite_scroll.config.last_thread_count = $('div.thread').length;
 			repod.infinite_scroll.callme.bind();
 			repod.infinite_scroll.config.can_load = true;
 		}});

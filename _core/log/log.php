@@ -164,9 +164,6 @@ class Log {
                 /*possibility for ads after each post*/
                 $dat .= "</span><br clear=\"left\" /><hr />\n";
 
-                if (USE_ADS3)
-                    $dat .= ADS3 . '<hr>';
-
                 if ($resno)
                     $dat .= "[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]<hr>";
 
@@ -177,11 +174,15 @@ class Log {
                     break;
                 } //only one tree line at time of res
             }
+            
+            if (USE_ADS3)
+                $dat .= ADS3 . '<hr>';    
+                
             //afterPosts div is closed in general/foot.php
             $dat .= '<div class="afterPosts" /><table align="right"><tr><td class="delsettings" nowrap="nowrap" align="center">
     <input type="hidden" name="mode" value="usrdel" />' . S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']
     ' . S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />
-    <input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="var o=document.getElementsByTagName(\'INPUT\');for(var i=0;i<o.length;i++)if(o[i].type==\'checkbox\' && o[i].checked && o[i].value==\'delete\') return reppop(\'' . PHP_SELF_ABS . '?mode=report&no=\'+o[i].name+\'\');"></tr></td></form><script>document.delform.pwd.value=l("saguaro_delpass");</script></td></tr></table>';
+    <input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="var o=document.getElementsByTagName(\'INPUT\');for(var i=0;i<o.length;i++)if(o[i].type==\'checkbox\' && o[i].checked && o[i].value==\'delete\') return reppop(\'' . PHP_SELF_ABS . '?mode=report&no=\'+o[i].name+\'\');"></tr></td></form><script>l();</script></td></tr></table>';
             /*<script language="JavaScript" type="script"><!--
             l();
             //--></script>';*/
@@ -215,7 +216,7 @@ class Log {
                         if ( $i == 0 ) {
                             $dat .= "[<a href=\"" . PHP_SELF2 . "\">0</a>] ";
                         } else {
-                            $dat .= "[<a href=\"" . ( $i / PAGE_DEF ) . PHP_EXT . "\">" . ( $i / PAGE_DEF ) . "</a>] ";
+                            $dat .= "[<a href=\"" . ( $i / PAGE_DEF ) . PHP_EXT . "\">" . ( $i / PAGE_DEF ) . "</a>]";
                         }
                     }
                 }
@@ -224,9 +225,9 @@ class Log {
                 if ( $p >= PAGE_DEF && $counttree > $next ) {
                     $dat .= "<td><form action=\"" . $next / PAGE_DEF . PHP_EXT . "\" method=\"get\">";
                     $dat .= "<input type=\"submit\" value=\"" . S_NEXT . "\" />";
-                    $dat .= "</form></td>";
+                    $dat .= "</form></td><td> | <a href='#top'>Top</a> | <a href='catalog'>Catalog</a></td>";
                 } else {
-                    $dat .= "<td>" . S_LASTPG . "</td>";
+                    $dat .= "<td>" . S_LASTPG . "</td><td> | <a href='#top'>Top</a> | <a href='catalog'>Catalog</a></td>";
                 }
                 $dat .= "</tr></table><br clear=\"all\" />\n";
             } else {
@@ -263,12 +264,14 @@ class Log {
         return false;
     }
 
-    function update_cache($auto = false) {
+    function update_cache($revalidate = false) {
         //For porting purposes, the code was copied, formatted, and then just made to store the result in $this->cache.
         //However, it still needs to be rewritten.
 
-        //if ($auto == false && !empty($this->cache)) { return; } //Automatically exit if the cache isn't empty.
-
+        //Automatically exit if the cache isn't empty.
+        if (!empty($this->cache) && $revalidate == false)    //If cache isn't empty, continue. If no request to rebuild cache, continue
+            return true; //Otherwise doesn't need to be updated.
+        
         global $ipcount, $mysql_unbuffered_reads, $lastno, $mysql;
 
         $ips = [];

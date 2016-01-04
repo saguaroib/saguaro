@@ -18,9 +18,9 @@
 // die: whether to die on error
 // careful, setting children to 0 could leave orphaned posts.
 function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1) {
-    require_once(CORE_DIR . "/admin/delpost.php");
+    require_once(CORE_DIR . "/admin/delete.php");
 
-    $remove = new DeletePost;
+    $remove = new Delete;
     $remove->targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1);
 }
 
