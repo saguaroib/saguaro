@@ -97,6 +97,8 @@ class PostForm {
         else
             $temp .= '</table></form></div></div>';
 
+        if (USE_ADS2) $temp .= ADS2 . "<hr>";
+            
         if (file_exists(GLOBAL_NEWS)) {
             $news = file_get_contents(GLOBAL_NEWS);
 
@@ -104,12 +106,12 @@ class PostForm {
                 $temp .= "<div class='globalNews desktop'>" . file_get_contents( GLOBAL_NEWS ) . "</div><hr>";
                 $temp .= "<div class='globalNewsM mobile'>" . file_get_contents( GLOBAL_NEWS ) . "<hr></div>";
         }
-
+        
         if ($resno) //Navigation bar above thread.
             $temp .= "<div class='threadnav' /> [<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='" . $resno . PHP_EXT . "#bottom'/>Bottom</a>] </div>\n<hr>";
         else
             $temp .= "<div class='threadnav' /> [<a href='" . PHP_SELF2_ABS . "#bottom'/>Bottom</a>]  [<a href='/" . BOARD_DIR . "/" . PHP_SELF . "?mode=catalog'>Catalog</a>]</div><hr>";
-        if (USE_ADS2) $temp .= ADS2 . "<hr>";
+        
 
         return $temp;
     }

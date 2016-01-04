@@ -26,10 +26,10 @@ $mes = "";
 
 if (valid('moderator')) {
     $moderator = 1;
-    if (valid('admin'))
-        $moderator = 2;
     if (valid('manager'))
         $moderator = 3;
+    if (valid('admin'))
+        $moderator = 2;
 }
 
 if ($moderator) {
@@ -191,10 +191,10 @@ if (SPOILERS && $spoiler)
 if ($moderator && isset($_POST['showCap'])) {
     if ($moderator == 1)
         $clean['name'] = '<span class="cap moderator" >' . $clean['name'] . ' ## Mod </span>';
-    if ($moderator == 2)
-        $clean['name'] = '<span class="cap admin" >' . $clean['name'] . ' ## Admin </span>';
     if ($moderator == 3)
         $clean['name'] = '<span class="cap manager" >' . $clean['name'] . ' ## Manager  </span>';
+    if ($moderator == 2)
+        $clean['name'] = '<span class="cap admin" >' . $clean['name'] . ' ## Admin </span>';
 }
 
 if (FORCED_ANON == 1) {
@@ -259,7 +259,7 @@ if ($has_image) {
     if (DUPE_CHECK) {
         $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
         if ($mysql->num_rows($result)) {
-            list($dupeno, $duperesto) = $mysql->fetch_rows($result);
+            list($dupeno, $duperesto) = $mysql->fetch_row($result);
             if (!$duperesto)
                 $duperesto = $dupeno;
             error('<a href="' . DATA_SERVER . BOARD_DIR . "/res/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>', $dest);
