@@ -12,9 +12,10 @@ repod.thread_stats = {
 	},
 	update: function() {
 		if (repod.thread_stats.config.enabled) {
-			$("span#repod_thread_stats_container").length == 0 && $("div.threadnav").before("<span id='repod_thread_stats_container'></span>");
+            $("div.threadnav").css("float","left");
+			$("span#repod_thread_stats_container").length == 0 && $("div.threadnav").after("&nbsp;<span id='repod_thread_stats_container'></span>");
 			$("span#repod_thread_stats_container").html(repod.thread_stats.format());
 		}
 	},
-	format: function() { return "[" + $("td.reply").length + " replies] [" + $("td.reply > a > img.postimg").length + " images]"; }
+	format: function() { return "[" + $("div.post.reply").length + " replies] [" + $("a > img.postimg").length + " images]"; }
 };

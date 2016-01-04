@@ -41,7 +41,7 @@ class Delete extends Log {
     function targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $allbyip = 0, $delhost = '') {
         global $path, $mysql;
 
-        $this->update_cache(true);
+        $this->update_cache(1);
         $log = $this->cache;
         $resno = intval($resno);
 
@@ -58,8 +58,8 @@ class Delete extends Log {
         }
         if (!$delete_ok)
             error(S_BADDELPASS);
-        // check ghost bumping
-        if (!isset($admindel) || !$admindel) {
+        // check ghost bumping. I'll return for this soon.
+        /*if (!isset($admindel) || !$admindel) {
             if (BOARD_DIR == 'a' && (int) $row['time'] > (time() - 25) && $row['email'] != 'sage') {
                 $ghostdump = var_export(array(
                      'server' => $_SERVER,
@@ -69,7 +69,7 @@ class Delete extends Log {
                ), true);
                 //file_put_contents('ghostbump.'.time(),$ghostdump);
             }
-        }
+        }*/
         if (isset($admindel) && $admindel) { // extra actions for admin user
             $auser   = $mysql->escape_string($_COOKIE['saguaro_auser']);
             $adfsize = ($row['fsize'] > 0) ? 1 : 0;
@@ -114,6 +114,7 @@ class Delete extends Log {
             $result = $mysql->query("delete from " . SQLLOG . " where no=$resno or resto=$resno");
         elseif (!$imgonly) // just delete the post
             $result = $mysql->query("delete from " . SQLLOG . " where no=$resno");
+        
         return $row['resto']; // so the caller can know what pages need to be rebuilt
     }
 }

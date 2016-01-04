@@ -50,14 +50,6 @@ function error($mes, $dest, $fancy = 0) {
     $error->format($mes, $dest, $fancy);
 }
 
-/* user image deletion */
-function usrdel($no, $pwd, $onlyimgdel) {
-    global $path, $pwdc, $onlyimgdel;
-    require_once(CORE_DIR . "/admin/delete.php");
-    $del = new Delete;
-    $del->userDel($no, $pwd, $onlyimgdel);
-}
-
 /*-----------Main-------------*/
 switch ($mode) {
     case 'regist':
@@ -74,7 +66,13 @@ switch ($mode) {
         echo $catalog->formatPage();
         break;
     case 'usrdel':
-        usrdel($no, $pwd, $onlyimgdel);
+        global $path, $pwdc, $onlyimgdel;
+        require_once(CORE_DIR . "/admin/delete.php");
+        $del = new Delete;
+        $del->userDel($no, $pwd, $onlyimgdel);
+        $my_log->update();
+        echo "<META HTTP-EQUIV='refresh' content='0;URL=" . PHP_SELF2_ABS . "'>";
+        break;
     default:
         if ($res) {
             require_once(CORE_DIR . "/general/resredir.php");

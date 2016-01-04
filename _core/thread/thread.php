@@ -23,9 +23,13 @@ class Thread {
 
     function format($op, $foot = false) {
         global $my_log;
+        
         $my_log->update_cache();
         $log = $my_log->cache;
-
+        
+        if (!isset($log[$op]))
+            return false;
+        
         $temp = $this->generateOP($log[$op]);
         $temp .= $this->generateReplies($op);
         if ($foot) $temp .= "</span><br clear='left'><hr>[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$op" . PHP_EXT . "#top'>Top</a>] [<a href='" . PHP_SELF_ABS . "?mode=catalog'>Catalog</a>]<hr>";
