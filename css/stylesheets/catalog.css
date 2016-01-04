@@ -4,12 +4,13 @@
 
 .catalog_item {
     width:150px;
-    display:inline-block;
+    display: inline-block;
     margin: 0px 5px;
     vertical-align: top;
     max-height:250px;
     overflow:hidden;
     margin-bottom: 5px;
+    padding: 20px 0px;
 }
 
 .catalog_item > a {
@@ -30,11 +31,12 @@
 
 .catalog_item .comment {
     overflow: inherit;
-    display:inline-block;
-    font-size:0.8em;
+    /* display:inline-block; */
+    font-size: 10pt;
     line-height:1em;
-    min-height: 1.3em;
+    /* min-height: 1.3em; */
     word-break: break-word;
+    padding: 20px 0px;
 }
 
 .postimg {
