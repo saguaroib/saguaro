@@ -125,8 +125,8 @@ class Table {
                     $md5  = "";
                 }
                 
-                if (!valid('moderator'))
-                    $host ='###.###.###.###';
+                $host = md5($host);
+                $host = substr($host, 12,20);
                 
                 $class = ($j % 2) ? "row1" : "row2"; //BG color
                 $altClass = ($j % 2) ? "row2" : "row1"; //lol
@@ -177,10 +177,8 @@ class Table {
                 $special .= "<b><font color=\"2E2EFE\">[Permasaged]</font></b>";
             $temp .= "<tr><td class='postblock'>Special:</td><td class='row2'>This thread is $special</td></tr>"; //lmoa
         }
-        if (!valid('moderator')) //Hide IPs from janitors
-            $host = '###.###.###.###';       
-        if ($host == '')
-            $host = "No IP in dataabase";
+        $host = md5($host);
+        $host = substr($host, 12,20);
         $temp .= "<tr><td class='postblock'>Name:</td><td class='row1'>$name</td></tr>
       <tr><td class='postblock'>tempe:</td><td class='row2' />$now</td></tr>
       <tr><td class='postblock'>IP:</td><td class='row1' /><b>$host</b></td></tr><br>

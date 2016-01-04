@@ -58,7 +58,7 @@ class News {
         $temp .= "<br><br><hr style='width:40%;'><br>";
         $temp .= "<b>Edit HTML contents of your board news ( " . GLOBAL_NEWS . " ). For unique board announcements, reference different filepaths in the config. <br>If you want all the boards to share an announcement, reference the same filepath in the config.<br>";
         $temp .= "<form action='" . PHP_ASELF_ABS . "?mode=news' method='post'><input type='hidden' name='file' value='globAnno'><textarea name='update' cols='100' rows='15'/>" . $anno . "</textarea><br><input type='submit' value='Submit'></div></form>";
-        $temp .= "<div class='container' style='text-align:center;'><br><br>You will need to [<a href='?mode=rebuild'>Rebuild</a>] your pages for updates to be visible.</div>";
+        $temp .= "<div class='container' style='text-align:center;'><br><br>You will need to [<a href='?mode=rebuild'>Rebuild</a>] your pages for updates to be immediately visible. Otherwise, allow users to update pages via posting normally.</div>";
         
         return $temp;
         

@@ -164,9 +164,6 @@ class Log {
                 /*possibility for ads after each post*/
                 $dat .= "</span><br clear=\"left\" /><hr />\n";
 
-                if (USE_ADS3)
-                    $dat .= ADS3 . '<hr>';
-
                 if ($resno)
                     $dat .= "[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]<hr>";
 
@@ -177,6 +174,10 @@ class Log {
                     break;
                 } //only one tree line at time of res
             }
+            
+            if (USE_ADS3)
+                $dat .= ADS3 . '<hr>';    
+                
             //afterPosts div is closed in general/foot.php
             $dat .= '<div class="afterPosts" /><table align="right"><tr><td class="delsettings" nowrap="nowrap" align="center">
     <input type="hidden" name="mode" value="usrdel" />' . S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']
@@ -215,7 +216,7 @@ class Log {
                         if ( $i == 0 ) {
                             $dat .= "[<a href=\"" . PHP_SELF2 . "\">0</a>] ";
                         } else {
-                            $dat .= "[<a href=\"" . ( $i / PAGE_DEF ) . PHP_EXT . "\">" . ( $i / PAGE_DEF ) . "</a>] ";
+                            $dat .= "[<a href=\"" . ( $i / PAGE_DEF ) . PHP_EXT . "\">" . ( $i / PAGE_DEF ) . "</a>]";
                         }
                     }
                 }
@@ -224,9 +225,9 @@ class Log {
                 if ( $p >= PAGE_DEF && $counttree > $next ) {
                     $dat .= "<td><form action=\"" . $next / PAGE_DEF . PHP_EXT . "\" method=\"get\">";
                     $dat .= "<input type=\"submit\" value=\"" . S_NEXT . "\" />";
-                    $dat .= "</form></td>";
+                    $dat .= "</form></td><td> | <a href='#top'>Top</a> | <a href='catalog'>Catalog</a></td>";
                 } else {
-                    $dat .= "<td>" . S_LASTPG . "</td>";
+                    $dat .= "<td>" . S_LASTPG . "</td><td> | <a href='#top'>Top</a> | <a href='catalog'>Catalog</a></td>";
                 }
                 $dat .= "</tr></table><br clear=\"all\" />\n";
             } else {
