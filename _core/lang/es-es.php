@@ -17,7 +17,7 @@ $S_RULES = '<ul><li>Los tipos de archivo apoyados son: GIF, JPG, PNG</li>
 <li>El tamano de archivo maximo permitido es '.MAX_KB.' KB.</li>
 <li>Imagenes mayores que '.MAX_W.'x'.MAX_H.' pixeles seran reducidas.</li>
 <li>Imagenes mas pequeno que '.MIN_W.'x'.MIN_H.' pixeles seran rechazado.</li>
-</ul>'				//Prints rules under posting section
+</ul>';				//Prints rules under posting section
 $S_REPORTERR = 'Error: no Puede encontrar la respuesta.';							//Returns error when a reply (res) cannot be found
 $S_THUMB = 'Una del pulgar mostrada, imagen de chasquido para tamano natural.';					//Prints instructions for viewing real source
 $S_PICNAME = 'Archivo : ';										//Prints text before upload name/link

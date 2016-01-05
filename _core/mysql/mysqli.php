@@ -68,7 +68,7 @@ class SaguaroMySQLi extends SaguaroQL {
     function fetch_row($string) {
         if (!$string) return $this->last;
 
-        $true = (is_resource($string) ? $string : $this->query($string);
+        $true = is_resource($string) ? $string : $this->query($string);
         $this->last = $true->fetch_row();
         return $this->last;
     }
@@ -76,7 +76,7 @@ class SaguaroMySQLi extends SaguaroQL {
     function fetch_array($string) {
         if (!$string) return $this->last;
 
-        $true = (is_resource($string) ? $string : $this->query($string);
+        $true = is_resource($string) ? $string : $this->query($string);
         $this->last = $true->fetch_array();
         return $this->last;
     }
@@ -84,7 +84,7 @@ class SaguaroMySQLi extends SaguaroQL {
     function fetch_assoc($string) {
         if (!$string) return $this->last;
 
-        $true = (is_resource($string) ? $string : $this->query($string);
+        $true = is_resource($string) ? $string : $this->query($string);
         $this->last = $true->fetch_assoc();
         return $this->last;
     }
@@ -92,7 +92,7 @@ class SaguaroMySQLi extends SaguaroQL {
     function num_rows($string) {
         if (!$string) return $this->last->num_rows;
 
-        $true = (is_resource($string) ? $string : $this->query($string);
+        $true = is_resource($string) ? $string : $this->query($string);
         $this->last = $true->num_rows;
         return $this->last;
     }
