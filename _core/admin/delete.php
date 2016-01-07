@@ -74,19 +74,21 @@ class Delete extends Log {
             $auser   = $mysql->escape_string($_COOKIE['saguaro_auser']);
             $adfsize = ($row['fsize'] > 0) ? 1 : 0;
             $adname  = str_replace('</span> <span class="postertrip">!', '#', $row['name']);
-            $imgonly = ($imgonly) ? 1 : 0;
+            $imgonly2 = ($imgonly) ? "image" : "post";
             
             $row['sub']      = $mysql->escape_string($row['sub']);
             $row['com']      = $mysql->escape_string($row['com']);
             $row['filename'] = $mysql->escape_string($row['filename']);
-            $mysql->query("INSERT INTO " . SQLDELLOG . " (postno, imgonly, board,name,sub,com,img,filename,admin) values('$resno','$imgonly','" . BOARD_DIR . "','$adname','{$row['sub']}','{$row['com']}','$adfsize','{$row['filename']}','$auser')");
+            $mysql->query("INSERT INTO " . SQLDELLOG . " (admin, postno, action, board,name,sub,com,img) 
+            VALUES('$auser','$resno', '$imgonly2', '" . BOARD_DIR . ", '$adname','{$row['sub']}','{$row['com']}')");
         }
-        if ($allbyip && $delhost !== '') 
+        if ($allbyip && $delhost !== ''): 
             $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where host='" . $delhost . "'");
-        if ($row['resto'] == 0 && $children && !$imgonly && !$allbyip) // select thread and children
+        elseif ($row['resto'] == 0 && $children && !$imgonly && !$allbyip): // select thread and children
             $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno");
-        else // just select the post
+        else: // just select the post
             $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno");
+        endif;
         while ($delrow = $mysql->fetch_assoc($result)) {
             // delete
             $path = realpath("./") . '/' . IMG_DIR;

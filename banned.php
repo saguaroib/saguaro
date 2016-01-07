@@ -21,23 +21,24 @@ if ($deny) {
     switch ($row['type']) {
         case '1':
             $status = 'have been warned on: <b>/' . $row['board'] . '/ - ' . TITLE . '</b>';
-            $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
+            $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1"); //Save warnings.
             break;
         case '2':
             $status = 'have been banned from: <b>/' . $row['board'] . '/ - ' . TITLE . '</b>';
             if (time() > $row['expires'])
-                $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
-            $row['expires'] = date('F d, Y H:i', $row['expires']) . " days";
+                $mysql->query("DELETE " . SQLBANLOG . " WHERE ip='$host' AND active='1' LIMIT 1");
+            $row['expires'] = date('F d, Y H:i', $row['expires']);
             break;
         case '3':
             $status = 'have been banned from <b>all boards</b>';
             if (time() > $row['expires'])
-                $mysql->query("UPDATE " . SQLBANLOG . " SET active='0' WHERE ip='$host' AND active='1' LIMIT 1");
-            $row['expires'] = date('F d, Y H:i', $row['expires']) . " days";
+                $mysql->query("DELETE " . SQLBANLOG . " WHERE ip='$host' AND active='1' LIMIT 1");
+            $row['expires'] = date('F d, Y H:i', $row['expires']);
             break;
         case '4':
             $status = 'have been <b>permanently banned from all boards<b>';
             $length = '<b>forever</b>';
+            $row['expires'] = "never.";
             break;
         default:
             $status      = 'are not banned';
@@ -45,7 +46,11 @@ if ($deny) {
             break;
     }
     $row['placedon'] = date('F d, Y H:i', $row['placedon']);
+    
+    //for appeals: 0: not able to appeal, 1:appealable. 2:appeal filed. 3: appeal denied.
+    
 }
+
 
 echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -63,8 +68,8 @@ if ($row['active'] < 1) {
     echo '<p>You ' . $status . ' for the following reason: </p><br /><p><b>' . $row['reason'] . '</b></p><br /><hr />
                 <p><a href="//' . SITE_ROOT . '/' . RULES . '#' . $row['board'] . '" />Please review the board rules</a> and be aware that further rule violations can result in an extended ban.</p><br />
                 <h3>This warn was issued for the IP address ' . $host . '</h3>' . $footer;
-} else
+} else {
     echo '<p>You <b>' . $status . '</b> for the following reason: </p><br /><p><b>' . $row['reason'] . '</b></p><br /><hr />
-                <p>This ban will last <b>' . $length . ' </b>. It was placed on <b>' . $row['placedon'] . '</b> and will expire: <b>' . $row['expires'] . '</b><br/><h3>This ban was issued for the IP address ' . $host . '</h3>' . $footer;
+            <p>This ban was placed on <b>' . $row['placedon'] . '</b> and will expire on: <b>' . $row['expires'] . '</b><br/><h3>This ban was issued for the IP address ' . $host . '</h3>' . $footer;
 
 ?>
