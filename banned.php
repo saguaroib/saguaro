@@ -71,5 +71,5 @@ if ($row['active'] < 1) {
 } else {
     echo '<p>You <b>' . $status . '</b> for the following reason: </p><br /><p><b>' . $row['reason'] . '</b></p><br /><hr />
             <p>This ban was placed on <b>' . $row['placedon'] . '</b> and will expire on: <b>' . $row['expires'] . '</b><br/><h3>This ban was issued for the IP address ' . $host . '</h3>' . $footer;
-
+}
 ?>
