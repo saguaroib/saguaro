@@ -11,7 +11,7 @@ repod.thread_stats = {
 		this.update();
 	},
 	update: function() {
-		if (repod.thread_stats.config.enabled) {
+		if (repod.thread_stats.config.enabled && $("div.theader").length) {
             $("div.threadnav").css("float","left");
 			$("span#repod_thread_stats_container").length == 0 && $("div.threadnav").after("&nbsp;<span id='repod_thread_stats_container'></span>");
 			$("span#repod_thread_stats_container").html(repod.thread_stats.format());
