@@ -120,8 +120,10 @@ class Post {
     }
 
     function auto_link($com, $resno) {
-        require_once("autolink.php");
-        return auto_link($com, $resno);
+        require_once(CORE_DIR . "/general/text_process/autolink.php");
+        $link = new AutoLink;
+        $com = $link->format($com);
+        return $com;
     }
 }
 
