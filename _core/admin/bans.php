@@ -9,41 +9,26 @@ class Banish {
 		return true;		//No active bans
     }
     
-	function postOptions($no, $ip, $expires, $banType, $perma, $pubreason, $staffnote, $custmess, $showbanmess, $afterban) {
-        global $mysql;
+	function postOptions($no, $ip, $expires, $expires2, $banType, $perma, $pubreason, $staffnote, $custmess, $showbanmess, $afterban) {
+        global $mysql, $my_log;
 		//This will do the POST processing and pass it to applyBan
 		
-		$str = "+" . $expires . " day";
+		$str = "+" . $expires . " " . $expires2;
 		$expires = strtotime($str, time() );
 		
-	if ($banType) {
-		if ( $banType == 'warn') 
-			$banType = 1;
-		elseif ( $banType == 'thisboard' ) 
-			$banType = 2;
-		elseif ( $banType == 'global')  //bantype is global
-			$banType = 3;
-		else 
-			$banType = 4;
-	}
-		
-		if ( $showbanmess ) {
-			if ( $custmess == '')
-				$custmess = "(USER WAS BANNED FOR THIS POST)";
-			else 
-				$custmess = "(" . $custmess . ")";
-		} else 
-			$custmess = 0;
-				
-		if ( $afterban !== 'none' ) {
+        $custmess = ($showbanmess) ? ($custmess == '') ? "(USER WAS BANNED FOR THIS POST)" : "(" . $custmess . ")" : 0; //pls ignore
+
+        $afterban = (int) $afterban;
+		if ($afterban > 0) {
             require_once(CORE_DIR . '/admin/delete.php');
             $del = new Delete;
-			if ($afterban == 'delpost')
+			if ($afterban == 1):
                 $del->targeted($no, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1);
-			if ($afterban == 'delallbyip')
-                $del->targeted($no, $pwd, $imgonly = 0, $automatic = 1, $children = 1, $die = 1, $allbyip = 1, $ip);
-			if ($afterban == 'delimgonly')
-                $del->targeted($no, $pwd, $imgonly = 1, $automatic = 1, $children = 0, $die = 1);
+			elseif ($afterban == 2):
+                $del->targeted($no, $pwd, $imgonly = 1, $automatic = 1, $children = 1, $die = 1);
+			else:
+                $del->targeted($no, $pwd, $imgonly = 0, $automatic = 1, $children = 0, $die = 1, $ip);
+            endif;
 		}
 		
 		$mysql->query( "INSERT INTO " . SQLBANLOG . " (ip, active, placedon, expires, board, type, reason, staffnotes) 
@@ -58,48 +43,55 @@ class Banish {
 
 		if ($custmess)
 			$mysql->query( "UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><b><font color=\"FF101A\">" . $mysql->escape_string( $custmess ) . "</font></b>') where no='" . $no . "'");  
-		
-	}
+	
+        $my_log->update($no);
+    }
 	
     function form($no) {
         global $mysql;
     
-    $host = $mysql->result("SELECT host FROM " . SQLBANLOG . " WHERE no='" . $mysql->escape_string($no) . "'");
-    $alart = ($host) ? $mysql->num_rows("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'") : 0;
-    $alert = ( $alart > 0) ? "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>" : "No bans on record for IP $host";
+        $host = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='" . $mysql->escape_string($no) . "'", 0, 0);
+        $alart = ($host) ? $mysql->num_rows("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'") : 0;
+        $alert = ( $alart > 0) ? "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>" : "No bans on record for IP $host";
 
-    $temp = head(1);
-    
-    $temp .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
-        <input type='hidden' name='no' value='$no' />
-        <input type='hidden' name='ip' value='$host' />
-        <tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
-        <tr><td class='postblock'>Unban in:</td><td><input type='number' min='0' size='4' name='banlength'  /> days</td></tr>
-        <center><tr><td class='postblock'>Ban type:</td><td></center>
-            <select name='banType' />
-            <option value='warn' />Warning only</option>
-            <option value='thisboard' />This board - /" . BOARD_DIR . "/ </option>
-            <option value='global' />All boards</option>
-            <option value='perma' />Permanent - All boards</option>
-            </select>
-        </td></tr>
-        <tr><td class='postblock'>Public reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
-        <tr><td class='postblock'>Staff notes:</td><td><input type='text' name='staffnote' /></td></tr>
-        <tr><td class='postblock'>Append user's comment:</td><td><input type='text' name='custmess' placeholder='Leave blank for USER WAS BAN etc.' /> [ Show message<input type='checkbox' name='showbanmess' /> ] </td></tr>
-        <tr><td class='postblock'>After-ban options:</td><td>
-            <select name='afterban' />
-            <option value='none' />None</option>
-            <option value='delpost' />Delete this post</option>
-            <option value='delallbyip' />Delete all by this IP</option>
-            <option value='delimgonly' />Delete image only</option>
-            </select>
-        </td></tr>";
-        if (valid('admin'))
-            $temp .= "
-            <tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";
-        $temp .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form>";
+        $temp = head(1);
         
-        echo $temp;
+        $temp .= "<!---banning #:$no; host:$host---><br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
+            <input type='hidden' name='no' value='$no' />
+            <input type='hidden' name='ip' value='$host' />
+            <tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
+            <tr><td class='postblock'>Unban in:</td><td><input type='number' min='0' size='7' name='banlength1'  /> <select name='banlength2' />
+                <option value='second' />seconds</option>
+                <option value='minute' />minutes</option>
+                <option value='day' />days</option>
+                <option value='month' />months</option>
+                <option value='year' />years</option>
+                </select></td></tr>
+            <center><tr><td class='postblock'>Ban type:</td><td></center>
+                <select name='banType' />
+                <option value='1' />Warning only</option>
+                <option value='2' />This board - /" . BOARD_DIR . "/ </option>
+                <option value='3' />All boards</option>
+                <option value='4' />Permanent - All boards</option>
+                </select>
+            </td></tr>
+            <tr><td class='postblock'>Public reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
+            <tr><td class='postblock'>Staff notes:</td><td><input type='text' name='staffnote' /></td></tr>
+            <tr><td class='postblock'>Append user's comment:</td><td><input type='text' name='custmess' placeholder='Leave blank for USER WAS BAN etc.' /><br>[ Show message<input type='checkbox' name='showbanmess' /> ] </td></tr>
+            <tr><td class='postblock'>After-ban options:</td><td>
+                <select name='afterban' />
+                <option value='0' />None</option>
+                <option value='1' />Delete this post</option>
+                <option value='2' />Delete image only</option>
+                <option value='3' />Delete all by this IP</option>
+                </select>
+            </td></tr>";
+            /*if (valid('admin'))
+                $temp .= "
+                <tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";*/ //Soon.
+            $temp .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form>";
+            
+            echo $temp;
     }
     
 	function afterBan() {

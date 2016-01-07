@@ -103,8 +103,10 @@ switch ($_GET['mode']) {
             error(S_NOPERM);
         require_once(CORE_DIR . "/admin/bans.php");
         $banish = new Banish;
-        if (isset($no));
-            $banish->postOptions($no, $ip, $banlength, $banType, $perma, $pubreason, $staffnote, $custmess, $showbanmess, $afterban);
+        if (isset($no)) {
+            $banish->postOptions($no, $ip, $banlength1, $banlength2, $banType, $perma, $pubreason, $staffnote, $custmess, $showbanmess, $afterban);
+            echo "<script>window.close();</script>";
+        }
         $banish->form($_GET['no']);
         break;
     case 'more':

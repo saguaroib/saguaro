@@ -263,9 +263,9 @@ if (is_file($lockout)) {
                     //Create tables.
                     $tables = [
                         SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, sticky int, permasage int, locked int, root  timestamp, resto int, board text",
-                        SQLBANLOG => "num INT(25) PRIMARY KEY AUTO_INCREMENT, ip VARCHAR(25), active INT(1),  placedon VARCHAR(25), expires VARCHAR(25), board VARCHAR(50), type VARCHAR (2), reason VARCHAR(500), staffnotes VARCHAR(500) ",
+                        SQLBANLOG => "num INT(25) PRIMARY KEY AUTO_INCREMENT, ip VARCHAR(25), active INT(1),  placedon VARCHAR(25), expires VARCHAR(25), board VARCHAR(50), type VARCHAR (2), reason VARCHAR(500), staffnotes VARCHAR(500), appeal INT(1) ",
                         SQLMODSLOG => "user VARCHAR(25), password VARCHAR(250), public_salt VARCHAR(256), allowed VARCHAR(250), denied VARCHAR(250), PRIMARY KEY (user), UNIQUE KEY (user)",
-                        SQLDELLOG => "postno VARCHAR(250) PRIMARY KEY, imgonly VARCHAR(25), board VARCHAR(250), name VARCHAR(250), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . "), img VARCHAR(250), filename VARCHAR(250), admin VARCHAR(100)", //Why does S_POSTLENGTH start with S_?
+                        SQLDELLOG => "admin VARCHAR(250), postno VARCHAR(20) PRIMARY KEY, action VARCHAR(25), board VARCHAR(250), name VARCHAR(50) sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . ")", //Why does S_POSTLENGTH start with S_?
                         "reports" => "num VARCHAR(250) PRIMARY KEY, no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ip VARCHAR(250)",
                         "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)",
                         "rebuildqueue" => "board char(4) NOT NULL, no int(11) NOT NULL, ownedby int(11) NOT NULL default '0', ts timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, PRIMARY KEY (board,no,ownedby)"
