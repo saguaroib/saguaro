@@ -12,7 +12,7 @@ repod.image_expansion = {
 	},
 	update: function() {
         var that = this;
-		this.config.enabled && $(document).on("click", this.config.selector, function(event) { that.check_image(event,$(this)) });
+		this.config.enabled && $("div.threadnav").length && $(document).on("click", this.config.selector, function(event) { that.check_image(event,$(this)) });
 	},
 	check_image: function(event,e) {
 		event.preventDefault();

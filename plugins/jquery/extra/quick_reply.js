@@ -7,13 +7,14 @@ try {
 } catch (a) {
     repod = {};
 }
+
 repod.quick_reply = {
     init: function() {
         this.config = {
             enabled: repod.suite_settings && !!repod_jsuite_getCookie("repod_quick_reply_enabled") ? repod_jsuite_getCookie("repod_quick_reply_enabled") === "true" : true,
             persist: repod.suite_settings && !!repod_jsuite_getCookie("repod_quick_reply_persist") ? repod_jsuite_getCookie("repod_quick_reply_persist") === "true" : false,
             autoreload: repod.suite_settings && !!repod_jsuite_getCookie("repod_quick_reply_autoreload") ? repod_jsuite_getCookie("repod_quick_reply_autoreload") === "true" : false,
-            op: ($("div.post.op").length == 1) ? parseInt($("div.post op > postContainer.opContainer >  a.quotejs").eq(1).text()) : false
+            op: $("a.quotejs").closest(".thread").attr("id").substring(1)
         }
         this.details = {
             baseurl: "",
@@ -54,7 +55,7 @@ repod.quick_reply = {
     },
     update: function() {
         if (this.config.op) {
-            $(document).on("click", "a.quotejs:odd", function(e) {
+            $(document).on("click", "a.quotejs", function(e) {
                 e.preventDefault();
                 if ($("div#repod_jquery_quick_reply_container").length > 0) {
                     insertAtCaret("repod_jquery_quick_reply_textarea", ">>" + $(this).text() + "\n");
@@ -117,6 +118,7 @@ repod.quick_reply = {
         $("body").append("<div style='max-width:310px;position:fixed;right:0px;top:100px' id='repod_jquery_quick_reply_container' class='reply'><div id='repod_jquery_quick_reply_container_title' class='theader' style='text-align:center;width:100%;cursor:move'><small><strong>" + repod.quick_reply.details.qrbasetitle + "</strong></small><img id='r_qr_close' style='float:right;cursor:pointer;position:relative;right:5px;font-size:small' src='plugins/jquery/close.jpg' title='Close' alt='[X]'></div></div>")
         $("div#repod_jquery_quick_reply_container").append("<span style='max-width:300px' id='repod_jquery_quick_reply_window'></span>");
         $("span#repod_jquery_quick_reply_window").append(qreply_clone);
+        $("table").append("<input type='hidden' name='resto' value='" + op + "'>");
         $("img#qr_captcha").on("click", function() {
             $(this).attr("src", repod.quick_reply.details.baseurl + "?" + new Date().getTime());
         });
