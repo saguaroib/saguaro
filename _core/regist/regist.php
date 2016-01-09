@@ -178,6 +178,8 @@ $com   = $sanitize->CleanStr($com, $moderator); //But they can with this.
 
 $clean = $sanitize->process($name, $com, $sub, $email, $resto, $url, $dest, $moderator);
 
+$clean['com'] = preg_replace("!(^|>)(>[^<]*)!", "\\1<font class=\"quote\">\\2</font>", $clean['com']);
+
 if (USE_BBCODE === true) {
     require_once(CORE_DIR . '/general/text_process/bbcode.php');
 
@@ -203,7 +205,6 @@ if (FORCED_ANON == 1) {
     $now  = '';
 }
 
-$clean['com'] = preg_replace("!(^|>)(>[^<]*)!", "\\1<font class=\"quote\">\\2</font>", $clean['com']);
 
 $may_flood = ($moderator >= 1);
 

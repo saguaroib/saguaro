@@ -43,7 +43,7 @@ if ( preg_match( "/\#/", $names ) ) {
             );
             $fortunenum = rand( 0, sizeof( $fortunes ) - 1 );
             $fortcol    = "#" . sprintf( "%02x%02x%02x", 127 + 127 * sin( 2 * M_PI * $fortunenum / sizeof( $fortunes ) ), 127 + 127 * sin( 2 * M_PI * $fortunenum / sizeof( $fortunes ) + 2 / 3 * M_PI ), 127 + 127 * sin( 2 * M_PI * $fortunenum / sizeof( $fortunes ) + 4 / 3 * M_PI ) );
-            $com        = "<font color=$fortcol><b>Your fortune: " . $fortunes[$fortunenum] . "</b></font><br /><br />" . $com;
+            $com        =  $com ."<br /><br /><font color=$fortcol><b>Your fortune: " . $fortunes[$fortunenum] . "</b></font>";
             $trip       = "";
             if ( $sectrip == "" ) {
                 if ( $name == "</span>" && $sectrip == "" )
