@@ -225,9 +225,9 @@ class Log {
                 if ( $p >= PAGE_DEF && $counttree > $next ) {
                     $dat .= "<td><form action=\"" . $next / PAGE_DEF . PHP_EXT . "\" method=\"get\">";
                     $dat .= "<input type=\"submit\" value=\"" . S_NEXT . "\" />";
-                    $dat .= "</form></td><td> | <a href='#top'>Top</a> | <a href='catalog'>Catalog</a></td>";
+                    $dat .= "</form></td><td> | <a href='#top'>Top</a> | <a href='imgboard.php?mode=catalog'>Catalog</a></td>";
                 } else {
-                    $dat .= "<td>" . S_LASTPG . "</td><td> | <a href='#top'>Top</a> | <a href='catalog'>Catalog</a></td>";
+                    $dat .= "<td>" . S_LASTPG . "</td><td> | <a href='#top'>Top</a> | <a href='imgboard.php?mode=catalog'>Catalog</a></td>";
                 }
                 $dat .= "</tr></table><br clear=\"all\" />\n";
             } else {
