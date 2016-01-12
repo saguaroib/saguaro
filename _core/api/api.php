@@ -31,7 +31,7 @@ class SaguaroAPI {
             $out['children'] = $this->formatReplies($no);
         }
 
-        return json_encode($out, JSON_UNESCAPED_SLASHES);
+        return json_encode($out, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
     }
 
     private function formatPost($no) {
@@ -79,10 +79,9 @@ class SaguaroAPI {
     private function formatReplies($op) {
         global $my_log;
 
-        $log = $my_log->cache;
         $temp = [];
 
-        foreach ($log as $entry) {
+        foreach ($my_log->cache as $entry) {
             if ($entry['resto'] == $op) {
                 array_push($temp, $this->formatPost($entry['no']));
             }
