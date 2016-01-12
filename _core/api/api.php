@@ -50,13 +50,14 @@ class SaguaroAPI {
         $temp['file'] = (!$temp['fname']) ? null :
         [
             'name' => $temp['fname'],
-            'size' => $temp['fsize'],
+            'local_name' => $temp['tim'],
             'extension' => $temp['ext'],
+            'size' => $temp['fsize'],
             'md5' => $temp['md5'],
             'dimensions' => [$temp['w'],$temp['h']],
             'thumb_dimensions' => [$temp['tn_w'],$temp['tn_h']],
         ];
-        unset($temp['fname'],$temp['fsize'],$temp['ext'],$temp['md5'],$temp['w'],$temp['h'],$temp['tn_w'],$temp['tn_h']);
+        unset($temp['fname'],$temp['tim'],$temp['fsize'],$temp['ext'],$temp['md5'],$temp['w'],$temp['h'],$temp['tn_w'],$temp['tn_h']);
 
         //Format special properties.
         $temp['special'] = [
