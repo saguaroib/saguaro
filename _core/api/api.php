@@ -24,10 +24,10 @@ class SaguaroAPI {
                 "self" => SITE_ROOT_BD . "/" . RES_DIR . "$no.json",
                 "parent" => ($temp['resto'] > 0) ? SITE_ROOT_BD . "/" . RES_DIR . $temp['resto'] . ".json" : null
             ],
-            "post" => $this->formatPost($no)
+            "post" => ($temp) ? $this->formatPost($no) : null
         ];
 
-        if ($temp['resto'] == 0) {
+        if ($temp && $temp['resto'] == 0) {
             $out['children'] = $this->formatReplies($no);
         }
 
