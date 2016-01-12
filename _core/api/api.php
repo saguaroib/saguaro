@@ -46,7 +46,7 @@ class SaguaroAPI {
             unset($temp[$unset]);
         }
 
-        //Return null if no file, otherwise format the file information then delete the old keys.
+        //Return null if no file, otherwise relocate the file information.
         $temp['file'] = (!$temp['fname']) ? null :
         [
             'name' => $temp['fname'],
@@ -59,7 +59,7 @@ class SaguaroAPI {
         ];
         unset($temp['fname'],$temp['tim'],$temp['fsize'],$temp['ext'],$temp['md5'],$temp['w'],$temp['h'],$temp['tn_w'],$temp['tn_h']);
 
-        //Format special properties.
+        //Relocate special properties.
         $temp['special'] = [
             'locked' => (bool) $temp['locked'],
             'permasage' => (bool) $temp['permasage'],
