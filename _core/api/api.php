@@ -31,7 +31,7 @@ class SaguaroAPI {
             $out['children'] = $this->formatReplies($no);
         }
 
-        return json_encode($out, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+        return json_encode($out/*, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP*/);
     }
 
     private function formatPost($no) {
