@@ -9,6 +9,7 @@ RewriteRule ^res/(\d+).json$ api/$1.json [NC,L]          #res/#.json -> api/#.js
 RewriteRule ^(admin|catalog)/?$ imgboard.php?mode=$1 [L]
 RewriteRule ^(?:page/)(\d+)/?$ $1.html [NC,L]            #page/# -> #.html (indexes)
 RewriteRule banned banned.php [NC]
+RewriteRule catalog imgboard.php?mode=catalog [NC]
 
 #RewriteRule friendly_pcre target
 #Flags: http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewriteflags
