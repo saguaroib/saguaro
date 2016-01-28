@@ -9,13 +9,13 @@
 
 include("image.php");
 
-class Post {
+class CatalogPost {
     function format($input,$stats) {
         extract($input);
         
         $temp = "<div class='catalog_item'>"; 
         
-        $image = new Image;
+        $image = new CatalogImage;
         $temp .= $image->format($input);
         
         $temp .= "<br>";

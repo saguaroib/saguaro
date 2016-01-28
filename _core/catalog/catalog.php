@@ -16,7 +16,7 @@
 
 require("post.php");
 
-class Catalog {
+class Catalog extends Log {
     private $data = [];
 
     function formatPage() {     
@@ -24,8 +24,9 @@ class Catalog {
         $page = new Page;
         $page->headVars['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . " - Catalog";
         array_push($page->headVars['css']['extra'], "stylesheets/catalog.css");
+        $out = $page->generate($this->format());
         
-        return $page->generate($this->format());
+        $this->print_page("catalog", $out, 0);
     }
 
     function format() {
@@ -68,7 +69,7 @@ class Catalog {
         $this->data = array_merge($temp['sticky'], $temp['regular']);
     }
     function generateOP($input,$stats) {
-        $post = new Post;
+        $post = new CatalogPost;
 
         return $post->format($input,$stats);
     }

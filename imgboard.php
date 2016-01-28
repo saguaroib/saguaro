@@ -61,9 +61,7 @@ switch ($mode) {
         $report->reportProcess();
         break;
     case 'catalog':
-        require_once(CORE_DIR . "/catalog/catalog.php");
-        $catalog = new Catalog;
-        echo $catalog->formatPage();
+        echo "<META HTTP-EQUIV='refresh' content='0;URL=\"catalog.html\"'>"; //let go of the past
         break;
     case 'usrdel':
         global $path, $pwdc, $onlyimgdel;
