@@ -8,7 +8,7 @@
 
 */
 
-class Image {
+class CatalogImage {
     function format($input) {
         extract($input);
 
