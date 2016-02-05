@@ -206,7 +206,7 @@ hr {
     color: gray;
 }
 .reply {
-    background: rgba(240,224,214,0.85);/*#F0E0D6*/
+    background: rgba(240,224,214,1);/*#F0E0D6*/
     color: #800000;
     display: table;
     padding: 2px;
@@ -231,7 +231,7 @@ hr {
 }
 .pages {
     border:1px solid #800000;
-    background: rgba(240,224,214,0.85); /*#F0E0D6*/
+    background: rgba(240,224,214,1); /*#F0E0D6*/
     color:#800;
 }
 .pages td {

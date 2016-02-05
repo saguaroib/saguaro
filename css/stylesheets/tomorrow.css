@@ -200,7 +200,7 @@ th {} .row1 {
     color: gray;
 }
 .reply {
-    background: rgba(40,42,46,0.85); /*#282A2E;*/ 
+    background: rgba(40,42,46,1); /*#282A2E;*/ 
     color: inherit;
     display: table;
     padding: 2px;
@@ -228,7 +228,7 @@ th {} .row1 {
 }
 .pages {
     border:1px solid whitesmoke;
-    background: rgba(40,42,46,0.85); /*#282A2E;*/ 
+    background: rgba(40,42,46,1); /*#282A2E;*/ 
     color: whitesmoke;
     
 }

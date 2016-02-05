@@ -187,7 +187,7 @@ hr {
     color: gray;
 }
 .reply {
-    background: rgba(214,218,240,0.85); /*#D6DAF0;*/
+    background: rgba(214,218,240,1); /*#D6DAF0;*/
     color: #000000;
     font-family: Arial, Helvetica, sans-serif;
     display: table;
@@ -213,7 +213,7 @@ hr {
 }
 .pages {
     border:1px solid black;
-    background: rgba(214,218,240,0.85); /*#D6DAF0;*/
+    background: rgba(214,218,240,1); /*#D6DAF0;*/
     color:#89A;
 }
 .pages td {

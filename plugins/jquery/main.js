@@ -65,6 +65,12 @@ function set_cookie(name, value, days) {
     document.cookie = name + "=" + value + expires + "; path=/";
 }
 
+function extraScripts() {
+	var x;
+	x = getCookie("loadThis");
+	$('head').append('<script src="//static.saguaro.tk/plugins/jquery/' + x + '.js" type="text/javascript"></script>' );
+}
+
 function del_cookie(name) {
     document.cookie = name + '=; expires=Thu, 01-Jan-70 00:00:01 GMT; path=/';
 }
@@ -108,3 +114,5 @@ function more(div, div2, nest) {
         obj2.display = '';
     }
 }
+
+extraScripts();
