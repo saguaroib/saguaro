@@ -27,20 +27,6 @@ class PostForm {
         $temp .= "<div class='postForm' align='center'><div class='postarea'>";
         $temp .= "<form id='contribform' action='" . PHP_SELF_ABS . "' method='post' name='contrib' enctype='multipart/form-data'>";
 
-        if ($admin) {
-            $name = "";
-
-            if (valid('moderator')) 
-                $name = '<span style="color:#770099;font-weight:bold;">Anonymous ## Mod</span>';
-            if (valid('manager'))
-                $name = '<span style="color:#2E2EFE;font-weight:bold;">Anonymous ## Manager</span>';
-            if (valid('admin'))
-                $name = '<span style="color:#FF101A;font-weight:bold;">Anonymous ## Admin</span>';
-
-            $temp .= "<em>" . S_NOTAGS . " Posting as</em>: " . $name;
-            $temp .= "<input type='hidden' name='admin' value='" . PANEL_PASS . "'>";
-        }
-
         $temp .= "<input type='hidden' name='mode' value='regist'><input type='hidden' name='MAX_FILE_SIZE' value='" . $maxbyte . "'>";
 
         if ($resno)
@@ -49,27 +35,27 @@ class PostForm {
         $temp .= "<table>";
 
         if (!FORCED_ANON) //Name
-            $temp .= "<tr><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28'></td></tr>";
+            $temp .= "<tr id='nameBlock' ><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28'></td></tr>";
 
-        $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'>";
+        $temp .= "<tr id='emailBlock' ><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'>";
 
         if (!$resno) //Subject if a new thread.
              $temp .= "</td></tr><tr><td class='postblock' align='left'>" . S_SUBJECT . "</td><td align='left'><input type='text' name='sub' size='35'>";
 
         $temp .= "<input type='submit' value='" . S_SUBMIT . "'></td></tr>";
 
-        $temp .= "<tr><td class='postblock' align='left'>" . S_COMMENT . "</td><td align='left'><textarea name='com' cols='34' rows='4'></textarea></td></tr>";
+        $temp .= "<tr id='comBlock' ><td class='postblock' align='left'>" . S_COMMENT . "</td><td align='left'><textarea id='comtxt' name='com' cols='34' rows='4'></textarea></td></tr>";
 
-        if (BOTCHECK && !$admin) { //Captcha
+        if (BOTCHECK) { //Captcha
             if (RECAPTCHA) {
-                $temp .= "<tr><td class='postblock' align='left'>Verification</td><td><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></div></tr>";
+                $temp .= "<tr id='captcha' ><td class='postblock' align='left'>Verification</td><td><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></div></tr>";
             } else {
-                $temp .= "<tr><td class='postblock' align='left'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
+                $temp .= "<tr id='captcha' ><td class='postblock' align='left'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
             }
         }
 
         //File selection
-        $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*|.webm' size='35'>";
+        $temp .= "<tr id='fileUp' ><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*|.webm' size='35'>";
 
         if (NOPICBOX && !SPOILER)
             $temp .= "[<label><input type='checkbox' name='textonly' value='on'>" . S_NOFILE . "</label>]</td></tr>";
