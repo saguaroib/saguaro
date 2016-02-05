@@ -1,5 +1,5 @@
 /********************************************************************************
-*				========Saguaro jQuery suite========
+*											========Saguaro jQuery suite========
 
 *		Use with Saguaro Imageboard suite 	(https://saguaroimgboard.tk | https://github.com/spootTheLousy/saguaro )
 		Original author: RePod, https://GitHub.com/RePod
@@ -8,9 +8,9 @@
 *
 ********************************************************************************/
 
-repod_suite_settings_pusher = []; //Legacy support. New scripts should push their information to Core.info instead.
+repod_suite_settings_pusher = []; //Legacy support. New scripts should push their information to RePod.info instead.
 
-Core = {
+RePod = {
     init: function() {
 		this.config = {
 			width: 300, //Width of settings window and any windows spawned by it, in pixels. (default: 300)
@@ -19,16 +19,20 @@ Core = {
 			pre_categories: ["Images", "Quotes & Replying", "Monitoring", "Navigation", "Miscellaneous"] //Categories that should be spawned in this order before everything else.
 		}
 		$("div.linkBar").prepend("[<a href='#' id='repod_jquery_suite_settings_open'>Settings</a>]");
-		$("a#repod_jquery_suite_settings_open").click(function() { Core.spawn.settings_window(); });
-		ImageHover.init();
-		ImageExpand.init();
+		$("a#repod_jquery_suite_settings_open").click(function() { RePod.spawn.settings_window(); });
+		RePod.ImageHover.init();
+		RePod.ImageExpand.init();
+		RePod.ImageToolbar.init();
+        RePod.ThreadUpdater.init();
+        RePod.ThreadStats.init();
+        RePod.Quotes.init();
     },
 	
     spawn: {
         settings_window: function() {
             $("body").append(
                 "<div id='settings_container' style='position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25);'><div style='display:table-cell;vertical-align:middle;height:inherit'><div id='settings_window' class='reply' style='max-height:480px;width:" +
-                Core.config.width +
+                RePod.config.width +
                 "px;overflow:auto;margin-left:auto;margin-right:auto;border-style:solid;border-width:1px;padding:5px 0px 5px 0px;text-align:center;'></div></div></div>"
             );
             $("#settings_window").append(
@@ -37,13 +41,13 @@ Core = {
             $("#settings_container").on("click", function() { $(this).remove(); });
             $("#settings_window").on("click", function(event) { event.stopPropagation(); });
             $("img#close").on("click", function() { $("div#settings_container").remove(); });
-            Core.populate.settings_window();
+            RePod.populate.settings_window();
         },
         popup: function(popup_data) {
             if (popup_data["type"] !== "function") {
                 $("body").append(
                     "<div id='settings_popup_container' style='position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25);'><div style='display:table-cell;vertical-align:middle;height:inherit'><div id='settings_popup_window' class='reply' style='max-height:480px;width:" +
-                    Core.config.width +
+                    RePod.config.width +
                     "px;overflow:auto;margin-left:auto;margin-right:auto;border-style:solid;border-width:1px;padding:5px 0px 5px 0px;text-align:center;'></div></div></div>"
                 );
                 $("#settings_popup_window").append("<strong>" + popup_data["title"] +
@@ -51,12 +55,12 @@ Core = {
                 );
                 $("#settings_popup_container").on("click", function() { $(this).remove(); });
                 $("#settings_popup_window").on("click", function(event) { event.stopPropagation(); });
-                $("#settings_popup_window").append(Core.populate.popup_footer(popup_data["type"]));
-                $("#settings_popup_window > input[value='Save']").data(popup_data).on("click", function() { Core.data_manip.save.popup(
+                $("#settings_popup_window").append(RePod.populate.popup_footer(popup_data["type"]));
+                $("#settings_popup_window > input[value='Save']").data(popup_data).on("click", function() { RePod.data_manip.save.popup(
                         $(this).data()); });;
-                $("#settings_popup_window > input[value='Reset']").data(popup_data).on("click", function() { Core.data_manip.reset.popup(
+                $("#settings_popup_window > input[value='Reset']").data(popup_data).on("click", function() { RePod.data_manip.reset.popup(
                         $(this).data()); });;
-                $("#settings_popup_window > #pop_content_area").html(Core.populate.popup(popup_data));
+                $("#settings_popup_window > #pop_content_area").html(RePod.populate.popup(popup_data));
                 $("#settings_popup_window > img#close, #settings_popup_window > input[value='Close']").on("click", function() { $(
                         "div#settings_popup_window").remove(); });
             } else {
@@ -66,18 +70,18 @@ Core = {
     },
     populate: {
         settings_window: function() {
-            $.each(Core.config.pre_categories, function(a, b) { Core.populate.spawn_category(b); });
+            $.each(RePod.config.pre_categories, function(a, b) { RePod.populate.spawn_category(b); });
             this.iterate(repod_suite_settings_pusher);
-            this.iterate(Core.info.cache);
+            this.iterate(RePod.info.cache);
             $("#populated_settings > div > strong").on("click", function() { $("#" + $(this).text().replace(/[\A\W]/g, "-") + " > span").slideToggle(); });
             $("#settings_window > strong").on("click", function() {
                 if ($("#populated_settings > div > span").first().css("display") == "none") { $("#populated_settings > div > span").slideDown(); } else { $
                         ("#populated_settings > div > span").slideUp(); } });
             $("div.grouptoggle > a").on("click", function() { $("#" + $(this).parent().prev("strong").text().replace(/[\A\W]/g, "-") +
                     " > span > input[type='checkbox']").prop("checked", ($(this).text() == "On") ? "checked" : ""); });
-            $("#settings_window > input[value='Save']").on("click", function() { Core.data_manip.save.settings_window(); });
-            $("#settings_window > input[value='Reset']").on("click", function() { Core.data_manip.reset.settings_window(); });
-            $(".settings_popup").on("click", function() { Core.spawn.popup($(this).data()); });
+            $("#settings_window > input[value='Save']").on("click", function() { RePod.data_manip.save.settings_window(); });
+            $("#settings_window > input[value='Reset']").on("click", function() { RePod.data_manip.reset.settings_window(); });
+            $(".settings_popup").on("click", function() { RePod.spawn.popup($(this).data()); });
         },
         iterate: function(a) {
             $.each(a, function(a, b) {
@@ -89,17 +93,17 @@ Core = {
                     var name = b['menu']['label'];
                     var desc = (b['menu']['hover']) ? b['menu']['hover'].replace(/'/g, "&apos;").replace(/"/g, "&quot;") : "";
                     if (cat && tvar && name) {
-                        Core.populate.spawn_category(cat);
+                        RePod.populate.spawn_category(cat);
                         $("#populated_settings > #" + cat_safe).show();
                         if (b['menu']['read']) {
                             var c = (b['menu']['read'] === true) ? "checked" : "" } else {
-                            var c = (Core.getItem(tvar) === "true") ? "checked" : ""; }
+                            var c = (RePod.getItem(tvar) === "true") ? "checked" : ""; }
                         var popup = (b['popup']) ? b['popup'] : "";
                         var n = $(".settings_popup").size();
                         popup = (popup['label'] && popup['title'] && popup['type'] && popup['variable']) ?
                             " <a href='#' class='settings_popup' id='settings_popup_" + n + "'>" + popup['label'] + "</a>" : "";
                         $("#populated_settings > #" + cat_safe + " > span").append("<input id='" + tvar + "' " + c +
-                            " type='checkbox'><label for='" + tvar + "'>" + name + "</label>" + popup + "<br /><font style='font-size:.85em;'>" + desc + "</font><br />" );
+                            " type='checkbox'><label for='" + tvar + "'>" + name + "</label>" + popup + "<br /><font style='font-size:.85em; padding:0px 25px;font-style:italic;'>" + desc + "</font><br />" );
                         popup !== "" && $("#settings_popup_" + n).data(b['popup']);
                     }
                 }
@@ -152,7 +156,7 @@ Core = {
                 $("#populated_settings > div > span > input[type='checkbox']").each(function() {
                     v1 = $(this).attr("id");
                     v2 = (($(this).prop("checked")) ? true : false);
-                    Core.setItem(v1, v2);
+                    RePod.setItem(v1, v2);
                 });
                 location.reload();
             },
@@ -160,19 +164,19 @@ Core = {
                 var c = 0;
                 $("#settings_popup_window > #pop_content_area > :input").each(function() {
                     c++; // Original joke.
-                    Core.setItem($(this).attr("id"), $(this).val());
+                    RePod.setItem($(this).attr("id"), $(this).val());
                 });
-                if (c > 0 && popup_data['type'] == 'multitext') { Core.setItem(popup_data['variable']['prefix'] + "amount", c); }
+                if (c > 0 && popup_data['type'] == 'multitext') { RePod.setItem(popup_data['variable']['prefix'] + "amount", c); }
                 $("div#settings_popup_container").remove();
             }
         },
         reset: {
             settings_window: function() { $("#populated_settings > div > span > input[type='checkbox']").each(function() { v1 = $(this).attr("id");
-                    Core.setItem(v1, "false"); });
+                    RePod.setItem(v1, "false"); });
                 location.reload(); },
             popup: function(popup_data) {
                 $("#settings_popup_window > #pop_content_area > :input").each(function() {
-                    Core.setItem($(this).attr("id"), "false");
+                    RePod.setItem($(this).attr("id"), "false");
                 });
                 $("div#settings_popup_container").remove();
             }
@@ -184,7 +188,7 @@ Core = {
     },
 	
 	isReady: function() {
-		return true;
+		return true; //he awakens
 	},
 	
 	getItem: function(name) {
@@ -207,4 +211,4 @@ function repod_jsuite_executeFunctionByName(functionName, context /*, args */ ) 
     return context[func].apply(this);
 }
 
-$(document).ready(function() {Core.init()});
+$(document).ready(function() {RePod.init()});

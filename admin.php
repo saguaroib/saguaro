@@ -62,22 +62,22 @@ function error($mes) { //until error class is sorted out, this is in-house admin
 switch ($_GET['mode']) {
     case 'res':
         head(0);
-        aform($post = '', 0, 1);
+        //aform($post = '', 0, 1);
         $table->display($type = 'res', $_GET['no']);
         break;
     case 'all':
         head(0);
-        aform($post = '', 0, 1);
+        //aform($post = '', 0, 1);
         $table->display($type = 'all', 0);
         break;
     case 'ip' :
         head(0);
-        aform($post = '', 0, 1);
+        //aform($post = '', 0, 1);
         $table->display($type = 'ip', $_GET['no']);
         break;
     case 'ops':
         head(0);
-        aform($post = '', 0, 1);
+        //aform($post = '', 0, 1);
         $table->display($type = 'ops', 0);
         break;
     case 'staff':
@@ -148,7 +148,7 @@ switch ($_GET['mode']) {
         break;
     default:
         head(0);
-        aform($post = '', 0, 1);
+        //aform($post = '', 0, 1);
         $table->display($type = 'all', 0);
         break;
 }

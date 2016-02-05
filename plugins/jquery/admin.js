@@ -2,10 +2,9 @@
 Admin = {
     init: function() {
         this.config = {
-            enabled: Core.isReady(),
-            selector: ".postimg"
+            enabled: RePod.isReady()
         }
-        Core && Core.info.push({
+        RePod && RePod.info.push({
             mode: 'modern',
             menu: {
                 category: 'Administrator',
@@ -19,7 +18,9 @@ Admin = {
     },
     update: function() {
         if(this.config.enabled) {
-			//do things
+			$('#fileUp').after('<tr><td align="left" class="postblock" align="left">Options</td><td align="left">Sticky: <input type="checkbox" name="isSticky" value="isSticky">Event sticky: <input type="checkbox" name="eventSticky" value="eventSticky">Lock:<input type="checkbox" name="isLocked" value="isLocked">Capcode:<input type="checkbox" name="showCap" value="showCap"></td></tr>');
+			$('#captcha').css('display', 'none');
+			$('#comtxt').attr('placeholder', 'HTML tags have been enabled.');
         }
     }
 	

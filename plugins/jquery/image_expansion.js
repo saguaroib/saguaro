@@ -1,24 +1,24 @@
 //RePod - Expands images with their source inside their parent element up to certain dimensions.
-ImageExpand = {
+RePod.ImageExpand = {
     init: function() {
         this.config = {
-            enabled: Core.isReady() && Core.getItem("imageExpansion") === "true",
+            enabled: RePod.isReady() && RePod.getItem("imageExpansion") === "true",
             selector: ".postimg"
         }
-        Core && Core.info.push({
+        RePod && RePod.info.push({
             menu: {
                 category: 'Images',
                 read: this.config.enabled,
                 variable: 'imageExpansion',
                 label: 'Image expansion',
-                hover: 'Enable inline image expansion, limited to browser width'
+                hover: 'Images expand inline on click.'
             }
         });
         this.update();
     },
     update: function() {
         this.config.enabled && $("div.threadnav").length && $(document).on("click", this.config.selector, function(event) {
-            ImageExpand.check(event, $(this))
+            RePod.ImageExpand.check(event, $(this))
         });
     },
     check: function(event, e) {

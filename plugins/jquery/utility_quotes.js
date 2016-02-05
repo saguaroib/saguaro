@@ -1,42 +1,41 @@
 //RePod - Various things involving quotes.
-$(document).ready(function() { repod.utility_quotes.init(); });
-try { repod; } catch(e) { repod = {}; }
-repod.utility_quotes = {
+
+RePod.Quotes = {
 	init: function() {
-		repod.thread_updater && repod.thread_updater.callme.push(repod.utility_quotes.backlinks.update);
+		RePod.ThreadUpdater && RePod.ThreadUpdater.callme.push(RePod.Quotes.backlinks.update);
 		this.backlinks.config = {
-			enabled: repod.suite_settings && !!repod_jsuite_getCookie("repod_utility_quotes_backlinks") ? repod_jsuite_getCookie("repod_utility_quotes_backlinks") === "true" : true,
+			enabled: RePod.isReady() && RePod.getItem("quoteBacklinks") === "true",
 			prefix: "bl_"
 		}
 		this.inline_expansion.config = {
-			enabled: repod.suite_settings && !!repod_jsuite_getCookie("repod_utility_quotes_inline") ? repod_jsuite_getCookie("repod_utility_quotes_inline") === "true" : true,
+			enabled: RePod.isReady() && RePod.getItem("inlineQuotes") === "true",
 			selector: "a.inline_quote"
 		}
 		this.hover.config = {
-			enabled: repod.suite_settings && !!repod_jsuite_getCookie("repod_utility_quotes_hover") ? repod_jsuite_getCookie("repod_utility_quotes_hover") === "true" : true,
+			enabled: RePod.isReady() && RePod.getItem("hoverQuotes") === "true",
 			selector: "a.inline_quote",
 			div_class: "hover_post"
 		}
 		this.config = {
 			in_thread: ($("div.post op").length == 1) ? true : false
 		}
-		if (repod.suite_settings) {
-			repod.suite_settings.info.push({menu:{category:'Quotes & Replying',read:this.backlinks.config.enabled,variable:'repod_utility_quotes_hover',label:'Quote preview',hover:'Enable inline quote previews'}});
-			repod.suite_settings.info.push({menu:{category:'Quotes & Replying',read:this.inline_expansion.config.enabled,variable:'repod_utility_quotes_backlinks',label:'Backlinks',hover:'Show who has replied to a post'}});
-			repod.suite_settings.info.push({menu:{category:'Quotes & Replying',read:this.hover.config.enabled,variable:'repod_utility_quotes_inline',label:'Inline quote links',hover:'Clicking quote links will inline expand the quoted post, shift-clicking bypasses the inlining'}});
+		if (RePod) {
+			RePod.info.push({menu:{category:'Quotes & Replying',read:this.backlinks.config.enabled,variable:'hoverQuotes',label:'Quote preview',hover:'Enable inline quote previews'}});
+			RePod.info.push({menu:{category:'Quotes & Replying',read:this.inline_expansion.config.enabled,variable:'quoteBacklinks',label:'Backlinks',hover:'Show who has replied to a post'}});
+			RePod.info.push({menu:{category:'Quotes & Replying',read:this.hover.config.enabled,variable:'inlineQuotes',label:'Inline quote links',hover:'Clicking quote links will inline expand the quoted post, shift-clicking bypasses the inlining'}});
 		}
 		this.update();
 	},
 	update: function() {
 		$("a:contains('>>')").attr("class","inline_quote");
-		/*this.config.in_thread && */repod.utility_quotes.backlinks.update(); repod.utility_quotes.inline_expansion.update(); repod.utility_quotes.hover.update();
+		/*this.config.in_thread && */RePod.Quotes.backlinks.update(); RePod.Quotes.inline_expansion.update(); RePod.Quotes.hover.update();
 	},
 	backlinks: {
 		config: {},
 		update: function() {
 			$("a:contains('>>'):not(.inline_quote)").attr("class","inline_quote");
-			if (repod.utility_quotes.backlinks.config.enabled) {
-				var prefix = repod.utility_quotes.backlinks.config.prefix;
+			if (RePod.Quotes.backlinks.config.enabled) {
+				var prefix = RePod.Quotes.backlinks.config.prefix;
 				$("a.quotejs:odd").each(function () {
 					var this_post = $(this).text();
 					var num = $("a.inline_quote:not('.backlink')").filter(function(index) { return $(this).text() === ">>"+this_post; }).length; //http://stackoverflow.com/a/6673805
@@ -54,16 +53,16 @@ repod.utility_quotes = {
 	inline_expansion: {
 		config: {},
 		update: function() {
-			this.config.enabled && $(document).on("click", this.config.selector, function(e) { repod.utility_quotes.inline_expansion.check(e,$(this)); });
+			this.config.enabled && $(document).on("click", this.config.selector, function(e) { RePod.Quotes.inline_expansion.check(e,$(this)); });
 		},
 		check: function(event,e) {
 			event.preventDefault();
-			if (event.shiftKey || !repod.utility_quotes.config.in_thread) { window.location = $(e).attr("href"); }
+			if (event.shiftKey || !RePod.Quotes.config.in_thread) { window.location = $(e).attr("href"); }
 			else {
-				var temp = ($(e).is('.backlink')) ? $(e).attr("href").split("#") : $(e).attr("href").split("?")[1].split("=")[1].split("#");
-				var target_thread = temp[0];
+				var temp = ($(e).is('.quotelink')) ? $(e).attr("href").split("#") : $(e).attr("href").split("#");
+				var target_thread = temp[1];
 				var target_post = temp[1];
-				var target = ($(e).parent().attr("class") == "unkfunc") ? $(e).parent() : $(e);
+				var target = ($(e).parent().attr("class") == "quotelink") ? $(e).parent() : $(e);
 				var target = ($(e).is(".backlink")) ? $(e).parent().parent().children("blockquote") : target;
 				var bl = !!$(e).is(".backlink");
 				if (!$(target).siblings("div#inline_"+target_post).length && !$(target).children("#inline_"+target_post).length) {
@@ -75,7 +74,7 @@ repod.utility_quotes = {
 		},
 		expand: function(target,target_post,bl) {
 			$("div.hover_post").remove();
-			var clone = $("a[href='javascript:insert('>>"+target_post+"')']:first").parent().clone(true);
+			var clone = $("a[href='javascript:insert('"+target_post+"')']:first").parent().clone(true);
 			clone.find("div.inline_post").prev().remove().next().remove().remove();
 			clone.find("a > img.imgpost").remove();
 			if (bl) {
@@ -100,18 +99,18 @@ repod.utility_quotes = {
 	hover: {
 		config: {},
 		update: function() {
-			if (repod.utility_quotes.hover.config.enabled) {
-				$(document).on("mouseover", repod.utility_quotes.hover.config.selector, function(e) { repod.utility_quotes.hover.display_hover(e,$(this)); });
-				$(document).on("mouseout", repod.utility_quotes.hover.config.selector, function() { repod.utility_quotes.hover.kill_hover(); });
+			if (RePod.Quotes.hover.config.enabled) {
+				$(document).on("mouseover", RePod.Quotes.hover.config.selector, function(e) { RePod.Quotes.hover.display_hover(e,$(this)); });
+				$(document).on("mouseout", RePod.Quotes.hover.config.selector, function() { RePod.Quotes.hover.kill_hover(); });
 			}
 		},
 		display_hover: function(event,e) {
-			var temp = ($(e).is('.backlink')) ? $(e).attr("href").split("#") : $(e).attr("href").split("?")[1].split("=")[1].split("#");
-			var target_thread = temp[0]; var target_post = temp[1];
-			var in_thread = ($("a[href='javascript:insert('>>"+target_post+"')']:first").length) ? true : false;
+			var temp = ($(e).is('.quotelink')) ? $(e).attr("href").split("#") : $(e).attr("href").split("#");
+			var target_thread = temp[1]; var target_post = temp[1];
+			var in_thread = ($("a[href='javascript:insert('"+target_post+"')']:first").length) ? true : false;
 			if (in_thread) {
 				event.preventDefault();
-				var target = ($(e).parent().attr("class") == "unkfunc") ? $(e).parent() : $(e);
+				var target = ($(e).parent().attr("class") == "quotelink") ? $(e).parent() : $(e);
 				if (!$(target).siblings("div#hover"+target_post).length) {
 					var clone = $("a[href='javascript:insert('>>"+target_post+"')']:first").parent().clone(true);
 					clone.find("div.inline_post").prev().remove().next().remove().remove();

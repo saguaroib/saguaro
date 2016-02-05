@@ -1,21 +1,21 @@
 //RePod - Displays the original image when hovering over its thumbnail.
 
-ImageHover = {
+RePod.ImageHover = {
     init: function() {
         //typeof repod_thread_updater_calls == "object" && repod_thread_updater_calls.push(repod_image_hover_bindings);
         //typeof repod_infinite_scroll_calls == "object" && repod_infinite_scroll_calls.push(repod_image_hover_bindings);
         this.config = {
-            enabled: Core.isReady() && Core.getItem("imageHover") === "true",
+            enabled: RePod.isReady() && RePod.getItem("imageHover") === "true",
             selector: ".postimg"
         }
-        Core && Core.info.push({
+        RePod && RePod.info.push({
             mode: 'modern',
             menu: {
                 category: 'Images',
                 read: this.config.enabled,
                 variable: 'imageHover',
                 label: 'Image hover',
-                hover: 'Expand images on hover, limited to browser size'
+                hover: 'Expand images on mouseover.'
             }
         });
         this.update();

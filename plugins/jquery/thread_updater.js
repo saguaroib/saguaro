@@ -1,21 +1,12 @@
 //RePod - Attempts to update threads without reloading the page via jQuery and AJAX.
 //Interconnects with other features which are called upon adding new content to the DOM, or not.
 //Want a custom function called when new posts are added? Push it to repod.thread_updater.callme.
-$(document).ready(function() {
-    repod.thread_updater.init();
-});
-repod_suite_settings_pusher = []; //Legacy support. New scripts should push their information to repod.thread_updater.callme instead.
-try {
-    repod;
-} catch (a) {
-    repod = {};
-}
-repod.thread_updater = {
+RePod.ThreadUpdater = {
     init: function() {
         this.config = {
-            enabled: repod.suite_settings && !!repod_jsuite_getCookie("repod_thread_updater_enabled") ? repod_jsuite_getCookie("repod_thread_updater_enabled") === "true" : true,
-            auto_update: repod.suite_settings && !!repod_jsuite_getCookie("repod_thread_updater_auto_update") ? repod_jsuite_getCookie("repod_thread_updater_auto_update") === "true" : false,
-            auto_scroll: repod.suite_settings && !!repod_jsuite_getCookie("repod_thread_updater_auto_scroll") ? repod_jsuite_getCookie("repod_thread_updater_auto_scroll") === "true" : false,
+            enabled: RePod.isReady() && RePod.getItem("threadUpdater") === "true",
+            auto_update: RePod && RePod.getItem("threadUpdaterAutoUpdate") === "true",
+            auto_scroll: RePod && RePod.getItem("threadUpdaterAutoScroll") === "true",
         }
         this.advanced = {
             current_min_delay: 10,
@@ -26,53 +17,53 @@ repod.thread_updater = {
             base_title: document.title,
             total_new: 0
         }
-        if (repod.suite_settings) {
-            repod.suite_settings.info.push({
+        if (RePod) {
+            RePod.info.push({
                 menu: {
                     category: 'Monitoring',
                     read: this.config.enabled,
-                    variable: 'repod_thread_updater_enabled',
+                    variable: 'threadUpdater',
                     label: 'Thread updater',
                     hover: 'Enable inline thread updating'
                 }
             });
-            repod.suite_settings.info.push({
+            RePod.info.push({
                 menu: {
                     category: 'Monitoring',
                     read: this.config.auto_update,
-                    variable: 'repod_thread_updater_auto_update',
-                    label: 'Auto-update by default',
+                    variable: 'threadUpdaterAutoUpdate',
+                    label: 'Auto-update',
                     hover: 'Always auto-update threads'
                 }
             });
-            repod.suite_settings.info.push({
+            RePod.info.push({
                 menu: {
                     category: 'Monitoring',
                     read: this.config.auto_scroll,
-                    variable: 'repod_thread_updater_auto_scroll',
-                    label: 'Auto-scroll with auto-updated posts',
-                    hover: 'Automatically scroll the page when new posts are added'
+                    variable: 'threadUpdaterAutoScroll',
+                    label: 'Auto-scroll on update',
+                    hover: 'Automatically scroll the page on update'
                 }
             });
         }
         this.update();
     },
     update: function() {
-        if (repod.thread_updater.config.enabled && $("div.theader").length) {
-            $("a:contains('Return')").after(" / <input type='checkbox' id='updater_checkbox' " + ((repod.thread_updater.config.auto_update) ? "checked" : "") + "></input> <label for='updater_checkbox'>Auto</label> <a class='update_button' href=''>Update</a> <span class='updater_timer'></span> <span class='updater_status'></span>");
+        if (RePod.ThreadUpdater.config.enabled && $("div.theader").length) {
+            $("a:contains('Return')").after(" / <input type='checkbox' id='updater_checkbox' " + ((RePod.ThreadUpdater.config.auto_update) ? "checked" : "") + "></input> <label for='updater_checkbox'>Auto</label> <a class='update_button' href=''>Update</a> <span class='updater_timer'></span> <span class='updater_status'></span>");
         }
         $("a.update_button").on("click", function(e) {
             e.preventDefault();
-            repod.thread_updater.load_thread_url();
+            RePod.ThreadUpdater.load_thread_url();
         });
         $("input#updater_checkbox").on("click", function(event) {
             if (this.checked) {
-                repod.thread_updater.timer.start();
+                RePod.ThreadUpdater.timer.start();
             } else {
-                repod.thread_updater.timer.stop();
+                RePod.ThreadUpdater.timer.stop();
             }
         });
-        repod.thread_updater.config.auto_update && repod.thread_updater.timer.start();
+        RePod.ThreadUpdater.config.auto_update && RePod.ThreadUpdater.timer.start();
     },
     timer: {
         check: function() {
@@ -81,19 +72,19 @@ repod.thread_updater = {
                 timer_count--;
                 $("span.updater_timer").text(timer_count);
             } else if (timer_count <= 1) {
-                repod.thread_updater.load_thread_url();
+                RePod.ThreadUpdater.load_thread_url();
                 $("span.updater_timer").text("Updating...");
             }
         },
         start: function() {
-            repod.thread_updater.advanced.current_max_delay = 10;
-            $("span.updater_timer").text(repod.thread_updater.advanced.current_max_delay);
-            repod.thread_updater.advanced.timer = setInterval(repod.thread_updater.timer.check, 1000);
+            RePod.ThreadUpdater.advanced.current_max_delay = 10;
+            $("span.updater_timer").text(RePod.ThreadUpdater.advanced.current_max_delay);
+            RePod.ThreadUpdater.advanced.timer = setInterval(RePod.ThreadUpdater.timer.check, 1000);
             $("input#updater_checkbox").prop('checked', true);
         },
         stop: function() {
             $("span.updater_timer").text("");
-            clearInterval(repod.thread_updater.advanced.timer);
+            clearInterval(RePod.ThreadUpdater.advanced.timer);
             $("input#updater_checkbox").prop('checked', false);
         }
     },
@@ -104,26 +95,28 @@ repod.thread_updater = {
             url: url,
             success: function(result) {
                 var counter = 0;
-                $(result).find('div.thread > postContainer.replyContainer').each(function() {
+                console.log("test2");
+                $(result).find('postContainer.replyContainer').each(function() {
                     if ($("div.theader").length) {
                         counter++;
-                        repod.thread_updater.advanced.total_new++;
-                        document.title = "(" + repod.thread_updater.advanced.total_new + ") " + repod.thread_updater.advanced.base_title;
-                        $("body > form > div.thread").append($(this));
+                        RePod.ThreadUpdater.advanced.total_new++;
+                        document.title = "(" + RePod.ThreadUpdater.advanced.total_new + ") " + RePod.ThreadUpdater.advanced.base_title;
+                        $("div.thread").append($(this));
                     }
                 });
                 if (counter > 0) {
-                    repod.thread_updater.advanced.max_delay = repod.thread_updater.advanced.min_delay;
-                    repod.thread_updater.callme.bind();
-                    if (repod.thread_updater.config.auto_scroll) {
+                    console.log("test");
+                    RePod.ThreadUpdater.advanced.max_delay = RePod.ThreadUpdater.advanced.min_delay;
+                    RePod.ThreadUpdater.callme.bind();
+                    if (RePod.ThreadUpdater.config.auto_scroll) {
                         if (!tu_isVisible() && do_scroll) {
                             $('html, body').scrollTop($(document).height() - $(window).height());
                         }
                     }
                 } else {
-                    repod.thread_updater.advanced.current_max_delay += (repod.thread_updater.advanced.current_max_delay < repod.thread_updater.advanced.max_timeout) ? repod.thread_updater.advanced.step_timeout : 0;
+                    RePod.ThreadUpdater.advanced.current_max_delay += (RePod.ThreadUpdater.advanced.current_max_delay < RePod.ThreadUpdater.advanced.max_timeout) ? RePod.ThreadUpdater.advanced.step_timeout : 0;
                 }
-                $("span.updater_timer").text(repod.thread_updater.advanced.current_max_delay);
+                $("span.updater_timer").text(RePod.ThreadUpdater.advanced.current_max_delay);
             }
         });
     },
@@ -136,7 +129,7 @@ repod.thread_updater = {
 
         },
         bind: function(input) {
-            $.each(repod.thread_updater.callme.cache, function(a, b) {
+            $.each(RePod.ThreadUpdater.callme.cache, function(a, b) {
                 b();
             });
         }
@@ -164,7 +157,7 @@ function repod_jsuite_getDocHeight() {
 
 $(window).scroll(function() {
     if ($(window).scrollTop() + $(window).height() == repod_jsuite_getDocHeight()) {
-        document.title = repod.thread_updater.advanced.base_title;
-        repod.thread_updater.advanced.total_new = 0;
+        document.title = RePod.ThreadUpdater.advanced.base_title;
+        RePod.ThreadUpdater.advanced.total_new = 0;
     }
 });
