@@ -433,10 +433,10 @@ class Log {
         // (makes *.html and *.gz if USE_GZIP is on)
 
         $json = ($json) ? '.json' : PHP_EXT; // Print HTML or JSON only!
-        $path = ($json) ? $config['api']['path'] : RES_DIR;
-        $filename = $filename . $path;
+        //$path = ($json) ? API_PATH : RES_DIR;
+        $filename = $filename . $json;
         $gzip = (USE_GZIP == 1 && !$force_nogzip);
-        $tempfile = tempnam(realpath($path), "tmp"); //note: THIS actually creates the file
+        $tempfile = tempnam(realpath(RES_DIR), "tmp"); //note: THIS actually creates the file
         file_put_contents($tempfile, $contents, FILE_APPEND);
         rename($tempfile, $filename);
         chmod($filename, 0664); //it was created 0600
