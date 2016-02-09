@@ -86,22 +86,19 @@ class Log {
             //  	touch($update_start . ".$mt.highprio");
         }
 
-        //using CACHE_TTL method (when is this even used!?)
-        if (CACHE_TTL >= 1) {
-            $logfilename = ($resno) ? RES_DIR . $resno : PHP_SELF2;
+
+        if (CACHE_TTL >= 1) {        //using CACHE_TTL method (Bulk page updating, save disk I/O)
+            $logfilename = ($resno) ?  RES_DIR . $resno . PHP_EXT : PHP_SELF2;
             //if(USE_GZIP == 1) $logfilename .= '.html';
-            // if the file has been made and it's younger than CACHE_TTL seconds ago
-            clearstatcache();
+            clearstatcache(); // if the file has been made and it's younger than CACHE_TTL seconds ago
             if (file_exists($logfilename) && filemtime($logfilename) > (time() - CACHE_TTL)) {
-                rebuildqueue_add($resno);                // save the post to be rebuilt later
+                rebuildqueue_add($resno); // save the post to be rebuilt later
                 if ($resno && !$rebuild) // if it's a thread, try again on the indexes
                     $this->update();
-                return true;  // and we don't do any more rebuilding on this request
+                return true; // and we don't do any more rebuilding on this request
             } else {
-                // we're gonna update it now, so take it out of the queue
-                rebuildqueue_remove($resno);
-                // and make sure nobody else starts trying to update it because it's too old
-                touch($logfilename);
+                rebuildqueue_remove($resno); // we're gonna update it now, so take it out of the queue
+                touch($logfilename); // and make sure nobody else starts trying to update it because it's too old
             }
         }
 
@@ -234,21 +231,20 @@ class Log {
             $dat .= $foot->format();
 
             if ($resno) {
-                $logfilename = RES_DIR . $resno;
+                $logfilename = RES_DIR . $resno . PHP_EXT;
                 $this->print_page($logfilename, $dat);
                 $dat = '';
                 if (!$rebuild)
                     $deferred = $this->update(0);
                 break;
             }
-            
-            $logfilename = (!$page) ? PHP_SELF2 : $page / PAGE_DEF;
+            $logfilename = (!$page) ? PHP_SELF2 : $page / PAGE_DEF . PHP_EXT;
 
             $this->print_page($logfilename, $dat);
             //chmod($logfilename,0666);
         }
-        
-        if (!$resno) { //Rebuild catalog page if index is changed. Eventually should handle catalog stuff client side...
+		
+		if (!$resno) { //Rebuild catalog page if index is changed. Eventually should handle catalog stuff client side...
             require_once(CORE_DIR . "/catalog/catalog.php");
             $catalog = new Catalog;
             $catalog->formatPage();
@@ -408,7 +404,7 @@ class Log {
             //Generate Index pages.
             $pageC->headVars['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE;
             $temp = $pageC->generate($this->generate("index", $page, false));
-            $logfilename = ($page == 1) ? PHP_SELF2 : ($page - 1);
+            $logfilename = ($page == 1) ? PHP_SELF2 : ($page - 1). PHP_EXT;
 
             echo "Writing out Index $page ($logfilename)... ";
             $this->print_page($logfilename , $temp);
@@ -417,7 +413,7 @@ class Log {
 
         foreach ($this->cache['THREADS'] as $no) {
                 $pageC->headVars['page']['title'] = "/" . BOARD_DIR . "/" . (!empty($this->cache[$no]['sub']) ? " - " . $this->cache[$no]['sub'] : '') . " - " . TITLE;
-                $logfilename = RES_DIR . $no;
+                $logfilename = RES_DIR . $no . PHP_EXT;
                 echo "Writing out #$no ($logfilename)... ";
                 $temp = $pageC->generate($this->generate("thread", $no, false));
 
@@ -428,13 +424,10 @@ class Log {
         echo sprintf("<br>Took %f", microtime() - $profile) . " seconds.";
     }
 
-    function print_page($filename, $contents, $json = 0, $force_nogzip = 0) {
+    function print_page($filename, $contents, $force_nogzip = 0) {
         // print $contents to $filename by using a temporary file and renaming it
         // (makes *.html and *.gz if USE_GZIP is on)
 
-        $json = ($json) ? '.json' : PHP_EXT; // Print HTML or JSON only!
-        //$path = ($json) ? API_PATH : RES_DIR;
-        $filename = $filename . $json;
         $gzip = (USE_GZIP == 1 && !$force_nogzip);
         $tempfile = tempnam(realpath(RES_DIR), "tmp"); //note: THIS actually creates the file
         file_put_contents($tempfile, $contents, FILE_APPEND);
