@@ -139,7 +139,7 @@ class Table {
                 
                 //Actual panel html
                 //$temp .=  "<tr class='$class'><td><input type=checkbox name=\"$no\" value=delete></td>"; //<input value='x' alt='Delete post' onclick=\"location.href='?mode=adel&no=$no';\" type='button'>
-                $temp .=  "<tr class='$class'><td><input value='x' alt='Delete post' onclick=\"location.href='?mode=adel&no=$no&refer=$mode';\" type='button'></td>";          
+                $temp .=  "<tr class='$class' id='tr$no'><td><input value='x' alt='Delete post' class='cmd' data-cmd='del-post' data-id='$no' type='button'></td>";          
                 $temp .=  "<td colspan='1'>$sno</td><td>$now</td><td>$sub</td>";
                 $temp .=  "<td>$name</b></td><td><span title='Double-click to preview full comment' ondblclick='swap(\"trunc$no\", \"full$no\")' id='trunc$no'>$trunccom</span><span ondblclick='swap(\"full$no\", \"trunc$no\")' id='full$no' style='display:none;'>$com</span></td>";
                 $temp .=  "<td class='postimg' >$clip</td><td>$host</td><td>" . calculate_age($time) . "</td><td><input type='button' value='More' onclick='more(\"" . $no . "a\",\"" . $no . "b\");'></td>";
