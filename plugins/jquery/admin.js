@@ -1,25 +1,25 @@
-$(document).ready(function() { Core.init(); });
+$(document).ready(function() { Admin.init(); });
 
-Core = {
+Admin = {
 	
 	init: function() {
-		try (repod.suite_settings) { Core.repodHook.init();} catch { console.log("User suite not found, skipping.");}
+		try (repod.suite_settings) { Admin.repodHook.init();} catch { console.log("User suite not found, skipping.");}
 		$(".cmd").click(function() { 
 			var action = $(this).attr('data-cmd'), data = $(this).attr('data-id');
-			Core.cmd(action, data);
+			Admin.cmd(action, data);
 		});
 	},
 	
-	admin: {
+	mod: {
 		del: function(data) {
 			if (data) {
 				$.ajax({
 					url: location.href.split("/").slice(-1) + "?mode=adel&no=" + data,
 					success: function() { $('#tr' + data).remove(); $("#" + data + "a").remove();$("#" + data + "b").remove();},
-					error: function() { Core.msg("Connection error.", 1);}
+					error: function() { Admin.msg("Connection error.", 1);}
 				});
 			} else {
-				Core.msg("Error! No post # given!", 1)
+				Admin.msg("Error! No post # given!", 1)
 			}
 		},
 		
@@ -32,8 +32,8 @@ Core = {
 		index: function() {
 			$.ajax({
 				url: "imgboard.php",
-				success: function() { Core.msg("Updated index.");  },
-				error: function() { Core.msg("Connection error.", 1);}
+				success: function() { Admin.msg("Updated index.");  },
+				error: function() { Admin.msg("Connection error.", 1);}
 			});
 		}
 	},
@@ -48,19 +48,19 @@ Core = {
 	cmd: function(action, data) {
 		switch(action) {
 			case 'toggle':
-				Core.panel.toggle();
+				Admin.panel.toggle();
 				break;
 			case 'close':
-				Core.panel.close();
+				Admin.panel.close();
 				break;
 			case 'del-post':
-				Core.admin.del(data);
+				Admin.mod.del(data);
 				break;
 			case 'ban-usr':
-				Core.ban.open(data);
+				Admin.ban.open(data);
 				break;
 			case 'update-index':
-				Core.update.index();
+				Admin.update.index();
 			default:
 				console.log("Error");
 				break;
