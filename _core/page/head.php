@@ -131,7 +131,8 @@ class Head {
         $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";        
         
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
-                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script></head>";
+                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script></head>
+				<script src='" . JS_PATH . "/admin.js' type='text/javascript'></script></head>";
         
         if (!$noHead) {
             $dat .= '<div class="beforePostform" />' . $titlebar . '
@@ -139,10 +140,10 @@ class Head {
                     <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
                     </span><div class="boardBanner">' . $bannerImg . $boardTitle . '</div>';            
             
-            $dat .= "<div class='panelOps' style='text-align:left;' />[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>][<a href=\"" . PHP_SELF . "\">" . S_LOGUPD . "</a>]";
+            $dat .= "<div class='panelOps' style='text-align:left;' />[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>][<a class='cmd' title='Update the index' href='javascript:;' data-cmd='update-index'>Update</a>]";
 
             if (valid('moderator')) {
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' >Rebuild all</a>]";
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' title='Rebuild all pages' >Rebuild all</a>]";
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=all' >Deletion panel</a>]";
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->reportGetAllBoard() . "</a>]";
             }
