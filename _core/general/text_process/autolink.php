@@ -11,8 +11,11 @@
 
 class AutoLink {
     function format($comment) {
+		
+		//meme arrows
+		$temp = preg_replace("!(^|>)(>[^<]*)!", "\\1<font class=\"quote\">\\2</font>", $comment);
         //Lookup local (current board) post numbers.
-        $temp = preg_replace_callback("/(?:>|>){2}(\d+)/", "AutoLink::lookupLocal", $comment);
+        $temp = preg_replace_callback("/(?:>|>){2}(\d+)/", "AutoLink::lookupLocal", $temp);
 
         //Link to other board's imgboard.php and let it handle the routing.
         //$temp = preg_replace("/(?:>|>){2}(\/\w+\/)(\d+)/", "<a href='\\1imgboard.php?res=\\2'>>>\\1\\2", $comment); //Revisit, not really essential right now.
