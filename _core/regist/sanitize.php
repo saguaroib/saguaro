@@ -60,6 +60,7 @@ class Sanitize {
         if (!$moderator) { //If not moderator+, disable html tags 
             $str = htmlspecialchars($str); //remove html special chars
             $str = str_replace("&amp;", "&", $str); //remove ampersands
+			$str = str_replace("&gt;", ">", $str); //For backlinking
         }
         return str_replace(",", "&#44;", $str); //remove commas
     }
