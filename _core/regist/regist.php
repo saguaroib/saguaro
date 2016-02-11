@@ -162,8 +162,6 @@ if (strpos($email,'sage') !== false || strpos($email,'nokosage') !== false)
 if (strpos($email,'nokosage') !== false || strpos($email,'noko') !== false)
     $noko = true;
 
-require_once("tripcode.php"); //This DOES the trip processing.
-
 //Text sanitizing
 //Text plastic surgery (rorororor)
 $email = $sanitize->CleanStr($email, 0); //Don't allow moderators to fuck with this
@@ -178,28 +176,38 @@ $com   = $sanitize->CleanStr($com, $moderator); //But they can with this.
 
 $clean = $sanitize->process($name, $com, $sub, $email, $resto, $url, $dest, $moderator);
 
+$sub = $clean['sub'];
+$com = $clean['com'];
+$email = $clean['email'];
+$name = $clean['name'];
+
+unset($clean);
+
+require_once("tripcode.php"); //This DOES the trip processing.
+
+
 if (USE_BBCODE === true) {
     require_once(CORE_DIR . '/general/text_process/bbcode.php');
 
     $bbcode = new BBCode;
-    $clean['com'] = $bbcode->format($clean['com']);
+    $com = $bbcode->format($com);
 }
 
 if (SPOILERS && $spoiler)
-    $clean['sub'] = "SPOILER<>" . $clean['sub'];
+    $sub = "SPOILER<>" . $sub;
 
 if ($moderator && isset($_POST['showCap'])) {
     if ($moderator == 1)
-        $clean['name'] = '<span class="cap moderator" >' . $clean['name'] . ' ## Mod </span>';
+        $name = '<span class="cap moderator" >' . $name . ' ## Mod </span>';
     if ($moderator == 3)
-        $clean['name'] = '<span class="cap manager" >' . $clean['name'] . ' ## Manager  </span>';
+        $name = '<span class="cap manager" >' . $name . ' ## Manager  </span>';
     if ($moderator == 2)
-        $clean['name'] = '<span class="cap admin" >' . $clean['name'] . ' ## Admin </span>';
+        $name = '<span class="cap admin" >' . $name . ' ## Admin </span>';
 }
 
 if (FORCED_ANON == 1) {
-    $clean['name'] = S_ANONAME . " </span>$now<span>";
-    $clean['sub']  = '';
+    $name = S_ANONAME . " </span>$now<span>";
+    $sub  = '';
     $now  = '';
 }
 
@@ -207,9 +215,9 @@ if (FORCED_ANON == 1) {
 $may_flood = ($moderator >= 1);
 
 if (!$may_flood) {
-    if ($clean['com']) {
+    if ($com) {
         // Check for duplicate comments
-        $query  = "select count(no)>0 from " . SQLLOG . " where com='" . $mysql->escape_string($clean['com']) . "' " . "and host='" . $mysql->escape_string($host) . "' " . "and time>" . ($time - RENZOKU_DUPE);
+        $query  = "select count(no)>0 from " . SQLLOG . " where com='" . $mysql->escape_string($com) . "' " . "and host='" . $mysql->escape_string($host) . "' " . "and time>" . ($time - RENZOKU_DUPE);
         $result = $mysql->query($query);
         if ($mysql->result($result, 0, 0))
             error(S_RENZOKU, $dest);
@@ -282,10 +290,10 @@ if ($resto) {
 
 //Main insert
 $query = "INSERT INTO " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) VALUES (" . "'" . $now . "',"
- . "'" . $mysql->escape_string($clean['name']) . "'," 
- . "'" . $mysql->escape_string($clean['email']) . "',"
- . "'" . $mysql->escape_string($clean['sub']) . "'," 
- . "'" . $mysql->escape_string($clean['com']) . "'," 
+ . "'" . $mysql->escape_string($name) . "'," 
+ . "'" . $mysql->escape_string($email) . "',"
+ . "'" . $mysql->escape_string($sub) . "'," 
+ . "'" . $mysql->escape_string($com) . "'," 
  . "'" . $mysql->escape_string($host) . "'," 
  . "'" . $mysql->escape_string($pass) . "'," 
  . "'" . $ext . "',"
