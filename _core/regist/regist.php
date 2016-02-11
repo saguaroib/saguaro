@@ -162,6 +162,7 @@ if (strpos($email,'sage') !== false || strpos($email,'nokosage') !== false)
 if (strpos($email,'nokosage') !== false || strpos($email,'noko') !== false)
     $noko = true;
 
+$noko = true;
 //Text sanitizing
 //Text plastic surgery (rorororor)
 $email = $sanitize->CleanStr($email, 0); //Don't allow moderators to fuck with this
@@ -186,7 +187,7 @@ unset($clean);
 require_once("tripcode.php"); //This DOES the trip processing.
 
 
-if (USE_BBCODE === true) {
+if (USE_BBCODE) {
     require_once(CORE_DIR . '/general/text_process/bbcode.php');
 
     $bbcode = new BBCode;
@@ -205,7 +206,7 @@ if ($moderator && isset($_POST['showCap'])) {
         $name = '<span class="cap admin" >' . $name . ' ## Admin </span>';
 }
 
-if (FORCED_ANON == 1) {
+if (FORCED_ANON) {
     $name = S_ANONAME . " </span>$now<span>";
     $sub  = '';
     $now  = '';
@@ -272,6 +273,16 @@ if ($has_image) {
             error('<a href="' . DATA_SERVER . BOARD_DIR . "/res/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>', $dest);
         }
         $mysql->free_result($result);
+    }
+    
+    //Thumbnail
+    rename($dest, $path . $tim . $ext);
+    if (USE_THUMB) { //We'll still make the thumbnail even if its a spoiler image for user extensions.
+        require_once("thumb.php");
+        $tn_name = thumb($path, $tim, $ext, $resto);
+        if (!$tn_name && $ext != ".pdf") {
+            error(S_UNUSUAL);
+        }
     }
 }
 
@@ -340,18 +351,6 @@ if (!$resto) {
         pruneThread($resto);
     }
     $mysql->free_result($eventStick);
-}
-
-// thumbnail
-if ($has_image) {
-    rename($dest, $path . $tim . $ext);
-    if (USE_THUMB) { //We'll still make the thumbnail even if its a spoiler image for user extensions.
-        require_once("thumb.php");
-        $tn_name = thumb($path, $tim, $ext, $resto);
-        if (!$tn_name && $ext != ".pdf") {
-            error(S_UNUSUAL);
-        }
-    }
 }
 
 $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
