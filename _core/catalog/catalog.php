@@ -26,7 +26,7 @@ class Catalog extends Log {
         array_push($page->headVars['css']['extra'], "stylesheets/catalog.css");
         $out = $page->generate($this->format());
         
-        $this->print_page("catalog", $out, 0);
+        $this->print_page("catalog" . PHP_EXT, $out, 0);
     }
 
     function format() {
