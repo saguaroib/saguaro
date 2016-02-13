@@ -31,15 +31,13 @@ class Regist {
             'local_name' => $tim,
             'board' => null
         ];
-        
-        var_dump($info);
         $this->cache = $info; //Copy to cache.
-        
+
         if ($info['file']) {
             $this->checkDuplicate($info['file']['md5']);
             $this->generateThumbnail(); //If we made it this far, generate the thumbnail.
         }
-        
+        var_dump($this->cache);
         //$this->insert($info);
         //Update the log and cache files.
     }
@@ -49,7 +47,7 @@ class Regist {
     }
     
     private function checkDuplicate($md5) {
-        //If there is a file, check the table for duplicates.
+        //If there is a file (hopefully), check the table for duplicates.
         global $mysql;
 
         if (DUPE_CHECK) {
@@ -66,11 +64,13 @@ class Regist {
 
     private function generateThumbnail() {
         if (USE_THUMB) {
-            require_once("thumb.php");
-            $tn_name = thumb($path, $tim, $ext, ($this->cache['post']['child']));
-            if (!$tn_name && $ext != ".pdf") {
+            echo "set phazers 2 fun";
+            require_once("thumb/thumb.php");
+            $output = thumb($this->cache['file']['location'], ($this->cache['post']['child']));
+            if (!$output['location'] && $ext != ".pdf") {
                 cleanup(S_UNUSUAL);
             }
+            $this->cache['file']['thumbnail'] = $output;
         }
     }
     
