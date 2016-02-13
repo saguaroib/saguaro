@@ -13,25 +13,49 @@
 */
 
 class Regist {
-    private $cache = [
-        'moderator' => 0
-    ];
+    private $cache = [];
     
     function run() {
+        $this->initialCheck(); //Run prelimary checks.
+
         $file = $_FILES["upfile"]["tmp_name"];
         $time = time(); $tim  = $time . substr(microtime(), 2, 3);
-        
-        $this->initialCheck(); //Run prelimary checks.
         $info = [ 
             'post' => $this->extractForm(), //Get the post info.
             'file' => (is_uploaded_file($file)) ? $this->extractFile($file,$tim) : false, //Get the file info and copy/rename to target directory.
-            'host' => $_SERVER['REMOTE_ADDR']
+            'host' => $_SERVER['REMOTE_ADDR'],
+            'time' => $time,
+            'local_name' => $tim
         ];
         
         var_dump($info);
+        $this->cache = $info; //Copy to cache.
+        
+        if ($info['file'])
+            $this->checkDuplicate($info['file']['md5']);
         
         //$this->insert($info);
         //Update the log and cache files.
+    }
+    
+    private function cleanup($message) {
+        error($message,$this->cache['file']['location']);
+    }
+    
+    private function checkDuplicate($md5) {
+        //If there is a file, check the table for duplicates.
+        global $mysql;
+
+        if (DUPE_CHECK) {
+            $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
+            if ($mysql->num_rows($result)) {
+                list($dupeno, $duperesto) = $mysql->fetch_row($result);
+                if (!$duperesto)
+                    $duperesto = $dupeno;
+                $this->cleanup('<a href="' . DATA_SERVER . BOARD_DIR . "/res/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>');
+            }
+            $mysql->free_result($result);
+        }
     }
     
     private function insert($info) {
@@ -55,7 +79,13 @@ class Regist {
             'name' => (FORCED_ANON == false && $_POST['name']) ? $_POST['name'] : S_ANONAME,
             'subject' => (FORCED_ANON == false && $_POST['sub']) ? $_POST['sub'] : S_ANOTITLE,
             'email' => ($_POST['email']) ? $_POST['email'] : S_ANOTEXT,
-            'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT
+            'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
+            'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0,
+            'special' => [
+                'sticky' => false,
+                'locked' => false,
+                'permasage' => false
+            ]
         ];
         
         //Apply trip/capcodes to $post['name'].
