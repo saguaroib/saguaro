@@ -24,6 +24,7 @@ class VideoProcessor {
         global $W, $H;
         $W = $info['width'];
         $H = $info['height'];
+        return $info;
     }
 
     private function check ($input) {
