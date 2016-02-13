@@ -11,7 +11,7 @@ class ProcessImage {
         $TN_W = 0; $TN_H = 0;
         $maxw = (!$resto) ? MAX_W : MAXR_W;
         $maxh = (!$resto) ? MAX_H : MAXR_H;
-        
+
         $size = getimagesize($dest);
         if (!is_array($size))
             error(S_NOREC, $dest);
@@ -90,12 +90,12 @@ class ProcessImage {
             $TN_W = ceil($W * $key);
             $TN_H = ceil($H * $key);
         }
-        
+
         $info = [
             'width' => $W,
             'height' => $H
         ];
-        
+
         return $info;
     }
 }

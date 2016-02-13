@@ -17,13 +17,13 @@
 
 class Regist {
     private $cache = [];
-    
+
     function run() {
         $this->initialCheck(); //Run prelimary checks.
 
         $file = $_FILES["upfile"]["tmp_name"];
         $time = time(); $tim  = $time . substr(microtime(), 2, 3);
-        $info = [ 
+        $info = [
             'post' => $this->extractForm(), //Get the post info.
             'file' => (is_uploaded_file($file)) ? $this->extractFile($file,$tim) : false, //Get the file info and copy/rename to target directory.
             'host' => $_SERVER['REMOTE_ADDR'],
@@ -41,11 +41,11 @@ class Regist {
         //$this->insert($info);
         //Update the log and cache files.
     }
-    
+
     private function cleanup($message) {
         error($message,$this->cache['file']['location']);
     }
-    
+
     private function checkDuplicate($md5) {
         //If there is a file (hopefully), check the table for duplicates.
         global $mysql;
@@ -64,7 +64,6 @@ class Regist {
 
     private function generateThumbnail() {
         if (USE_THUMB) {
-            echo "set phazers 2 fun";
             require_once("thumb/thumb.php");
             $output = thumb($this->cache['file']['location'], ($this->cache['post']['child']));
             if (!$output['location'] && $ext != ".pdf") {
@@ -73,14 +72,14 @@ class Regist {
             $this->cache['file']['thumbnail'] = $output;
         }
     }
-    
+
     private function insert($info) {
         global $mysql;
         $query = "INSERT INTO {SQLLOG} () VALUES ()";
     }
-    
+
     private function updateCache() {
-        
+
     }
 
     function initialCheck() {
@@ -106,15 +105,16 @@ class Regist {
             ],
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
-        
+
         $post['child'] = (bool) ($post['parent'] !== 0);
+        $post['comment_md5'] = md5($post['comment']);
 
         //Apply trip/capcodes to $post['name'].
         //All other magic required here.
 
         return $post;
     }
-    
+
     function extractFile($file,$tim) {
         //Need the file's width/height, MD5 hash, and size.
         //Determine the file type and load the appropriate processor.
