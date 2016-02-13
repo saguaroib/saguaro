@@ -7,8 +7,9 @@
 */
 
 //OP thumbnail creation
-function thumb( $path, $tim, $ext ) {
+function thumb($path, $tim, $ext, $child) {
     global $resto;
+    $sub = ($child) ? $child : ($resto > 0) ? true : false;
 
     if ( !function_exists( "ImageCreate" ) || !function_exists( "ImageCreateFromJPEG" ) )
         return;
@@ -18,8 +19,8 @@ function thumb( $path, $tim, $ext ) {
     $outpath = $thumb_dir . $tim . 's.jpg';
     
     //Determine thumbnail resolution.
-    $width = (!$resto) ? MAX_W : MAXR_W;
-    $height = (!$resto) ? MAX_H : MAXR_H;
+    $width = (!$sub) ? MAX_W : MAXR_W;
+    $height = (!$sub) ? MAX_H : MAXR_H;
 
     if ($ext == ".webm") {
         require_once("thumb/video.php");

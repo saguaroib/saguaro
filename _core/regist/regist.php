@@ -10,6 +10,9 @@
     Security for the future:
         MD5 hash the comment and use for checking duplicates (store otherwise).
 
+    This file's structure and functions may change drastically over time.
+    The initial idea is to get it functional and easier to manage.
+
 */
 
 class Regist {
@@ -32,8 +35,10 @@ class Regist {
         var_dump($info);
         $this->cache = $info; //Copy to cache.
         
-        if ($info['file'])
+        if ($info['file']) {
             $this->checkDuplicate($info['file']['md5']);
+            $this->generateThumbnail(); //If we made it this far, generate the thumbnail.
+        }
         
         //$this->insert($info);
         //Update the log and cache files.
@@ -56,6 +61,16 @@ class Regist {
                 $this->cleanup('<a href="' . DATA_SERVER . BOARD_DIR . "/res/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>');
             }
             $mysql->free_result($result);
+        }
+    }
+
+    private function generateThumbnail() {
+        if (USE_THUMB) {
+            require_once("thumb.php");
+            $tn_name = thumb($path, $tim, $ext, ($this->cache['post']['child']));
+            if (!$tn_name && $ext != ".pdf") {
+                cleanup(S_UNUSUAL);
+            }
         }
     }
     
@@ -83,14 +98,16 @@ class Regist {
             'subject' => (FORCED_ANON == false && $_POST['sub']) ? $_POST['sub'] : S_ANOTITLE,
             'email' => ($_POST['email']) ? $_POST['email'] : "",
             'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
-            'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0,
             'password' => ($_POST['pwd'] !== "") ? substr($_POST['pwd'],0,8) : ($_COOKIE['saguaro_pass']) ? $_COOKIE['saguaro_pass'] : substr(md5(rand()),0,8), //Get and/or supply deletion password.
             'special' => [
                 'sticky' => false,
                 'locked' => false,
                 'permasage' => false
-            ]
+            ],
+            'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
+        
+        $post['child'] = (bool) ($post['parent'] !== 0);
 
         //Apply trip/capcodes to $post['name'].
         //All other magic required here.
