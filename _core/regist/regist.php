@@ -25,7 +25,8 @@ class Regist {
             'file' => (is_uploaded_file($file)) ? $this->extractFile($file,$tim) : false, //Get the file info and copy/rename to target directory.
             'host' => $_SERVER['REMOTE_ADDR'],
             'time' => $time,
-            'local_name' => $tim
+            'local_name' => $tim,
+            'board' => null
         ];
         
         var_dump($info);
@@ -75,12 +76,15 @@ class Regist {
 
     function extractForm() {
         //Default post information.
+        srand((double) microtime() * 1000000); //Seed the RNG.
+
         $post = [
             'name' => (FORCED_ANON == false && $_POST['name']) ? $_POST['name'] : S_ANONAME,
             'subject' => (FORCED_ANON == false && $_POST['sub']) ? $_POST['sub'] : S_ANOTITLE,
             'email' => ($_POST['email']) ? $_POST['email'] : S_ANOTEXT,
             'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0,
+            'password' => ($_POST['pwd'] !== "") ? substr($_POST['pwd'],0,8) : ($_COOKIE['saguaro_pass']) ? $_COOKIE['saguaro_pass'] : substr(md5(rand()),0,8), //Get and/or supply deletion password.
             'special' => [
                 'sticky' => false,
                 'locked' => false,
@@ -88,9 +92,11 @@ class Regist {
             ]
         ];
         
+        
+
         //Apply trip/capcodes to $post['name'].
         //All other magic required here.
-        
+
         return $post;
     }
     
