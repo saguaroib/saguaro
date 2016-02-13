@@ -19,7 +19,7 @@ class Regist {
     private $cache = [];
 
     function run() {
-        $this->initialCheck(); //Run prelimary checks.
+        $this->initialCheck(); //Run preliminary checks.
 
         $file = $_FILES["upfile"]["tmp_name"];
         $time = time(); $tim  = $time . substr(microtime(), 2, 3);
@@ -71,7 +71,7 @@ class Regist {
             }
             $this->cache['file']['thumbnail'] = $output;
         } else {
-            
+
         }
     }
 
@@ -118,6 +118,9 @@ class Regist {
         if (!$result = $mysql->query($query)) {
             echo E_REGFAILED;
         }
+
+        //Rebuild and log stuff.
+        $this->updateCache();
     }
 
     private function updateCache() {
