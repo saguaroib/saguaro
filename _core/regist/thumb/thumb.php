@@ -12,14 +12,14 @@ function thumb($input, $child) {
         return;
 
     //$fname = $path . $tim . $ext;
-    $ext = pathinfo($input, PATHINFO_FILENAME);
+    $ext = pathinfo($input, PATHINFO_EXTENSION);
     $outpath = THUMB_DIR . pathinfo($input, PATHINFO_FILENAME) . 's.jpg';
 
     //Determine thumbnail resolution.
     $width = (!$child) ? MAX_W : MAXR_W;
     $height = (!$child) ? MAX_H : MAXR_H;
 
-    if ($ext == ".webm") {
+    if ($ext == "webm") {
         require_once("video.php");
         $thumb = new VideoThumbnail;
         $thumb->run($input, $outpath, $width, $height);
