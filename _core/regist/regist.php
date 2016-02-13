@@ -81,7 +81,7 @@ class Regist {
         $post = [
             'name' => (FORCED_ANON == false && $_POST['name']) ? $_POST['name'] : S_ANONAME,
             'subject' => (FORCED_ANON == false && $_POST['sub']) ? $_POST['sub'] : S_ANOTITLE,
-            'email' => ($_POST['email']) ? $_POST['email'] : S_ANOTEXT,
+            'email' => ($_POST['email']) ? $_POST['email'] : "",
             'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0,
             'password' => ($_POST['pwd'] !== "") ? substr($_POST['pwd'],0,8) : ($_COOKIE['saguaro_pass']) ? $_COOKIE['saguaro_pass'] : substr(md5(rand()),0,8), //Get and/or supply deletion password.
@@ -91,8 +91,6 @@ class Regist {
                 'permasage' => false
             ]
         ];
-        
-        
 
         //Apply trip/capcodes to $post['name'].
         //All other magic required here.
