@@ -92,8 +92,8 @@ class ProcessImage {
         }
 
         $info = [
-            'width' => $W,
-            'height' => $H
+            'width' => (int) $W,
+            'height' => (int) $H
         ];
 
         return $info;
