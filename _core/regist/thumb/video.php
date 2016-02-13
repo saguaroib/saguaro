@@ -10,8 +10,8 @@
 
 class VideoThumbnail {
     function run($input, $output = "auto", $width = 250, $height = 250) {
-        if ('which avconv' || 'where avconv') { $this->thumb_avconv($input,$output,$width,$height); }
-        else if ('which ffmpeg' || 'where ffmpeg') { $this->thumb_ffmpeg($input,$output,$width,$height); }
+        if ('which avconv' || 'where avconv') { return $this->thumb_avconv($input,$output,$width,$height); }
+        else if ('which ffmpeg' || 'where ffmpeg') { return $this->thumb_ffmpeg($input,$output,$width,$height); }
     }
 
     private function passthrough($temp) {
