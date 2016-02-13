@@ -12,6 +12,8 @@ $upfile_name = $_FILES["upfile"]["name"];
 $upfile = $_FILES["upfile"]["tmp_name"];
 
 require_once('process/upload.php'); //Check prereq conditions for post processing
+$check = new UploadCheck;
+$check->run();
 
 global $my_log, $mysql, $path, $badstring, $badfile, $badip, $pwdc, $textonly;
 
