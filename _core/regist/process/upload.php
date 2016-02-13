@@ -16,7 +16,7 @@ class UploadCheck {
         if ($this->captcha() !== true) error($this->last, $upfile); //Captcha check.
         if ($this->proxy() !== true) error($this->last, $upfile); //Proxy check.
         if ($this->uploadedFile() !== true) error($this->last, $upfile); //File check.
-        
+
         //These checks access the SQL server so we should prioritize these last and then order based on how intensive they are.
         if ($this->banned() !== true) error($this->last, $upfile); //Ban check.
         if ($this->locked() !== true) error($this->last, $upfile); //Lock check.

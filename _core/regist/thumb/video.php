@@ -3,7 +3,7 @@
 /*
 
     Class that handles generating video thumbnails for various formats and encoders.
-    
+
     Currently requires handlers to be in the path.
 
 */
@@ -17,7 +17,7 @@ class VideoThumbnail {
     private function passthrough($temp) {
 
     }
-    
+
     function thumb_avconv($input, $output, $width, $height) {
         $inputn = preg_replace('/\\.[^.\\s]{3,4}$/', '', $input); //Strip out extension.
         $output = ($output == "auto") ? THUMB_DIR . "/" . $inputn . ".jpg" : $output;

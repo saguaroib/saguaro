@@ -20,7 +20,7 @@ class VideoProcessor {
             error("\"$upfile_name\" contains audio!", $dest);
         if ($info['duration'] > MAX_DURATION)
             error("\"$upfile_name\" is too long! ({$info['duration']} > " . MAX_DURATION . ")", $dest);
-        
+
         global $W, $H;
         $W = $info['width'];
         $H = $info['height'];

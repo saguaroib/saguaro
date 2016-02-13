@@ -29,6 +29,7 @@ function thumb($input, $child) {
 
     return [
         'location' => $outpath,
+        'filename' => basename($outpath),
         'width' => $width,
         'height' => $height
     ];
