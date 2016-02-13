@@ -38,7 +38,7 @@ class Regist {
             $this->generateThumbnail(); //If we made it this far, generate the thumbnail.
         }
         var_dump($this->cache);
-        //$this->insert($info);
+        $this->insert($this->cache);
         //Update the log and cache files.
     }
 
@@ -70,12 +70,54 @@ class Regist {
                 cleanup(S_UNUSUAL);
             }
             $this->cache['file']['thumbnail'] = $output;
+        } else {
+            
         }
     }
 
     private function insert($info) {
         global $mysql;
-        $query = "INSERT INTO {SQLLOG} () VALUES ()";
+
+        $data = [ //Ironically aligned to "permasage".
+            'now'       => 0,
+            'name'      => $info['post']['name'],
+            'email'     => $info['post']['email'],
+            'sub'       => $info['post']['subject'],
+            'com'       => $info['post']['comment'],
+            'host'      => $info['host'],
+            'pwd'       => $info['post']['password'],
+            'ext'       => "." . $info['file']['original_extension'],
+            'w'         => $info['file']['width'],
+            'h'         => $info['file']['height'],
+            'tn_w'      => $info['file']['thumbnail']['width'],
+            'tn_h'      => $info['file']['thumbnail']['height'],
+            'tim'       => $info['local_name'],
+            'time'      => $info['time'],
+            'md5'       => $info['file']['md5'],
+            'fsize'     => $info['file']['filesize'],
+            'fname'     => $info['file']['original_name'],
+            'sticky'    => $info['post']['special']['sticky'],
+            'permasage' => $info['post']['special']['permasage'],
+            'locked'    => $info['post']['special']['locked'],
+            'root'      => 0,
+            'resto'     => ($_POST['resto']) ? (int) $_POST['resto'] : 0
+        ];
+
+        //Dynamically build the SQL command, numerous advantages.
+        $keys = []; $vals = [];
+        foreach($data as $column => $value) {
+            array_push($keys,$column);
+
+            //If the value is numeric (but may be a string) or a boolean, cast it to an integer. Otherwise wrap in doublequotes and escape it.
+            array_push($vals,(is_numeric($value) || is_bool($value)) ? (int) $value : '"' . $mysql->escape_string($value) . '"');
+        }
+        $keys = implode(",",$keys);
+        $vals = implode(",",$vals);
+
+        $query = "insert into ".SQLLOG." ($keys) values ($vals)";
+        if (!$result = $mysql->query($query)) {
+            echo E_REGFAILED;
+        }
     }
 
     private function updateCache() {
