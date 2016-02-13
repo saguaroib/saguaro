@@ -89,7 +89,6 @@ class ProcessImage {
             ($W2 < $H2) ? $key = $W2 : $key = $H2;
             $TN_W = ceil($W * $key);
             $TN_H = ceil($H * $key);
-            echo $TN_W;
         }
         
         $info = [

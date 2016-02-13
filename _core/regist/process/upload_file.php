@@ -54,6 +54,7 @@ class ProcessFile {
         }
 
         $post = [
+            'location' => $dest,
             'md5' => md5_file($dest),
             'filesize' => $fsize,
             'original_name' => $_FILES["upfile"]["name"],
