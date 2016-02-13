@@ -24,7 +24,7 @@ class Regist {
         $this->initialCheck(); //Run prelimary checks.
         $info = [ 
             'post' => $this->extractForm(), //Get the post info.
-            'file' => $this->extractFile($file,$tim), //Get the file info and copy/rename to target directory.
+            'file' => (is_uploaded_file($file)) ? $this->extractFile($file,$tim) : [], //Get the file info and copy/rename to target directory.
             'host' => $_SERVER['REMOTE_ADDR']
         ];
         
