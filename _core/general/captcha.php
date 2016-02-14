@@ -22,7 +22,7 @@ class Captcha {
             return $this->validate();
         }
     }
-    
+
     private function validate_recaptcha() {
         //http://stackoverflow.com/a/6609181
         $url = 'https://www.google.com/recaptcha/api/siteverify';
@@ -47,8 +47,9 @@ class Captcha {
         if (is_null($_SESSION['captcha_key']))
             return false;
 
-        return (strtoupper($_POST['num']) === $_SESSION['captcha_key']) ? true : false;
+        $temp = $_SESSION['captcha_key'];
         unset($_SESSION['captcha_key']);
+        return (strtoupper($_POST['num']) === $temp) ? true : false;
     }
 
     function generate() {
