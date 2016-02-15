@@ -21,7 +21,7 @@ class UploadCheck {
         if ($this->banned() !== true) error($this->last, $upfile); //Ban check.
         if ($this->locked() !== true) error($this->last, $upfile); //Lock check.
         if ($this->media() !== true) error($this->last, $upfile); //Media check.
-        if ($this->cooldown($upfile)) error($this->last, $upfile); //Flood/cooldown checks.
+        if ($this->cooldown($upfile) !== true) error($this->last, $upfile); //Flood/cooldown checks.
     }
 
     function captcha() {
