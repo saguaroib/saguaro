@@ -3,7 +3,17 @@
 class Sanitize {
     
     function process($name, $com, $sub, $email, $resto, $url, $dest, $moderator = 0) {
-           
+
+		$email = $this->CleanStr($email, 0); //Don't allow moderators to fuck with this
+		$email = preg_replace("[\r\n]", "", $email);
+		$sub   = $this->CleanStr($sub, 0); //Or this
+		$sub   = preg_replace("[\r\n]", "", $sub);
+		$url   = $this->CleanStr($url, 0); //Or this
+		$url   = preg_replace("[\r\n]", "", $url);
+		$resto = $this->CleanStr($resto, 0); //Or this
+		$resto = preg_replace("[\r\n]", "", $resto);
+		$com   = $this->CleanStr($com, $moderator); //But they can with this.	
+		
         if (!$name || preg_match("/^[ |&#12288;|]*$/", $name))
             $name = "";
         if (!$com || preg_match("/^[ |&#12288;|\t]*$/", $com))
@@ -45,8 +55,8 @@ class Sanitize {
         
         return [
         'name' => $name,
-        'com' => $com,
-        'sub' => $sub,
+        'comment' => $com,
+        'subject' => $sub,
         'email' => $email
         ];
     }
