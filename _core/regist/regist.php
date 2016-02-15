@@ -82,7 +82,7 @@ class Regist {
         global $mysql;
 
         $data = [ //Ironically aligned to "permasage".
-            'now'       => '',
+            'now'       => $info['post']['now'],
             'name'      => $info['post']['name'],
             'email'     => $info['post']['email'],
             'sub'       => $info['post']['subject'],
@@ -157,10 +157,9 @@ class Regist {
         require_once('sanitize.php'); //Load sanitation class.
         //Default post information.
         srand((double) microtime() * 1000000); //Seed the RNG.
-		$time = time();
-		
-		$youbi  = array(S_SUN,S_MON,S_TUE,S_WED,S_THU,S_FRI,S_SAT);
-		$yd     = $youbi[date("w", $time)];
+        
+        $time = time();
+        $day  = [S_SUN,S_MON,S_TUE,S_WED,S_THU,S_FRI,S_SAT][date("w", $time)];
 
         $post = [
             'name' => (FORCED_ANON == false && $_POST['name']) ? $_POST['name'] : S_ANONAME,
@@ -168,15 +167,15 @@ class Regist {
             'email' => ($_POST['email']) ? $_POST['email'] : "",
             'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
             'password' => ($_POST['pwd'] !== "") ? substr($_POST['pwd'],0,8) : ($_COOKIE['saguaro_pass']) ? $_COOKIE['saguaro_pass'] : substr(md5(rand()),0,8), //Get and/or supply deletion password.
-            'now' => date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i:s", $time),
-			'special' => [
+            'now' => date("m/d/y", $time) . "(" . (string) $day . ")" . date("H:i:s", $time),
+            'special' => [
                 'sticky' => false,
                 'locked' => false,
                 'permasage' => false
             ],
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
-        
+
         //Basic sanitization.
         $sanitize = ['name','subject','email','comment'];
         foreach ($sanitize as $key) {
