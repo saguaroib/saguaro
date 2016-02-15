@@ -40,7 +40,7 @@ class Regist {
         }
 
         $this->insert($this->cache); //Returns 'no' (post number), however this is also stored back in $this->cache['post']['number']
-        var_dump($this->cache);
+        //var_dump($this->cache);
         $this->updateCache();
     }
 
@@ -125,11 +125,25 @@ class Regist {
     }
 
     private function updateCache() {
-        global $mysql;
+        global $mysql, $my_log;
 
+        $child = $this->cache['post']['child'];
         $number = (int) $this->cache['post']['number'];
-        $parent = (int) (!$this->cache['post']['child']) ? $number : $this->cache['post']['parent'];
+        $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
         $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
+        
+        //Run update process.
+        $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
+        $target = ($child) ? $parent : $number;
+        $my_log->update($target, $static_rebuild);
+
+        //Auto-noko.
+        $url = DATA_SERVER . BOARD_DIR . "/" . RES_DIR;
+        $target = $url . $target . PHP_EXT . (($child) ? "#$number" : "");
+        echo "<html><head><meta http-equiv='refresh' content='1;URL=$target'></head><body><a href='$target'>Redirecting...</a></body></html>";
+        //echo "<body>" . S_SCRCHANGE . "</body></html>";
+        header("Location: $target"); /* Redirect browser */
+        exit();
     }
 
     function initialCheck() {
