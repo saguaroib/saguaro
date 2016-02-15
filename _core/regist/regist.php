@@ -101,7 +101,6 @@ class Regist {
             'sticky'    => $info['post']['special']['sticky'],
             'permasage' => $info['post']['special']['permasage'],
             'locked'    => $info['post']['special']['locked'],
-            /*'root'      => 0,*/
             'resto'     => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
 
@@ -133,7 +132,7 @@ class Regist {
             echo "hi!";
             $number = (int) $this->cache['post']['number'];
             $parent = (int) $this->cache['post']['parent'];
-            $mysql->query("update " . SQLLOG . " set root=$number where no=$parent"); //Set the parent's last reply to this one.
+            $mysql->query("update " . SQLLOG . " set last=$number where no=$parent"); //Set the parent's last reply to this one.
         }
     }
 
