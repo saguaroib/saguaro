@@ -10,8 +10,14 @@
 
 class VideoThumbnail {
     function run($input, $output = "auto", $width = 250, $height = 250) {
-        if ('which avconv' || 'where avconv') { return $this->thumb_avconv($input,$output,$width,$height); }
-        else if ('which ffmpeg' || 'where ffmpeg') { return $this->thumb_ffmpeg($input,$output,$width,$height); }
+        $path = "";
+        if ('which avconv' || 'where avconv') { $path = $this->thumb_avconv($input,$output,$width,$height); }
+        else if ('which ffmpeg' || 'where ffmpeg') { $path = $this->thumb_ffmpeg($input,$output,$width,$height); }
+
+        $temp = (class_exists('ProcessImage')) ? ProcessImage::run($path) : []; //Obtain thumbnail stats (resolution) via ProcessImage class.
+        $temp['path'] = $path;
+
+        return $temp;
     }
 
     private function passthrough($temp) {

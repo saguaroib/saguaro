@@ -67,6 +67,7 @@ class Regist {
     private function generateThumbnail() {
         if (USE_THUMB) {
             require_once("thumb/thumb.php");
+            require_once("process/image.php"); //Required for video thumbnail stats.
             $output = thumb($this->cache['file']['location'], ($this->cache['post']['child']));
             if (!$output['location'] && $ext != ".pdf") {
                 cleanup(S_UNUSUAL);
@@ -131,7 +132,7 @@ class Regist {
         $number = (int) $this->cache['post']['number'];
         $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
         $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
-        
+
         //Run update process.
         $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
         $target = ($child) ? $parent : $number;
