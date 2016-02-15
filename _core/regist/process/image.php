@@ -8,10 +8,6 @@
 
 class ProcessImage {
     function run($dest) {
-        $TN_W = 0; $TN_H = 0;
-        $maxw = (!$resto) ? MAX_W : MAXR_W;
-        $maxh = (!$resto) ? MAX_H : MAXR_H;
-
         $size = getimagesize($dest);
         if (!is_array($size))
             error(S_NOREC, $dest);
@@ -69,26 +65,13 @@ class ProcessImage {
                 error(S_UPFAIL, $dest);
                 break;
         }
-        if (GIF_ONLY == 1 && $size[2] != 1)
-            error(S_UPFAIL, $dest);
 
-        if (defined('MIN_W') && MIN_W > $W)
-            error(S_UPFAIL, $dest);
-        if (defined('MIN_H') && MIN_H > $H)
-            error(S_UPFAIL, $dest);
-        if (defined('MAX_DIMENSION')) {
-            $maxdimension = MAX_DIMENSION;
-        } else {
-            $maxdimension = 5000;
-        }
+        if (GIF_ONLY == 1 && $size[2] != 1) error(S_UPFAIL, $dest);
+        if (defined('MIN_W') && MIN_W > $W) error(S_UPFAIL, $dest);
+        if (defined('MIN_H') && MIN_H > $H) error(S_UPFAIL, $dest);
+        $maxdimension = (defined('MAX_DIMENSION')) ? MAX_DIMENSION : 5000;
         if ($W > $maxdimension || $H > $maxdimension) {
             error(S_TOOBIGRES, $dest);
-        } elseif ($W > $maxw || $H > $maxh) {
-            $W2 = $maxw / $W;
-            $H2 = $maxh / $H;
-            ($W2 < $H2) ? $key = $W2 : $key = $H2;
-            $TN_W = ceil($W * $key);
-            $TN_H = ceil($H * $key);
         }
 
         $info = [
