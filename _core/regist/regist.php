@@ -126,14 +126,10 @@ class Regist {
 
     private function updateCache() {
         global $mysql;
-        
-        //Update the log and cache files.
-        if ($this->cache['post']['child']) {
-            echo "hi!";
-            $number = (int) $this->cache['post']['number'];
-            $parent = (int) $this->cache['post']['parent'];
-            $mysql->query("update " . SQLLOG . " set last=$number where no=$parent"); //Set the parent's last reply to this one.
-        }
+
+        $number = (int) $this->cache['post']['number'];
+        $parent = (int) (!$this->cache['post']['child']) ? $number : $this->cache['post']['parent'];
+        $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
     }
 
     function initialCheck() {
