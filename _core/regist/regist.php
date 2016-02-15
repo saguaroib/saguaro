@@ -141,7 +141,7 @@ class Regist {
         //Auto-noko.
         $url = DATA_SERVER . BOARD_DIR . "/" . RES_DIR;
         $target = $url . $target . PHP_EXT . (($child) ? "#$number" : "");
-        echo "<html><head><meta http-equiv='refresh' content='1;URL=$target'></head><body><a href='$target'>Redirecting...</a></body></html>";
+        echo "<html><head><meta http-equiv='refresh' content='60;URL=$target'></head><body><a href='$target'>Redirecting...</a></body></html>";
         //echo "<body>" . S_SCRCHANGE . "</body></html>";
         header("Location: $target"); /* Redirect browser */
         exit();
@@ -157,9 +157,9 @@ class Regist {
         require_once('sanitize.php'); //Load sanitation class.
         //Default post information.
         srand((double) microtime() * 1000000); //Seed the RNG.
-        
+
         $time = time();
-        $day  = [S_SUN,S_MON,S_TUE,S_WED,S_THU,S_FRI,S_SAT][date("w", $time)];
+        $day = [S_SUN,S_MON,S_TUE,S_WED,S_THU,S_FRI,S_SAT]; $day = $day[date("w")];
 
         $post = [
             'name' => (FORCED_ANON == false && $_POST['name']) ? $_POST['name'] : S_ANONAME,
@@ -175,7 +175,7 @@ class Regist {
             ],
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
-
+        
         //Basic sanitization.
         $sanitize = ['name','subject','email','comment'];
         foreach ($sanitize as $key) {
@@ -186,8 +186,8 @@ class Regist {
         $post['comment_md5'] = md5($post['comment']);
 
         //Apply trip/capcodes, user IDs, dice, fortune, etc to post.
-		require_once("addons.php");
-		$post = parseAddons($post);
+        /*require_once("addons.php");
+        $post = parseAddons($post);*/ //Wrong. Also currently has the indirect benefit of blowing up the entire variable.
 
         return $post;
     }
