@@ -50,6 +50,10 @@ if (function_exists("ImageCreateTrueColor")) {
 } else {
     $im_out = ImageCreate($out_w, $out_h);
 }
+
+$width = $out_w;
+$height = $out_h;
+
 ImageAlphaBlending($im_out, false);
 ImageSaveAlpha($im_out, true);
 // copy resized original

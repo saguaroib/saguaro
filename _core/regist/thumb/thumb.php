@@ -22,7 +22,9 @@ function thumb($input, $child) {
     if ($ext == "webm") {
         require_once("video.php");
         $thumb = new VideoThumbnail;
-        $thumb->run($input, $outpath, $width, $height);
+        $result = $thumb->run($input, $outpath, $width, $height);
+        $width = $result['width'];
+        $height = $result['height'];
     } else {
         require_once("image.php");
     }
