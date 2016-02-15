@@ -21,7 +21,8 @@ class UploadCheck {
         if ($this->banned() !== true) error($this->last, $upfile); //Ban check.
         if ($this->locked() !== true) error($this->last, $upfile); //Lock check.
         if ($this->media() !== true) error($this->last, $upfile); //Media check.
-    }
+		if ($this->cooldown($upfile) == true) error($this->last, $upfile); //Flood/cooldown checks.
+	}
 
     function captcha() {
         if (BOTCHECK === true && !valid('moderator')) {
@@ -77,7 +78,7 @@ class UploadCheck {
     function banned() {
         require_once(CORE_DIR . "/admin/bans.php");
         $checkban = new Banish;
-        if (!$checkban->checkBan($_SERVER["REMOTE_ADDR"])) {
+        if ($checkban->isBanned($_SERVER["REMOTE_ADDR"])) {
             $this->last = S_BADHOST;
             //error(S_BADHOST, $upfile);
             return false;
@@ -119,6 +120,50 @@ class UploadCheck {
         }
         return true;
     }
+	
+	function cooldown() {
+		global $mysql;
+		
+		$resto = (int) $resto;
+		$host = $_SERVER['REMOTE_ADDR'];
+		$time = time();
+		
+		$canFlood = (valid('moderator')) ? true : false;
+		
+		if (!$canFlood) {
+
+			//Reply cooldown
+			if (!$upfile) {
+				$query  = "SELECT COUNT(no)>0 FROM " . SQLLOG . " WHERE time>" . ($time - RENZOKU) . " " . "AND host='" . $mysql->escape_string($host) . "' AND resto>0";
+				$result = $mysql->query($query);
+				if ($mysql->result($result, 0, 0))
+					$this->last = S_RENZOKU;
+				$mysql->free_result($result);
+				return false;
+			}
+
+			//Thread creation cooldown
+			if (!$resto) {
+				$query  = "SELECT COUNT(no)>0 FROM " . SQLLOG . " WHERE time>" . ($time - RENZOKU3) . " " . "AND host='" . $mysql->escape_string($host) . "' AND root>0"; //root>0 == non-sticky
+				$result = $mysql->query($query);
+				if ($mysql->result($result, 0, 0))
+					$this->last = S_RENZOKU3;
+				$mysql->free_result($result);
+				return false;
+			}
+
+			//Image cooldown
+			if ($upfile) {
+				$query  = "SELECT COUNT(no)>0 FROM " . SQLLOG . " WHERE time>" . ($time - RENZOKU2) . " " . "AND host='" . $mysql->escape_string($host) . "' AND resto>0";
+				$result = $mysql->query($query);
+				if ($mysql->result($result, 0, 0))
+					$this->last = S_RENZOKU2;
+				$mysql->free_result($result);
+				return false;
+			}
+		}
+		return true;
+	}
 }
 
 ?>
