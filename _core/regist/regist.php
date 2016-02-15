@@ -23,6 +23,7 @@ class Regist {
 
         $file = $_FILES["upfile"]["tmp_name"];
         $time = time(); $tim  = $time . substr(microtime(), 2, 3);
+
         $info = [
             'post' => $this->extractForm(), //Get the post info.
             'file' => (is_uploaded_file($file)) ? $this->extractFile($file,$tim) : false, //Get the file info and copy/rename to target directory.
@@ -37,9 +38,10 @@ class Regist {
             $this->checkDuplicate($info['file']['md5']);
             $this->generateThumbnail(); //If we made it this far, generate the thumbnail.
         }
+
+        $this->insert($this->cache); //Returns 'no' (post number), however this is also stored back in $this->cache['post']['number']
         var_dump($this->cache);
-        $this->insert($this->cache);
-        //Update the log and cache files.
+        $this->updateCache();
     }
 
     private function cleanup($message) {
@@ -79,7 +81,7 @@ class Regist {
         global $mysql;
 
         $data = [ //Ironically aligned to "permasage".
-            'now'       => 0,
+            'now'       => '',
             'name'      => $info['post']['name'],
             'email'     => $info['post']['email'],
             'sub'       => $info['post']['subject'],
@@ -99,7 +101,7 @@ class Regist {
             'sticky'    => $info['post']['special']['sticky'],
             'permasage' => $info['post']['special']['permasage'],
             'locked'    => $info['post']['special']['locked'],
-            'root'      => 0,
+            /*'root'      => 0,*/
             'resto'     => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
 
@@ -115,16 +117,24 @@ class Regist {
         $vals = implode(",",$vals);
 
         $query = "insert into ".SQLLOG." ($keys) values ($vals)";
-        if (!$result = $mysql->query($query)) {
-            echo E_REGFAILED;
-        }
+        $mysql->query($query);
+        $final = (int) $mysql->result('select last_insert_id()');
+        /* if (!$result = ?) { echo E_REGFAILED; }*/
 
-        //Rebuild and log stuff.
-        $this->updateCache();
+        $this->cache['post']['number'] = $final;
+        return $final; //Return 'no', latest auto-incremented column.
     }
 
     private function updateCache() {
-
+        global $mysql;
+        
+        //Update the log and cache files.
+        if ($this->cache['post']['child']) {
+            echo "hi!";
+            $number = (int) $this->cache['post']['number'];
+            $parent = (int) $this->cache['post']['parent'];
+            $mysql->query("update " . SQLLOG . " set root=$number where no=$parent"); //Set the parent's last reply to this one.
+        }
     }
 
     function initialCheck() {
