@@ -156,6 +156,10 @@ class Regist {
     function extractForm() {
         //Default post information.
         srand((double) microtime() * 1000000); //Seed the RNG.
+		$time = time();
+		
+		$youbi  = array(S_SUN,S_MON,S_TUE,S_WED,S_THU,S_FRI,S_SAT);
+		$yd     = $youbi[date("w", $time)];
 
         $post = [
             'name' => (FORCED_ANON == false && $_POST['name']) ? $_POST['name'] : S_ANONAME,
@@ -163,7 +167,8 @@ class Regist {
             'email' => ($_POST['email']) ? $_POST['email'] : "",
             'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
             'password' => ($_POST['pwd'] !== "") ? substr($_POST['pwd'],0,8) : ($_COOKIE['saguaro_pass']) ? $_COOKIE['saguaro_pass'] : substr(md5(rand()),0,8), //Get and/or supply deletion password.
-            'special' => [
+            'now' => date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i:s", $time),
+			'special' => [
                 'sticky' => false,
                 'locked' => false,
                 'permasage' => false
@@ -174,8 +179,9 @@ class Regist {
         $post['child'] = (bool) ($post['parent'] !== 0);
         $post['comment_md5'] = md5($post['comment']);
 
-        //Apply trip/capcodes to $post['name'].
-        //All other magic required here.
+        //Apply trip/capcodes, user IDs, dice, fortune, etc to post.
+		require_once("addons.php");
+		$post = parseAddons($post);
 
         return $post;
     }
