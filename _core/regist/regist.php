@@ -154,6 +154,7 @@ class Regist {
     }
 
     function extractForm() {
+        require_once('sanitize.php'); //Load sanitation class.
         //Default post information.
         srand((double) microtime() * 1000000); //Seed the RNG.
 		$time = time();
@@ -175,6 +176,12 @@ class Regist {
             ],
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
+        
+        //Basic sanitization.
+        $sanitize = ['name','subject','email','comment'];
+        foreach ($sanitize as $key) {
+            $post[$key] = Sanitize::CleanStr($post[$key]);
+        }
 
         $post['child'] = (bool) ($post['parent'] !== 0);
         $post['comment_md5'] = md5($post['comment']);
