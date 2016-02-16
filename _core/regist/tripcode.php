@@ -23,27 +23,9 @@ if ( preg_match( "/\#/", $names ) ) {
     
     if ( $trip != "" ) {
         if ( FORTUNE_TRIP == 1 && $trip == "fortune" ) {
-            $fortunes   = array(
-                 "Bad Luck",
-                "Average Luck",
-                "Good Luck",
-                "Excellent Luck",
-                "Reply hazy, try again",
-                "Godly Luck",
-                "Very Bad Luck",
-                "Outlook good",
-                "Better not tell you now",
-                "You will meet a dark handsome stranger",
-                "&#65399;&#65408;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;(&#65439;&#8704;&#65439;)&#9473;&#9473;&#9473;&#9473;&#9473;&#9473; !!!!",
-                "&#65288;&#12288;´_&#12445;`&#65289;&#65420;&#65392;&#65437; ",
-                "Good news will come to you by mail",
-                "Hope you're insured",
-                "Great things await",
-                "Don't leave the house today." 
-            );
-            $fortunenum = rand( 0, sizeof( $fortunes ) - 1 );
-            $fortcol    = "#" . sprintf( "%02x%02x%02x", 127 + 127 * sin( 2 * M_PI * $fortunenum / sizeof( $fortunes ) ), 127 + 127 * sin( 2 * M_PI * $fortunenum / sizeof( $fortunes ) + 2 / 3 * M_PI ), 127 + 127 * sin( 2 * M_PI * $fortunenum / sizeof( $fortunes ) + 4 / 3 * M_PI ) );
-            $com        =  $com ."<br /><br /><font color=$fortcol><b>Your fortune: " . $fortunes[$fortunenum] . "</b></font>";
+            require_once("fortune.php");
+            $fortune = new Fortune; $fortune = $fortune->giveFortune();
+            $com        =  $com ."<br /><br /><font color=$fortcol><b>Your fortune: " . $fortune . "</b></font>";
             $trip       = "";
             if ( $sectrip == "" ) {
                 if ( $name == "</span>" && $sectrip == "" )
