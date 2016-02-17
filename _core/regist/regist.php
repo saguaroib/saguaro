@@ -175,7 +175,7 @@ class Regist {
             ],
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
-        
+
         //Basic sanitization.
         $sanitize = ['name','subject','email','comment'];
         foreach ($sanitize as $key) {
@@ -184,6 +184,9 @@ class Regist {
 
         $post['child'] = (bool) ($post['parent'] !== 0);
         $post['comment_md5'] = md5($post['comment']);
+
+        require_once('tripcode.php');
+        $post['name'] = Tripcode::format($post['name']);
 
         //Apply trip/capcodes, user IDs, dice, fortune, etc to post.
         /*require_once("addons.php");

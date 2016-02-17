@@ -143,7 +143,7 @@ if (DISP_ID) {
     } else {
         if (!$resto) {
         //holy hell there has to be a better way to do this. i swear ill think of it soon
-        $idsalt = $mysql->result($mysql->query("select max(no) from " . SQLLOG), 0, 0); 
+        $idsalt = $mysql->result($mysql->query("select max(no) from " . SQLLOG), 0, 0);
         $idsalt = $idsalt + 1;
         } else {
             $idsalt = $resto;
@@ -276,7 +276,7 @@ if ($has_image) {
         }
         $mysql->free_result($result);
     }
-    
+
     //Thumbnail
     rename($dest, $path . $tim . $ext);
     if (USE_THUMB) { //We'll still make the thumbnail even if its a spoiler image for user extensions.
@@ -294,7 +294,7 @@ if ($stickied)
     $rootqu = '20270727070707';
 
 //Bump processing
-if ($resto) { 
+if ($resto) {
     $countres = $mysql->result("SELECt COUNT(no) FROM " . SQLLOG . " where resto=" . $resto, 0, 0);
     $stat = $mysql->fetch_assoc("SELECT sticky,permasage FROM " . SQLLOG . " WHERE no=" . $resto);
     if (!$sageThis && $countres < MAX_RES && !$stat['sticky'] && !$stat['permasage']) //|| ($admin && $age && $sticky < "0"))
@@ -303,17 +303,17 @@ if ($resto) {
 
 //Main insert
 $query = "INSERT INTO " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) VALUES (" . "'" . $now . "',"
- . "'" . $mysql->escape_string($name) . "'," 
+ . "'" . $mysql->escape_string($name) . "',"
  . "'" . $mysql->escape_string($email) . "',"
- . "'" . $mysql->escape_string($sub) . "'," 
- . "'" . $mysql->escape_string($com) . "'," 
- . "'" . $mysql->escape_string($host) . "'," 
- . "'" . $mysql->escape_string($pass) . "'," 
+ . "'" . $mysql->escape_string($sub) . "',"
+ . "'" . $mysql->escape_string($com) . "',"
+ . "'" . $mysql->escape_string($host) . "',"
+ . "'" . $mysql->escape_string($pass) . "',"
  . "'" . $ext . "',"
  . (int) $W . ","
  . (int) $H . ","
- . (int) $TN_W . "," 
- . (int) $TN_H . "," 
+ . (int) $TN_W . ","
+ . (int) $TN_H . ","
  . "'" . $tim . "',"
  . (int) $time . ","
  . "'" . $md5 . "',"
@@ -369,7 +369,7 @@ $deferred = false;
 // update html
 if ($resto)
     $deferred = $my_log->update($resto, $static_rebuild);
-else 
+else
     $deferred = $my_log->update($insertid, $static_rebuild);
 
 if ($noko && !$resto) {

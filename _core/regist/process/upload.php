@@ -12,6 +12,8 @@ class UploadCheck {
     private $last = "";
 
     function run() {
+        $upfile = $_FILES["upfile"]["tmp_name"];
+
         if ($_SERVER["REQUEST_METHOD"] !== "POST") error(S_UNJUST, $upfile); //Ensure the data was sent via POST.
         if ($this->captcha() !== true) error($this->last, $upfile); //Captcha check.
         if ($this->proxy() !== true) error($this->last, $upfile); //Proxy check.
@@ -121,7 +123,7 @@ class UploadCheck {
         return true;
     }
 
-    function cooldown() {
+    function cooldown($upfile) {
         global $mysql;
 
         $resto = (int) $resto;
@@ -136,30 +138,33 @@ class UploadCheck {
             if (!$upfile) {
                 $query  = "SELECT COUNT(no)>0 FROM " . SQLLOG . " WHERE time>" . ($time - RENZOKU) . " " . "AND host='" . $mysql->escape_string($host) . "' AND resto>0";
                 $result = $mysql->query($query);
-                if ($mysql->result($result, 0, 0))
+                if ($mysql->result($result, 0, 0)) {
                     $this->last = S_RENZOKU;
-                $mysql->free_result($result);
-                return false;
+                    $mysql->free_result($result);
+                    return false;
+                }
             }
 
             //Thread creation cooldown
             if (!$resto) {
                 $query  = "SELECT COUNT(no)>0 FROM " . SQLLOG . " WHERE time>" . ($time - RENZOKU3) . " " . "AND host='" . $mysql->escape_string($host) . "' AND root>0"; //root>0 == non-sticky
                 $result = $mysql->query($query);
-                if ($mysql->result($result, 0, 0))
+                if ($mysql->result($result, 0, 0)) {
                     $this->last = S_RENZOKU3;
-                $mysql->free_result($result);
-                return false;
+                    $mysql->free_result($result);
+                    return false;
+                }
             }
 
             //Image cooldown
             if ($upfile) {
                 $query  = "SELECT COUNT(no)>0 FROM " . SQLLOG . " WHERE time>" . ($time - RENZOKU2) . " " . "AND host='" . $mysql->escape_string($host) . "' AND resto>0";
                 $result = $mysql->query($query);
-                if ($mysql->result($result, 0, 0))
+                if ($mysql->result($result, 0, 0)) {
                     $this->last = S_RENZOKU2;
-                $mysql->free_result($result);
-                return false;
+                    $mysql->free_result($result);
+                    return false;
+                }
             }
         }
         return true;
