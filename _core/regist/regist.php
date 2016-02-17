@@ -58,7 +58,7 @@ class Regist {
                 list($dupeno, $duperesto) = $mysql->fetch_row($result);
                 if (!$duperesto)
                     $duperesto = $dupeno;
-                $this->cleanup('<a href="' . DATA_SERVER . BOARD_DIR . "/res/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>');
+                $this->cleanup('<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>');
             }
             $mysql->free_result($result);
         }
