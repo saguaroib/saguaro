@@ -39,7 +39,6 @@ function prune_old() {
             $result      = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE sticky=0 AND resto=0 ORDER BY $exp_order ASC");
             $threadcount = $mysql->num_rows($result);
             while ($row = $mysql->fetch_array($result) and $threadcount > $maxthreads) {
-				echo "deleted " . $row['no'] ."<br>";
                 delete_post($row['no'], 'trim', 0, 1, 1, 0); // imgonly=0, automatic=1, children=1
                 $threadcount--;
             }
