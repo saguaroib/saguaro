@@ -133,6 +133,13 @@ class Regist {
         $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
         $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
 
+		//Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
+		require_once("prune_old.php");
+		prune_old(); //Does the page pruning
+		
+		if ($this->cache['post']['special']['sticky'] == 2)
+			pruneThread($parent); //Event stickies.
+		
         //Run update process.
         $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
         $target = ($child) ? $parent : $number;
