@@ -190,6 +190,7 @@ class Regist {
 
         require_once('tripcode.php');
         $post['name'] = Tripcode::format($post['name']);
+        $post['name'] = ($post['special']['capcode']) ? Tripcode::adminify($post['name']) : $post['name']; 
 
         //Apply trip/capcodes, user IDs, dice, fortune, etc to post.
         /*require_once("addons.php");
@@ -209,20 +210,22 @@ class Regist {
     
     private function sortSpecial() {
 
-        if (valid('moderator')) {
+        if (valid('janitor')) {
             //Must leave int values as ints, bool values as bools
+            $cap = (isset($_POST['showCap'])) ? true : false;
             $sticky = (isset($_POST['isSticky'])) ? 1 : 0;
             $eventSticky = (isset($_POST['eventSticky'])) ? $sticky = 2 : 0;
             $locked = (isset($_POST['isLocked'])) ? 1 : 0;
         }
-        
+
         //Expand this later with capcodes.
         return [
             'sticky' => $sticky,
-            'locked' => $locked
+            'locked' => $locked,
+            'capcode' => $cap
         ];
     }
-    
+
 }
 
 $regist = new Regist;
