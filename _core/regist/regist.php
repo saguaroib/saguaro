@@ -134,7 +134,7 @@ class Regist {
         $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
 
 		//Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
-		require_once("prune_old.php");
+		require_once("prune.php");
 		prune_old(); //Does the page pruning
 		
 		if ($this->cache['post']['special']['sticky'] == 2)
@@ -175,11 +175,7 @@ class Regist {
             'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
             'password' => ($_POST['pwd'] !== "") ? substr($_POST['pwd'],0,8) : ($_COOKIE['saguaro_pass']) ? $_COOKIE['saguaro_pass'] : substr(md5(rand()),0,8), //Get and/or supply deletion password.
             'now' => date("m/d/y", $time) . "(" . (string) $day . ")" . date("H:i:s", $time),
-            'special' => [
-                'sticky' => false,
-                'locked' => false,
-                'permasage' => false
-            ],
+            'special' => $this->sortSpecial(),
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
 
@@ -210,6 +206,23 @@ class Regist {
         $check = new ProcessFile;
         return $check->run($file,$tim);
     }
+    
+    private function sortSpecial() {
+
+        if (valid('moderator')) {
+            //Must leave int values as ints, bool values as bools
+            $sticky = (isset($_POST['isSticky'])) ? 1 : 0;
+            $eventSticky = (isset($_POST['eventSticky'])) ? $sticky = 2 : 0;
+            $locked = (isset($_POST['isLocked'])) ? 1 : 0;
+        }
+        
+        //Expand this later with capcodes.
+        return [
+            'sticky' => $sticky,
+            'locked' => $locked
+        ];
+    }
+    
 }
 
 $regist = new Regist;
