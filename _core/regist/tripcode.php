@@ -3,7 +3,7 @@
 /*
 
     Tripcode class.
-    Not capcodes!
+    Now with capcodes!
 
     $trip = new Tripcode;
     echo $trip->format("Ayelm&ao#xd");
@@ -73,7 +73,7 @@ class Tripcode {
     
         //Travel up the permission tree to get the highest value
         if(valid('janitor') && JANI_CAPCODES)
-            $name = "<span class='cap janitor'>" . $name2 . " ## Janitor</span>";
+            $name = "<span class='cap jani'>" . $name2 . " ## Janitor</span>";
         if(valid('moderator')) // Note the combination of the words.
             $name = "<span class='cap moderator'>" . $name2 . " ## Mod</span>";
         if(valid('manager'))
