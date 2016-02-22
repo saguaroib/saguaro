@@ -181,6 +181,9 @@ th {} .row1 {
     color: #c5c8c6;
     font-weight: 500;
 }
+.cap.jani {
+    color: #4169E1;
+}
 .cap.moderator {
     color: #770099;
 }

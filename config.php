@@ -59,6 +59,9 @@ define(UPDATE_THROTTLING, false); //Leave this as 0 unless you recieve /a lot/ o
 define(SHOW_BLOTTER, false);      //Experimental. Added to the top of each board, ex: ex: http://yoursite.com/resources/globalnews.txt
 define(BLOTTER_PATH, 'CHANGEME'); //Experimental. Absolute html path to your blotter file, this feature is experimental and still is not fully functional.
 
+//Administrative
+define(JANI_CAPCODES, false); //Allow janitors to post with a capcode
+
 // Post & Thread
 define(USE_BBCODE, false);  //Use BBcode
 define(DICE_ROLL, false);   //Allow users to roll /dice in the name field

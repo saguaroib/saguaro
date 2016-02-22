@@ -19,8 +19,8 @@ class Tripcode {
 
         if ($secure || $trip)
             $trip = ($secure) ? Tripcode::secure($secure) : Tripcode::normal($trip);
-
-        return trim("$name $trip");
+        
+        return trim("$name$trip");
     }
 
     private function normal($trip) {
@@ -57,7 +57,7 @@ class Tripcode {
     }
 
     private function fortune() {
-        if (1 /*FORTUNE_TRIP*/) {
+        if (FORTUNE_TRIP) {
             require_once("fortune.php");
             $fortune = new Fortune;
 
@@ -65,6 +65,25 @@ class Tripcode {
         }
 
         return "";
+    }
+    
+    function adminify($name) {
+    
+        $name2 = strip_tags($name); //Remove anything inserted by tripcode processing
+    
+        //Travel up the permission tree to get the highest value
+        if(valid('janitor') && JANI_CAPCODES)
+            $name = "<span class='cap janitor'>" . $name2 . " ## Janitor</span>";
+        if(valid('moderator')) // Note the combination of the words.
+            $name = "<span class='cap moderator'>" . $name2 . " ## Mod</span>";
+        if(valid('manager'))
+            $name = "<span class='cap manager'>" . $name2 . " ## Manager</span>";
+        if(valid('admin'))
+            $name = "<span class='cap admin'>" . $name2 . " ## Admin</span>";
+         
+        unset($name2);
+    
+        return $name;
     }
 }
 
