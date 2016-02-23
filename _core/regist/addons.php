@@ -24,7 +24,7 @@ function dice($com, $email) {
 	if(DICE_ROLL) {
 		if ($email) {
 			if (preg_match("/dice[ +](\\d+)[ d+](\\d+)(([ +-]+?)(-?\\d+))?/", $email, $match)) {
-				$dicetxt = "rolled ";
+				$dicetxt = "Rolled ";
 				$dicenum = min(25, $match[1]);
 				$diceside = $match[2];
 				$diceaddexpr = $match[3];
@@ -45,7 +45,7 @@ function dice($com, $email) {
 				}
 				
 				$dicetxt .= " = $dicesum<br /><br />";
-				$com = "<b>$dicetxt</b>" . $com;
+				$com = "<strong>$dicetxt</strong>" . $com;
 				
 				return $com;
 			}

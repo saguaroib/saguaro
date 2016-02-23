@@ -134,7 +134,7 @@ class UploadCheck {
         $time = time();
 
         //Pull all recent rows (to the highest timeout) from the SQL table.
-        $min = $time - max(RENZOKU,RENZOKU2/*,RENZOKU3*/);
+        $min = $time - max(RENZOKU,RENZOKU2,RENZOKU3);
         $query = "SELECT time,resto FROM `".SQLLOG."` WHERE host='".$mysql->escape_string($host)."' AND time>=$min";
         $query = $mysql->query($query);
         $result = $mysql->result($query);
