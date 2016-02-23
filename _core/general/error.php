@@ -7,14 +7,15 @@ class Error {
 
     function format($mes, $dest = '', $fancy = 0) {
         global $path;
+        //debug_print_backtrace(); //Useful for figuring out where the call is coming from and why.
 
         if (is_file($dest))
             unlink($dest);
 
 
-        if ($mes == S_BADHOST) {
-            die("<html><head><meta http-equiv='refresh' content='0; url=banned.php'></head></html>");
-        } elseif (!$fancy) {
+        /*if ($mes == S_BADHOST) {
+            //die("<html><head><meta http-equiv='refresh' content='0; url=banned.php'></head></html>");
+        } else*/if (!$fancy) {
             require_once(CORE_DIR . "/page/head.php");
             $head = new Head; $head = $head->generate();
             $upfile_name = $_FILES["upfile"]["name"];

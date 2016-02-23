@@ -2,389 +2,233 @@
 
 /*
 
-Eventually rewrite this.
+    Regist
+
+    The most functionally important and hair removing part of the board software.
+    Handles posting and uploads.
+
+    Security for the future:
+        MD5 hash the comment and use for checking duplicates (store otherwise).
+
+    This file's structure and functions may change drastically over time.
+    The initial idea is to get it functional and easier to manage.
 
 */
 
-$host = $_SERVER['REMOTE_ADDR'];
+class Regist {
+    private $cache = [];
 
-$upfile_name = $_FILES["upfile"]["name"];
-$upfile = $_FILES["upfile"]["tmp_name"];
+    function run() {
+        $this->initialCheck(); //Run preliminary checks.
 
-require_once('process/upload.php'); //Check prereq conditions for post processing
+        $file = $_FILES["upfile"]["tmp_name"];
+        $time = time(); $tim  = $time . substr(microtime(), 2, 3);
 
-global $my_log, $mysql, $path, $badstring, $badfile, $badip, $pwdc, $textonly;
+        $info = [
+            'post' => $this->extractForm(), //Get the post info.
+            'file' => (is_uploaded_file($file)) ? $this->extractFile($file,$tim) : false, //Get the file info and copy/rename to target directory.
+            'host' => $_SERVER['REMOTE_ADDR'],
+            'time' => $time,
+            'local_name' => $tim,
+            'board' => null
+        ];
+        $this->cache = $info; //Copy to cache.
 
-require_once(CORE_DIR . "/regist/sanitize.php");
-$sanitize = new Sanitize;
-
-if ($pwd == PANEL_PASS)
-    $admin = $pwd;
-if ($admin != PANEL_PASS || !valid())
-    $admin = '';
-$mes = "";
-
-if (valid('moderator')) {
-    $moderator = 1;
-    if (valid('manager'))
-        $moderator = 3;
-    if (valid('admin'))
-        $moderator = 2;
-}
-
-if ($moderator) {
-    if (isset($_POST['isSticky'])) {
-        $stickied = 1;
-        if (isset($_POST['eventSticky'])) //Experimental feature.
-            $stickied = 2;
-    }
-    if (isset($_POST['isLocked']))
-        $locked = 1;
-}
-
-if (!$upfile && !$resto) { // allow textonly threads for moderators!
-    if ($moderator) //They have the permission anyway, might as well remove the query until the user class is done.
-        $textonly = 1;
-}
-
-// time
-$time = time();
-$tim  = $time . substr(microtime(), 2, 3);
-
-require_once('process/upload_file.php'); //Process the uploaded file.
-
-//The last result number
-$lastno = $mysql->result($mysql->query("select max(no) from " . SQLLOG), 0, 0);
-
-// Number of log lines
-if (!$result = $mysql->query("select no,ext,tim from " . SQLLOG . " where no<=" . ($lastno - LOG_MAX))) {
-    echo S_SQLFAIL;
-} else {
-    while ($resrow = $mysql->fetch_row($result)) {
-        list($dno, $dext, $dtim) = $resrow;
-        if (!$mysql->query("delete from " . SQLLOG . " where no=" . $dno)) {
-            echo S_SQLFAIL;
+        if ($info['file']) {
+            $this->checkDuplicate($info['file']['md5']);
+            $this->generateThumbnail(); //If we made it this far, generate the thumbnail.
         }
-        if ($dext) {
-            if (is_file($path . $dtim . $dext))
-                unlink($path . $dtim . $dext);
-            if (is_file(THUMB_DIR . $dtim . 's.jpg'))
-                unlink(THUMB_DIR . $dtim . 's.jpg');
+
+        $this->insert($this->cache); //Returns 'no' (post number), however this is also stored back in $this->cache['post']['number']
+        //var_dump($this->cache);
+        $this->updateCache();
+    }
+
+    private function cleanup($message) {
+        error($message,$this->cache['file']['location']);
+    }
+
+    private function checkDuplicate($md5) {
+        //If there is a file (hopefully), check the table for duplicates.
+        global $mysql;
+
+        if (DUPE_CHECK) {
+            $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
+            if ($mysql->num_rows($result)) {
+                list($dupeno, $duperesto) = $mysql->fetch_row($result);
+                if (!$duperesto)
+                    $duperesto = $dupeno;
+                $this->cleanup('<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>');
+            }
+            $mysql->free_result($result);
         }
     }
-    $mysql->free_result($result);
-}
 
-$find  = false;
-$resto = (int) $resto;
-if ($resto) {
-    if (!$result = $mysql->query("select * from " . SQLLOG . " where root>0 and no=$resto")) {
-        echo S_SQLFAIL;
-    } else {
-        $find = $mysql->fetch_row($result);
-        $mysql->free_result($result);
-    }
-    if (!$find)
-        error(S_NOTHREADERR, $dest);
-}
-
-if (!$name)
-    $name = S_ANONAME;
-if (!$com)
-    $com = S_ANOTEXT;
-if (!$sub)
-    $sub = S_ANOTITLE;
-
-if (!$resto && !$textonly && !is_file($dest) && !$moderator)
-    error(S_NOPIC, $dest);
-if (!$com && !is_file($dest) && !$moderator)
-    error(S_NOTEXT, $dest);
-
-// No, path, time, and url format
-srand((double) microtime() * 1000000);
-
-if ($pwd == "") {
-    $pwd = $_COOKIE['saguaro_pass'];
-    if ($pwd == "") {
-        $pwd = rand();
-        $pwd = substr($pwd, 0, 8);
-    }
-}
-
-$c_pass = $pwd;
-$c_email = $email;
-
-$pass   = ($pwd) ? substr(md5($pwd), 2, 8) : "*";
-$youbi  = array(
-     S_SUN,
-    S_MON,
-    S_TUE,
-    S_WED,
-    S_THU,
-    S_FRI,
-    S_SAT
-);
-$yd     = $youbi[date("w", $time)];
-
-$now = (SHOW_SECONDS == 1)  ? date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i:s", $time) : date("m/d/y", $time) . "(" . (string) $yd . ")" . date("H:i", $time);
-
-if (DISP_ID) {
-    //$rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
-    //$color = '#'.$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)].$rand[rand(0,15)];
-    $color  = "inherit"; // Until unique IDs between threads get sorted out
-    //Leave these quotes escaped for mysql
-    $idhtml = "<span class=\"posteruid\" id=\"posterid\" style=\"background-color:" . $color . "; border-radius:10px;font-size:8pt;\" />";
-    $mysql->escape_string($idhtml);
-
-    if ($email && DISP_ID == 1) {
-        $now .= " (ID:" . $idhtml . " Heaven </span>)";
-    } else {
-        if (!$resto) {
-        //holy hell there has to be a better way to do this. i swear ill think of it soon
-        $idsalt = $mysql->result($mysql->query("select max(no) from " . SQLLOG), 0, 0); 
-        $idsalt = $idsalt + 1;
+    private function generateThumbnail() {
+        if (USE_THUMB) {
+            require_once("thumb/thumb.php");
+            require_once("process/image.php"); //Required for video thumbnail stats.
+            $output = thumb($this->cache['file']['location'], ($this->cache['post']['child']));
+            if (!$output['location'] && $ext != ".pdf") {
+                cleanup(S_UNUSUAL);
+            }
+            $this->cache['file']['thumbnail'] = $output;
         } else {
-            $idsalt = $resto;
+
         }
-        $now .= " (ID:" . $idhtml . substr(crypt(md5($_SERVER["REMOTE_ADDR"] . PANEL_PASS . 'id' . date("Ymd", $time)), $idsalt), +3) . "</span>)";
-    }
-}
-
-if (file_exists('geoiploc.php')) {
-    require_once("geoiploc.php");
-    $country = strtolower(getCountryFromIP($host, "CTRY"));
-    $now .= " <img src='" . CSS_PATH . "/imgs/flags.png' class='f-$country' /> ";
-}
-
-if (strpos($email,'sage') !== false || strpos($email,'nokosage') !== false)
-    $sageThis = true;
-
-if (strpos($email,'nokosage') !== false || strpos($email,'noko') !== false)
-    $noko = true;
-
-$noko = true;
-//Text sanitizing
-//Text plastic surgery (rorororor)
-$email = $sanitize->CleanStr($email, 0); //Don't allow moderators to fuck with this
-$email = preg_replace("[\r\n]", "", $email);
-$sub   = $sanitize->CleanStr($sub, 0); //Or this
-$sub   = preg_replace("[\r\n]", "", $sub);
-$url   = $sanitize->CleanStr($url, 0); //Or this
-$url   = preg_replace("[\r\n]", "", $url);
-$resto = $sanitize->CleanStr($resto, 0); //Or this
-$resto = preg_replace("[\r\n]", "", $resto);
-$com   = $sanitize->CleanStr($com, $moderator); //But they can with this.
-
-$clean = $sanitize->process($name, $com, $sub, $email, $resto, $url, $dest, $moderator);
-
-$sub = $clean['sub'];
-$com = $clean['com'];
-$email = $clean['email'];
-$name = $clean['name'];
-
-unset($clean);
-
-require_once("tripcode.php"); //This DOES the trip processing.
-
-
-if (USE_BBCODE) {
-    require_once(CORE_DIR . '/general/text_process/bbcode.php');
-
-    $bbcode = new BBCode;
-    $com = $bbcode->format($com);
-}
-
-if (SPOILERS && $spoiler)
-    $sub = "SPOILER<>" . $sub;
-
-if ($moderator && isset($_POST['showCap'])) {
-    if ($moderator == 1)
-        $name = '<span class="cap moderator" >' . $name . ' ## Mod </span>';
-    if ($moderator == 3)
-        $name = '<span class="cap manager" >' . $name . ' ## Manager  </span>';
-    if ($moderator == 2)
-        $name = '<span class="cap admin" >' . $name . ' ## Admin </span>';
-}
-
-if (FORCED_ANON) {
-    $name = S_ANONAME . " </span>$now<span>";
-    $sub  = '';
-    $now  = '';
-}
-
-
-$may_flood = ($moderator >= 1);
-
-if (!$may_flood) {
-    if ($com) {
-        // Check for duplicate comments
-        $query  = "select count(no)>0 from " . SQLLOG . " where com='" . $mysql->escape_string($com) . "' " . "and host='" . $mysql->escape_string($host) . "' " . "and time>" . ($time - RENZOKU_DUPE);
-        $result = $mysql->query($query);
-        if ($mysql->result($result, 0, 0))
-            error(S_RENZOKU, $dest);
-        $mysql->free_result($result);
     }
 
-    if (!$has_image) {
-        // Check for flood limit on replies
-        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0";
-        $result = $mysql->query($query);
-        if ($mysql->result($result, 0, 0))
-            error(S_RENZOKU, $dest);
-        $mysql->free_result($result);
-    }
+    private function insert($info) {
+        global $mysql;
 
-    if ($sageThis) {
-        // Check flood limit on sage posts
-        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU_SAGE) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0 and permasage=1";
-        $result = $mysql->query($query);
-        if ($mysql->result($result, 0, 0))
-            error(S_RENZOKU, $dest);
-        $mysql->free_result($result);
-    }
+        $data = [ //Ironically aligned to "permasage".
+            'now'       => $info['post']['now'],
+            'name'      => $info['post']['name'],
+            'email'     => $info['post']['email'],
+            'sub'       => $info['post']['subject'],
+            'com'       => $info['post']['comment'],
+            'host'      => $info['host'],
+            'pwd'       => $info['post']['password'],
+            'ext'       => "." . $info['file']['original_extension'],
+            'w'         => $info['file']['width'],
+            'h'         => $info['file']['height'],
+            'tn_w'      => $info['file']['thumbnail']['width'],
+            'tn_h'      => $info['file']['thumbnail']['height'],
+            'tim'       => $info['local_name'],
+            'time'      => $info['time'],
+            'md5'       => $info['file']['md5'],
+            'fsize'     => $info['file']['filesize'],
+            'fname'     => $info['file']['original_name'],
+            'sticky'    => $info['post']['special']['sticky'],
+            'permasage' => $info['post']['special']['permasage'],
+            'locked'    => $info['post']['special']['locked'],
+            'resto'     => ($_POST['resto']) ? (int) $_POST['resto'] : 0
+        ];
 
-    if (!$resto) {
-        // Check flood limit on new threads
-        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU3) . " " . "and host='" . $mysql->escape_string($host) . "' and root>0"; //root>0 == non-sticky
-        $result = $mysql->query($query);
-        if ($mysql->result($result, 0, 0))
-            error(S_RENZOKU3, $dest);
-        $mysql->free_result($result);
-    }
-}
+        //Dynamically build the SQL command, numerous advantages.
+        $keys = []; $vals = [];
+        foreach($data as $column => $value) {
+            array_push($keys,$column);
 
-// Upload processing
-if ($has_image) {
-    if (!$may_flood) {
-        $query  = "select count(no)>0 from " . SQLLOG . " where time>" . ($time - RENZOKU2) . " " . "and host='" . $mysql->escape_string($host) . "' and resto>0";
-        $result = $mysql->query($query);
-        if ($mysql->result($result, 0, 0))
-            error(S_RENZOKU2, $dest);
-        $mysql->free_result($result);
-    }
-
-    //Duplicate image check
-    if (DUPE_CHECK) {
-        $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
-        if ($mysql->num_rows($result)) {
-            list($dupeno, $duperesto) = $mysql->fetch_row($result);
-            if (!$duperesto)
-                $duperesto = $dupeno;
-            error('<a href="' . DATA_SERVER . BOARD_DIR . "/res/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>', $dest);
+            //If the value is numeric (but may be a string) or a boolean, cast it to an integer. Otherwise wrap in doublequotes and escape it.
+            array_push($vals,(is_numeric($value) || is_bool($value)) ? (int) $value : '"' . $mysql->escape_string($value) . '"');
         }
-        $mysql->free_result($result);
+        $keys = implode(",",$keys);
+        $vals = implode(",",$vals);
+
+        $query = "insert into ".SQLLOG." ($keys) values ($vals)";
+        $mysql->query($query);
+        $final = (int) $mysql->result('select last_insert_id()');
+        /* if (!$result = ?) { echo E_REGFAILED; }*/
+
+        $this->cache['post']['number'] = $final;
+        return $final; //Return 'no', latest auto-incremented column.
+    }
+
+    private function updateCache() {
+        global $mysql, $my_log;
+
+        $child = $this->cache['post']['child'];
+        $number = (int) $this->cache['post']['number'];
+        $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
+        $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
+
+		//Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
+		require_once("prune.php");
+		prune_old(); //Does the page pruning
+		
+		if ($this->cache['post']['special']['sticky'] == 2)
+			pruneThread($parent); //Event stickies.
+		
+        //Run update process.
+        $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
+        $target = ($child) ? $parent : $number;
+        $my_log->update($target, $static_rebuild);
+
+        //Auto-noko.
+        $url = DATA_SERVER . BOARD_DIR . "/" . RES_DIR;
+        $target = $url . $target . PHP_EXT . (($child) ? "#$number" : "");
+        echo "<html><head><meta http-equiv='refresh' content='60;URL=$target'></head><body><a href='$target'>Redirecting...</a></body></html>";
+        //echo "<body>" . S_SCRCHANGE . "</body></html>";
+        header("Location: $target"); /* Redirect browser */
+        exit();
+    }
+
+    function initialCheck() {
+        require_once('process/upload.php');
+        $check = new UploadCheck;
+        $check->run();
+    }
+
+    function extractForm() {
+        require_once('sanitize.php'); //Load sanitation class.
+        //Default post information.
+        srand((double) microtime() * 1000000); //Seed the RNG.
+
+        $time = time();
+        $day = [S_SUN,S_MON,S_TUE,S_WED,S_THU,S_FRI,S_SAT]; $day = $day[date("w")];
+
+        $post = [
+            'name' => (FORCED_ANON == false && $_POST['name']) ? $_POST['name'] : S_ANONAME,
+            'subject' => (FORCED_ANON == false && $_POST['sub']) ? $_POST['sub'] : S_ANOTITLE,
+            'email' => ($_POST['email']) ? $_POST['email'] : "",
+            'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
+            'password' => ($_POST['pwd'] !== "") ? substr($_POST['pwd'],0,8) : ($_COOKIE['saguaro_pass']) ? $_COOKIE['saguaro_pass'] : substr(md5(rand()),0,8), //Get and/or supply deletion password.
+            'now' => date("m/d/y", $time) . "(" . (string) $day . ")" . date("H:i:s", $time),
+            'special' => $this->sortSpecial(),
+            'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
+        ];
+
+        //Basic sanitization.
+        $sanitize = ['name','subject','email','comment'];
+        foreach ($sanitize as $key) {
+            $post[$key] = Sanitize::CleanStr($post[$key]);
+        }
+
+        $post['child'] = (bool) ($post['parent'] !== 0);
+        $post['comment_md5'] = md5($post['comment']);
+
+        require_once('tripcode.php');
+        $post['name'] = Tripcode::format($post['name']);
+        $post['name'] = ($post['special']['capcode']) ? Tripcode::adminify($post['name']) : $post['name']; 
+
+		//Apply user IDs, dice, EXIF etc to post.
+		require_once("addons.php");
+		$post['now'] = userID($post['now'], $post['email']);
+		$post['comment'] = parseComment($post['comment'], $post['email']);
+
+        return $post;
+    }
+
+    function extractFile($file,$tim) {
+        //Need the file's width/height, MD5 hash, and size.
+        //Determine the file type and load the appropriate processor.
+
+        require_once('process/upload_file.php');
+        $check = new ProcessFile;
+        return $check->run($file,$tim);
     }
     
-    //Thumbnail
-    rename($dest, $path . $tim . $ext);
-    if (USE_THUMB) { //We'll still make the thumbnail even if its a spoiler image for user extensions.
-        require_once("thumb.php");
-        $tn_name = thumb($path, $tim, $ext, $resto);
-        if (!$tn_name && $ext != ".pdf") {
-            error(S_UNUSUAL);
+    private function sortSpecial() {
+
+        if (valid('janitor')) {
+            //Must leave int values as ints, bool values as bools
+            $cap = (isset($_POST['showCap'])) ? true : false;
+            $sticky = (isset($_POST['isSticky'])) ? true : false;
+            $eventSticky = (isset($_POST['eventSticky'])) ? $sticky = 2 : false;
+            $locked = (isset($_POST['isLocked'])) ? true : false;
         }
+
+        return [
+            'sticky' => $sticky,
+            'locked' => $locked,
+            'capcode' => $cap
+        ];
     }
+
 }
 
-$rootqu = $resto ? "0" : "now()";
-
-if ($stickied)
-    $rootqu = '20270727070707';
-
-//Bump processing
-if ($resto) { 
-    $countres = $mysql->result("SELECt COUNT(no) FROM " . SQLLOG . " where resto=" . $resto, 0, 0);
-    $stat = $mysql->fetch_assoc("SELECT sticky,permasage FROM " . SQLLOG . " WHERE no=" . $resto);
-    if (!$sageThis && $countres < MAX_RES && !$stat['sticky'] && !$stat['permasage']) //|| ($admin && $age && $sticky < "0"))
-        $mysql->query("UPDATE " . SQLLOG . " SET root=now() WHERE  no='$resto'"); //Bump
-}
-
-//Main insert
-$query = "INSERT INTO " . SQLLOG . " (now,name,email,sub,com,host,pwd,ext,w,h,tn_w,tn_h,tim,time,md5,fsize,fname,sticky,permasage,locked,root,resto) VALUES (" . "'" . $now . "',"
- . "'" . $mysql->escape_string($name) . "'," 
- . "'" . $mysql->escape_string($email) . "',"
- . "'" . $mysql->escape_string($sub) . "'," 
- . "'" . $mysql->escape_string($com) . "'," 
- . "'" . $mysql->escape_string($host) . "'," 
- . "'" . $mysql->escape_string($pass) . "'," 
- . "'" . $ext . "',"
- . (int) $W . ","
- . (int) $H . ","
- . (int) $TN_W . "," 
- . (int) $TN_H . "," 
- . "'" . $tim . "',"
- . (int) $time . ","
- . "'" . $md5 . "',"
- . (int) $fsize . ","
- . "'" . $mysql->escape_string($upfile_name) . "',"
- . (int) $stickied . ","
- . (int) $permasage . ","
- . (int) $locked . ","
- . $rootqu . ","
- . (int) $mysql->escape_string($resto) . ")";
-
-if (!$result = $mysql->query($query)) {
-    echo E_REGFAILED;
-} //post registration
-
-$cookie_domain = '.' . SITE_ROOT . '';
-
-//Begin cookies
-/*if ($c_name) //Name
-    setrawcookie("saguaro_name", rawurlencode($c_name), time() + ($c_name ? (7 * 24 * 3600) : -3600), '/', $cookie_domain);*/
-
-if (($c_email != "sage") && ($c_email != "age")) //Email
-    setcookie("saguaro_email", $c_email, time() + ($c_email ? (7 * 24 * 3600) : -3600), '/', $cookie_domain); // 1 week cookie expiration
-
-//Pass
-setcookie("saguaro_pass", $c_pass, time() + 7 * 24 * 3600, '/', $cookie_domain); // 1 week cookie expiration
-
-//End cookies
-
-if (!$resto) {
-    require_once('prune_old.php');
-    prune_old();
-} else {//Event stickies
-    $eventStick = $mysql->query("SELECT sticky FROM " . SQLLOG . " WHERE no='$resto' AND sticky=2");
-    if ($mysql->num_rows($eventStick) > 0) {
-        require_once('prune_old.php');
-        pruneThread($resto);
-    }
-    $mysql->free_result($eventStick);
-}
-
-$static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
-
-//Finding the last entry number
-if (!$result = $mysql->query("select max(no) from " . SQLLOG)) {
-    echo S_SQLFAIL;
-}
-$hacky    = $mysql->fetch_array($result);
-$insertid = (int) $hacky[0];
-$mysql->free_result($result);
-
-$deferred = false;
-// update html
-if ($resto)
-    $deferred = $my_log->update($resto, $static_rebuild);
-else 
-    $deferred = $my_log->update($insertid, $static_rebuild);
-
-if ($noko && !$resto) {
-    $redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $insertid . PHP_EXT;
-} else if ($noko) {
-    $redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $resto . PHP_EXT . '#' . $insertid;
-} else {
-    $redirect = PHP_SELF2_ABS;
-}
-
-if ($deferred) {
-    echo "<html><head><META HTTP-EQUIV=\"refresh\" content=\"2;URL=$redirect\"></head>";
-    echo "<body>$mes " . S_SCRCHANGE . "<br>Your post may not appear immediately.<!-- thread:$resto,no:$insertid --></body></html>";
-} else {
-    echo "<html><head><META HTTP-EQUIV=\"refresh\" content=\"1;URL=$redirect\"></head>";
-    echo "<body>$mes " . S_SCRCHANGE . "<!-- thread:$resto,no:$insertid --></body></html>";
-}
-
+$regist = new Regist;
+$regist->run();
 
 ?>

@@ -89,6 +89,10 @@ class SaguaroMySQL extends SaguaroQL {
         $this->last = mysql_num_rows($true);
         return $this->last;
     }
+
+    function stats() {
+        return mysql_stat($this->connection);
+    }
 }
 
 ?>

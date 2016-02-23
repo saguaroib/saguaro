@@ -2,11 +2,13 @@
 
 class Banish {
 	
-    function checkBan($ip) {
-       global $mysql;
-		if ( $mysql->num_rows("SELECT ip, active FROM " . SQLBANLOG . " WHERE ip='" . $mysql->escape_string($ip) . "' AND active>0 LIMIT 1") > 0 ) 		//if active ban exists, stop all further action
-			return false;
-		return true;		//No active bans
+    function isBanned($ip) {
+		global $mysql;
+
+		$query = "SELECT ip FROM " . SQLBANLOG . " WHERE ip='" . $mysql->escape_string($ip) . "' AND active>0";
+		$result = $mysql->num_rows($query);
+
+		return ($result > 0) ? true : false;
     }
     
 	function postOptions($no, $ip, $expires, $expires2, $banType, $perma, $pubreason, $staffnote, $custmess, $showbanmess, $afterban) {

@@ -10,7 +10,7 @@ $host = $_SERVER['REMOTE_ADDR'];
 require_once(CORE_DIR . "/admin/bans.php");
 
 $dis  = new Banish;
-$deny = ($dis->checkBan($host)) ? 0 : 1; //no ban : is banned
+$deny = ($dis->isBanned($host)) ? 0 : 1; //no ban : is banned
 
 $status = "are not banned";
 if ($deny) {

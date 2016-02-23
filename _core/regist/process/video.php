@@ -20,10 +20,8 @@ class VideoProcessor {
             error("\"$upfile_name\" contains audio!", $dest);
         if ($info['duration'] > MAX_DURATION)
             error("\"$upfile_name\" is too long! ({$info['duration']} > " . MAX_DURATION . ")", $dest);
-        
-        global $W, $H;
-        $W = $info['width'];
-        $H = $info['height'];
+
+        return $info;
     }
 
     private function check ($input) {
@@ -51,7 +49,13 @@ class VideoProcessor {
             $has_video = preg_match("/^codec_type=video$/msi", $probe);
             $has_audio = preg_match("/^codec_type=audio$/msi", $probe);
 
-            return ['width' => $width[1], 'height' => $height[1], 'duration' => round($dur[1],1), 'has_video' => $has_video, 'has_audio' => $has_audio];
+            return [
+                'width' => (int) $width[1],
+                'height' => (int) $height[1],
+                'duration' => round($dur[1],1),
+                'has_video' => $has_video,
+                'has_audio' => $has_audio
+            ];
         }
     }
 

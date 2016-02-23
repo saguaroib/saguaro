@@ -33,7 +33,7 @@ class Image {
         $shortname = (strlen($fname) > 40) ? substr($fname, 0, 40) . "(...)" . $ext : $longname;
         // img tag creation
         $imgsrc    = "";
-        if ($ext) {
+        if ($ext !=='.') {
             // turn the 32-byte ascii md5 into a 24-byte base64 md5
             $shortmd5 = base64_encode(pack("H*", $md5));
             if ($fsize >= 1048576) {

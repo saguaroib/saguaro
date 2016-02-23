@@ -3,21 +3,27 @@
 /*
 
     Class that handles generating video thumbnails for various formats and encoders.
-    
+
     Currently requires handlers to be in the path.
 
 */
 
 class VideoThumbnail {
     function run($input, $output = "auto", $width = 250, $height = 250) {
-        if ('which avconv' || 'where avconv') { $this->thumb_avconv($input,$output,$width,$height); }
-        else if ('which ffmpeg' || 'where ffmpeg') { $this->thumb_ffmpeg($input,$output,$width,$height); }
+        $path = "";
+        if ('which avconv' || 'where avconv') { $path = $this->thumb_avconv($input,$output,$width,$height); }
+        else if ('which ffmpeg' || 'where ffmpeg') { $path = $this->thumb_ffmpeg($input,$output,$width,$height); }
+
+        $temp = (class_exists('ProcessImage')) ? ProcessImage::run($path) : []; //Obtain thumbnail stats (resolution) via ProcessImage class.
+        $temp['path'] = $path;
+
+        return $temp;
     }
 
     private function passthrough($temp) {
 
     }
-    
+
     function thumb_avconv($input, $output, $width, $height) {
         $inputn = preg_replace('/\\.[^.\\s]{3,4}$/', '', $input); //Strip out extension.
         $output = ($output == "auto") ? THUMB_DIR . "/" . $inputn . ".jpg" : $output;
