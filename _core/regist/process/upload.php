@@ -124,14 +124,14 @@ class UploadCheck {
     }
 
     function cooldown($upfile) {
-        global $mysql;
+		$canFlood = (valid('moderator')) ? true : false;
+        if ($canFlood) return true;
+
+		global $mysql;
 
         $resto = (int) $_POST['resto'];
         $host = $_SERVER['REMOTE_ADDR'];
         $time = time();
-
-        $canFlood = (valid('moderator')) ? true : false;
-        if ($canFlood) return true;
 
         //Pull all recent rows (to the highest timeout) from the SQL table.
         $min = $time - max(RENZOKU,RENZOKU2/*,RENZOKU3*/);
