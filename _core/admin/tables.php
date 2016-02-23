@@ -93,8 +93,8 @@ class Table {
                 $img_flag = FALSE;
                 list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto) = $row;
                 // Format
-                $now = ereg_replace('.{2}/(.*)$', '\1', $now);
-                $now = ereg_replace('\(.*\)', ' ', $now);
+                /*$now = preg_replace('/.{2}(.*)$/', '\1', $now); //tfw you'll never know reg expressions
+                $now = preg_replace('/(.*)/', ' ', $now);*/
                 $name = (strlen($name) > 10) ? substr($name, 0, 9) . "..." : $name;
                 $name = ($email) ? "<a href=\"mailto:$email\">$name</a>" : $name;
                 $sub = (strlen($sub) > 10) ? substr($sub, 0, 9) . "..." : $sub;

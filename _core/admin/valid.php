@@ -29,7 +29,7 @@ class Valid {
                     // except that we only know that they're a moderator or a janitor for another board
                     // AFTER we read all the tokens
                     foreach ($allows as $token) {
-                        if ($token == 'janitor')
+                        if ($token == 'janitor_board')
                             $seen_janitor_token = true;
                         /*  else if ($token == 'manager' && $valid_cache < $access_level['manager'])
                         $valid_cache = $access_level['manager'];*/

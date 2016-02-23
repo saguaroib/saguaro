@@ -164,10 +164,10 @@ class Log {
                     break;
                 } //only one tree line at time of res
             }
-            
+
             if (USE_ADS3)
-                $dat .= ADS3 . '<hr>';    
-                
+                $dat .= ADS3 . '<hr>';
+
             //afterPosts div is closed in general/foot.php
             $dat .= '<div class="afterPosts" /><table align="right"><tr><td class="delsettings" nowrap="nowrap" align="center">
     <input type="hidden" name="mode" value="usrdel" />' . S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']
@@ -243,7 +243,7 @@ class Log {
             $this->print_page($logfilename, $dat);
             //chmod($logfilename,0666);
         }
-		
+
 		if (!$resno) { //Rebuild catalog page if index is changed. Eventually should handle catalog stuff client side...
             require_once(CORE_DIR . "/catalog/catalog.php");
             $catalog = new Catalog;
@@ -264,7 +264,7 @@ class Log {
         //Automatically exit if the cache isn't empty.
         if (!empty($this->cache) && $revalidate == false)    //If cache isn't empty, continue. If no request to rebuild cache, continue
             return true; //Otherwise doesn't need to be updated.
-        
+
         global $ipcount, $mysql_unbuffered_reads, $lastno, $mysql;
 
         $ips = [];
@@ -317,7 +317,8 @@ class Log {
 
         }
 
-        $query = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE root>0 order by root desc");
+        //Basic support for bump order with new 'last' column.
+        $query = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE resto=0 order by last desc");
         while ($row = $mysql->fetch_assoc($query)) {
             if (isset($log[$row['no']]) && $log[$row['no']]['resto'] == 0) {
                 $threads[] = $row['no'];
