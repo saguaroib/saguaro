@@ -20,7 +20,7 @@ class UploadCheck {
         if ($this->uploadedFile() !== true) error($this->last, $upfile); //File check.
 
         //These checks access the SQL server so we should prioritize these last and then order based on how intensive they are.
-        if ($this->banned() !== true) error($this->last, $upfile); //Ban check.
+        if ($this->banned() !== true) {if (is_file($upfile)) unlink($upfile); header("Location: banned.php");} //Ban check.
         if ($this->locked() !== true) error($this->last, $upfile); //Lock check.
         if ($this->media() !== true) error($this->last, $upfile); //Media check.
         if ($this->cooldown($upfile) !== true) error($this->last, $upfile); //Flood/cooldown checks.
