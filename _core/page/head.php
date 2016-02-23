@@ -64,7 +64,8 @@ class Head {
 
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/styleswitch.js' type='text/javascript'></script>
-                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>";
+                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>
+                <script src='" . JS_PATH . "/admin.js' type='text/javascript'></script>";
 
         if (USE_JS_SETTINGS)  $dat .= '<script src="' . JS_PATH . '/suite_settings.js" type="text/javascript"></script>';
         if (USE_IMG_HOVER)    $dat .= '<script src="' . JS_PATH . '/image_hover.js" type="text/javascript"></script>';
