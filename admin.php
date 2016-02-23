@@ -92,22 +92,17 @@ switch ($_GET['mode']) {
         break;
     case 'adel':
         if (!valid('janitor'))
-                error(S_NOPERM);
+            error(S_NOPERM);
         $no = $mysql->escape_string($_GET['no']);
         $imonly = ($_GET['imgonly'] == '1') ? 0 : 1;
         delete_post($no, 0, $imonly, 0,1,1);
         echo '<meta http-equiv="refresh" content="0; url=' . PHP_ASELF_ABS . '?mode=' . $_GET['refer'] . '" />';
         break;
     case 'ban':
-        if (!valid('moderator'))
-            error(S_NOPERM);
+        if (!valid('moderator')) error(S_NOPERM);
         require_once(CORE_DIR . "/admin/bans.php");
-        $banish = new Banish;
-        if (isset($no)) {
-            $banish->postOptions($no, $ip, $banlength1, $banlength2, $banType, $perma, $pubreason, $staffnote, $custmess, $showbanmess, $afterban);
-            echo "<script>window.close();</script>";
-        }
-        $banish->form($_GET['no']);
+        if ($no) Banish::process($no, $ip, $length, $global, $reason, $pubreason);
+        Banish::form($_GET['no']);
         break;
     case 'more':
         echo $table->moreInfo($_GET['no']);

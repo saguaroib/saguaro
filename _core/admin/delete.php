@@ -119,5 +119,12 @@ class Delete extends Log {
         
         return $row['resto']; // so the caller can know what pages need to be rebuilt
     }
+    
+    function deleteUploaded($file, $path) {
+        global $upfile, $dest;
+        if ($dest || $upfile) {
+            @unlink($upfile);
+            @unlink($dest);
+    }
 }
 ?>
