@@ -60,7 +60,7 @@ define(SHOW_BLOTTER, false);      //Experimental. Added to the top of each board
 define(BLOTTER_PATH, 'CHANGEME'); //Experimental. Absolute html path to your blotter file, this feature is experimental and still is not fully functional.
 
 //Administrative
-define(JANI_CAPCODES, false); //Allow janitors to post with a capcode
+define(JANITOR_CAPCODES, false); //Allow janitors to post with a capcode
 
 // Post & Thread
 define(USE_BBCODE, false);  //Use BBcode
@@ -79,6 +79,7 @@ define(PROXY_CHECK, true);  //Enable proxy check.
 
 define(RENZOKU, 10);        //Seconds between posts (floodcheck)
 define(RENZOKU2, 15);       //Seconds between image posts (floodcheck)
+define(RENZOKU3, 13);		//Seconds between thread creation (floodcheck)
 define(MAX_RES, 500);       //Maximum thread bumps from posts.
 define(MAX_IMGRES, 300);    //Maximum thread bumps from images
 define(EVENT_STICKY_RES, 1500); //The number of replies allowed to an event sticky before in-thread pruning begins. These stickies self delete the oldest posts once the number of replies exceeds this number.
