@@ -3,7 +3,7 @@ $(document).ready(function() { Admin.init(); });
 Admin = {
 	
 	init: function() {
-		try (repod.suite_settings) { Admin.repodHook.init();} catch { console.log("User suite not found, skipping.");}
+		//try (repod.suite_settings) { Admin.repodHook.init();} catch { console.log("User suite not found, skipping.");} //The world isn't ready for this yet.
 		$(".cmd").click(function() { 
 			var action = $(this).attr('data-cmd'), data = $(this).attr('data-id');
 			Admin.cmd(action, data);
