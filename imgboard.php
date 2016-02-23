@@ -44,10 +44,10 @@ function valid($action = 'moderator', $no = 0) {
     return $validate->verify($action);
 }
 
-function error($mes, $dest, $fancy = 0) {
+function error($mes, $dest, $banflag = 0) {
     require_once(CORE_DIR . "/general/error.php");
     $error = new Error();
-    $error->format($mes, $dest, $fancy);
+    $error->format($mes, $dest, $banflag);
 }
 
 /*-----------Main-------------*/

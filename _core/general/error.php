@@ -5,17 +5,16 @@ class Error {
         $this->format($mes, $dest, $fancy);
     }*/
 
-    function format($mes, $dest = '', $fancy = 0) {
+    function format($mes, $dest = '', $banflag = 0) {
         global $path;
         //debug_print_backtrace(); //Useful for figuring out where the call is coming from and why.
 
         if (is_file($dest))
             unlink($dest);
 
-
-        /*if ($mes == S_BADHOST) {
-            //die("<html><head><meta http-equiv='refresh' content='0; url=banned.php'></head></html>");
-        } else*/if (!$fancy) {
+		if ($banflag) header("Location: banned.php");
+		
+        if (!$fancy) {
             require_once(CORE_DIR . "/page/head.php");
             $head = new Head; $head = $head->generate();
             $upfile_name = $_FILES["upfile"]["name"];
