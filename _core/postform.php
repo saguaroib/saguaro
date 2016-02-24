@@ -30,6 +30,8 @@ class PostForm {
         if ($admin) {
             $name = "";
 
+            if (valid('janitor')) 
+                $name = '<span style="color:#4169E1;font-weight:bold;">Anonymous ## Janitor</span>';
             if (valid('moderator')) 
                 $name = '<span style="color:#770099;font-weight:bold;">Anonymous ## Mod</span>';
             if (valid('manager'))
@@ -49,7 +51,7 @@ class PostForm {
         $temp .= "<table>";
 
         if (!FORCED_ANON) //Name
-            $temp .= "<tr><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28'></td></tr>";
+        $temp .= "<tr><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28' placeholder='" . S_ANONAME . "'></td></tr>";
 
         $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'>";
 
