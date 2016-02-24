@@ -30,7 +30,7 @@ class PostForm {
         if ($admin) {
             $name = "";
 
-            if (valid('janitor')) 
+            if (valid('janitor') && JANITOR_CAPCODES) 
                 $name = '<span style="color:#4169E1;font-weight:bold;">Anonymous ## Janitor</span>';
             if (valid('moderator')) 
                 $name = '<span style="color:#770099;font-weight:bold;">Anonymous ## Mod</span>';
