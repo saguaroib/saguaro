@@ -72,7 +72,7 @@ class Tripcode {
         $name2 = strip_tags($name); //Remove anything inserted by tripcode processing
     
         //Travel up the permission tree to get the highest value
-        if(valid('janitor') && JANI_CAPCODES)
+        if(valid('janitor') && JANITOR_CAPCODES)
             $name = "<span class='cap jani'>" . $name2 . " ## Janitor</span>";
         if(valid('moderator')) // Note the combination of the words.
             $name = "<span class='cap moderator'>" . $name2 . " ## Mod</span>";
