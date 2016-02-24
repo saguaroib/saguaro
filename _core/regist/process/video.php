@@ -39,7 +39,6 @@ class VideoProcessor {
 
     private function check($input) {
         if ('which avprobe' || 'where avprobe') { return $this->process_avprobe($input); }
-        else if ('which ffprobe' || 'where ffprobe') { return $this->process_ffprobe($input); }
 
         return 0;
     }
@@ -94,12 +93,6 @@ class VideoProcessor {
                 'has_audio' => $has_audio
             ];
         }
-    }
-
-    function process_ffprobe($input) {
-        //exec("ffprobe -print_format json -show_format -show_streams $input", $out, $aye);
-
-        //var_dump($out);
     }
 }
 
