@@ -24,9 +24,9 @@ class Post {
         $temp .= "<div class='postInfoM mobile' id='pim$no'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now  <a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a></span></div>";
         $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span>";
 
-        $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky"> ' : "";
+        $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky" title="Stickied thread"> ' : "";
 
-        if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/imgs/locked.gif" alt="closed"> ';
+        if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/imgs/locked.gif" alt="closed" title="Locked Thread"> ';
 
         if (!$this->inIndex) {
             $temp .= "<a href='#$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon </div>";
