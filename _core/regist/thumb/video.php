@@ -20,10 +20,6 @@ class VideoThumbnail {
         return $temp;
     }
 
-    private function passthrough($temp) {
-
-    }
-
     function thumb_avconv($input, $output, $width, $height) {
         $inputn = preg_replace('/\\.[^.\\s]{3,4}$/', '', $input); //Strip out extension.
         $output = ($output == "auto") ? THUMB_DIR . "/" . $inputn . ".jpg" : $output;
