@@ -51,7 +51,7 @@ class PostForm {
         $temp .= "<table>";
 
         if (!FORCED_ANON) //Name
-            $temp .= "<tr><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28' placeholder='Anonymous'></td></tr>";
+        $temp .= "<tr><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28' placeholder='" . S_ANONAME . "'></td></tr>";
 
         $temp .= "<tr><td class='postblock' align='left'>" . S_EMAIL . "</td><td align='left'><input type='text' name='email' size='28'>";
 
