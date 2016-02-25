@@ -17,10 +17,9 @@ $page = new Page;
 
 $host = $_SERVER['REMOTE_ADDR'];
 
-$status = $ban->isBanned($host); 				//Check if user is banned
-$info = ($status) $ban->banInfo : "none"; 		//If ban exists in the table, get the information array. Otherwise, user isn't banned
+$info = ($ban->isBanned($host)) $ban->banInfo() : "none"; 		//If ban exists in the table, get the information array. Otherwise, user isn't banned
 $html = $ban->banScreen($info); 				//Returns all the html for banned.php from the ban class
 echo $page->generate($html); 					//Page class outputs. 
-$ban->append();									//Run checks to see if the ban needs to be updated and we're done here!
+$ban->append($host);									//Run checks to see if the ban needs to be updated and we're done here!
 
 ?>
