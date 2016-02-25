@@ -164,14 +164,15 @@ class Table {
     
     function moreInfo($no) {
         global $mysql;
+		
+		$no = $mysql->escape_string($no);
         
         if (!$result = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'"))
             echo S_SQLFAIL;
         
         $row = $mysql->fetch_row($result);
         list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board, ) = $row;
-        $temp = head(0);
-        $temp .= "<table border='0' cellpadding='0' cellspacing='0'  />";
+        $temp = "<table border='0' cellpadding='0' cellspacing='0'  />";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br><hr><br>";
         if ($sticky || $locked || $permasage) {
             if ($sticky)
@@ -247,7 +248,7 @@ class Table {
         $temp .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form><br><hr>";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br>";
         
-        echo $temp;
+        return $temp;
     }
     
 }

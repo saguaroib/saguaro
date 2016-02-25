@@ -99,7 +99,8 @@ switch ($_GET['mode']) {
         echo $news->newsPanel();
         break;
     case 'more':
-        echo $table->moreInfo($_GET['no']);
+        $html = $table->moreInfo($_GET['no']);
+		echo $page->generate($html, true, false);
         break;
     case 'modify':
         require_once(CORE_DIR . "/admin/modify.php");
