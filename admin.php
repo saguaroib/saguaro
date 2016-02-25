@@ -32,6 +32,7 @@ function valid($action = 'moderator', $no = 0) {
 }
 
 function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1) {
+	$resno = $mysql->escape_string($resno);
     require_once(CORE_DIR . "/admin/delete.php");
     $remove = new Delete;
     $remove->targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1);
@@ -57,46 +58,38 @@ switch ($_GET['mode']) {
 		echo $page->generate($html, true);
         break;
     case 'staff':
-        head(0);
-        if (!valid('admin')) 
-            error(S_NOPERM);
         require_once(CORE_DIR . "/admin/staff.php");
-        $staff = new Staff;
-        echo $staff->getStaff();
-        if (isset($_POST['user']) && isset($_POST['pwd1']) && isset($_POST['pwd2']) && isset($_POST['action']))
-            $staff->addStaff($_POST['user'], $_POST['pwd1'], $_POST['pwd2'], $_POST['action']);
+        if ($_POST) Staff::process($_POST);
+        $html = Staff::display();
+        echo $page->generate($html, true, false);
         break;
     case 'adel':
         if (!valid('janitor')) error(S_NOPERM);
-        delete_post($no, 0, $_GET['imgonly'], 0, 1, 1);
-        echo '<meta http-equiv="refresh" content="0; url=' . PHP_ASELF_ABS . '?mode=' . $_GET['refer'] . '" />';
+        delete_post($_GET['no'], 0, $_GET['imgonly'], 0, 1, 1);
         break;
     case 'ban':
         if (!valid('moderator')) error(S_NOPERM);
         require_once(CORE_DIR . "/admin/bans.php");
-        if ($no) Banish::process($no, $ip, $length, $global, $reason, $pubreason);
-        Banish::form($_GET['no']);
+        if ($_POST['no']) Banish::process($_POST);
+		echo Banish::action($_GET);
         break;
     case 'rebuild':
+		if (!valid("admin")) error(S_NOPERM);
         require_once(CORE_DIR . "/log/rebuild.php");
         rebuild(1);
         break;
     case 'reports':
         head(0);
-        if (isset($_GET['no']))
-            $getReport->reportClear($_GET['no']);
+        if ($_GET['no']) $getReport->reportClear($_GET['no']);
         $active    = $getReport->reportGetAllBoard();
         echo $getReport->reportList();
         break;
     case 'news':
-        head(0);
-        if (!valid('admin'))
-            error(S_NOPERM);
+        if (!valid('admin')) error(S_NOPERM);
         require_once(CORE_DIR . "/admin/news.php");
-        $news = new News; //lol
-        if (isset($_POST['update']) && isset($_POST['file']) || isset($_POST['boardlist']))
-            $news->newsUpdate($_POST['update'], $_POST['file']);
-        echo $news->newsPanel();
+        if ($_POST['update']) News::newsUpdate($_POST);
+        $html = News::newsPanel();
+		echo $page->generate($html, true, false); 
         break;
     case 'more':
         $html = $table->moreInfo($_GET['no']);
