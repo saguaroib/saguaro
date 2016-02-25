@@ -4,6 +4,10 @@ class Table {
     
     function display($type = 0, $resource = 0) {
         global $mysql;
+		
+		require_once(CORE_DIR . "/postform.php");
+		$postform = new PostForm;
+		
             function calculate_age($timestamp, $comparison = '') {
                 $units = array(
                      'second' => 60,
@@ -63,7 +67,9 @@ class Table {
                 $mode = 'ops';
             }            
 
-            // Deletion screen display
+			$temp .= $postform->format(0, 1);
+			
+            // Deletion screen display. Begin HTML generation.
             $temp .= "<div class='managerBanner'>" . S_MANAMODE . "</div>" . $banner;
             $temp .= '<br><form action="' . PHP_ASELF . '" method="get" id="delForm"><input type="hidden" name="mode" value="res">
             <input type="text" name="no" placeholder="Post # or IP" required><input type="submit" value="Search">
@@ -152,9 +158,8 @@ class Table {
             $temp .=  "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
             $all = (int) ($all / 1024);
             //$temp .=  "<div align='center'/>[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]</div>";
-            $temp .= "</body></html>";
 
-            echo $temp;
+            return $temp;
     }
     
     function moreInfo($no) {

@@ -2,43 +2,28 @@
 
 require('config.php');
 
-require_once(CORE_DIR . "/mysql/mysql.php");
+require_once(CORE_DIR . "/mysql/mysql.php");	//Init SQL
 $mysql = new SaguaroMySQL;
 $mysql->init();
 
-require_once(CORE_DIR . "/admin/login.php");
+require_once(CORE_DIR . "/admin/login.php");	//First line of security. Die script if user isn't logged in
 $login = new Login;
 $login->auth();
 
-//Load and initialize Log.
-require_once(CORE_DIR . "/log/log.php");
+require_once(CORE_DIR . "/page/page.php");		//Load page class
+$page = new Page;
+$page->headVars['page']['title'] = "/" . BOARD_DIR . "/ - Management Panel";
+
+require_once(CORE_DIR . "/log/log.php");		//Load and initialize Log.
 $my_log = new Log;
 
-//Load post table
-require_once(CORE_DIR . "/admin/tables.php");
+require_once(CORE_DIR . "/admin/tables.php");	//Load post tables
 $table = new Table;
 
-//Load report queue
-require_once(CORE_DIR . "/admin/report.php");
+require_once(CORE_DIR . "/admin/report.php");	//Load report queue
 $getReport = new Report;
 
 extract($_POST, EXTR_SKIP);
-
-//Display head.
-function head($noHead) {
-    require_once(CORE_DIR . "/page/head.php");
-    $head = new Head;
-    $head->info['page']['title'] = "/" . BOARD_DIR . "/ - Management Panel";
-    echo $head->generateAdmin($noHead);
-}
-
-//Admin form
-function aform(&$post, $resno, $admin = "") {
-    require_once(CORE_DIR . "/postform.php");
-    $postform = new PostForm;
-    $post .= "<div id='adminForm' style='display:none; align:center;' />" . $postform->format($resno, $admin) . "</div>";
-    echo $post;
-}
 
 function valid($action = 'moderator', $no = 0) {
     require_once(CORE_DIR . "/admin/valid.php");
@@ -47,7 +32,6 @@ function valid($action = 'moderator', $no = 0) {
 }
 
 function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1) {
-    require_once(CORE_DIR . "/log/log.php");
     require_once(CORE_DIR . "/admin/delete.php");
     $remove = new Delete;
     $remove->targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1);
@@ -61,24 +45,16 @@ function error($mes) { //until error class is sorted out, this is in-house admin
 /* Main switch */
 switch ($_GET['mode']) {
     case 'res':
-        head(0);
-        aform($post = '', 0, 1);
-        $table->display($type = 'res', $_GET['no']);
-        break;
-    case 'all':
-        head(0);
-        aform($post = '', 0, 1);
-        $table->display($type = 'all', 0);
+        $html = $table->display($type = 'res', $_GET['no']);
+		echo $page->generate($html, true);
         break;
     case 'ip' :
-        head(0);
-        aform($post = '', 0, 1);
-        $table->display($type = 'ip', $_GET['no']);
+        $html = $table->display($type = 'ip', $_GET['no']);
+		echo $page->generate($html, true);
         break;
     case 'ops':
-        head(0);
-        aform($post = '', 0, 1);
-        $table->display($type = 'ops', 0);
+        $html = $table->display($type = 'ops', 0);
+		echo $page->generate($html, true);
         break;
     case 'staff':
         head(0);
@@ -91,11 +67,8 @@ switch ($_GET['mode']) {
             $staff->addStaff($_POST['user'], $_POST['pwd1'], $_POST['pwd2'], $_POST['action']);
         break;
     case 'adel':
-        if (!valid('janitor'))
-            error(S_NOPERM);
-        $no = $mysql->escape_string($_GET['no']);
-        $imonly = ($_GET['imgonly'] == '1') ? 0 : 1;
-        delete_post($no, 0, $imonly, 0,1,1);
+        if (!valid('janitor')) error(S_NOPERM);
+        delete_post($no, 0, $_GET['imgonly'], 0, 1, 1);
         echo '<meta http-equiv="refresh" content="0; url=' . PHP_ASELF_ABS . '?mode=' . $_GET['refer'] . '" />';
         break;
     case 'ban':
@@ -104,27 +77,12 @@ switch ($_GET['mode']) {
         if ($no) Banish::process($no, $ip, $length, $global, $reason, $pubreason);
         Banish::form($_GET['no']);
         break;
-    case 'more':
-        echo $table->moreInfo($_GET['no']);
-        break;
-    case "modify":
-        require_once(CORE_DIR . "/admin/modify.php");
-        $modify = new Modify;
-        echo $modify->mod($_GET['no'], $_GET['action']);
-        break;
-    case 'logout':
-        setcookie('saguaro_apass', '0', 1);
-        setcookie('saguaro_auser', '0', 1);
-        echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
-        break;
     case 'rebuild':
         require_once(CORE_DIR . "/log/rebuild.php");
         rebuild(1);
         break;
     case 'reports':
         head(0);
-        require_once(CORE_DIR . "/admin/report.php");
-        $getReport = new Report;
         if (isset($_GET['no']))
             $getReport->reportClear($_GET['no']);
         $active    = $getReport->reportGetAllBoard();
@@ -140,10 +98,22 @@ switch ($_GET['mode']) {
             $news->newsUpdate($_POST['update'], $_POST['file']);
         echo $news->newsPanel();
         break;
+    case 'more':
+        echo $table->moreInfo($_GET['no']);
+        break;
+    case 'modify':
+        require_once(CORE_DIR . "/admin/modify.php");
+        $modify = new Modify;
+        echo $modify->mod($_GET['no'], $_GET['action']);
+        break;
+    case 'logout':
+        setcookie('saguaro_apass', '0', 1);
+        setcookie('saguaro_auser', '0', 1);
+        echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
+        break;
     default:
-        head(0);
-        aform($post = '', 0, 1);
-        $table->display($type = 'all', 0);
+        $html = $table->display($type = 'all', 0);
+		echo $page->generate($html, true, false);
         break;
 }
 ?>

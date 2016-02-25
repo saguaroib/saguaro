@@ -112,9 +112,11 @@ class PostForm {
         else
             $temp .= "<div class='threadnav' /> [<a href='" . PHP_SELF2_ABS . "#bottom'/>Bottom</a>]  [<a href='/" . BOARD_DIR . "/" . PHP_SELF . "?mode=catalog'>Catalog</a>]</div><hr>";
         
-
+		$temp = "<div id='adminForm' style='display:none; align:center;' />" . $temp . "</div>";
+		
         return $temp;
     }
+
 }
 
 ?>
