@@ -146,6 +146,11 @@ class Banish {
         
         echo $temp;
     }
+	
+	function banScreen($info) {
+		//Returns & processes banned.php HTML
+		
+	}
     
 }
 
