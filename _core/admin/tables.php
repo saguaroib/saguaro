@@ -166,11 +166,12 @@ class Table {
         global $mysql;
 		
 		$no = $mysql->escape_string($no);
-        
-        if (!$result = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'"))
-            echo S_SQLFAIL;
-        
-        $row = $mysql->fetch_row($result);
+
+        $query = "SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'";
+        $row = $mysql->fetch_row($query);
+		
+		if (!$row) echo S_SQLFAIL;
+		
         list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board, ) = $row;
         $temp = "<table border='0' cellpadding='0' cellspacing='0'  />";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br><hr><br>";
@@ -183,11 +184,11 @@ class Table {
                 $special .= "<b><font color=\"2E2EFE\">[Permasaged]</font></b>";
             $temp .= "<tr><td class='postblock'>Special:</td><td class='row2'>This thread is $special</td></tr>"; //lmoa
         }
-        $host = md5($host);
-        $host = substr($host, 12,20);
+        $hashedip = md5($host);
+        $hashedip = substr($hashedip, 12,20);
         $temp .= "<tr><td class='postblock'>Name:</td><td class='row1'>$name</td></tr>
       <tr><td class='postblock'>tempe:</td><td class='row2' />$now</td></tr>
-      <tr><td class='postblock'>IP:</td><td class='row1' /><b>$host</b></td></tr><br>
+      <tr><td class='postblock'>IP:</td><td class='row1' /><b>$hashedip</b></td></tr><br>
       <tr><td class='postblock'>Comment:</td><td class='row2' />$com</td></tr>
       <tr><td class='postblock'>MD5:</td><td class='row1' />$md5</td></tr>
       <tr><td class='postblock'>File</td>";
@@ -212,14 +213,14 @@ class Table {
             </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></td></tr></table></form>";
         } else
             $temp .= "</table></form>";
-        $alart = $mysql->num_rows("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
+        $alart = $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE host='" . $host . "'", 0, 0);
         if ( $alart > 0)
-            $alert = "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>";
+            $alert = "<b><font color=\"FF101A\"> $alart ban(s) on record for $hashedip!</font></b>";
         else
-            $alert = "No bans on record for IP $host";
+            $alert = "No bans on record for IP $hashedip";
         $temp .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
         <input type='hidden' name='no' value='$no' />
-        <input type='hidden' name='ip' value='$host' />
+        <input type='hidden' name='ip' value='$hashedip' />
         <center><th class='postblock'><b>Ban panel</b></th></center>
         <tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
         <tr><td class='postblock'>Unban in:</td><td><input type='number' min='0' size='4' name='banlength'  /> days</td></tr>
