@@ -21,6 +21,7 @@ class Report {
             $this->showForm($_GET['no']);
         } else {
             //Form popup has been submitted, file it.
+            $this-canSubmit($_POST['no']);
             $this->formSubmit($_POST['no'], $_POST['cat']);
         }
         die('</body></html>');
@@ -113,6 +114,7 @@ class Report {
         echo "<head><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/" . $style . ".css'/><script>function loaded(){window.setTimeout(CloseMe, 3000);}function CloseMe() {window.close();}</script></head><body onLoad='loaded()'>
 	<center><font color=blue size=5>Report submitted! This window will close in 3 seconds...</b></font></center></body>";
     }
+    
     function reportFormHead($no) {
     	global $mysql;
         $style = (NSFW) ? "saguaba" : "sagurichan";
