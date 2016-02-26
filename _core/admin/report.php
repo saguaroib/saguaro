@@ -165,48 +165,7 @@ class Report {
 		</html>';
         
     }
-    
-    function displayTable() {
-        global $mysql;
-        if (!$active = $mysql->query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type>0 ORDER BY `type` DESC "))
-            echo S_SQLFAIL;
-        $j = 0;
-        
-        $temp .= "<br><br><div class='managerBanner'>Active reports for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
-        $temp .= "<table class='postlists'>";
-        $temp .= "<tr class=\"postTable head\"><th>Clear Report</th><th>Post Number</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
-        $temp .= "</tr>";
-        
-        while ($row = $mysql->fetch_array($active)) {
-            $j++;
 
-            switch ($row['type']) {
-                case '1':
-                    $type = 'Spam';
-                    break;
-                case '2':
-                    $type = 'Rule Violation';
-                    break;
-                case '3':
-                    $type = 'Illegal Content';
-                    break;
-                default:
-                    $type = 'Type Error';
-                    break;
-            }
-            $class = ($j % 2) ? "row1" : "row2"; //BG color
-            
-            $temp .= "<tr class='$class'><td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=reports&no=" . $row['no'] . "';\" value='Clear' /></td>";
-            $temp .= "<td>" . $row['no'] . "</td><td>/" . $row['board'] . "/</td><td>$type</td><td>" . $row['ip'] ." </td>
-            <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $row['no'] . "';\" value=\"Post Info\" /></td>";
-            $temp .= "</tr>";
-            $temp .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
-            
-        }
-        
-        return $temp;
-    }
-    
     function error($mes, $no) {
         
         $this->reportFormHead($no);
