@@ -2,7 +2,7 @@
 
 class Table {
     
-    function display($type = 0, $resource = 0) {
+    function deleteTable($type = 0, $resource = 0) {
         global $mysql;
 		
 		require_once(CORE_DIR . "/postform.php");
@@ -251,7 +251,88 @@ class Table {
         
         return $temp;
     }
-    
+  
+     function reportTable() {
+        global $mysql;
+        if (!$active = $mysql->query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type>0 ORDER BY `type` DESC "))
+            echo S_SQLFAIL;
+        $j = 0;
+        
+        $temp .= "<br><br><div class='managerBanner'>Active reports for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
+        $temp .= "<table class='postlists'>";
+        $temp .= "<tr class=\"postTable head\"><th>Clear Report</th><th>Post Number</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
+        $temp .= "</tr>";
+        
+        while ($row = $mysql->fetch_array($active)) {
+            $j++;
+
+            switch ($row['type']) {
+                case '1':
+                    $type = 'Spam';
+                    break;
+                case '2':
+                    $type = 'Rule Violation';
+                    break;
+                case '3':
+                    $type = 'Illegal Content';
+                    break;
+                default:
+                    $type = 'Type Error';
+                    break;
+            }
+            $class = ($j % 2) ? "row1" : "row2"; //BG color
+            
+            $temp .= "<tr class='$class'><td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=reports&no=" . $row['no'] . "';\" value='Clear' /></td>";
+            $temp .= "<td>" . $row['no'] . "</td><td>/" . $row['board'] . "/</td><td>$type</td><td>" . $row['ip'] ." </td>
+            <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $row['no'] . "';\" value=\"Post Info\" /></td>";
+            $temp .= "</tr>";
+            $temp .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
+            
+        }
+        
+        return $temp;
+    }
+  
+    function staffTable() {
+        
+        if (!valid('admin'))  error(S_NOPERM);
+        
+        global $mysql;
+        //Staff list for panel
+        
+        if (!$active = $mysql->query("SELECT * FROM " . SQLMODSLOG . "")) 
+            echo S_SQLFAIL;
+        $j = 0;
+        $temp = '';
+        $temp .= "<br><br>[<a href='" . PHP_ASELF_ABS . "'>Back to Panel</a><input type='hidden' name='mode' value='admin'>]";
+        $temp .= "<input type=hidden name=pass value=\"$pass\">";
+        $temp .= "<div class='delbuttons'>";
+        $temp .= "<table class='postlists'><br>";
+        $temp .=  "<tr class='postTable head'><th>User</th><th>Allowed permissions</th><th>Denied permission</th><th>Delete user</th>";
+        $temp .=  "</tr>";
+
+        while ($row = $mysql->fetch_assoc($active)) {
+                $j++;               
+                $class = 'row' . ($j % 2 + 1); //BG color
+                $temp .= "<form action='" . PHP_ASELF_ABS ."?mode=staff' method='post' ><tr class='$class'>";
+                $temp .= "<td>" . $row['user'] . "</td><td>" . $row['allowed'] . "</td><td>" . $row['denied'] . "</td>
+                <td><input type='submit' value='" . $row['user'] . "' name='delete' /></td>";
+                $temp .= "</tr>";
+        }	
+        $temp .= "</form><div class='managerBanner' >[<a href='#' onclick=\"toggle_visibility('userForm');\" style='color:white;text-align:center;'>Toggle New User Form</a>]</div>";
+        $temp .= "<div><table id='userForm' style='text-align:center;display:none;'><br><hr style='width:50%;'>";
+        $temp .= "<form action='" . PHP_ASELF_ABS ."?mode=staff' method='post'><tr><td>New username: <input type='text' name='user' required></td>";
+        $temp .= "<td>New password: <input type='password' name='pwd1' required></td><td>Confirm password: <input type='password' name='pwd2' required></td>";
+        $temp .= "<td>Access level: <select name='action' required>
+            <option value='' /></option>
+            <option class='cap admin' value='admin' />Admin</option>
+            <option class='cap manager' value='manager' />Manager</option>
+            <option class='cap moderator' value='mod' />Moderator</option>
+            <option class='cap jani' value='janitor' />Global Janitor</option>
+            <option value='janitor_board' />Janitor (/" . BOARD_DIR . "/ only)</option>
+            </select></td><td><input type='submit' value='Submit'/></td></tr></table></div>";
+        return $temp;
+    }
 }
 
 ?>

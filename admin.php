@@ -39,28 +39,29 @@ function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, 
 }
 
 function error($mes) { //until error class is sorted out, this is in-house admin error
-    echo "<br><br><hr><br><br><div style='text-align:center;font-size:24px;font-color:blue;'>$mes<br><br><a href='" . PHP_ASELF_ABS . "'>" . S_RELOAD . "</a></div><br><br><hr>";
+    $html = "<br><br><hr><br><br><div style='text-align:center;font-size:24px;font-color:blue;'>$mes<br><br><a href='" . PHP_ASELF_ABS . "'>" . S_RELOAD . "</a></div><br><br><hr>";
+    echo $page->generate($html, true, false);
     die("</body></html>");
 }
 
 /* Main switch */
 switch ($_GET['mode']) {
     case 'res':
-        $html = $table->display($type = 'res', $_GET['no']);
+        $html = $table->displayTable($type = 'res', $_GET['no']);
 		echo $page->generate($html, true);
         break;
     case 'ip' :
-        $html = $table->display($type = 'ip', $_GET['no']);
+        $html = $table->displayTable($type = 'ip', $_GET['no']);
 		echo $page->generate($html, true);
         break;
     case 'ops':
-        $html = $table->display($type = 'ops', 0);
+        $html = $table->displayTable($type = 'ops', 0);
 		echo $page->generate($html, true);
         break;
     case 'staff':
         require_once(CORE_DIR . "/admin/staff.php");
         if ($_POST) Staff::process($_POST);
-        $html = Staff::display();
+        $html = $table->staffTable();
         echo $page->generate($html, true, false);
         break;
     case 'adel':
@@ -80,8 +81,7 @@ switch ($_GET['mode']) {
         break;
     case 'reports':
         if ($_POST['no']) $getReport->clearNum($_POST['no']);
-        $active    = $getReport->countBoard();
-        $html = $getReport->displayTable();
+        $html = $table->reportTable();
         echo $page->generate($html, true, false);
         break;
     case 'news':
