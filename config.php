@@ -61,6 +61,7 @@ define(BLOTTER_PATH, 'CHANGEME'); //Experimental. Absolute html path to your blo
 
 //Administrative
 define(JANITOR_CAPCODES, false); //Allow janitors to post with a capcode
+define(REPORT_FLOOD, 5); //How many reports a user can file at once.
 
 // Post & Thread
 define(USE_BBCODE, false);  //Use BBcode
