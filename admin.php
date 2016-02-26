@@ -79,10 +79,10 @@ switch ($_GET['mode']) {
         rebuild(1);
         break;
     case 'reports':
-        head(0);
-        if ($_GET['no']) $getReport->reportClear($_GET['no']);
-        $active    = $getReport->reportGetAllBoard();
-        echo $getReport->reportList();
+        if ($_POST['no']) $getReport->clearNum($_POST['no']);
+        $active    = $getReport->countBoard();
+        $html = $getReport->displayTable();
+        echo $page->generate($html, true, false);
         break;
     case 'news':
         if (!valid('admin')) error(S_NOPERM);

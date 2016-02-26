@@ -266,7 +266,7 @@ if (is_file($lockout)) {
                         SQLBANLOG => "board VARCHAR(20), global INT(1), name VARCHAR(200), host VARCHAR(50), reason VARCHAR(1000), length DATETIME, admin VARCHAR(100), reverse VARCHAR(200), xff VARCHAR(200), placed TIMESTAMP PRIMARY KEY NOT NULL",
                         SQLMODSLOG => "user VARCHAR(25), password VARCHAR(250), public_salt VARCHAR(256), allowed VARCHAR(250), denied VARCHAR(250), PRIMARY KEY (user, password, public_salt), UNIQUE KEY (user)",
                         SQLDELLOG => "admin VARCHAR(250), postno VARCHAR(20) PRIMARY KEY, action VARCHAR(25), board VARCHAR(250), name VARCHAR(50), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . ")", //Why does S_POSTLENGTH start with S_?
-                        "reports" => "num VARCHAR(250) PRIMARY KEY, no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ip VARCHAR(250)",
+                        "reports" => "no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), ip VARCHAR(250), reported TIMESTAMP, PRIMARY KEY(no, ip)",
                         "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)",
                         "rebuildqueue" => "board char(4) NOT NULL, no int(11) NOT NULL, ownedby int(11) NOT NULL default '0', ts timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, PRIMARY KEY (board,no,ownedby)"
                     ];

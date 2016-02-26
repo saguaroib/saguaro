@@ -146,7 +146,7 @@ class Head {
             if (valid('moderator')) {
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' title='Rebuild all pages' >Rebuild all</a>]";
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=all' >Deletion panel</a>]";
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->reportGetAllBoard() . "</a>]";
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->countBoard() . "</a>]";
             }
             if (valid('admin')) {
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=staff' >Users</a>]";
