@@ -47,15 +47,15 @@ function error($mes) { //until error class is sorted out, this is in-house admin
 /* Main switch */
 switch ($_GET['mode']) {
     case 'res':
-        $html = $table->displayTable($type = 'res', $_GET['no']);
+        $html = $table->deleteTable($type = 'res', $_GET['no']);
 		echo $page->generate($html, true);
         break;
     case 'ip' :
-        $html = $table->displayTable($type = 'ip', $_GET['no']);
+        $html = $table->deleteTable($type = 'ip', $_GET['no']);
 		echo $page->generate($html, true);
         break;
     case 'ops':
-        $html = $table->displayTable($type = 'ops', 0);
+        $html = $table->deleteTable($type = 'ops', 0);
 		echo $page->generate($html, true);
         break;
     case 'staff':
@@ -106,7 +106,7 @@ switch ($_GET['mode']) {
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
         break;
     default:
-        $html = $table->display($type = 'all', 0);
+        $html = $table->deleteTable($type = 'all', 0);
 		echo $page->generate($html, true, false);
         break;
 }
