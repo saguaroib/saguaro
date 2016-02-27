@@ -140,7 +140,7 @@ class Table {
                 $ssno = ($resto) ? $resto : $no;
                 $linknum = /*($resto) ?*/ '<a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a>';// : '<b><a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a></b>';
                 $sno = ($sticky) ? "<b><font color=\"FF101A\">$linknum</font></b>" : $linknum;
-                $threadmode = ($resto) ? $resto : $no;    
+                $threadmode = ($last) ? $resto : $no;    
                 $delim = ($size) ? "<td colspan='2'>&nbsp;</td><td colspan='1'>[<b><a href='?mode=adel&no=$no&imgonly=1&refer=$mode'>Delete image?</a>]</b></td><td colspan='3'>&nbsp;</td>" : "<td colspan='6'>&nbsp;</td>";
                 
                 //Actual panel html

@@ -31,11 +31,27 @@ class Banish {
     }
 
 
-    function process($no, $ip, $length, $global, $reason, $pubreason) {
+    function process($info) {
         global $mysql, $my_log;
 
-        //Append public ban message
-        $mysql->query("UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><b><font color=\"FF101A\">" . $mysql->escape_string($custmess) . "</font></b>') where no='" . $no . "'");
+		$info = [
+			'no' => $mysql->escape_string($_POST['no']),
+			'host' => $mysql->escape_string($_POST['host']),
+			'intlength' => $mysql->escape_string($_POST['banlength1']),
+			'strlength' => $mysql->escape_string($_POST['banlength2']),
+			'type' => $mysql->escape_string($_POST['banType']),
+			'reason' => $mysql->escape_string($_POST['pubreason']),
+			'areason' => $mysql->escape_string($_POST['staffnote']),
+			'append' => $mysql->escape_string($_POST['custmess']),
+			'public' => $mysql->escape_string($_POST['showbanmess']),
+			'after' => $mysql->escape_string($_POST['afterban'])
+			];
+		
+        $resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "'");
+		$rebuild = ($resto) ? $resto : $
+		//Append public ban message
+		if ($info['public'])
+			$mysql->query("UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><strong><font color=\"FF101A\">" . $info['append'] . "</font></strong>') where no='" . $no . "'");
 
         $my_log->update($no);
         
@@ -101,24 +117,22 @@ class Banish {
     
     //Ban filing form.
     function form($no) {
-        global $mysql;
+        global $mysql, $page;
         
         $host  = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='" . $mysql->escape_string($no) . "'", 0, 0);
         $alart = ($host) ? $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host) : 0;
         $alert = ($alart > 0) ? "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>" : "No bans on record for IP $host";
-        
-        $temp = head(1);
         
         $temp .= "<!---banning #:$no; host:$host---><br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
             <input type='hidden' name='no' value='$no' />
             <input type='hidden' name='ip' value='$host' />
             <tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
             <tr><td class='postblock'>Unban in:</td><td><input type='number' min='0' size='7' name='banlength1'  /> <select name='banlength2' />
-                <option value='second' />seconds</option>
-                <option value='minute' />minutes</option>
-                <option value='day' />days</option>
-                <option value='month' />months</option>
-                <option value='year' />years</option>
+                <option value='1' />seconds</option>
+                <option value='2' />minutes</option>
+                <option value='3' />days</option>
+                <option value='4' />months</option>
+                <option value='5' />years</option>
                 </select></td></tr>
             <center><tr><td class='postblock'>Ban type:</td><td></center>
                 <select name='banType' />
@@ -144,13 +158,54 @@ class Banish {
         <tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";*/ //Soon.
         $temp .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form>";
         
-        echo $temp;
+        echo $page->generate($temp, true, true);
     }
 	
+	//Returns & processes banned.php HTML
 	function banScreen($info) {
-		//Returns & processes banned.php HTML
-		
+		global $page;
+
+		//If ban exists in the table, get the information array. Otherwise, user isn't banned
+		if ($this->isBanned($_SERVER['REMORE_ADDR'])) {
+			$info = $ban->banInfo();
+			$page->headVars['page']['title'] = "You are banned!";
+			$page->headVars['css']['extra'] = "banned.css";
+		}		
+
 	}
+	
+    //returns processed ban info array blah blah blah.
+    function banInfo() {
+		global $mysql;
+
+		$row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE host='$ip' AND active=1");
+		
+		$name = "<span class='name'>" . $row['name'] . "</span>";
+		$global = ($row['global']) ? "<strong>all boards</strong>" : "<strong>/" . $row['board'] . "/</strong> ";
+		
+		$placedstr = strtotime($row['placed']);
+		$placed = "<strong>" . date("l F j, Y G:i:s", $placedstr) . "</strong>";
+		$expiresString = "<strong>" . date("l F j, Y G:i:s", $row['length']) . "</strong>";
+		$expires =  strtotime($row['length']) - $placedstr;
+		$length = "<strong>" . date("j \d\a\y\s\, h \h\o\u\r\s\, \a\n\d m \m\i\n\u\t\e\s", $expires) . "</strong>";
+		
+		return [
+			'name' => $name,
+			'global' => $global,
+			'board' => $row['board'],
+			'host'	   => $row['host'],
+			'reason' => $row['reason'],
+			'placed' => $placed,
+			'length'  => $length,
+			'expires' => $expires,
+			'expstring' => $expiresString
+		];
+		
+    }
+    
+    function append() {
+    
+    }
     
 }
 
