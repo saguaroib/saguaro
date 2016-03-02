@@ -20,6 +20,5 @@ $host = $_SERVER['REMOTE_ADDR'];
 
 $html = $ban->banScreen(); 				//Returns all the html for banned.php from the ban class
 echo $page->generate($html); 					//Page class outputs. 
-$ban->append($host);									//Run checks to see if the ban needs to be updated and we're done here!
 
 ?>

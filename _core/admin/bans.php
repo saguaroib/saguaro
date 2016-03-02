@@ -47,13 +47,46 @@ class Banish {
 			'after' => $mysql->escape_string($_POST['afterban'])
 			];
 		
+		switch($info['strlength']) {
+			case '1':
+				$info['length'] = strtotime("+ " . $info['intlength'] . " seconds", time());
+				break;
+			case '2': 
+				$info['length'] = strtotime("+ " . $info['intlength'] . " minutes", time());
+				break;
+			case '3':
+				$info['length'] = strtotime("+ " . $info['intlength'] . " days", time());
+				break;
+			case '4':
+				$info['length'] = strtotime("+ " . $info['intlength'] . " weeks", time());
+				break;
+			case '5':
+				$info['length'] = strtotime("+ " . $info['intlength'] . " months", time());
+				break;
+			default:
+				$info['length'] = false;
+				break;
+		}
+
         $resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "'");
-		$rebuild = ($resto) ? $resto : $
+		$rebuild = ($resto) ? $resto : $no;
+		
 		//Append public ban message
 		if ($info['public'])
 			$mysql->query("UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><strong><font color=\"FF101A\">" . $info['append'] . "</font></strong>') where no='" . $no . "'");
 
-        $my_log->update($no);
+		$mysql->query( "INSERT INTO " . SQLBANLOG . " (board, global, name, host, reason, length, admin, reverse, xff, placed) 
+		VALUES ( '" . $info['host'] . 
+		"', '" . $info['global'] . 
+		"', '" . $info['name'] . 
+		"', '" . $info['reason'] . 
+		"', '" . $info['length'] . 
+		"', '" . $info['areason'] . 
+		"', 'null',
+		'null',
+		'" . time() ."')");
+		
+        $my_log->update($rebuild);
         
         echo "<script>window.close();</script>"; //Close ban window
         
@@ -131,8 +164,8 @@ class Banish {
                 <option value='1' />seconds</option>
                 <option value='2' />minutes</option>
                 <option value='3' />days</option>
-                <option value='4' />months</option>
-                <option value='5' />years</option>
+                <option value='4' />weeks</option>
+                <option value='5' />months</option>
                 </select></td></tr>
             <center><tr><td class='postblock'>Ban type:</td><td></center>
                 <select name='banType' />
@@ -162,7 +195,7 @@ class Banish {
     }
 	
 	//Returns & processes banned.php HTML
-	function banScreen($info) {
+	function banScreen() {
 		global $page;
 
 		//If ban exists in the table, get the information array. Otherwise, user isn't banned
@@ -182,13 +215,8 @@ class Banish {
 		
 		$name = "<span class='name'>" . $row['name'] . "</span>";
 		$global = ($row['global']) ? "<strong>all boards</strong>" : "<strong>/" . $row['board'] . "/</strong> ";
-		
-		$placedstr = strtotime($row['placed']);
-		$placed = "<strong>" . date("l F j, Y G:i:s", $placedstr) . "</strong>";
-		$expiresString = "<strong>" . date("l F j, Y G:i:s", $row['length']) . "</strong>";
-		$expires =  strtotime($row['length']) - $placedstr;
-		$length = "<strong>" . date("j \d\a\y\s\, h \h\o\u\r\s\, \a\n\d m \m\i\n\u\t\e\s", $expires) . "</strong>";
-		
+
+
 		return [
 			'name' => $name,
 			'global' => $global,
