@@ -35,18 +35,19 @@ class Banish {
         global $mysql, $my_log;
 
 		$info = [
-			'no' => $mysql->escape_string($_POST['no']),
-			'host' => $mysql->escape_string($_POST['host']),
-			'intlength' => $mysql->escape_string($_POST['banlength1']),
-			'strlength' => $mysql->escape_string($_POST['banlength2']),
-			'type' => $mysql->escape_string($_POST['banType']),
-			'reason' => $mysql->escape_string($_POST['pubreason']),
-			'areason' => $mysql->escape_string($_POST['staffnote']),
-			'append' => $mysql->escape_string($_POST['custmess']),
-			'public' => $mysql->escape_string($_POST['showbanmess']),
-			'after' => $mysql->escape_string($_POST['afterban'])
+			'no' => $mysql->escape_string($_POST['no']),				//Post # being banned for
+			'host' => $mysql->escape_string($_POST['host']),			//Banned IP
+			'intlength' => $mysql->escape_string($_POST['banlength1']), //Integer ban length
+			'strlength' => $mysql->escape_string($_POST['banlength2']), //Unit of time banned for
+			'type' => $mysql->escape_string($_POST['banType']), 		//...
+			'reason' => $mysql->escape_string($_POST['pubreason']),		//Publically displayed reason
+			'areason' => $mysql->escape_string($_POST['staffnote']),	//Admin notes
+			'append' => $mysql->escape_string($_POST['custmess']),		//Message appended to post
+			'public' => $mysql->escape_string($_POST['showbanmess']),	//Show message appened to post
+			'after' => $mysql->escape_string($_POST['afterban'])		//What to do after ban is processed
 			];
 		
+		//Calculate the end time()
 		switch($info['strlength']) {
 			case '1':
 				$info['length'] = strtotime("+ " . $info['intlength'] . " seconds", time());
@@ -67,13 +68,8 @@ class Banish {
 				$info['length'] = false;
 				break;
 		}
-
-        $resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "'");
-		$rebuild = ($resto) ? $resto : $no;
 		
-		//Append public ban message
-		if ($info['public'])
-			$mysql->query("UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><strong><font color=\"FF101A\">" . $info['append'] . "</font></strong>') where no='" . $no . "'");
+		if($info['type'] == '4') $info['length'] = -1; //Permabanned!
 
 		$mysql->query( "INSERT INTO " . SQLBANLOG . " (board, global, name, host, reason, length, admin, reverse, xff, placed) 
 		VALUES ( '" . $info['host'] . 
@@ -86,7 +82,18 @@ class Banish {
 		'null',
 		'" . time() ."')");
 		
-        $my_log->update($rebuild);
+		if ($info['after'] || $info['public']) { //Gotta rebuild the thread or indexes if after-actions are set
+
+			$resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "'"); //For rebuild selection
+			$rebuild = ($resto) ? $resto : $info['no'];
+			
+			//Append public ban message
+			if ($info['public']) {
+				$mysql->query("UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><strong><font color=\"FF101A\">" . $info['append'] . "</font></strong>') where no='" . $rebuild . "'");
+			}
+			$my_log->update($rebuild);
+		}
+        
         
         echo "<script>window.close();</script>"; //Close ban window
         
