@@ -31,11 +31,11 @@ function valid($action = 'moderator', $no = 0) {
     return $valid->verify($action);
 }
 
-function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1) {
+function delete_post($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $delhost = '') {
 	$resno = $mysql->escape_string($resno);
     require_once(CORE_DIR . "/admin/delete.php");
     $remove = new Delete;
-    $remove->targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1);
+    $remove->targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $delhost = '');
 }
 
 function error($mes) { //until error class is sorted out, this is in-house admin error
@@ -66,13 +66,14 @@ switch ($_GET['mode']) {
         break;
     case 'adel':
         if (!valid('janitor')) error(S_NOPERM);
-        delete_post($_GET['no'], 0, $_GET['imgonly'], 0, 1, 1);
+        delete_post($_GET['no'], 0, $_GET['imgonly'], 0, 1, 1, '');
         break;
     case 'ban':
         if (!valid('moderator')) error(S_NOPERM);
         require_once(CORE_DIR . "/admin/bans.php");
-        if ($_POST['no']) Banish::process($_POST);
-		echo Banish::action($_GET);
+		$bans = new Banish;
+        if ($_POST['no']) $bans->process($_POST);
+		echo $bans->form($_GET);
         break;
     case 'rebuild':
 		if (!valid("admin")) error(S_NOPERM);

@@ -102,7 +102,8 @@ class Regist {
             'sticky'    => $info['post']['special']['sticky'],
             'permasage' => $info['post']['special']['permasage'],
             'locked'    => $info['post']['special']['locked'],
-            'resto'     => ($_POST['resto']) ? (int) $_POST['resto'] : 0
+            'resto'     => ($_POST['resto']) ? (int) $_POST['resto'] : 0,
+            'board'		=> BOARD_DIR
         ];
 
         //Dynamically build the SQL command, numerous advantages.

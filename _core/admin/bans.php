@@ -23,7 +23,7 @@ class Banish {
     function isBanned($ip, $redirect = 0) {
         global $mysql;
         
-        $query   = $mysql->query("SELECT count(*)>0 FROM " . SQLBANLOG . " WHERE host='$ip' AND active=1 AND (board='$board' or global=1)");
+        $query   = $mysql->query("SELECT count(*)>0 FROM " . SQLBANLOG . " WHERE host='$ip' AND (board='" . BOARD_DIR . "' or global=1)");
         $exists = $mysql->result($query, 0, 0);
 
         $respond = ($redirect) ? header("Location: banned.php") : true; //If isbanned is called with redirect, then return the new header
@@ -36,17 +36,29 @@ class Banish {
 
 		$info = [
 			'no' => $mysql->escape_string($_POST['no']),				//Post # being banned for
-			'host' => $mysql->escape_string($_POST['host']),			//Banned IP
 			'intlength' => $mysql->escape_string($_POST['banlength1']), //Integer ban length
 			'strlength' => $mysql->escape_string($_POST['banlength2']), //Unit of time banned for
 			'type' => $mysql->escape_string($_POST['banType']), 		//...
-			'reason' => $mysql->escape_string($_POST['pubreason']),		//Publically displayed reason
-			'areason' => $mysql->escape_string($_POST['staffnote']),	//Admin notes
-			'append' => $mysql->escape_string($_POST['custmess']),		//Message appended to post
-			'public' => $mysql->escape_string($_POST['showbanmess']),	//Show message appened to post
 			'after' => $mysql->escape_string($_POST['afterban'])		//What to do after ban is processed
 			];
-		
+
+		//Let's sort through all the items that are supposed to be integers only.
+		foreach ($info as $key => $item) { 
+			if (!is_numeric($item))
+				die("Invalid POST option!");
+		}
+
+		$info['host']	 = $mysql->escape_string($_POST['host']);			//Banned IP
+		$info['reason']  = $mysql->escape_string($_POST['pubreason']);		//Publically displayed reason
+		$info['areason'] = $mysql->escape_string($_POST['staffnote']);		//Admin notes
+		$info['append']  = $mysql->escape_string($_POST['custmess']);		//Message appended to post
+		$info['public']  = $mysql->escape_string($_POST['showbanmess']);	//Show message appened to post
+
+		if ($this->isBanned($info['host']))
+			die("A ban for this ip already exists");	
+
+		$row = $mysql->fetch_assoc("SELECT name, com FROM " . SQLLOG . " WHERE no='" . $info['no'] "' AND board='" . BOARD_DIR . "'");			
+
 		//Calculate the end time()
 		switch($info['strlength']) {
 			case '1':
@@ -65,16 +77,51 @@ class Banish {
 				$info['length'] = strtotime("+ " . $info['intlength'] . " months", time());
 				break;
 			default:
-				$info['length'] = false;
+				$info['length'] = 0; //Warning
 				break;
 		}
 		
 		if($info['type'] == '4') $info['length'] = -1; //Permabanned!
-
-		$mysql->query( "INSERT INTO " . SQLBANLOG . " (board, global, name, host, reason, length, admin, reverse, xff, placed) 
-		VALUES ( '" . $info['host'] . 
-		"', '" . $info['global'] . 
-		"', '" . $info['name'] . 
+		
+		if ($info['after'] || $info['public']) { //Gotta rebuild the thread or index if after-actions are set
+			
+			if ($info['after']) {
+				require_once(CORE_DIR . "/admin/delete.php");
+				$delete = new Delete;
+				
+				switch($info['after']) {
+					case '1': //Delete post
+						$delete->targeted($post['no'], 'pwd', $imgonly = 0, $automatic = 1, $children = 1, $die = 0, $delhost = '');
+						break;
+					case '2': //Image only
+						$delete->targeted($post['no'], 'pwd', $imgonly = 1, $automatic = 1, $children = 1, $die = 0, $delhost = '');
+						break;
+					case '3': //All by IP. 
+						$delete->targeted($post['no'], 'pwd', $imgonly = 0, $automatic = 1, $children = 1, $die = 0, $info['host']);
+						break;
+					default: //whoops
+						break;
+				}
+			}
+			
+			
+			$resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "'"); //For rebuild selection
+			$rebuild = ($resto) ? $resto : $info['no'];
+			
+			//Append public ban message
+			if ($info['public']) {
+				$info['append'] = ($info['append']) ? $info['append'] : "(USER WAS BANNED FOR THIS POST)";
+				$mysql->query("UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><strong><font color=\"FF101A\">" . $info['append'] . "</font></strong>') where no='" . $rebuild . "'");
+			}
+			$my_log->update($rebuild);
+		}
+        
+        $mysql->query( "INSERT INTO " . SQLBANLOG . " (board, global, name, host, com reason, length, admin, reverse, xff, placed) 
+		VALUES ( '" . BOARD_DIR .
+		"', '" . $info['global'] .
+		"', '" . $row['name'] . 
+		"', '" . $info['host'] .
+		"', '" . $row['com'] . 
 		"', '" . $info['reason'] . 
 		"', '" . $info['length'] . 
 		"', '" . $info['areason'] . 
@@ -82,26 +129,15 @@ class Banish {
 		'null',
 		'" . time() ."')");
 		
-		if ($info['after'] || $info['public']) { //Gotta rebuild the thread or indexes if after-actions are set
-
-			$resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "'"); //For rebuild selection
-			$rebuild = ($resto) ? $resto : $info['no'];
-			
-			//Append public ban message
-			if ($info['public']) {
-				$mysql->query("UPDATE " . SQLLOG . " SET com = CONCAT(com, '<br><strong><font color=\"FF101A\">" . $info['append'] . "</font></strong>') where no='" . $rebuild . "'");
-			}
-			$my_log->update($rebuild);
-		}
-        
-        
         echo "<script>window.close();</script>"; //Close ban window
         
         return true; //Success
     }
     
     function autoBan($name, $host, $length, $global, $reason, $pubreason = '') {
-        global $mysql;
+		//TODO: Update insert query to reflect table column changes
+		
+        /*global $mysql;
         
         //Get all IP info for the ban
         $reverse = $mysql->escape_string(gethostbyaddr($host));
@@ -130,18 +166,15 @@ class Banish {
         if ($pubreason) $pubreason .= "<>";
 
         switch($banlength) {
-            case 0:
-                //Auto-warn
-                $autowarnq     = $mysql->query("SELECT COUNT(*) FROM " . SQLLOGBAN . " WHERE host='$host' AND admin='Auto-ban' AND now > DATE_SUB(NOW(),INTERVAL 3 DAY) AND reason like '%$reason'");
+            case 0: //Auto-warn
+                $autowarnq     = $mysql->query("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE host='$host' AND admin='Auto-ban' AND now > DATE_SUB(NOW(),INTERVAL 3 DAY) AND reason like '%$reason'");
                 $autowarncount = $mysql->result($autowarnq, 0, 0);
                 if ($autowarncount > 3) $banlength = 14; //14 days
                 break;
-            case -1:
-                //Permanent
-                $length = '0000' . '00' . '00'; // YYYY/MM/DD
+            case -1: //Permanent
+                $length = -1; 
                 break;
-            default:
-                //Normal ban
+            default: //Normal ban
                 $banlength = (int) $banlength;
                 $length = date("Ymd", time() + $banlength * (24 * 60 * 60));
                 break;
@@ -149,18 +182,20 @@ class Banish {
 
         $length .= "00" . "00" . "00"; // H:M:S
 
-        if (!$result = $mysql->query("INSERT INTO " . SQLLOGBAN . " (board,global,name,host,reason,length,admin,reverse,xff) VALUES('$board','$global','$name','$host','$pubreason<b>Auto-ban</b>: $reason','$length','Auto-ban','$reverse','$xff')"))
+        if (!$result = $mysql->query("INSERT INTO " . SQLBANLOG . " (board,global,name,host,reason,length,admin) VALUES('$board','$global','$name','$host','$pubreason<b>Auto-ban</b>: $reason','$length','Auto-ban')"))
             echo S_SQLFAIL;
             
-        @$mysql->free_result($result);
+        @$mysql->free_result($result);*/
     }
     
     //Ban filing form.
     function form($no) {
         global $mysql, $page;
-        
-        $host  = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='" . $mysql->escape_string($no) . "'", 0, 0);
-        $alart = ($host) ? $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host) : 0;
+
+		$no = $mysql->escape_string($_GET['no']);
+		
+        $host  = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$no'", 0, 0);
+        $alart = ($host) ? $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE host='" . $host . "'") : 0;
         $alert = ($alart > 0) ? "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>" : "No bans on record for IP $host";
         
         $temp .= "<!---banning #:$no; host:$host---><br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
@@ -218,7 +253,7 @@ class Banish {
     function banInfo() {
 		global $mysql;
 
-		$row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE host='$ip' AND active=1");
+		$row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE host='$ip'");
 		
 		$name = "<span class='name'>" . $row['name'] . "</span>";
 		$global = ($row['global']) ? "<strong>all boards</strong>" : "<strong>/" . $row['board'] . "/</strong> ";
