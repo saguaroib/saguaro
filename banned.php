@@ -16,9 +16,9 @@ require_once(CORE_DIR . "/page/page.php");
 $page = new Page;
 $page->headVars['page']['title'] = "You are not banned!";
 
-$host = $_SERVER['REMOTE_ADDR'];
+$host = $mysql->escape_string($_SERVER['REMOTE_ADDR']);
 
-$html = $ban->banScreen(); 				//Returns all the html for banned.php from the ban class
+$html = $ban->banScreen($host); 				//Returns all the html for banned.php from the ban class
 echo $page->generate($html); 					//Page class outputs. 
 
 ?>

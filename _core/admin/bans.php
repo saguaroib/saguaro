@@ -237,46 +237,127 @@ class Banish {
     }
 	
 	//Returns & processes banned.php HTML
-	function banScreen() {
+	function banScreen($host) {
 		global $page;
 
 		//If ban exists in the table, get the information array. Otherwise, user isn't banned
-		if ($this->isBanned($_SERVER['REMORE_ADDR'])) {
-			$info = $ban->banInfo();
-			$page->headVars['page']['title'] = "You are banned!";
+		if ($this->isBanned($host)) {
+			$info = $ban->banInfo($host);
+			$page->headVars['page']['title'] = "You are " . $type . "!";
 			$page->headVars['css']['extra'] = "banned.css";
-		}		
+            if ($info['append']) $ban->append($host);
+		}
 
 	}
 	
     //returns processed ban info array blah blah blah.
-    function banInfo() {
+    private function banInfo($host) {
 		global $mysql;
 
-		$row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE host='$ip'");
+		$row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE host='$host'");
 		
 		$name = "<span class='name'>" . $row['name'] . "</span>";
 		$global = ($row['global']) ? "<strong>all boards</strong>" : "<strong>/" . $row['board'] . "/</strong> ";
-
+		$host = "<span class='bannedHost' >" . $host . "</span>";
+		$reason = "<span class='reason'>" . $row['reason'] . "</span>";
+		$placed = "<strong>" . date("l, F d, Y" , $row['placed']) . "</strong>";
+		$expires = "<strong>" . date("l, F d, Y", $row['length']) . "</strong>";
+		$appendFlag = false;
+		switch($row['length']) {//Do calculation for the time difference...
+			case 0:
+				$type = "warned";
+				$appendFlag = true;
+				break;
+			case -1:
+				$type = "permanently banned";
+				$expires = "<strong>never</strong>";
+				break;
+			default:
+				$type = "banned";
+				$clength = $row['length'] - $row['placed'];
+				if ($clength <= 0) {
+					$this->append($row['host']);
+					$appendFlag = true;
+				}
+				$length = "<strong>" . $this->calculate_age($row['length'], $row['placed']) . "</strong>";
+				break;
+		}
 
 		return [
-			'name' => $name,
-			'global' => $global,
-			'board' => $row['board'],
-			'host'	   => $row['host'],
-			'reason' => $row['reason'],
-			'placed' => $placed,
-			'length'  => $length,
-			'expires' => $expires,
-			'expstring' => $expiresString
+			'name'		=> $name,
+			'global'	=> $global,
+			'board'		=> $row['board'],
+			'host'		=> $host,
+			'reason'	=> $reason,
+			'placed'	=> $placed,
+			'length'	=> $length,
+			'type'		=> $type,
+			'append'	=> $appendFlag,
+			'expires'	=> $expires
 		];
 		
     }
     
-    function append() {
-    
+    private function append($host) {
+        global $mysql;
+        
+        $row = $mysql->fetch_assoc("SELECT host, length, com, reason, admin FROM " . SQLBANLOG . " WHERE host='$host'");
+        //Remove ban fron table
+        $mysql->query("DELETE FROM " . SQLBANLOG . " WHERE host='$host'");
+        //Insert into notes table
+        switch($row['length']) {
+            case 0:
+                $row['length'] = "warn";
+                break;
+            case -1:
+                $row['length'] = "permanent";
+                break;
+            default:
+                $row['length'] = "ban";
+                break;
+        }
+        $mysql->query("INSERT INTO" . SQLBANNOTES . " (board, host, type, com, reason, admin) VALUES ('" 
+        . $row['board']. "', '" 
+        . $row['host']. "', '"
+        . $row['length']. "', '" 
+        . $row['com']. "', '" 
+        . $row['reason']. "', '" 
+        . $row['admin']. "')");
+        
+        return true;
     }
     
+	function calculate_age($timestamp, $comparison = '') {
+                $units = array(
+                    'second' => 60,
+                    'minute' => 60,
+                    'hour' => 24,
+                    'day' => 7,
+                    'week' => 4.25,
+                    'month' => 12
+               );
+
+                if (empty($comparison)) {
+                    $comparison = $_SERVER['REQUEST_TIME'];
+                }
+                $age_current_unit = abs($comparison - $timestamp);
+                foreach ($units as $unit => $max_current_unit) {
+                    $age_next_unit = $age_current_unit / $max_current_unit;
+                    if ($age_next_unit < 1) {
+                        // are there enough of the current unit to make one of the next unit?
+                        $age_current_unit = floor($age_current_unit);
+                        $formatted_age    = $age_current_unit . ' ' . $unit;
+                        return $formatted_age . ($age_current_unit == 1 ? '' : 's');
+                    }
+                    $age_current_unit = $age_next_unit;
+                }
+
+                $age_current_unit = round($age_current_unit, 1);
+                $formatted_age    = $age_current_unit . ' year';
+                return $formatted_age . (floor($age_current_unit) == 1 ? '' : 's');
+
+            }
+	
 }
 
 ?>
