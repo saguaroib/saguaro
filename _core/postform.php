@@ -104,7 +104,6 @@ class PostForm {
 
             if ($news !== "")
                 $temp .= "<div class='globalNews desktop'>" . file_get_contents( GLOBAL_NEWS ) . "</div><hr>";
-                $temp .= "<div class='globalNewsM mobile'>" . file_get_contents( GLOBAL_NEWS ) . "<hr></div>";
         }
         
         if ($resno) //Navigation bar above thread.
