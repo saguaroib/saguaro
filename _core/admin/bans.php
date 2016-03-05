@@ -30,23 +30,17 @@ class Banish {
         return ($exists > 0) ? $respond : false;
     }
 
-
+    //Files the ban
     function process($info) {
         global $mysql, $my_log;
 
 		$info = [
-			'no' => $mysql->escape_string($_POST['no']),				//Post # being banned for
-			'intlength' => $mysql->escape_string($_POST['banlength1']), //Integer ban length
-			'strlength' => $mysql->escape_string($_POST['banlength2']), //Unit of time banned for
-			'type' => $mysql->escape_string($_POST['banType']), 		//...
-			'after' => $mysql->escape_string($_POST['afterban'])		//What to do after ban is processed
-			];
-
-		//Let's sort through all the items that are supposed to be integers only.
-		foreach ($info as $key => $item) { 
-			if (!is_numeric($item))
-				die("Invalid POST option!");
-		}
+			'no'        => $mysql->escape_string($_POST['no']),				//Post # being banned for
+			'intlength' => $mysql->escape_string($_POST['banlength1']),     //Integer ban length
+			'strlength' => $mysql->escape_string($_POST['banlength2']),     //Unit of time banned for
+			'type'      => $mysql->escape_string($_POST['banType']), 		//...
+			'after'     => $mysql->escape_string($_POST['afterban'])		//What to do after ban is processed
+        ];
 
 		$info['host']	 = $mysql->escape_string($_POST['host']);			//Banned IP
 		$info['reason']  = $mysql->escape_string($_POST['pubreason']);		//Publically displayed reason
@@ -57,7 +51,7 @@ class Banish {
 		if ($this->isBanned($info['host']))
 			die("A ban for this ip already exists");	
 
-		$row = $mysql->fetch_assoc("SELECT name, com FROM " . SQLLOG . " WHERE no='" . $info['no'] "' AND board='" . BOARD_DIR . "'");			
+		//$row = $mysql->fetch_assoc("SELECT name, com FROM " . SQLLOG . " WHERE no=" . $info['no'] " AND board=" . BOARD_DIR);			
 
 		//Calculate the end time()
 		switch($info['strlength']) {
@@ -116,7 +110,7 @@ class Banish {
 			$my_log->update($rebuild);
 		}
         
-        $mysql->query( "INSERT INTO " . SQLBANLOG . " (board, global, name, host, com reason, length, admin, reverse, xff, placed) 
+        $mysql->query( "INSERT INTO " . SQLBANLOG . " (board, global, name, host, com, reason, length, admin, placed) 
 		VALUES ( '" . BOARD_DIR .
 		"', '" . $info['global'] .
 		"', '" . $row['name'] . 
@@ -125,15 +119,14 @@ class Banish {
 		"', '" . $info['reason'] . 
 		"', '" . $info['length'] . 
 		"', '" . $info['areason'] . 
-		"', 'null',
-		'null',
-		'" . time() ."')");
+		"', '" . time() ."')");
 		
-        echo "<script>window.close();</script>"; //Close ban window
+        if (DEBUG_MODE !== true) echo "<script>window.close();</script>"; //Close ban window
         
         return true; //Success
     }
     
+    //Autoban function - WIP
     function autoBan($name, $host, $length, $global, $reason, $pubreason = '') {
 		//TODO: Update insert query to reflect table column changes
 		
@@ -182,13 +175,13 @@ class Banish {
 
         $length .= "00" . "00" . "00"; // H:M:S
 
-        if (!$result = $mysql->query("INSERT INTO " . SQLBANLOG . " (board,global,name,host,reason,length,admin) VALUES('$board','$global','$name','$host','$pubreason<b>Auto-ban</b>: $reason','$length','Auto-ban')"))
+        if (!$result = $mysql->query("INSERT INTO " . SQLBANLOG . " (board,global,name,host,reason,length,admin) VALUES('$board','$global','$name','$host','$pubreason<strong>Auto-ban</b>: $reason','$length','Auto-ban')"))
             echo S_SQLFAIL;
             
         @$mysql->free_result($result);*/
     }
     
-    //Ban filing form.
+    //Admin ban filing form.
     function form($no) {
         global $mysql, $page;
 
@@ -196,11 +189,11 @@ class Banish {
 		
         $host  = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$no'", 0, 0);
         $alart = ($host) ? $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE host='" . $host . "'") : 0;
-        $alert = ($alart > 0) ? "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>" : "No bans on record for IP $host";
+        $alert = ($alart > 0) ? "<strong><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>" : "No bans on record for IP $host";
         
         $temp .= "<!---banning #:$no; host:$host---><br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
             <input type='hidden' name='no' value='$no' />
-            <input type='hidden' name='ip' value='$host' />
+            <input type='hidden' name='host' value='$host' />
             <tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
             <tr><td class='postblock'>Unban in:</td><td><input type='number' min='0' size='7' name='banlength1'  /> <select name='banlength2' />
                 <option value='1' />seconds</option>
@@ -236,21 +229,47 @@ class Banish {
         echo $page->generate($temp, true, true);
     }
 	
-	//Returns & processes banned.php HTML
+	//Formats banned.php HTML
 	function banScreen($host) {
 		global $page;
 
 		//If ban exists in the table, get the information array. Otherwise, user isn't banned
 		if ($this->isBanned($host)) {
-			$info = $ban->banInfo($host);
-			$page->headVars['page']['title'] = "You are " . $type . "!";
-			$page->headVars['css']['extra'] = "banned.css";
-            if ($info['append']) $ban->append($host);
-		}
-
+			$info = $this->banInfo($host);
+			$page->headVars['page']['title'] = "You are " . $info['type'] . "!";
+			//$page->headVars['css']['extra'] = "banned";
+            if ($info['append']) $this->append($host);
+            
+            if ($info['type'] === 'warned') {
+                $temp = '<div class="container"><div class="header">You have been ' . $info['type'] . '! :~:</div><div class="banBody">';
+                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><br /><p>' . $info['reason'] . '</p><br /><hr />
+                        <p>This warn was placed on ' . $info['placed'] . '. Now that you have seen it, you should be able to post again. 
+                        <p>Please review the board rules and be aware that further rule violations can result in an extended ban.</p><br />                        
+                        <br/>This action was filed for the following IP address: ' . $info['host'] . '</div>';
+                return $temp;
+            } else {
+                $temp .= '<div class="container"><div class="header">You have been ' . $info['type'] . '! :~:</div><div class="banBody">';
+                
+                $expired = ($info['append']) ? ". Your ban is now lifted and you should be able to continue posting. Please be review and be mindful of the board rules to prevent future bans" :  ' and will expire on: ' . $info['expires'] . $info['length'];
+                
+                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><br /><p>' . $info['reason'] . '</p><br /><hr />
+                        <p>This ban was placed on ' . $info['placed'] . $expired . '  
+                        <br>This action was filed for the following IP address: ' . $info['host'] . '</div>';
+                
+                return $temp;
+            }
+		} else {
+            $page->headVars['page']['title'] = "You are not banned!";
+			//$page->headVars['css']['extra'] = "banned.css";
+            $temp = '<div class="container"><div class="header">You are not banned!</div><div class="banBody"><br>You are not banned from posting.</div></div>';
+            
+            return $temp;
+        }
+        
+        return "There was an issue retrieving ban information.";
 	}
 	
-    //returns processed ban info array blah blah blah.
+    //Returns ban info array blah blah blah.
     private function banInfo($host) {
 		global $mysql;
 
@@ -263,23 +282,21 @@ class Banish {
 		$placed = "<strong>" . date("l, F d, Y" , $row['placed']) . "</strong>";
 		$expires = "<strong>" . date("l, F d, Y", $row['length']) . "</strong>";
 		$appendFlag = false;
-		switch($row['length']) {//Do calculation for the time difference...
+		switch($row['length']) { //Do calculation for the time difference...
 			case 0:
 				$type = "warned";
 				$appendFlag = true;
 				break;
 			case -1:
 				$type = "permanently banned";
-				$expires = "<strong>never</strong>";
+				$expires = "<strong>never</strong";
+                $length = '.';
 				break;
 			default:
 				$type = "banned";
 				$clength = $row['length'] - $row['placed'];
-				if ($clength <= 0) {
-					$this->append($row['host']);
-					$appendFlag = true;
-				}
-				$length = "<strong>" . $this->calculate_age($row['length'], $row['placed']) . "</strong>";
+				if ($clength <= 0) $appendFlag = true;
+				$length = ", which is <strong>" . $this->calculate_age($row['length'], $row['placed']) . "</strong> from now. ";
 				break;
 		}
 
@@ -298,6 +315,7 @@ class Banish {
 		
     }
     
+    //Removes ban from table.
     private function append($host) {
         global $mysql;
         
@@ -327,37 +345,38 @@ class Banish {
         return true;
     }
     
+    //Calculate time units from UNIX timestamps
 	function calculate_age($timestamp, $comparison = '') {
-                $units = array(
-                    'second' => 60,
-                    'minute' => 60,
-                    'hour' => 24,
-                    'day' => 7,
-                    'week' => 4.25,
-                    'month' => 12
-               );
+        $units = array(
+            'second' => 60,
+            'minute' => 60,
+            'hour' => 24,
+            'day' => 7,
+            'week' => 4.25,
+            'month' => 12
+        );
 
-                if (empty($comparison)) {
-                    $comparison = $_SERVER['REQUEST_TIME'];
-                }
-                $age_current_unit = abs($comparison - $timestamp);
-                foreach ($units as $unit => $max_current_unit) {
-                    $age_next_unit = $age_current_unit / $max_current_unit;
-                    if ($age_next_unit < 1) {
-                        // are there enough of the current unit to make one of the next unit?
-                        $age_current_unit = floor($age_current_unit);
-                        $formatted_age    = $age_current_unit . ' ' . $unit;
-                        return $formatted_age . ($age_current_unit == 1 ? '' : 's');
-                    }
-                    $age_current_unit = $age_next_unit;
-                }
-
-                $age_current_unit = round($age_current_unit, 1);
-                $formatted_age    = $age_current_unit . ' year';
-                return $formatted_age . (floor($age_current_unit) == 1 ? '' : 's');
-
+        if (empty($comparison)) {
+            $comparison = $_SERVER['REQUEST_TIME'];
+        }
+        $age_current_unit = abs($comparison - $timestamp);
+        foreach ($units as $unit => $max_current_unit) {
+            $age_next_unit = $age_current_unit / $max_current_unit;
+            if ($age_next_unit < 1) { // are there enough of the current unit to make one of the next unit?
+                $age_current_unit = floor($age_current_unit);
+                $formatted_age    = $age_current_unit . ' ' . $unit;
+                
+                return $formatted_age . ($age_current_unit == 1 ? '' : 's');
             }
-	
+            $age_current_unit = $age_next_unit;
+        }
+
+        $age_current_unit = round($age_current_unit, 1);
+        $formatted_age    = $age_current_unit . ' year';
+
+        return $formatted_age . (floor($age_current_unit) == 1 ? '' : 's');
+
+    }
 }
 
 ?>
