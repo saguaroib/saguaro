@@ -187,8 +187,8 @@ class Banish {
 		$no = $mysql->escape_string($_GET['no']);
 		
         $host  = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$no'", 0, 0);
-        $alart = ($host) ? $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE host='" . $host . "'") : 0;
-        $alert = ($alart > 0) ? "<strong><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>" : "No bans on record for IP $host";
+        $alart = ($host) ? $mysql->result("SELECT COUNT(*) FROM " . SQLBANNOTES . " WHERE host='" . $host . "'") : 0;
+        $alert = ($alart > 0) ? "<strong><font color=\"FF101A\"> $alart ban(s)/warn(s) on record for $host!</font></b>" : "No bans on record for IP $host";
         
         $temp .= "<!---banning #:$no; host:$host---><br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
             <input type='hidden' name='no' value='$no' />

@@ -169,6 +169,7 @@ define(SQLLOG, PREFIX);            //Table for posting information.
 define(SQLBANLOG, PREFIX.'_ban');  //Table for ban information.
 define(SQLMODSLOG, PREFIX.'_mod'); //Table for mod information (authentication).
 define(SQLDELLOG, PREFIX.'_del');  //Table for deleted information.
+define(SQLBANNOTES, PREFIX.'_ipnotes'); //Table containing IP notes for warned/banned users
 
 //URL pathing.
 define(SITE_SUFFIX, preg_replace('/^.*\.(\w+)$/', '\1', SITE_ROOT));//Domain TLD. By default, this is obtained automatically with regex using SITE_ROOT.
