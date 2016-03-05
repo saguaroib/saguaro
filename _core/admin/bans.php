@@ -241,7 +241,7 @@ class Banish {
             
             if ($info['type'] === 'warned') {
                 $temp = '<div class="container"><div class="header">You have been ' . $info['type'] . '! :~:</div><div class="banBody">';
-                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><br /><p>' . $info['reason'] . '</p><br>
+                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><p>' . $info['reason'] . '</p><br>
                         The ban was filed on your post (without image):<br><br> ' . $info['post'] . '<br><hr />
                         <p>This warn was placed on ' . $info['placed'] . '. Now that you have seen it, you should be able to post again. 
                         <p>Please review the board rules and be aware that further rule violations can result in an extended ban.</p><br />                        
@@ -252,7 +252,7 @@ class Banish {
                 
                 $expired = ($info['append']) ? ". Your ban is now lifted and you should be able to continue posting. Please be review and be mindful of the board rules to prevent future bans" :  ' and will expire on: ' . $info['expires'] . $info['length'];
                 
-                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><br /><p>' . $info['reason'] . ' .</p><br>
+                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><p>' . $info['reason'] . ' .</p><br>
                         The ban was filed on your post (without image):<br><br> ' . $info['post'] . '<br><hr />
                         <p>This ban was placed on ' . $info['placed'] . $expired . '  
                         <br>This action was filed for the following IP address: ' . $info['host'] . '</div>';
@@ -262,7 +262,7 @@ class Banish {
 		} else {
             $page->headVars['page']['title'] = "You are not banned!";
 			//$page->headVars['css']['extra'] = "banned.css";
-            $temp = '<div class="container"><div class="header">You are not banned!</div><div class="banBody"><br>You are not banned from posting.</div></div>';
+            $temp = '<div class="container"><div class="header">You are not banned!</div><div class="banBody">You are not banned from posting.</div></div>';
             
             return $temp;
         }
