@@ -21,7 +21,6 @@ class Post {
         $image->inIndex = $this->inIndex;
         $temp .= $image->format($this->data);
         
-        $temp .= "<div class='postInfoM mobile' id='pim$no'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now  <a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\">>$no\")' class='quotejs'>$no</a></span></div>";
         $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span>";
 
         $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky"> ' : "";
@@ -32,8 +31,7 @@ class Post {
             $temp .= "<a href='#$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon </div>";
         } else {
             $temp .= "  <a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]</div>";
-            $temp .= "<div class='postLink mobile' > $stickyicon &nbsp; <a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a></div>";
-        
+            $temp .= "<div class='postLink' > $stickyicon &nbsp; <a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a></div>";
         }
 
         $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $no); //lol
@@ -58,14 +56,13 @@ class Post {
         $temp .= "<div class='postContainer replyContainer' id='pc$no'/>";
         $temp .= "<div class='sideArrows' id='sa$no'>&gt;&gt;</div><div id='$no' class='post reply'>";
         
-        $temp .= "<div class='postInfoM mobile' id='pim$no'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now  <a href='#$no' class='quotejs'>No.</a><a href='javascript:insert(\"$no\n\")' class='quotejs'>$no</a><span></div>";
         $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span> ";
 
         if (!$this->inIndex) {
             $temp .= "<a href='#$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></span></div>";
         } else {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' class='permalink' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
-            $temp .= "<div class='postLink mobile' > $stickyicon &nbsp;</div>";
+            $temp .= "<div class='postLink' > $stickyicon &nbsp;</div>";
         }
 
         $image = new Image;
