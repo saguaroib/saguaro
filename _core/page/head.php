@@ -59,7 +59,7 @@ class Head {
         $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";
 
         foreach($this->info['css']['extra'] as $css) {
-            $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "$css'/>";
+            $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . $css . ".css'/>";
         }
 
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
@@ -146,7 +146,7 @@ class Head {
             if (valid('moderator')) {
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' title='Rebuild all pages' >Rebuild all</a>]";
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=all' >Deletion panel</a>]";
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->reportGetAllBoard() . "</a>]";
+                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->countBoard() . "</a>]";
             }
             if (valid('admin')) {
                 $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=staff' >Users</a>]";

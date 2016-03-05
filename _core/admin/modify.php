@@ -4,6 +4,8 @@ class Modify {
     function mod($no, $action = 'none') {
         global $mysql;
         
+        $no = $mysql->escape_string($no);
+        
         switch ($action) {
             case 'eventsticky':
                 $sqlValue = "sticky";

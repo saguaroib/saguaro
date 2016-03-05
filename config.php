@@ -61,6 +61,7 @@ define(BLOTTER_PATH, 'CHANGEME'); //Experimental. Absolute html path to your blo
 
 //Administrative
 define(JANITOR_CAPCODES, false); //Allow janitors to post with a capcode
+define(REPORT_FLOOD, 5); //How many reports a user can file at once.
 
 // Post & Thread
 define(USE_BBCODE, false);  //Use BBcode
@@ -168,6 +169,7 @@ define(SQLLOG, PREFIX);            //Table for posting information.
 define(SQLBANLOG, PREFIX.'_ban');  //Table for ban information.
 define(SQLMODSLOG, PREFIX.'_mod'); //Table for mod information (authentication).
 define(SQLDELLOG, PREFIX.'_del');  //Table for deleted information.
+define(SQLBANNOTES, PREFIX.'_ipnotes'); //Table containing IP notes for warned/banned users
 
 //URL pathing.
 define(SITE_SUFFIX, preg_replace('/^.*\.(\w+)$/', '\1', SITE_ROOT));//Domain TLD. By default, this is obtained automatically with regex using SITE_ROOT.

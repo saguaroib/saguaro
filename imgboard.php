@@ -58,7 +58,7 @@ switch ($mode) {
     case 'report':
         require_once(CORE_DIR . "/admin/report.php");
         $report = new Report;
-        $report->reportProcess();
+        $report->process();
         break;
     case 'catalog':
         echo "<META HTTP-EQUIV='refresh' content='0;URL=\"catalog.html\"'>"; //let go of the past

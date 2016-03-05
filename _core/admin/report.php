@@ -1,94 +1,93 @@
 <?php
-
 /*      
-
-        Reports class. 
-        Eventually revisit this to make it do a less obscene amount of mysql calls per report.
-        Perhaps integrate the log cache to cut down on queries.
+    ============================= MEME HEADER ============================= 
+        Saguaro reports class. Handles everything related to.....reports.
+        What the HELL was going on here?
         
+        Cleaned up and optimized. somewhat.
+        Next time on reports rewriting: A log style cache that'll let me do fancier things.
+        
+        Still absolute garbage. The htmlolocaust is coming, heil templates
+    =======================================================================
 */
-
 
 class Report {
     
-    function reportProcess() {
+    function process() {
     	global $mysql;
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            $no = $mysql->escape_string($_GET['no']);
-            //Various checks in the popup window before form is filed
-            $this->reportPostExists($no);
-            $this->reportIsCleared($no);  
-            $this->reportCheckIP(BOARD_DIR, $no, $_SERVER['REMOTE_ADDR']);
-            $this->reportForm(BOARD_DIR, $_GET['no']); //User passed checks, display form
+            //User initiated report window.
+            $this->canSubmit($_GET['no']);
+            $this->showForm($_GET['no']);
         } else {
-            //Report form has been filled out, POST'ed and can now be filed
-            if ($this->reportCheckIP(BOARD_DIR, $no, $_SERVER['REMOTE_ADDR'])) //One last check for people trying to be sneaky.
-                $this->error('Please wait a while before reporting more posts.', $no);
-            $this->reportSubmit(BOARD_DIR, $_POST['no'], $_POST['cat']);
+            //Form popup has been submitted, file it.
+            $this-canSubmit($_POST['no']);
+            $this->formSubmit($_POST['no'], $_POST['cat']);
         }
         die('</body></html>');
     }
     
-    function reportGetAllBoard($list = 0) {
+    function countBoard() {
     	global $mysql;
-        $query = $mysql->query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type > 0");
         
-        if (!$list) { //If the call is for the oldvalid() alert in admin.php, this will be 1.	
-            $active = $mysql->num_rows($query);
-            if ($active > 0)
-                $active = "<b><font color='red'/>$active Reports!</font></b>";
-            else
-                $active = "Reports";
-        } else {
-            $active = $query;
-        }
+        $query = " SELECT COUNT(*) FROM reports WHERE board='" . BOARD_DIR . "' AND type<>0";
+        $active = $mysql->result($query, 0, 0);
+        $active = ($active) ? "<b><font color='red'/>$active Reports!</font></b>" : "Reports";
+        
         return $active;
     }
     
-    function reportPostExists($no) {
-    	global $mysql;
-    //I won't dignify retards who report stickies with a SQL query, just give them the post not found error.
-        $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE no='$no' AND sticky < 1 LIMIT 1");
-        if ($mysql->num_rows($query) < 1)
+    function canSubmit($no) {
+        global $mysql, $my_log;
+
+        $my_log->update_cache(0);
+        $log = $my_log->cache;
+
+        $host = $mysql->escape_string($_SERVER['REMOTE_ADDR']);
+        $no = $mysql->escape_string($no);
+        $board = BOARD_DIR;
+
+        $query = "SELECT * FROM reports WHERE ip='$host' AND board='$board'";
+
+        //Post exists?
+        if (!isset($log[$no]))
             return $this->error("That post doesn't exist.", $no);
-    }
-    
-    function reportIsCleared($no) {
-    	global $mysql;
-        $query = $mysql->query("SELECT `no`,`type` FROM reports WHERE no='" . $no . "' AND type='0' LIMIT 1");
+
+        //Trying to report a sticky?
+        if ($log[$no]['sticky'] > 0) return $this->error("Stop trying to report a sticky!", $no);
+
+        //User is reporting themself?
+        if ($host == $log[$no]['host']) return $this->error("You can't report your own post!", $no);
+
+        //Already reported this ip or is going on a reporting spree?
+        if ($mysql->num_rows($query) > REPORT_FLOOD && !valid('reportflood'))
+            return $this->error('Report flood limit reached.', $no);
+
+        /* Handled in 
+        //Has report been cleared?
+        $query = "SELECT `no`,`type` FROM reports WHERE no='" . $no . "' AND type='0' LIMIT 1";
         if ($mysql->num_rows($query) > 0)
             return $this->error('This post has been reviewed and cleared.', $no);
+        */
+
     }
 
-    function reportClear($no) {
+    function clearNum($no) {
     	global $mysql;
         
         if (!valid('moderator'))
-            $this->error("Permission denied");
+            $this->error(S_NOPERM);
         
         $no = $mysql->escape_string($no);
-        if ($this->reportPostExists($no)) {
-            @$mysql->query("DELETE FROM reports WHERE no='$no'"); //How did you get there? Attempt to clear up the phantom report.
-            $this->error("That report/post doesn't exist anymore!");
-        }
-        //Set report type to inactive if it's been cleared by a mod. 
-        //deletePost.php does the deletion when the post is pruned anyway
-        $mysql->query("UPDATE reports SET type='0' WHERE no='$no'");
-    }
-    
-    function reportCheckIP($board, $no, $ip) {
-    	global $mysql;
-        $query = $mysql->query("SELECT host FROM " . SQLLOG . " WHERE no='$no' AND host='$ip' LIMIT 1");
-        if ($mysql->num_rows($query) > 0) //Trying to report own post
-            return $this->error("You can't report your own post!", $no);
 
-        //Check if the submitting user has already reported this ip or is going on a reporting spree.
-        $query = $mysql->query("SELECT * FROM reports WHERE ip='" . $ip . "' AND board='" . $board . "'");
-        if ($mysql->num_rows($query) > 3 && !valid('janitor_board')) //Relax there, tattle tale
-            return $this->error('Please wait a while before reporting more posts.', $no);
+        //Set report type to *inactive* if it's been cleared by a mod. 
+        // _core/admin/delete.php deletes the report from the queue when the post is removed
+        $mysql->query("UPDATE reports SET type='0' WHERE no='$no'");
+        
+        return true;
     }
     
-    function reportSubmit($board, $no, $type) {
+    function formSubmit($no, $type) {
     	global $mysql;
         require_once(CORE_DIR . "/general/captcha.php");
         $captcha = new Captcha;
@@ -102,14 +101,15 @@ class Report {
         /*cat = 1: Rule violation
         cat = 2: Illegal content
         cat = 3: Advertising
-        0 = Cleared by moderator, can't report it again. 
-        This is not a valid submit option. 
-        If the report isn't submitted with either cat 1,2 or 3, it is discarded */
+        0 = Cleared by moderator, can't report it again*/
+        
+        if ($type == "0") //User is trying to make their post unreportable.
+            $this->error("Invalid post option!", $no);
+        
         $host   = $_SERVER['REMOTE_ADDR'];
-        $cboard = $mysql->escape_string($board);
-        $cno    = $mysql->escape_string($no);
-        $ctype  = $mysql->escape_string($type);
-        $mysql->query("INSERT INTO reports (`num`, `no`, `board`, `type`, `time`, `ip`) VALUES ( '" . rand() . "', '" . $cno . "', '" . $cboard . "', '" . $ctype . "', NOW(), '" . $host . "') ");
+        $no    = $mysql->escape_string($no);
+        $type  = $mysql->escape_string($type);
+        $mysql->query("INSERT INTO reports (`no`, `board`, `type`, `ip`) VALUES ( '" . $no . "', '" . BOARD_DIR . "', '" . $type . "','" . $host . "')");
         
         echo "<head><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/" . $style . ".css'/><script>function loaded(){window.setTimeout(CloseMe, 3000);}function CloseMe() {window.close();}</script></head><body onLoad='loaded()'>
 	<center><font color=blue size=5>Report submitted! This window will close in 3 seconds...</b></font></center></body>";
@@ -129,7 +129,7 @@ class Report {
 		</head>';
     }
     
-    function reportForm($board, $no) {
+    function showForm($no) {
     	
         require_once(CORE_DIR . "/general/captcha.php");
         $captcha = new Captcha;
@@ -165,48 +165,7 @@ class Report {
 		</html>';
         
     }
-    
-    function reportList() {
-        global $mysql;
-        if (!$active = $mysql->query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type>0 ORDER BY `type` DESC "))
-            echo S_SQLFAIL;
-        $j = 0;
-        
-        $temp .= "<br><br><div class='managerBanner'>Active reports for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
-        $temp .= "<table class='postlists'>";
-        $temp .= "<tr class=\"postTable head\"><th>Clear Report</th><th>Post Number</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
-        $temp .= "</tr>";
-        
-        while ($row = $mysql->fetch_array($active)) {
-            $j++;
 
-            switch ($row['type']) {
-                case '1':
-                    $type = 'Spam';
-                    break;
-                case '2':
-                    $type = 'Rule Violation';
-                    break;
-                case '3':
-                    $type = 'Illegal Content';
-                    break;
-                default:
-                    $type = 'Type Error';
-                    break;
-            }
-            $class = ($j % 2) ? "row1" : "row2"; //BG color
-            
-            $temp .= "<tr class='$class'><td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=reports&no=" . $row['no'] . "';\" value='Clear' /></td>";
-            $temp .= "<td>" . $row['no'] . "</td><td>/" . $row['board'] . "/</td><td>$type</td><td>" . $row['ip'] ." </td>
-            <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $row['no'] . "';\" value=\"Post Info\" /></td>";
-            $temp .= "</tr>";
-            $temp .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
-            
-        }
-        
-        return $temp;
-    }
-    
     function error($mes, $no) {
         
         $this->reportFormHead($no);

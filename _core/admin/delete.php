@@ -38,7 +38,7 @@ class Delete extends Log {
             $this->update(0, 1); // update the index page last
     }
     
-    function targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $allbyip = 0, $delhost = '') {
+    function targeted($resno, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $delhost = '') {
         global $path, $mysql;
 
         $this->update_cache(1);
@@ -82,9 +82,9 @@ class Delete extends Log {
             $mysql->query("INSERT INTO " . SQLDELLOG . " (admin, postno, action, board,name,sub,com,img) 
             VALUES('$auser','$resno', '$imgonly2', '" . BOARD_DIR . ", '$adname','{$row['sub']}','{$row['com']}')");
         }
-        if ($allbyip && $delhost !== ''): 
+        if ($delhost !== ''): 
             $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where host='" . $delhost . "'");
-        elseif ($row['resto'] == 0 && $children && !$imgonly && !$allbyip): // select thread and children
+        elseif ($row['resto'] == 0 && $children && !$imgonly && !$delhost): // select thread and children
             $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno");
         else: // just select the post
             $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno");
@@ -118,6 +118,13 @@ class Delete extends Log {
             $result = $mysql->query("delete from " . SQLLOG . " where no=$resno");
         
         return $row['resto']; // so the caller can know what pages need to be rebuilt
+    }
+    
+    function deleteUploaded($file, $path) {
+        global $upfile, $dest;
+        if ($dest || $upfile) {
+            @unlink($upfile);
+            @unlink($dest);
     }
 }
 ?>

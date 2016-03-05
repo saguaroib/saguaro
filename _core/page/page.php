@@ -15,23 +15,24 @@ class Page {
             'extra' => []
         ]
     ];
-    
-    function generate($middle = '') {
-        return $this->head() . $middle . $this->foot();
+
+    function generate($middle = '', $admin = 0, $noHead = 0) {
+        return $this->head($admin, $noHead) . $middle . $this->foot();
     }
-    
-    function head() {
+
+    function head($admin, $noHead) {
         require_once("head.php");
         $head = new Head;
         $head->info = $this->headVars;
         
-        return $head->generate();
+        return ($admin) ? $head->generateAdmin($noHead) : $head->generate();
     }
-    
+
     function foot() {
         require_once("foot.php");
-        //$footer = new Footer;
-        return Footer::format();//$footer->format();//strict standards prefers <- over -> Footer::format(); for some reason 
+        $footer = new Footer;
+		
+        return $footer->format();//strict standards prefers <- over -> Footer::format(); because it's STRICT
     }
 
 }

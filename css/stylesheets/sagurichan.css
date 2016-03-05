@@ -276,3 +276,28 @@ img.postimg {
     /*position where enlarged image should offset horizontally */    
     z-index: 50;
 }
+.container {
+    background: #D7DBF2;
+    margin: 20px 200px;
+    border: 1px solid #000000;
+}
+
+.header {
+    background: #9988EE;
+    border-bottom: 1px solid #000000;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.banBody {
+    padding: 10px 20px;
+}
+
+.bannedHost {
+    font-weight: 700;
+}
+
+.reason {
+    font-weight: 700;
+}

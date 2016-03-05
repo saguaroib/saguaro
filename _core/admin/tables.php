@@ -2,8 +2,12 @@
 
 class Table {
     
-    function display($type = 0, $resource = 0) {
+    function deleteTable($type = 0, $resource = 0) {
         global $mysql;
+		
+		require_once(CORE_DIR . "/postform.php");
+		$postform = new PostForm;
+		
             function calculate_age($timestamp, $comparison = '') {
                 $units = array(
                      'second' => 60,
@@ -63,7 +67,9 @@ class Table {
                 $mode = 'ops';
             }            
 
-            // Deletion screen display
+			$temp .= $postform->format(0, 1);
+			
+            // Deletion screen display. Begin HTML generation.
             $temp .= "<div class='managerBanner'>" . S_MANAMODE . "</div>" . $banner;
             $temp .= '<br><form action="' . PHP_ASELF . '" method="get" id="delForm"><input type="hidden" name="mode" value="res">
             <input type="text" name="no" placeholder="Post # or IP" required><input type="submit" value="Search">
@@ -134,7 +140,7 @@ class Table {
                 $ssno = ($resto) ? $resto : $no;
                 $linknum = /*($resto) ?*/ '<a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a>';// : '<b><a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a></b>';
                 $sno = ($sticky) ? "<b><font color=\"FF101A\">$linknum</font></b>" : $linknum;
-                $threadmode = ($resto) ? $resto : $no;    
+                $threadmode = ($last) ? $resto : $no;    
                 $delim = ($size) ? "<td colspan='2'>&nbsp;</td><td colspan='1'>[<b><a href='?mode=adel&no=$no&imgonly=1&refer=$mode'>Delete image?</a>]</b></td><td colspan='3'>&nbsp;</td>" : "<td colspan='6'>&nbsp;</td>";
                 
                 //Actual panel html
@@ -152,21 +158,22 @@ class Table {
             $temp .=  "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
             $all = (int) ($all / 1024);
             //$temp .=  "<div align='center'/>[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]</div>";
-            $temp .= "</body></html>";
 
-            echo $temp;
+            return $temp;
     }
     
     function moreInfo($no) {
         global $mysql;
-        
-        if (!$result = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'"))
-            echo S_SQLFAIL;
-        
-        $row = $mysql->fetch_row($result);
+		
+		$no = $mysql->escape_string($no);
+
+        $query = "SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'";
+        $row = $mysql->fetch_row($query);
+		
+		if (!$row) echo S_SQLFAIL;
+		
         list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board, ) = $row;
-        $temp = head(0);
-        $temp .= "<table border='0' cellpadding='0' cellspacing='0'  />";
+        $temp = "<table border='0' cellpadding='0' cellspacing='0'  />";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br><hr><br>";
         if ($sticky || $locked || $permasage) {
             if ($sticky)
@@ -177,11 +184,11 @@ class Table {
                 $special .= "<b><font color=\"2E2EFE\">[Permasaged]</font></b>";
             $temp .= "<tr><td class='postblock'>Special:</td><td class='row2'>This thread is $special</td></tr>"; //lmoa
         }
-        $host = md5($host);
-        $host = substr($host, 12,20);
+        $hashedip = md5($host);
+        $hashedip = substr($hashedip, 12,20);
         $temp .= "<tr><td class='postblock'>Name:</td><td class='row1'>$name</td></tr>
       <tr><td class='postblock'>tempe:</td><td class='row2' />$now</td></tr>
-      <tr><td class='postblock'>IP:</td><td class='row1' /><b>$host</b></td></tr><br>
+      <tr><td class='postblock'>IP:</td><td class='row1' /><b>$hashedip</b></td></tr><br>
       <tr><td class='postblock'>Comment:</td><td class='row2' />$com</td></tr>
       <tr><td class='postblock'>MD5:</td><td class='row1' />$md5</td></tr>
       <tr><td class='postblock'>File</td>";
@@ -206,14 +213,14 @@ class Table {
             </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></td></tr></table></form>";
         } else
             $temp .= "</table></form>";
-        $alart = $mysql->num_rows("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE ip='" . $host . "'");
+        $alart = $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE host='" . $host . "'", 0, 0);
         if ( $alart > 0)
-            $alert = "<b><font color=\"FF101A\"> $alart ban(s) on record for $host!</font></b>";
+            $alert = "<b><font color=\"FF101A\"> $alart ban(s) on record for $hashedip!</font></b>";
         else
-            $alert = "No bans on record for IP $host";
+            $alert = "No bans on record for IP $hashedip";
         $temp .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
         <input type='hidden' name='no' value='$no' />
-        <input type='hidden' name='ip' value='$host' />
+        <input type='hidden' name='ip' value='$hashedip' />
         <center><th class='postblock'><b>Ban panel</b></th></center>
         <tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
         <tr><td class='postblock'>Unban in:</td><td><input type='number' min='0' size='4' name='banlength'  /> days</td></tr>
@@ -242,9 +249,90 @@ class Table {
         $temp .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form><br><hr>";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br>";
         
-        echo $temp;
+        return $temp;
     }
-    
+  
+     function reportTable() {
+        global $mysql;
+        if (!$active = $mysql->query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type>0 ORDER BY `type` DESC "))
+            echo S_SQLFAIL;
+        $j = 0;
+        
+        $temp .= "<br><br><div class='managerBanner'>Active reports for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
+        $temp .= "<table class='postlists'>";
+        $temp .= "<tr class=\"postTable head\"><th>Clear Report</th><th>Post Number</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
+        $temp .= "</tr>";
+        
+        while ($row = $mysql->fetch_array($active)) {
+            $j++;
+
+            switch ($row['type']) {
+                case '1':
+                    $type = 'Spam';
+                    break;
+                case '2':
+                    $type = 'Rule Violation';
+                    break;
+                case '3':
+                    $type = 'Illegal Content';
+                    break;
+                default:
+                    $type = 'Type Error';
+                    break;
+            }
+            $class = ($j % 2) ? "row1" : "row2"; //BG color
+            
+            $temp .= "<tr class='$class'><td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=reports&no=" . $row['no'] . "';\" value='Clear' /></td>";
+            $temp .= "<td>" . $row['no'] . "</td><td>/" . $row['board'] . "/</td><td>$type</td><td>" . $row['ip'] ." </td>
+            <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $row['no'] . "';\" value=\"Post Info\" /></td>";
+            $temp .= "</tr>";
+            $temp .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
+            
+        }
+        
+        return $temp;
+    }
+  
+    function staffTable() {
+        
+        if (!valid('admin'))  error(S_NOPERM);
+        
+        global $mysql;
+        //Staff list for panel
+        
+        if (!$active = $mysql->query("SELECT * FROM " . SQLMODSLOG . "")) 
+            echo S_SQLFAIL;
+        $j = 0;
+        $temp = '';
+        $temp .= "<br><br>[<a href='" . PHP_ASELF_ABS . "'>Back to Panel</a><input type='hidden' name='mode' value='admin'>]";
+        $temp .= "<input type=hidden name=pass value=\"$pass\">";
+        $temp .= "<div class='delbuttons'>";
+        $temp .= "<table class='postlists'><br>";
+        $temp .=  "<tr class='postTable head'><th>User</th><th>Allowed permissions</th><th>Denied permission</th><th>Delete user</th>";
+        $temp .=  "</tr>";
+
+        while ($row = $mysql->fetch_assoc($active)) {
+                $j++;               
+                $class = 'row' . ($j % 2 + 1); //BG color
+                $temp .= "<form action='" . PHP_ASELF_ABS ."?mode=staff' method='post' ><tr class='$class'>";
+                $temp .= "<td>" . $row['user'] . "</td><td>" . $row['allowed'] . "</td><td>" . $row['denied'] . "</td>
+                <td><input type='submit' value='" . $row['user'] . "' name='delete' /></td>";
+                $temp .= "</tr>";
+        }	
+        $temp .= "</form><div class='managerBanner' >[<a href='#' onclick=\"toggle_visibility('userForm');\" style='color:white;text-align:center;'>Toggle New User Form</a>]</div>";
+        $temp .= "<div><table id='userForm' style='text-align:center;display:none;'><br><hr style='width:50%;'>";
+        $temp .= "<form action='" . PHP_ASELF_ABS ."?mode=staff' method='post'><tr><td>New username: <input type='text' name='user' required></td>";
+        $temp .= "<td>New password: <input type='password' name='pwd1' required></td><td>Confirm password: <input type='password' name='pwd2' required></td>";
+        $temp .= "<td>Access level: <select name='action' required>
+            <option value='' /></option>
+            <option class='cap admin' value='admin' />Admin</option>
+            <option class='cap manager' value='manager' />Manager</option>
+            <option class='cap moderator' value='mod' />Moderator</option>
+            <option class='cap jani' value='janitor' />Global Janitor</option>
+            <option value='janitor_board' />Janitor (/" . BOARD_DIR . "/ only)</option>
+            </select></td><td><input type='submit' value='Submit'/></td></tr></table></div>";
+        return $temp;
+    }
 }
 
 ?>
