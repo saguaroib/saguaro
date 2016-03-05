@@ -23,8 +23,7 @@ class Banish {
     function isBanned($ip, $redirect = 0) {
         global $mysql;
         
-        $query   = $mysql->query("SELECT count(*)>0 FROM " . SQLBANLOG . " WHERE host='$ip' AND (board='" . BOARD_DIR . "' or global=1)");
-        $exists = $mysql->result($query, 0, 0);
+        $exists   = $mysql->num_rows("SELECT * FROM " . SQLBANLOG . " WHERE host='$ip' AND (board='" . BOARD_DIR . "' or global=1)");
 
         $respond = ($redirect) ? header("Location: banned.php") : true; //If isbanned is called with redirect, then return the new header
         return ($exists > 0) ? $respond : false;
