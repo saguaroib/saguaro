@@ -58,7 +58,10 @@ Admin = {
 				break;
 			case 'ban-usr':
 				Admin.ban.open(data);
-				break;
+				break
+            case 'u-ban':
+                Admin.ban.remove(data);
+                break;
 			case 'update-index':
 				Admin.update.index();
 			default:

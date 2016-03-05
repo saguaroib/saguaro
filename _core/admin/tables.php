@@ -252,7 +252,7 @@ class Table {
         return $temp;
     }
   
-     function reportTable() {
+    function reportTable() {
         global $mysql;
         if (!$active = $mysql->query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type>0 ORDER BY `type` DESC "))
             echo S_SQLFAIL;
@@ -287,6 +287,36 @@ class Table {
             <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $row['no'] . "';\" value=\"Post Info\" /></td>";
             $temp .= "</tr>";
             $temp .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
+            
+        }
+        
+        return $temp;
+    }
+    
+    function banTable() {
+        require_once(CORE_DIR . "/admin/bans.php");
+        $ban = new Banish;
+        
+        global $mysql;
+        if (!$active = $mysql->query(" SELECT * FROM " . SQLBANLOG . " WHERE board='" . BOARD_DIR . "' ORDER BY `placed` DESC "))
+            echo S_SQLFAIL;
+        $j = 0;
+        
+        $temp .= "<br><br><div class='managerBanner'>Active bans/warns for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
+        $temp .= "<table class='postlists'>";
+        $temp .= "<tr class=\"postTable head\"><th>Remove ban</th><th>Host</th><th>Public Reason</th><th>Admin notes</th><th>Placed on</th><th>Expires</th>";
+        $temp .= "</tr>";
+        
+        while ($row = $mysql->fetch_assoc($active)) {
+            $j++;
+
+            $expires = ($row['global']) ? "<strong>Permanent</strong>" : date("d, Y", $row['length']) . " (<strong>" . $ban->calculate_age($row['length'], $row['placed']) . "</strong>)";
+            $class = ($j % 2) ? "row1" : "row2"; //BG color
+            $placed = date("l, F d, Y" , $row['placed']);
+
+            $temp .= "<tr class='$class'><td><input type='button' class='cmd' data-cmd='u-ban' data-id='" . $row['host'] ."' value='X' /></td>";
+            $temp .= "<td>" . $row['host'] . "</td><td>" . $row['reason'] . "</td><td>" . $row['admin'] . "</td><td>" . $placed ." </td><td>" . $expires ." </td>";
+            $temp .= "</tr>";
             
         }
         

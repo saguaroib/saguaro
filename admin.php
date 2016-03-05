@@ -75,6 +75,11 @@ switch ($_GET['mode']) {
         if ($_POST['no']) $bans->process($_POST);
 		echo $bans->form($_GET);
         break;
+    case 'blist':
+        if (!valid('moderator')) error(S_NOPERM);
+        $html = $table->banTable();
+        echo $page->generate($html, true, false);
+        break;
     case 'rebuild':
 		if (!valid("admin")) error(S_NOPERM);
         require_once(CORE_DIR . "/log/rebuild.php");
@@ -88,8 +93,9 @@ switch ($_GET['mode']) {
     case 'news':
         if (!valid('admin')) error(S_NOPERM);
         require_once(CORE_DIR . "/admin/news.php");
-        if ($_POST['update']) News::newsUpdate($_POST);
-        $html = News::newsPanel();
+        $news = new News;
+        if ($_POST['update']) $news->newsUpdate($_POST);
+        $html = $news->newsPanel();
 		echo $page->generate($html, true, false); 
         break;
     case 'more':

@@ -125,6 +125,7 @@ class Delete extends Log {
         if ($dest || $upfile) {
             @unlink($upfile);
             @unlink($dest);
+        }
     }
 }
 ?>
