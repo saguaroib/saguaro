@@ -51,7 +51,9 @@ class Banish {
 		if ($this->isBanned($info['host']))
 			die("A ban for this ip already exists");	
 
-		//$row = $mysql->fetch_assoc("SELECT name, com FROM " . SQLLOG . " WHERE no=" . $info['no'] " AND board=" . BOARD_DIR);			
+		$row = $mysql->fetch_assoc("SELECT name, com, now FROM " . SQLLOG . " WHERE no='" . $info['no'] . "' AND board='" . BOARD_DIR ."'");			
+
+        $name = $mysql->escape_string("<span class='name'>" . $row['name'] . '</span> ' . $row['now'] . " No.XXX");
 
 		//Calculate the end time()
 		switch($info['strlength']) {
@@ -113,7 +115,7 @@ class Banish {
         $mysql->query( "INSERT INTO " . SQLBANLOG . " (board, global, name, host, com, reason, length, admin, placed) 
 		VALUES ( '" . BOARD_DIR .
 		"', '" . $info['global'] .
-		"', '" . $row['name'] . 
+		"', '" . $name . 
 		"', '" . $info['host'] .
 		"', '" . $row['com'] . 
 		"', '" . $info['reason'] . 
@@ -242,7 +244,8 @@ class Banish {
             
             if ($info['type'] === 'warned') {
                 $temp = '<div class="container"><div class="header">You have been ' . $info['type'] . '! :~:</div><div class="banBody">';
-                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><br /><p>' . $info['reason'] . '</p><br /><hr />
+                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><br /><p>' . $info['reason'] . '</p><br>
+                        The ban was filed on your post (without image):<br><br> ' . $info['post'] . '<br><hr />
                         <p>This warn was placed on ' . $info['placed'] . '. Now that you have seen it, you should be able to post again. 
                         <p>Please review the board rules and be aware that further rule violations can result in an extended ban.</p><br />                        
                         <br/>This action was filed for the following IP address: ' . $info['host'] . '</div>';
@@ -252,7 +255,8 @@ class Banish {
                 
                 $expired = ($info['append']) ? ". Your ban is now lifted and you should be able to continue posting. Please be review and be mindful of the board rules to prevent future bans" :  ' and will expire on: ' . $info['expires'] . $info['length'];
                 
-                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><br /><p>' . $info['reason'] . '</p><br /><hr />
+                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><br /><p>' . $info['reason'] . ' .</p><br>
+                        The ban was filed on your post (without image):<br><br> ' . $info['post'] . '<br><hr />
                         <p>This ban was placed on ' . $info['placed'] . $expired . '  
                         <br>This action was filed for the following IP address: ' . $info['host'] . '</div>';
                 
@@ -275,7 +279,7 @@ class Banish {
 
 		$row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE host='$host'");
 		
-		$name = "<span class='name'>" . $row['name'] . "</span>";
+		$post = "<span class='post reply'>" . $row['name'] . "<br><blockquote>" . $row['com'] . "</blockquote></span>";
 		$global = ($row['global']) ? "<strong>all boards</strong>" : "<strong>/" . $row['board'] . "/</strong> ";
 		$host = "<span class='bannedHost' >" . $host . "</span>";
 		$reason = "<span class='reason'>" . $row['reason'] . "</span>";
@@ -301,8 +305,8 @@ class Banish {
 		}
 
 		return [
-			'name'		=> $name,
 			'global'	=> $global,
+            'post'       => $post,
 			'board'		=> $row['board'],
 			'host'		=> $host,
 			'reason'	=> $reason,
