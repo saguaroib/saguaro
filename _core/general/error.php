@@ -13,9 +13,7 @@ class Error {
             unlink($dest);
 
 
-        /*if ($mes == S_BADHOST) {
-            //die("<html><head><meta http-equiv='refresh' content='0; url=banned.php'></head></html>");
-        } else*/if (!$fancy) {
+        if (!$fancy) {
             require_once(CORE_DIR . "/page/head.php");
             $head = new Head; $head = $head->generate();
             $upfile_name = $_FILES["upfile"]["name"];
