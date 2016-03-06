@@ -300,7 +300,7 @@ class Banish {
 				break;
 			default:
 				$type = "banned";
-				$clength = $row['length'] - $row['placed'];
+				$clength = $row['length'] - time();
 				if ($clength <= 0) $appendFlag = true;
 				$length = ", which is <strong>" . $this->calculate_age($row['length'], $row['placed']) . "</strong> from now. ";
 				break;
