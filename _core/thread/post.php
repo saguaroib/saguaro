@@ -31,7 +31,6 @@ class Post {
             $temp .= "<a href='#$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon </div>";
         } else {
             $temp .= "  <a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]</div>";
-            $temp .= "<div class='postLink' > $stickyicon &nbsp; <a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a></div>";
         }
 
         $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $no); //lol
@@ -62,7 +61,6 @@ class Post {
             $temp .= "<a href='#$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></span></div>";
         } else {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' class='permalink' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
-            $temp .= "<div class='postLink' > $stickyicon &nbsp;</div>";
         }
 
         $image = new Image;

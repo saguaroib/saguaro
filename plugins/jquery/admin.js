@@ -14,7 +14,7 @@ Admin = {
 		del: function(data) {
 			if (data) {
 				$.ajax({
-					url: location.href.split("/").slice(-1) + "?mode=adel&no=" + data,
+					url: "admin.php?mode=adel&no=" + data,
 					success: function() { $('#tr' + data).remove(); $("#" + data + "a").remove();$("#" + data + "b").remove();},
 					error: function() { Admin.msg("Connection error.", 1);}
 				});
