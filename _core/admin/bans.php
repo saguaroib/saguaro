@@ -182,9 +182,14 @@ class Banish {
     
     //Admin ban filing form.
     function form($no) {
-        global $mysql, $page;
+        global $mysql;
 
 		$no = $mysql->escape_string($_GET['no']);
+
+		require_once(CORE_DIR . "/page/head.php");
+		$head = new Head;
+		
+		$temp = $head->generateAdmin(1); //Get head elements without head text
 		
         $host  = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$no'", 0, 0);
         $alart = ($host) ? $mysql->result("SELECT COUNT(*) FROM " . SQLBANNOTES . " WHERE host='" . $host . "'") : 0;
@@ -223,9 +228,9 @@ class Banish {
         /*if (valid('admin'))
         $temp .= "
         <tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";*/ //Soon.
-        $temp .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form>";
+        $temp .= "<center><tr><td><input type='submit' value='Ban' onclick='Admin.ban.close()' /></td></tr></center></table></form>";
         
-        echo $page->generate($temp, true, true);
+        return $temp;
     }
 	
 	//Formats banned.php HTML

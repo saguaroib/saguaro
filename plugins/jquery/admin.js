@@ -22,10 +22,25 @@ Admin = {
 				Admin.msg("Error! No post # given!", 1)
 			}
 		},
-		
-		ban: function(data) {
+	},
+	
+	ban: {
+		toggle: function(data) {
+			if ($("div.banFrame").length < 1) {
+				Admin.ban.open(data);
+			} else {
+				Admin.ban.close();
+			}
 		},
 		
+		open: function(data) {
+			$("body").append('<div class="banFrame" style=" position: absolute; top: 50px;"><div class="postblock" style="text-align:center;">Ban No.' + data +' [<a class="cmd" onclick="Admin.ban.close()" >Close</a>]</div><iframe src="admin.php?mode=ban&no=' + data + '" width="400" height="275" frameborder="0"></iframe></div>');
+			$("div.banFrame").draggable();
+		},
+		
+		close: function() {
+			$("div.banFrame").remove();
+		}
 	},
 	
 	update: {
@@ -39,7 +54,7 @@ Admin = {
 	},
 	
 	msg: function(string, type) {
-		var css = (type) ? "style='background-color:red; color:white;text-align:center;width: 300px;border-radius: 10px;margin: auto;'" : "style='background-color:green; color:white;text-align:center;width: 300px;border-radius: 10px;margin: auto;'";
+		var css = (type) ? "style='position:absolute; background-color:red; color:white; text-align:center;width: 300px;border-radius:10px; margin-right:auto; margin-left: auto;'" : "style=' position:absolute; background-color:green; color:white; text-align:center; width:300px; border-radius:10px; margin-right:auto; margin-left: auto;'";
 		$("body").prepend("<div class='alert' " + css + ">" + string + "</div>");
 		setTimeout(function(){
 		$(".alert").remove(); },3000);
@@ -62,6 +77,9 @@ Admin = {
             case 'u-ban':
                 Admin.ban.remove(data);
                 break;
+			case 'ban-window':
+				Admin.ban.toggle(data);
+				break;
 			case 'update-index':
 				Admin.update.index();
 			default:

@@ -132,7 +132,8 @@ class Head {
         $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";        
         
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
-                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script></head>
+                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>
+				<script src='" . JS_PATH . "/jquery-ui-1.10.4.min.js' type='text/javascript'></script>
 				<script src='" . JS_PATH . "/admin.js' type='text/javascript'></script></head>";
         
         if (!$noHead) {
