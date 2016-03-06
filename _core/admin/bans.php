@@ -214,10 +214,10 @@ class Banish {
                 <option value='4' />Permanent - All boards</option>
                 </select>
             </td></tr>
-            <tr><td class='postblock'>Public reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
-            <tr><td class='postblock'>Staff notes:</td><td><input type='text' name='staffnote' /></td></tr>
-            <tr><td class='postblock'>Append user's comment:</td><td><input type='text' name='custmess' placeholder='Leave blank for USER WAS BAN etc.' /><br>[ Show message<input type='checkbox' name='showbanmess' /> ] </td></tr>
-            <tr><td class='postblock'>After-ban options:</td><td>
+            <tr><td class='postblock'>Reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
+            <tr><td class='postblock'>IP note:</td><td><input type='text' name='staffnote' /></td></tr>
+            <tr><td class='postblock'>Append: </td><td><input type='text' name='custmess' placeholder='Leave blank for USER WAS BANNED etc.' /><br>[ Show message<input type='checkbox' name='showbanmess' /> ] </td></tr>
+            <tr><td class='postblock'>After-ban:</td><td>
                 <select name='afterban' />
                 <option value='0' />None</option>
                 <option value='1' />Delete this post</option>
