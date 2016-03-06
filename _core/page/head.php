@@ -59,7 +59,7 @@ class Head {
         $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";
 
         foreach($this->info['css']['extra'] as $css) {
-            $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . $css . ".css'/>";
+            $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "$css'/>";
         }
 
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
