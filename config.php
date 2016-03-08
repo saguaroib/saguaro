@@ -33,7 +33,7 @@ define(GLOBAL_NEWS, 'CHANGEME'); //Absolute html path to your global board news 
 define(SALTFILE, 'salt');        //Name of the salt file, do not add a file extension for security
 
 //Basic settings
-define(NSFW_BOARD, false);    //Whether or not this is a NSFW(Red/Saguaba or blue/Sagurichan) board. Also affects mobile theme.
+define(NSFW, false);    //Whether or not this is a NSFW(Red/Saguaba or blue/Sagurichan) board.
 define(SHOWTITLETXT, true);   //Show TITLE at top. False: hide title, True: display title (Setting this to 2 will show "/{your BOARD_DIR value}/ - {Your TITLE value}"
 define(SHOWTITLEIMG, false);  //Show image at top
 define(TITLEIMG, '');         //Title image (point to an img rotating script if you want rotating banners)
