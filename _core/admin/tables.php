@@ -351,7 +351,7 @@ class Table {
             echo S_SQLFAIL;
         $j = 0;
         
-        $temp .= "<div class='managerBanner'>Active bans & warns for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
+        $temp .= "<br><div class='managerBanner'>Active bans & warns for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
         $temp .= "<table class='postlists'>";
         $temp .= "<tr class=\"postTable head\"><th>Remove ban</th><th>Host</th><th>Public Reason</th><th>Admin notes</th><th>Placed on</th><th>Expires</th>";
         $temp .= "</tr>";
