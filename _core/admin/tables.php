@@ -1,6 +1,16 @@
 <?php
 
 class Table {
+
+    //Initial display for admin.php
+    function landing() {
+        global $mysql;
+        
+        define(S_LANDING, "");
+        $temp .= "<div class='managerBanner'>" . S_LANDING . "</div>";
+        $temp .= "<div class='container'><div class='header'>Boards</div>TEST</div>";
+        return $temp;
+    }
     
     function deleteTable($type = 0, $resource = 0) {
         global $mysql;
@@ -155,7 +165,7 @@ class Table {
                 <td colspan='4' align='center'><input value='View all by this IP' onclick=\"location.href='?mode=ip&no=$no';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='View in threadmode' onclick=\"location.href='?mode=res&no=$threadmode';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Delete everything by this IP' onclick=\"popup('admin=delall&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Ban user' class='cmd' data-cmd='ban-window' data-id='$no' type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"More info\" /></td>";                
             }//
             //$mysql->free_result($result);
-            $temp .=  "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
+            $temp .=  "</table><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
             $all = (int) ($all / 1024);
             //$temp .=  "<div align='center'/>[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]</div>";
 
@@ -166,12 +176,12 @@ class Table {
         global $mysql;
 		
 		$no = $mysql->escape_string($no);
-
         $query = "SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'";
         $row = $mysql->fetch_row($query);
 		
 		if (!$row) echo S_SQLFAIL;
 		
+        //Cleaner looking to do it this way lol
         list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board, ) = $row;
         $temp = "<table border='0' cellpadding='0' cellspacing='0'  />";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br><hr><br>";
@@ -184,8 +194,7 @@ class Table {
                 $special .= "<b><font color=\"2E2EFE\">[Permasaged]</font></b>";
             $temp .= "<tr><td class='postblock'>Special:</td><td class='row2'>This thread is $special</td></tr>"; //lmoa
         }
-        $hashedip = md5($host);
-        $hashedip = substr($hashedip, 12,20);
+        $hashedip = substr(md5($host), 12,20);
         $temp .= "<tr><td class='postblock'>Name:</td><td class='row1'>$name</td></tr>
       <tr><td class='postblock'>tempe:</td><td class='row2' />$now</td></tr>
       <tr><td class='postblock'>IP:</td><td class='row1' /><b>$hashedip</b></td></tr><br>
@@ -193,10 +202,9 @@ class Table {
       <tr><td class='postblock'>MD5:</td><td class='row1' />$md5</td></tr>
       <tr><td class='postblock'>File</td>";
         if ($w && $h) {
-            $hasimg = 1;
             $temp .= "<td><img width='" . MAX_W . "' height='" . MAX_H . "' src='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "'/></td></tr>
             <tr><td class='postblock'>Thumbnail:</td><td><img width='" . $tn_w . "' height='" . $tn_h . "' src='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg" . "'/></td></tr>
-            <tr><td class='postblock'>Links:</td><td>[<a href='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "' target='_blank' />Image src</a>][<a href='" . tempA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg' target='_blank' />Thumb src</a>]
+            <tr><td class='postblock'>Links:</td><td>[<a href='" . DATA_SERVER . BOARD_DIR . "/" . IMG_DIR . $tim . $ext . "' target='_blank' />Image src</a>][<a href='" . DATA_SERVER . BOARD_DIR . "/" . THUMB_DIR . $tim . "s.jpg' target='_blank' />Thumb src</a>]
             [<a href='" . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . $no . PHP_EXT . "#" . $no . "' target='_blank' /><b>View in thread</b></a>]</td></tr>";
         } else
             $temp .= "<td>No file</td></tr>";
@@ -213,11 +221,10 @@ class Table {
             </select></td><td><input type='hidden' name='no' value='$no' /><input type='submit' value='Submit'></td></tr></table></form>";
         } else
             $temp .= "</table></form>";
+        
         $alart = $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE host='" . $host . "'", 0, 0);
-        if ( $alart > 0)
-            $alert = "<b><font color=\"FF101A\"> $alart ban(s) on record for $hashedip!</font></b>";
-        else
-            $alert = "No bans on record for IP $hashedip";
+        $alert = ($alart) ? "<b><font color=\"FF101A\"> $alart ban(s) on record for $hashedip!</font></b>" : "No bans on record for IP $hashedip";
+        
         $temp .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
         <input type='hidden' name='no' value='$no' />
         <input type='hidden' name='ip' value='$hashedip' />
@@ -244,8 +251,8 @@ class Table {
             </select>
         </td></tr>";
         if (valid('admin'))
-            $temp .= "
-            <tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";
+            $temp .= "<tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";
+
         $temp .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form><br><hr>";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br>";
         
@@ -258,12 +265,12 @@ class Table {
             echo S_SQLFAIL;
         $j = 0;
         
-        $temp .= "<br><br><div class='managerBanner'>Active reports for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
+        $temp .= "<br><div class='managerBanner'>Active reports for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
         $temp .= "<table class='postlists'>";
         $temp .= "<tr class=\"postTable head\"><th>Clear Report</th><th>Post Number</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
         $temp .= "</tr>";
         
-        while ($row = $mysql->fetch_array($active)) {
+        while ($row = $mysql->fetch_assoc($active)) {
             $j++;
 
             switch ($row['type']) {
@@ -282,13 +289,14 @@ class Table {
             }
             $class = ($j % 2) ? "row1" : "row2"; //BG color
             
-            $temp .= "<tr class='$class'><td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=reports&no=" . $row['no'] . "';\" value='Clear' /></td>";
-            $temp .= "<td>" . $row['no'] . "</td><td>/" . $row['board'] . "/</td><td>$type</td><td>" . $row['ip'] ." </td>
+            $table .= "<tr class='$class'><td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=reports&no=" . $row['no'] . "';\" value='Clear' /></td>";
+            $table .= "<td>" . $row['no'] . "</td><td>/" . $row['board'] . "/</td><td>$type</td><td>" . $row['ip'] ." </td>
             <td><input type='button' text-align='center' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $row['no'] . "';\" value=\"Post Info\" /></td>";
-            $temp .= "</tr>";
-            $temp .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
+            $table .= "</tr>";
             
         }
+        
+        $temp .= "</table><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
         
         return $temp;
     }
@@ -304,7 +312,7 @@ class Table {
             echo S_SQLFAIL;
         $j = 0;
         $temp = '';
-        $temp .= "<br><br>[<a href='" . PHP_ASELF_ABS . "'>Back to Panel</a><input type='hidden' name='mode' value='admin'>]";
+        $temp .= "<input type='hidden' name='mode' value='admin'>";
         $temp .= "<input type=hidden name=pass value=\"$pass\">";
         $temp .= "<div class='delbuttons'>";
         $temp .= "<table class='postlists'><br>";
@@ -343,7 +351,7 @@ class Table {
             echo S_SQLFAIL;
         $j = 0;
         
-        $temp .= "<br><br><div class='managerBanner'>Active bans/warns for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
+        $temp .= "<div class='managerBanner'>Active bans & warns for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
         $temp .= "<table class='postlists'>";
         $temp .= "<tr class=\"postTable head\"><th>Remove ban</th><th>Host</th><th>Public Reason</th><th>Admin notes</th><th>Placed on</th><th>Expires</th>";
         $temp .= "</tr>";
@@ -360,6 +368,8 @@ class Table {
             $temp .= "</tr>";
             
         }
+        
+        $temp .= "</table>";
         
         return $temp;
     }
