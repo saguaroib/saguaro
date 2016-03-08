@@ -34,7 +34,7 @@ Admin = {
 		},
 		
 		open: function(data) {
-			$("body").append('<div class="banFrame" style=" position: absolute; top: 50px;"><div class="postblock" style="text-align:center;">Ban No.' + data +' [<a class="cmd" onclick="Admin.ban.close()" >Close</a>]</div><iframe src="admin.php?mode=ban&no=' + data + '" width="350" height="270" frameborder="0"></iframe></div>');
+			$("body").append('<div class="banFrame" style=" position: absolute; top: 50px; border: 1px solid black;"><div class="postblock" style="text-align:center; border-left:none; border-top:none;border-right:none;">Ban No.' + data +' [<a class="cmd" onclick="Admin.ban.close()" >Close</a>]</div><iframe src="admin.php?mode=ban&no=' + data + '" width="300" height="250" frameborder="0"></iframe></div>');
 			$("div.banFrame").draggable();
 		},
 		

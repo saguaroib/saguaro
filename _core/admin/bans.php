@@ -32,11 +32,10 @@ class Banish {
         global $mysql, $my_log;
 
 		$info = [
-			'no'        => $mysql->escape_string($_POST['no']),				//Post # being banned for
-			'intlength' => $mysql->escape_string($_POST['banlength1']),     //Integer ban length
-			'strlength' => $mysql->escape_string($_POST['banlength2']),     //Unit of time banned for
-			'type'      => $mysql->escape_string($_POST['banType']), 		//...
-			'after'     => $mysql->escape_string($_POST['afterban'])		//What to do after ban is processed
+			'no'        => $mysql->escape_string($_POST['no']),             //Post # being banned for
+			'length'    => $mysql->escape_string($_POST['length']),            //Integer ban length
+			'type'      => $mysql->escape_string($_POST['banType']),        //...
+			'after'     => $mysql->escape_string($_POST['afterban'])        //What to do after ban is processed
         ];
 
 		$info['host']	 = $mysql->escape_string($_POST['host']);			//Banned IP
@@ -46,36 +45,31 @@ class Banish {
 		$info['public']  = $mysql->escape_string($_POST['showbanmess']);	//Show message appened to post
 
 		if ($this->isBanned($info['host']))
-			die("A ban for this ip already exists");	
+			die("This IP is already banned.");	
 
 		$row = $mysql->fetch_assoc("SELECT name, com, now FROM " . SQLLOG . " WHERE no='" . $info['no'] . "' AND board='" . BOARD_DIR ."'");			
 
         $name = $mysql->escape_string("<span class='name'>" . $row['name'] . '</span> ' . $row['now'] . " No.XXX");
 
-		//Calculate the end time()
-		switch($info['strlength']) {
-			case '1':
-				$info['length'] = strtotime("+ " . $info['intlength'] . " seconds", time());
-				break;
-			case '2': 
-				$info['length'] = strtotime("+ " . $info['intlength'] . " minutes", time());
-				break;
-			case '3':
-				$info['length'] = strtotime("+ " . $info['intlength'] . " days", time());
-				break;
-			case '4':
-				$info['length'] = strtotime("+ " . $info['intlength'] . " weeks", time());
-				break;
-			case '5':
-				$info['length'] = strtotime("+ " . $info['intlength'] . " months", time());
-				break;
-			default:
-				$info['length'] = 0; //Warning
-				break;
-		}
-		
-		if($info['type'] == '4') $info['length'] = -1; //Permabanned!
-		
+		//Calculate the end time(). Thanks infinity/tinyboard (http://github.com/ctrlcctrlv/infinity/tree/master/inc/bans.php)	
+        if ($info['type'] !== "1") { //Expiring ban.
+            if (preg_match('/^((\d+)\s?ye?a?r?s?)?\s?+((\d+)\s?mon?t?h?s?)?\s?+((\d+)\s?we?e?k?s?)?\s?+((\d+)\s?da?y?s?)?((\d+)\s?ho?u?r?s?)?\s?+((\d+)\s?mi?n?u?t?e?s?)?\s?+((\d+)\s?se?c?o?n?d?s?)?$/', $info['length'], $matches) !== true)
+                die("Invalid length format!");
+            $expire = 0;
+            if (isset($matches[2])) $expire += $matches[2]*60*60*24*365;    //Years
+            if (isset($matches[4])) $expire += $matches[4]*60*60*24*30;     //Months
+            if (isset($matches[6])) $expire += $matches[6]*60*60*24*7;      //Weeks
+            if (isset($matches[8]))	$expire += $matches[8]*60*60*24;        //Days
+            if (isset($matches[10]))$expire += $matches[10]*60*60;          //Hours
+            if (isset($matches[12]))$expire += $matches[12]*60;             //Minutes
+            if (isset($matches[14]))$expire += $matches[14];                //Seconds
+            $info['length'] = time() + $expire;
+            
+            if($info['type'] == '3') $info['length'] = -1; //Permabanned!
+		} else {
+            $info['length'] = 0; //Set erronuous/tampered forms to warns by default.
+        }
+
 		if ($info['after'] || $info['public']) { //Gotta rebuild the thread or index if after-actions are set
 			
 			if ($info['after']) {
@@ -98,7 +92,7 @@ class Banish {
 			}
 			
 			
-			$resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "'"); //For rebuild selection
+			@$resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "'"); //For rebuild selection
 			$rebuild = ($resto) ? $resto : $info['no'];
 			
 			//Append public ban message
@@ -120,7 +114,7 @@ class Banish {
 		"', '" . $info['areason'] . 
 		"', '" . time() ."')");
 		
-        if (DEBUG_MODE !== true) echo "<script>window.close();</script>"; //Close ban window
+        if (DEBUG_MODE !== true) echo "<script>Admin.ban.close();</script>"; //Close ban window
         
         return true; //Success
     }
@@ -192,32 +186,25 @@ class Banish {
 		$temp = $head->generateAdmin(1); //Get head elements without head text
 		
         $host  = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$no'", 0, 0);
-        $alart = ($host) ? $mysql->result("SELECT COUNT(*) FROM " . SQLBANNOTES . " WHERE host='" . $host . "'") : 0;
-        $alert = ($alart > 0) ? "<strong><font color=\"FF101A\"> $alart ban(s)/warn(s) on record for $host!</font></b>" : "No bans on record for IP $host";
+        $alart = ($host) ? @$mysql->result("SELECT COUNT(*) FROM " . SQLBANNOTES . " WHERE host='" . $host . "'") : 0;
+        $alert = ($alart > 0) ? "<strong><font color=\"FF101A\"> $alart record(s) for $host!</font></b>" : "No record for IP $host";
         
-        $temp .= "<!---banning #:$no; host:$host---><br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
+        $temp .= "<!---banning #:$no; host:$host---><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
             <input type='hidden' name='no' value='$no' />
             <input type='hidden' name='host' value='$host' />
-            <tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
-            <tr><td class='postblock'>Unban in:</td><td><input type='number' min='0' size='7' name='banlength1'  /> <select name='banlength2' />
-                <option value='1' />seconds</option>
-                <option value='2' />minutes</option>
-                <option value='3' />days</option>
-                <option value='4' />weeks</option>
-                <option value='5' />months</option>
-                </select></td></tr>
-            <center><tr><td class='postblock'>Ban type:</td><td></center>
+            <tr><td class='postblock'>History: </td><td>$alert</td></tr>
+            <tr><td class='postblock'>Length:</td><td><input type='text' name='length' placeholder='3d4m10s, 5year2day, 5m etc.'/></td></tr>
+            <center><tr><td class='postblock'>Type:</td><td></center>
                 <select name='banType' />
-                <option value='0' />Warning only</option>
+                <option value='1' />Warning only</option>
                 <option value='2' />This board - /" . BOARD_DIR . "/ </option>
-                <option value='3' />All boards</option>
-                <option value='4' />Permanent - All boards</option>
+                <option value='3' />Permanent</option>
                 </select>
             </td></tr>
             <tr><td class='postblock'>Reason:</td><td><textarea rows='2' cols='25' name='pubreason' /></textarea></td></tr>
             <tr><td class='postblock'>IP note:</td><td><input type='text' name='staffnote' /></td></tr>
-            <tr><td class='postblock'>Append: </td><td><input type='text' name='custmess' placeholder='Leave blank for USER WAS BANNED etc.' /><br>[ Show message<input type='checkbox' name='showbanmess' /> ] </td></tr>
-            <tr><td class='postblock'>After-ban:</td><td>
+            <tr><td class='postblock'>Append: </td><td><input type='checkbox' name='showbanmess' /><input type='text' name='custmess' placeholder='USER WAS BANNED FOR THIS POST' /></td></tr>
+            <tr><td class='postblock'>After:</td><td>
                 <select name='afterban' />
                 <option value='0' />None</option>
                 <option value='1' />Delete this post</option>
@@ -228,7 +215,7 @@ class Banish {
         /*if (valid('admin'))
         $temp .= "
         <tr><td class='postblock'>Add to Blacklist:</td><td>[ Comment<input type='checkbox' name='blacklistcom' /> ] [ Image MD5<input type='checkbox' name='blacklistimage' /> ] </td></tr>";*/ //Soon.
-        $temp .= "<center><tr><td><input type='submit' value='Ban' onclick='Admin.ban.close()' /></td></tr></center></table></form>";
+        $temp .= "<center><tr><td><input type='submit' value='Ban' /></td></tr></center></table></form>";
         
         return $temp;
     }
@@ -246,7 +233,7 @@ class Banish {
             
             if ($info['type'] === 'warned') {
                 $temp = '<div class="container"><div class="header">You have been ' . $info['type'] . '! :~:</div><div class="banBody">';
-                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><p>' . $info['reason'] . '</p><br>
+                $temp .= '<p>You were ' . $info['type'] . ' on ' . $info['global'] . ' for the following reason: </p><p>' . $info['reason'] . '</p><br>
                         The ban was filed on your post (without image):<br><br> ' . $info['post'] . '<br><hr />
                         <p>This warn was placed on ' . $info['placed'] . '. Now that you have seen it, you should be able to post again. 
                         <p>Please review the board rules and be aware that further rule violations can result in an extended ban.</p><br />                        
@@ -257,7 +244,7 @@ class Banish {
                 
                 $expired = ($info['append']) ? ". Your ban is now lifted and you should be able to continue posting. Please be review and be mindful of the board rules to prevent future bans" :  ' and will expire on: ' . $info['expires'] . $info['length'];
                 
-                $temp .= '<p>You were ' . $info['type'] . ' for the following reason: </p><p>' . $info['reason'] . ' .</p><br>
+                $temp .= '<p>You were ' . $info['type'] . ' on ' . $info['global'] . ' for the following reason: </p><p>' . $info['reason'] . ' .</p><br>
                         The ban was filed on your post (without image):<br><br> ' . $info['post'] . '<br><hr />
                         <p>This ban was placed on ' . $info['placed'] . $expired . '  
                         <br>This action was filed for the following IP address: ' . $info['host'] . '</div>';
@@ -281,12 +268,12 @@ class Banish {
 
 		$row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE host='$host'");
 		
-		$post = "<span class='post reply'>" . $row['name'] . "<br><blockquote>" . $row['com'] . "</blockquote></span>";
+		$post = "<span class='post reply'style='border:1px solid black;'><input type='checkbox'>" . $row['name'] . "<br><blockquote>" . $row['com'] . "</blockquote></span>";
 		$global = ($row['global']) ? "<strong>all boards</strong>" : "<strong>/" . $row['board'] . "/</strong> ";
 		$host = "<span class='bannedHost' >" . $host . "</span>";
 		$reason = "<span class='reason'>" . $row['reason'] . "</span>";
-		$placed = "<strong>" . date("l, F d, Y" , $row['placed']) . "</strong>";
-		$expires = "<strong>" . date("l, F d, Y", $row['length']) . "</strong>";
+		$placed = "<strong>" . date("l, F d, Y \(H:m:s\)" , $row['placed']) . "</strong>";
+		$expires = "<strong>" . date("l, F d, Y \(H:m:s\)", $row['length']) . "</strong>";
 		$appendFlag = false;
 		switch($row['length']) { //Do calculation for the time difference...
 			case 0:
@@ -307,16 +294,16 @@ class Banish {
 		}
 
 		return [
-			'global'	=> $global,
-            'post'       => $post,
-			'board'		=> $row['board'],
-			'host'		=> $host,
-			'reason'	=> $reason,
-			'placed'	=> $placed,
-			'length'	=> $length,
-			'type'		=> $type,
-			'append'	=> $appendFlag,
-			'expires'	=> $expires
+            'global'    => $global,
+            'post'      => $post,
+            'board'     => $row['board'],
+            'host'      => $host,
+            'reason'    => $reason,
+            'placed'    => $placed,
+            'length'    => $length,
+            'type'      => $type,
+            'append'    => $appendFlag,
+            'expires'   => $expires
 		];
 		
     }

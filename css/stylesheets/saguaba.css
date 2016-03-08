@@ -325,3 +325,7 @@ img.postimg {
 .reason {
     font-weight: 700;
 }
+
+input[type="button"] {
+    border: 1px solid black;
+}
