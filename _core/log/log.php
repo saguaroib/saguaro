@@ -318,7 +318,7 @@ class Log {
         }
 
         //Basic support for bump order with new 'last' column.
-        $query = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE resto=0 order by last desc");
+        $query = $mysql->query('SELECT no FROM `'. SQLLOG . '` WHERE `resto` = 0 ORDER BY sticky DESC, last DESC');
         while ($row = $mysql->fetch_assoc($query)) {
             if (isset($log[$row['no']]) && $log[$row['no']]['resto'] == 0) {
                 $threads[] = $row['no'];
