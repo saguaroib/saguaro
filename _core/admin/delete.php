@@ -121,7 +121,7 @@ class Delete extends Log {
                     unset($log[$delrow['resto']]['children'][$delrow['no']]);
                 unset($log[$delrow['no']]);
                 $log['THREADS'] = array_diff($log['THREADS'], array($delrow['no'])); // remove from THREADS
-                $mysql->query("DELETE FROM reports WHERE (no=" . $delrow['no'] . "AND board='" . BOARD_DIR . "')"); // clear reports
+                $mysql->query("DELETE FROM reports WHERE (no=" . $delrow['no'] . " AND board='" . BOARD_DIR . "')"); // clear reports
                 if (USE_GZIP == 1)
                     @unlink(RES_DIR . $delrow['no'] . PHP_EXT . '.gz');
                 @unlink(RES_DIR . $delrow['no'] . PHP_EXT);
