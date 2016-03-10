@@ -82,7 +82,6 @@ class Regist {
         global $mysql;
 
         $data = [ //Ironically aligned to "permasage".
-			'no'		=> $mysql->result("SELECT MAX(no) FROM " . SQLLOG . " WHERE board='" . BOARD_DIR . "'") + 1,
             'now'       => $info['post']['now'],
             'name'      => $info['post']['name'],
             'email'     => $info['post']['email'],
@@ -107,8 +106,6 @@ class Regist {
             'board'		=> BOARD_DIR
         ];
 
-		if (UNIFIED_TABLE !== true) unset($data['no']);
-
         //Dynamically build the SQL command, numerous advantages.
         $keys = []; $vals = [];
         foreach($data as $column => $value) {
@@ -120,9 +117,9 @@ class Regist {
         $keys = implode(",",$keys);
         $vals = implode(",",$vals);
 
-        $query = "INSERT INTO ".SQLLOG." ($keys) VALUES ($vals) ON DUPLICATE KEY UPDATE no = no+1";
+        $query = "INSERT INTO ".SQLLOG." ($keys) VALUES ($vals)";
         $mysql->query($query);
-        $final = (UNIFIED_TABLE) ? $mysql->result("SELECT MAX(no) FROM " . SQLLOG . " WHERE board='" . BOARD_DIR . "'") : (int) $mysql->result('SELECT last_insert_id()');
+        $final =  (int) $mysql->result('SELECT last_insert_id()');
         /* if (!$result = ?) { echo E_REGFAILED; }*/
 
         $this->cache['post']['number'] = $final;

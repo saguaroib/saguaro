@@ -23,14 +23,6 @@ define(SQLDB, 'saguaro');   //Database used by image board.
 define(PREFIX, 'imgboard'); //Prefix to automatically use for the database tables.
 
 /*
-	Use only one SQL table for storing posts between multiple boards. 
-	If you enable this, do NOT touch PREFIX or SQLLOG values! If you do change PREFIX or SQLLOG, make sure they are the same for this to work!
-	See http://github.com/spootTheLousy/saguaro/wiki/Developer-quickstart#database for more info on saguaro's database architecture
-*/
-
-define(UNIFIED_TABLE, false);	
-
-/*
     Something descriptive.
 */
 
