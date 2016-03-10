@@ -23,7 +23,7 @@ class Banish {
     function isBanned($ip, $redirect = 0) {
         global $mysql;
         
-        $exists   = $mysql->num_rows("SELECT * FROM " . SQLBANLOG . " WHERE host='$ip' AND (board='" . BOARD_DIR . "' or global=1)");
+        $exists   = $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE host='$ip' AND (board='" . BOARD_DIR . "' or global=1) LIMIT 1");
         return ($exists > 0) ? true : false;
     }
 
@@ -47,7 +47,7 @@ class Banish {
 		if ($this->isBanned($info['host']))
 			die("This IP is already banned.");	
 
-		$row = $mysql->fetch_assoc("SELECT name, com, now FROM " . SQLLOG . " WHERE no='" . $info['no'] . "' AND board='" . BOARD_DIR ."'");			
+		$row = $mysql->fetch_assoc("SELECT name, com, now FROM " . SQLLOG . " WHERE no='" . $info['no'] . "' AND board='" . BOARD_DIR ."' LIMIT 1");			
 
         $name = $mysql->escape_string("<span class='name'>" . $row['name'] . '</span> ' . $row['now'] . " No.XXX");
 
@@ -103,7 +103,7 @@ class Banish {
 			}
 			
 			
-			@$resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "'"); //For rebuild selection
+			@$resto = $mysql->result("SELECT last FROM " . SQLLOG . " WHERE no='" . $info['no'] . "' LIMIT 1"); //For rebuild selection
 			$rebuild = ($resto) ? $resto : $info['no'];
 			
 			//Append public ban message
@@ -185,7 +185,7 @@ class Banish {
 		
 		$temp = $head->generateAdmin(1); //Get head elements without head text
 		
-        $host  = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$no'", 0, 0);
+        $host  = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$no' LIMIT 1", 0, 0);
         $alart = ($host) ? @$mysql->result("SELECT COUNT(*) FROM " . SQLBANNOTES . " WHERE host='" . $host . "'") : 0;
         $alert = ($alart > 0) ? "<strong><font color=\"FF101A\"> $alart record(s) for $host!</font></b>" : "No record for IP $host";
         
@@ -266,7 +266,7 @@ class Banish {
     private function banInfo($host) {
 		global $mysql;
 
-		$row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE host='$host'");
+		$row = $mysql->fetch_assoc("SELECT * FROM " . SQLBANLOG . " WHERE host='$host' LIMIT 1");
 		
 		$post = "<span class='post reply'style='border:1px solid black;'><input type='checkbox'>" . $row['name'] . "<br><blockquote>" . $row['com'] . "</blockquote></span>";
 		$global = ($row['global']) ? "<strong>all boards</strong>" : "<strong>/" . $row['board'] . "/</strong> ";
@@ -312,9 +312,9 @@ class Banish {
     private function append($host) {
         global $mysql;
         
-        $row = $mysql->fetch_assoc("SELECT host, length, com, reason, admin FROM " . SQLBANLOG . " WHERE host='$host'");
+        $row = $mysql->fetch_assoc("SELECT host, length, com, reason, admin FROM " . SQLBANLOG . " WHERE host='$host' LIMIT 1");
         //Remove ban fron table
-        $mysql->query("DELETE FROM " . SQLBANLOG . " WHERE host='$host'");
+        $mysql->query("DELETE FROM " . SQLBANLOG . " WHERE host='$host' LIMIT 1"); //What's preferable here? Delete multiple broken bans since there should only be one, or """"""optimize"""""" the query
         //Insert into notes table
         switch($row['length']) {
             case 0:

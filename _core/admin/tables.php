@@ -57,26 +57,26 @@ class Table {
                 
             if ($type === 'res') {
                 $banner = "<div class='managerBanner'>" . S_DELRES . $resource . "</div>";
-                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE resto='$resource' OR no='$resource' OR host='$resource' ORDER BY time ASC");
+                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE (resto='$resource' OR no='$resource' OR host='$resource') AND board='" . BOARD_DIR . "' ORDER BY time ASC");
                 $mode = 'res';
             }
             
             if ($type === 'all') {
                 $banner = "<div class='managerBanner'>" . S_DELALL . "</div>";
-                $query = $mysql->query("SELECT * FROM " . SQLLOG . " ORDER BY no DESC");
+                $query = $mysql->query("SELECT * FROM " . SQLLOG . "  AND board='" . BOARD_DIR . "'  ORDER BY no DESC");
                 $mode = 'all';
             }
             
             if ($type === 'ip') {
                 $banner = "<div class='managerBanner'>" . S_DELIP . $resource . "</div>";
-                $hostno = $mysql->result("SELECT host FROM " . SQLLOG . " WHERE no='$resource' ");
-                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE host='$hostno' ORDER BY NO DESC");
+                $hostno = $mysql->result("SELECT host FROM " . SQLLOG . "  WHERE no='$resource' AND board='" . BOARD_DIR . "' LIMIT 1");
+                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE host='$hostno' AND board='" . BOARD_DIR . "'  ORDER BY NO DESC LIMIT 1");
                 $mode = 'ip';
             }
             
             if ($type === 'ops') {
                 $banner = "<div class='managerBanner'>" . S_DELOPS . "</div>";
-                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE resto='0' ORDER BY time DESC");
+                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE resto='0' AND board='" . BOARD_DIR . "' ORDER BY time DESC");
                 $mode = 'ops';
             }            
 
