@@ -53,7 +53,7 @@ class Regist {
         global $mysql;
 
         if (DUPE_CHECK) {
-            $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
+            $result = $mysql->query("SELECT no,resto FROM " . SQLLOG . " WHERE md5='$md5' AND board='" . BOARD_DIR . "' LIMIT 1");
             if ($mysql->num_rows($result)) {
                 list($dupeno, $duperesto) = $mysql->fetch_row($result);
                 if (!$duperesto)
@@ -117,9 +117,9 @@ class Regist {
         $keys = implode(",",$keys);
         $vals = implode(",",$vals);
 
-        $query = "insert into ".SQLLOG." ($keys) values ($vals)";
+        $query = "INSERT INTO ".SQLLOG." ($keys) VALUES ($vals)";
         $mysql->query($query);
-        $final = (int) $mysql->result('select last_insert_id()');
+        $final =  (int) $mysql->result('SELECT last_insert_id()');
         /* if (!$result = ?) { echo E_REGFAILED; }*/
 
         $this->cache['post']['number'] = $final;
@@ -132,7 +132,7 @@ class Regist {
         $child = $this->cache['post']['child'];
         $number = (int) $this->cache['post']['number'];
         $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
-        $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
+        $mysql->query("UPDATE " . SQLLOG . " set last=$number where no=$parent");
 
 		//Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
 		require_once("prune.php");

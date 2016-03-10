@@ -262,13 +262,13 @@ if (is_file($lockout)) {
 
                     //Create tables.
                     $tables = [
-                        SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, sticky int, permasage int, locked int, last int, modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, resto int, board text",
+                        SQLLOG => "no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, sticky int, permasage int, locked int, last int, modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, resto int, board VARCHAR(200) not null, PRIMARY KEY (no, board)",
                         SQLBANLOG => "board VARCHAR(20), global INT(1), name VARCHAR(200), host VARCHAR(50), com VARCHAR(3000), reason VARCHAR(1000), length INT(25), admin VARCHAR(100), placed INT(25) NOT NULL, PRIMARY KEY (board, placed)",
                         SQLMODSLOG => "user VARCHAR(25), password VARCHAR(250), public_salt VARCHAR(256), allowed VARCHAR(250), denied VARCHAR(250), PRIMARY KEY (user), UNIQUE KEY (user)",
-                        SQLDELLOG => "admin VARCHAR(250), postno VARCHAR(20) PRIMARY KEY, action VARCHAR(25), board VARCHAR(250), name VARCHAR(50), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . ")", //Why does S_POSTLENGTH start with S_?
+                        SQLDELLOG => "admin VARCHAR(250), postno VARCHAR(20) PRIMARY KEY, action VARCHAR(25), board VARCHAR(250), name VARCHAR(50), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . "), PRIMARY KEY (postno, board)", //Why does S_POSTLENGTH start with S_?
                         SQLBANNOTES => "board VARCHAR(25), host VARCHAR(250), type VARCHAR(50), com VARCHAR(3100), reason VARCHAR(2000), admin VARCHAR(250), PRIMARY KEY (host, com), UNIQUE KEY (com)",
-                        "reports" => "no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), ip VARCHAR(250), reported TIMESTAMP, PRIMARY KEY(no, ip)",
-                        "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)",
+                        "reports" => "no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), ip VARCHAR(250), reported TIMESTAMP, PRIMARY KEY(no, ip, board)",
+                        //"loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50), PRIMARY KEY (board,", //Delete this, it's dumb and useless and DUMB
                         "rebuildqueue" => "board char(4) NOT NULL, no int(11) NOT NULL, ownedby int(11) NOT NULL default '0', ts timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, PRIMARY KEY (board,no,ownedby)"
                     ];
 

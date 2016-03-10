@@ -54,7 +54,7 @@ class Log {
         }
 
         //Finding the last entry number
-        if (!$result = $mysql->query("select max(no) from " . SQLLOG)) {
+        if (!$result = $mysql->query("SELECT MAX(no) FROM " . SQLLOG . " WHERE board='" . BOARD_DIR . "'")) {
             echo S_SQLFAIL;
         }
 
@@ -275,7 +275,7 @@ class Log {
 
         $mysql->query("SET read_buffer_size=1048576");
         $mysql_unbuffered_reads = 1;
-        $query = $mysql->query("SELECT * FROM " . SQLLOG);
+        $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE board='" . BOARD_DIR . "'");
 
         while ($row = $mysql->fetch_assoc($query)) {
             if ($row['no'] > $lastno) {
@@ -318,7 +318,7 @@ class Log {
         }
 
         //Basic support for bump order with new 'last' column.
-        $query = $mysql->query('SELECT no FROM `'. SQLLOG . '` WHERE `resto` = 0 ORDER BY sticky DESC, IF(sticky=0, last, sticky) DESC');
+        $query = $mysql->query("SELECT no FROM " . SQLLOG .  " WHERE board='" . BOARD_DIR . "' AND resto=0 ORDER BY sticky DESC, IF(sticky=0, last, sticky) DESC");
         while ($row = $mysql->fetch_assoc($query)) {
             if (isset($log[$row['no']]) && $log[$row['no']]['resto'] == 0) {
                 $threads[] = $row['no'];

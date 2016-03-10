@@ -20,7 +20,7 @@ class Valid {
                 $pass = $mysql->escape_string($_COOKIE['saguaro_apass']);
             }
             if ($user && $pass) {
-                list($allow, $deny) = $mysql->fetch_row("SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'");
+                list($allow, $deny) = $mysql->fetch_row("SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass' LIMIT 1");
                 //$mysql->free_result($result);
                 if ($allow) {
                     $allows             = explode(',', $allow);

@@ -14,6 +14,7 @@ define(S_DESCR, 'An imageboard powered by saguaro'); //meta description for this
     The database and tables are created automatically using these values.
     Scroll below to the MySQL Advanced section for additional options.
 */
+
 define(SQLUSER, 'username');
 define(SQLPASS, 'password');
 define(SQLHOST, 'localhost');
@@ -21,13 +22,12 @@ define(SQLHOST, 'localhost');
 define(SQLDB, 'saguaro');   //Database used by image board.
 define(PREFIX, 'imgboard'); //Prefix to automatically use for the database tables.
 
-
 /*
     Something descriptive.
 */
 
 define(PANEL_PASS, 'CHANGEME');  //Staff action key  (CHANGE THIS YO)
-define(SITE_ROOT, 'example.com');//Site domain.
+define(SITE_ROOT, 'example.net');//Site domain.
 define(BOARDLIST, '');           //the text file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
 define(GLOBAL_NEWS, 'CHANGEME'); //Absolute html path to your global board news file. Appears below post form, above index body
 define(SALTFILE, 'salt');        //Name of the salt file, do not add a file extension for security
