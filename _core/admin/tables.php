@@ -8,7 +8,10 @@ class Table {
         
         define(S_LANDING, "");
         $temp .= "<div class='managerBanner'>" . S_LANDING . "</div>";
-        $temp .= "<div class='container'><div class='header'>Boards</div>TEST</div>";
+        $temp .= "<div class='container'><div class='header'>Boards</div>TEST</div><br><div class='container' id='1'><div class='header'>Boards</div>TEST</div><br>
+        <div class='container' id='2'><div class='header'>Boards</div>TEST</div><br>
+        <div class='container' id='3'><div class='header'>Boards</div>TEST</div><br>
+        <div class='container' id='4'><div class='header'>Boards</div>TEST</div><br>";
         return $temp;
     }
     

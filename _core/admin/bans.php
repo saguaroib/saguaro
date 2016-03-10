@@ -69,8 +69,19 @@ class Banish {
 		} else {
             $info['length'] = 0; //Set erronuous/tampered forms to warns by default.
         }
-
-		if ($info['after'] || $info['public']) { //Gotta rebuild the thread or index if after-actions are set
+        
+        $mysql->query("INSERT INTO " . SQLBANLOG . " (board, global, name, host, com, reason, length, admin, placed) 
+		VALUES ( '" . BOARD_DIR .
+		"', '" . $info['global'] .
+		"', '" . $name . 
+		"', '" . $info['host'] .
+		"', '" . $row['com'] . 
+		"', '" . $info['reason'] . 
+		"', '" . $info['length'] . 
+		"', '" . $info['areason'] . 
+		"', '" . time() ."')");
+        
+        if ($info['after'] || $info['public']) { //Gotta rebuild the thread or index if after-actions are set
 			
 			if ($info['after']) {
 				require_once(CORE_DIR . "/admin/delete.php");
@@ -102,17 +113,6 @@ class Banish {
 			}
 			$my_log->update($rebuild);
 		}
-        
-        $mysql->query( "INSERT INTO " . SQLBANLOG . " (board, global, name, host, com, reason, length, admin, placed) 
-		VALUES ( '" . BOARD_DIR .
-		"', '" . $info['global'] .
-		"', '" . $name . 
-		"', '" . $info['host'] .
-		"', '" . $row['com'] . 
-		"', '" . $info['reason'] . 
-		"', '" . $info['length'] . 
-		"', '" . $info['areason'] . 
-		"', '" . time() ."')");
 		
         if (DEBUG_MODE !== true) echo "<script>Admin.ban.close();</script>"; //Close ban window
         
