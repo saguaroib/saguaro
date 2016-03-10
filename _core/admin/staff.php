@@ -5,7 +5,7 @@ class Staff {
     function isStaff($user) {
         global $mysql;
         //See if user exists in mod table. Returns false if user isn't in table. 
-        if ($mysql->num_rows("SELECT * FROM " . SQLMODSLOG . " WHERE user='$user'") > 0)
+        if ($mysql->num_rows("SELECT * FROM " . SQLMODSLOG . " WHERE user='$user' LIMIT 1") > 0)
             return true;           
         return false;
     }

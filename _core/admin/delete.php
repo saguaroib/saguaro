@@ -1,5 +1,21 @@
 <?php
 
+/*
+		========================== Saguaro Deletion class ==========================
+		
+			This class handles ALL post deletion, including admin deletion.
+
+			Userdel handles the POST information array when a user 
+			uses the checkbox deletion method while browsing.
+			
+			targeted actually processes the deletion, deleting the targeted post(s), 
+			their children, reports and destroys any necessary files (HTML and media).
+		
+			It is in desperate need of a rewrite. (meme header)
+		=========================================================================
+*/
+
+
 require_once(CORE_DIR . "/log/log.php");
 
 class Delete extends Log {
@@ -83,11 +99,11 @@ class Delete extends Log {
             VALUES('$auser','$resno', '$imgonly2', '" . BOARD_DIR . ", '$adname','{$row['sub']}','{$row['com']}')");
         }
         if ($delhost !== ''): 
-            $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where host='" . $delhost . "'");
+            $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where ( host='" . $delhost . "' AND board='" . BOARD_DIR . "')");
         elseif ($row['resto'] == 0 && $children && !$imgonly && !$delhost): // select thread and children
-            $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno or resto=$resno");
+            $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where ( no=$resno or resto=$resno ) AND board='" . BOARD_DIR . "'");
         else: // just select the post
-            $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where no=$resno");
+            $result = $mysql->query("select no,resto,tim,ext from " . SQLLOG . " where (no=$resno AND board='" . BOARD_DIR . "')");
         endif;
         while ($delrow = $mysql->fetch_assoc($result)) {
             // delete
@@ -105,7 +121,7 @@ class Delete extends Log {
                     unset($log[$delrow['resto']]['children'][$delrow['no']]);
                 unset($log[$delrow['no']]);
                 $log['THREADS'] = array_diff($log['THREADS'], array($delrow['no'])); // remove from THREADS
-                $mysql->query("DELETE FROM reports WHERE no=" . $delrow['no']); // clear reports
+                $mysql->query("DELETE FROM reports WHERE (no=" . $delrow['no'] . "AND board='" . BOARD_DIR . "')"); // clear reports
                 if (USE_GZIP == 1)
                     @unlink(RES_DIR . $delrow['no'] . PHP_EXT . '.gz');
                 @unlink(RES_DIR . $delrow['no'] . PHP_EXT);
@@ -113,9 +129,9 @@ class Delete extends Log {
         }
         //delete from DB
         if ($row['resto'] == 0 && $children && !$imgonly) // delete thread and children
-            $result = $mysql->query("delete from " . SQLLOG . " where no=$resno or resto=$resno");
+            $result = $mysql->query("delete from " . SQLLOG . " where (no=$resno or resto=$resno ) AND board='" . BOARD_DIR . "'");
         elseif (!$imgonly) // just delete the post
-            $result = $mysql->query("delete from " . SQLLOG . " where no=$resno");
+            $result = $mysql->query("delete from " . SQLLOG . " (where no=$resno ) AND board='" . BOARD_DIR . "'");
         
         return $row['resto']; // so the caller can know what pages need to be rebuilt
     }

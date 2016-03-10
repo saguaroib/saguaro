@@ -53,7 +53,7 @@ class Regist {
         global $mysql;
 
         if (DUPE_CHECK) {
-            $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
+            $result = $mysql->query("SELECT no,resto FROM " . SQLLOG . " WHERE md5='$md5' AND board='" . BOARD_DIR . "' LIMIT 1");
             if ($mysql->num_rows($result)) {
                 list($dupeno, $duperesto) = $mysql->fetch_row($result);
                 if (!$duperesto)
@@ -82,6 +82,7 @@ class Regist {
         global $mysql;
 
         $data = [ //Ironically aligned to "permasage".
+			'no'		=> $mysql->result("SELECT MAX(no) FROM " . SQLLOG . " WHERE board='" . BOARD_DIR . "'") + 1,
             'now'       => $info['post']['now'],
             'name'      => $info['post']['name'],
             'email'     => $info['post']['email'],
@@ -106,6 +107,8 @@ class Regist {
             'board'		=> BOARD_DIR
         ];
 
+		if (UNIFIED_TABLE !== true) unset($data['no']);
+
         //Dynamically build the SQL command, numerous advantages.
         $keys = []; $vals = [];
         foreach($data as $column => $value) {
@@ -117,9 +120,9 @@ class Regist {
         $keys = implode(",",$keys);
         $vals = implode(",",$vals);
 
-        $query = "insert into ".SQLLOG." ($keys) values ($vals)";
+        $query = "INSERT INTO ".SQLLOG." ($keys) VALUES ($vals) ON DUPLICATE KEY UPDATE no = no+1";
         $mysql->query($query);
-        $final = (int) $mysql->result('select last_insert_id()');
+        $final = (UNIFIED_TABLE) ? $mysql->result("SELECT MAX(no) FROM " . SQLLOG . " WHERE board='" . BOARD_DIR . "'") : (int) $mysql->result('SELECT last_insert_id()');
         /* if (!$result = ?) { echo E_REGFAILED; }*/
 
         $this->cache['post']['number'] = $final;
@@ -132,7 +135,7 @@ class Regist {
         $child = $this->cache['post']['child'];
         $number = (int) $this->cache['post']['number'];
         $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
-        $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
+        $mysql->query("UPDATE " . SQLLOG . " set last=$number where no=$parent");
 
 		//Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
 		require_once("prune.php");

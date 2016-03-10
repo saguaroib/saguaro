@@ -36,7 +36,7 @@ function prune_old() {
         if ($maxthreads) {
             $exp_order = (EXPIRE_NEGLECTED == true) ? 'modified' : (defined(EXPIRE_NEGLECTED) ? 'no' : 'modified'); //Legacy config support. For now.
 			
-            $result      = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE sticky=0 AND resto=0 ORDER BY $exp_order ASC");
+            $result      = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE board='" . BOARD_DIR . "' AND sticky=0 AND resto=0 ORDER BY $exp_order ASC");
             $threadcount = $mysql->num_rows($result);
             while ($row = $mysql->fetch_array($result) and $threadcount > $maxthreads) {
                 delete_post($row['no'], 'trim', 0, 1, 1, 0); // imgonly=0, automatic=1, children=1
@@ -53,7 +53,7 @@ function prune_old() {
                 $stickies[$row['no']] = 1;
             }
 
-            $result    = $mysql->query("SELECT no,resto,sticky FROM " . SQLLOG . " ORDER BY no ASC");
+            $result    = $mysql->query("SELECT no,resto,sticky FROM " . SQLLOG . " WHERE board='" . BOARD_DIR . "'  ORDER BY no ASC");
             $postcount = $mysql->num_rows($result);
             while ($row = $mysql->fetch_array($result) and $postcount >= $maxposts) {
                 // don't delete if this is a sticky thread
@@ -75,7 +75,7 @@ function pruneThread($no) {
     $my_log->update_cache();
     $maxreplies = EVENT_STICKY_RES;
 
-    $result      = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE resto='$no' ORDER BY time ASC");
+    $result      = $mysql->query("SELECT no FROM " . SQLLOG . " WHERE resto='$no' AND  board='" . BOARD_DIR . "' ORDER BY time ASC");
     $repcount = $mysql->num_rows($result);
     while ($row = $mysql->fetch_array($result) and $repcount >= $maxreplies) {
         delete_post($row['no'], 'trim', 0, 1, 0, 0); // imgonly=0, automatic=1, children=1
