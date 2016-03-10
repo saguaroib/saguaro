@@ -10,7 +10,7 @@ class Login {
         global $mysql;
 
         $usernm = $mysql->escape_string($usernm);
-        $check = $mysql->fetch_assoc("SELECT user,password,public_salt FROM " . SQLMODSLOG . " WHERE user='$usernm'");
+        $check = $mysql->fetch_assoc("SELECT user,password,public_salt FROM " . SQLMODSLOG . " WHERE user='$usernm' LIMIT 1");
 
         if ($check === false) {
             //Username does not exist.
