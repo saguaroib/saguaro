@@ -31,6 +31,7 @@ $S_REPDEL = 'Delete Post ';                                     //Prints text ne
 $S_DELPICONLY = 'File Only';                                    //Prints text next to checkbox for file deletion (right)
 $S_DELKEY = 'Password ';                                        //Prints text next to password field for deletion (left)
 $S_DELETE = 'Delete';                                           //Defines deletion button's name
+$S_NODELPOST = 'Cant find post #';                              //On deletion when post not found.
 $S_PREV = 'Previous';                                           //Defines previous button
 $S_FIRSTPG = 'Previous';                                        //Defines previous button
 $S_NEXT = 'Next';                                               //Defines next button
@@ -106,15 +107,17 @@ $S_THREADLOCKED = 'You cannot reply to a locked thread.';
 $S_LOGOUT = 'Logout';
 $S_SPOILERS = 'Spoiler Image';
 
-$S_NOPERM = 'Permission denied!';
+
 $S_NOFILE = '---';
 $S_DELRES = 'Deletion mode: Viewing thread #';
 $S_DELALL = 'Deletion mode: All';
 $S_DELIP = 'Deletion mode: Viewing all posts by IP from #';
 $S_DELOPS = 'Deletion mode: All opening posts (OPs)';
-$S_UPDERR = 'File could not be updated!';
+
 
 //Introducing...new system error strings!
+$S_NOPERM = 'Permission denied!';
+$S_UPDERR = 'File could not be updated!';
 $E_REGFAILED = 'Post registration failed!';
 
 ?>

@@ -29,6 +29,8 @@ require_once(CORE_DIR . "/mysql/mysql.php");
 $mysql = new SaguaroMySQL;
 $mysql->init();
 
+$host = $mysql->escape_string($_SERVER['REMOTE_ADDR']); //Get this once here at the root instead of 300 different times. Use globally.
+
 extract($_POST, EXTR_SKIP);
 extract($_GET, EXTR_SKIP);
 extract($_COOKIE, EXTR_SKIP);
@@ -64,12 +66,9 @@ switch ($mode) {
         echo "<META HTTP-EQUIV='refresh' content='0;URL=\"catalog.html\"'>"; //let go of the past
         break;
     case 'usrdel':
-        global $path, $pwdc, $onlyimgdel;
         require_once(CORE_DIR . "/admin/delete.php");
         $del = new Delete;
         $del->userDel($no, $pwd, $onlyimgdel);
-        $my_log->update();
-        echo "<META HTTP-EQUIV='refresh' content='0;URL=" . PHP_SELF2_ABS . "'>";
         break;
     default:
         if ($res) {

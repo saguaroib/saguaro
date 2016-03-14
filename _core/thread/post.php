@@ -29,6 +29,7 @@ class Post {
 
         if (!$this->inIndex) {
             $temp .= "<a href='#$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon </div>";
+            $temp .= "<input type='hidden' name='anchor' value='$no'>";  //Anchor for in-thread deletion redirect
         } else {
             $temp .= "  <a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]</div>";
         }
