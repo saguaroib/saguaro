@@ -68,7 +68,7 @@ switch ($mode) {
     case 'usrdel':
         require_once(CORE_DIR . "/admin/delete.php");
         $del = new Delete;
-        $del->userDel($_POST);
+        $del->userDel();
         break;
     default:
         if ($res) {

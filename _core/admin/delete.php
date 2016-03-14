@@ -3,7 +3,7 @@
 require_once(CORE_DIR . "/log/log.php");
 
 class Delete extends Log {
-    function userDel($_POST) {
+    function userDel() {
         global $mysql, $host;
         
         $pwdc = $mysql->escape_string($_COOKIE['saguaro_pwdc']);
