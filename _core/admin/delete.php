@@ -3,8 +3,12 @@
 require_once(CORE_DIR . "/log/log.php");
 
 class Delete extends Log {
-    function userDel($no, $pwd, $onlyimgdel) {
+    function userDel($_POST) {
         global $mysql, $host;
+        
+        $pwdc = $mysql->escape_string($_COOKIE['saguaro_pwdc']);
+        $imgonly = $mysql->escape_string($_POST['onlyimgdel']);
+        $pwd = $mysql->escape_string($_POST['pwd']);
         $delno        = array();
         $rebuildindex = !(defined("STATIC_REBUILD") && STATIC_REBUILD);
         $delflag      = FALSE;
@@ -17,7 +21,7 @@ class Delete extends Log {
                 $delflag = TRUE;
             }
         }
-        $pwdc = $_COOKIE['saguaro_pwdc'];
+
         if ($pwd == "" && $pwdc != "")
             $pwd = $pwdc;
         $countdel = count($delno);
@@ -45,24 +49,24 @@ class Delete extends Log {
         }
             
     }
-    
-    
+
     function targeted($no, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $delhost = '') {
         global $path, $mysql, $host;
 
         $this->update_cache(1);
         $log = $this->cache;
-        $no = (int) $no;
-        
+        $no = $mysql->escape_string($no);
+        //$no = (int) $no;
+
         if (!isset($log[$no])) //Does post exist?
             if ($die) exit(S_NODELPOST . $no);
-        
+
         $row = $log[$no];
         //Check password. If no password, check admin status
         $delete_ok = ($automatic || (substr(md5($pwd), 2, 8) == $row['pwd']) || ($row['host'] == $host));
         if (valid('janitor') && !$automatic)
             $admindel = valid('delete', $no);
-        
+
         if (!$delete_ok && !$admindel)
             error(S_BADDELPASS);
 
@@ -78,7 +82,7 @@ class Delete extends Log {
             $mysql->query("INSERT INTO " . SQLDELLOG . " (admin, postno, action, board,name,sub,com,img) 
             VALUES('$auser','$no', '$imgonly2', '" . BOARD_DIR . ", '$adname','{$row['sub']}','{$row['com']}')");
         }
-        
+
         if ($delhost !== ''): //Select all posts by IP
             $result = $mysql->query("SELECT no,resto,tim,ext FROM " . SQLLOG . " WHERE host='" . $delhost . "'");
         elseif ($row['resto'] == 0 && $children && !$imgonly): //Select thread and children
@@ -86,8 +90,7 @@ class Delete extends Log {
         else: //Only selecting the post
             $result = $mysql->query("SELECT no,resto,tim,ext FROM " . SQLLOG . " WHERE no=$no");
         endif;
-        
-        
+
         while ($delrow = $mysql->fetch_assoc($result)) { //This does the resource deletions
             $path = realpath("./") . '/' . IMG_DIR;
             $delfile  = $path . $delrow['tim'] . $delrow['ext']; //Path to files
@@ -109,7 +112,7 @@ class Delete extends Log {
                 @unlink(RES_DIR . $delrow['no'] . PHP_EXT);
             }
         }
-        
+
         //This actually does the database deletion
         if ($row['resto'] == 0 && $children && !$imgonly) //Delete thread and children
             $result = $mysql->query("DELETE FROM " . SQLLOG . " WHERE no=$no OR resto=$no");
