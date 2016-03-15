@@ -63,7 +63,7 @@ switch ($mode) {
         $report->process();
         break;
     case 'catalog':
-        echo "<META HTTP-EQUIV='refresh' content='0;URL=\"catalog.html\"'>"; //let go of the past
+        header("Location: catalog.html"); //let go of the past
         break;
     case 'usrdel':
         require_once(CORE_DIR . "/admin/delete.php");
@@ -75,7 +75,7 @@ switch ($mode) {
             require_once(CORE_DIR . "/general/resredir.php");
             echo "<META HTTP-EQUIV='refresh' content='10;URL=" . PHP_SELF2_ABS . "'>";
         } else {
-            echo "Updating index...\n";
+            echo S_SCRCHANGE;
             $my_log->update();
             echo "<META HTTP-EQUIV='refresh' content='0;URL=" . PHP_SELF2_ABS . "'>";
         }

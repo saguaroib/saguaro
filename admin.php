@@ -87,7 +87,7 @@ switch ($_GET['mode']) {
     case 'rebuild':
 		if (!valid("admin")) error(S_NOPERM);
         require_once(CORE_DIR . "/log/rebuild.php");
-        rebuild(1);
+        $my_log->generate_all();
         break;
     case 'reports':
         if ($_POST['no']) $getReport->clearNum($_POST['no']);

@@ -70,7 +70,7 @@ $S_RENZOKU2 = 'Error: Flood detected, file discarded.';         //Returns error 
 $S_RENZOKU3 = 'Error: Flood detected.';                         //Returns error for flood? (don't know the specifics)
 $S_DUPE = 'Error: Duplicate file entry detected.';              //Returns error for a duped file (same upload name or same tim/time)
 $S_NOTHREADERR = 'Error: Thread specified does not exist.';     //Returns error when a non-existant thread is accessed
-$S_SCRCHANGE = 'Updating page.';                                //Defines message to be displayed when post is successful    
+$S_SCRCHANGE = 'Updating index..';                                //Defines message to be displayed when post is successful    
 $S_TOODAMNSMALL = 'Error: Image too small.';                    //Error for small images                                //
 $S_BADDELPASS = 'Error: Password incorrect.';                   //Returns error for wrong password (when user tries to delete file)
 $S_WRONGPASS = 'Error: Username or password invalid.';          //Returns error for wrong password (when trying to access Manager modes)
@@ -118,6 +118,6 @@ $S_DELOPS = 'Deletion mode: All opening posts (OPs)';
 //Introducing...new system error strings!
 $S_NOPERM = 'Permission denied!';
 $S_UPDERR = 'File could not be updated!';
-$E_REGFAILED = 'Post registration failed!';
+$S_REGFAILED = 'Post registration failed!';
 
 ?>
