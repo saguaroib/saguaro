@@ -106,14 +106,13 @@ class Table {
                 error(S_SQLFAIL);
                 
             $j = 0;
-            while ($row = $mysql->fetch_row($query)) {
+            while ($row = $mysql->fetch_assoc($query)) {
                 $j++;
                 $path = realpath("./") . '/' . IMG_DIR;
-                $img_flag = FALSE;
-                list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto) = $row;
+                extract($row);
                 // Format
-                /*$now = preg_replace('/.{2}(.*)$/', '\1', $now); //tfw you'll never know reg expressions
-                $now = preg_replace('/(.*)/', ' ', $now);*/
+                $now = preg_replace('/.{2}(.*)$/', '\1', $now); //tfw you'll never know reg expressions
+                $now = preg_replace('/(.*)/', ' ', $now);
                 $name = (strlen($name) > 10) ? substr($name, 0, 9) . "..." : $name;
                 $name = ($email) ? "<a href=\"mailto:$email\">$name</a>" : $name;
                 $sub = (strlen($sub) > 10) ? substr($sub, 0, 9) . "..." : $sub;
@@ -124,7 +123,6 @@ class Table {
                 $fname =  (strlen($fname) > 10) ? substr($fname, 0, 40) : $fname;
                 // Link to the picture
                 if ($ext && is_file($path . $tim . $ext)) {
-                    $img_flag = TRUE;
                     $clip     = "<a class=\"thumbnail\" target=\"_blank\" href=\"" . IMG_DIR . $tim . $ext . "\">" . $tim . $ext . "<span><img class='postimg' src=\"" . THUMB_DIR . $tim . 's.jpg' . "\" width=\"100\" height=\"100\" /></span></a><br />";
                     if ($fsize >= 1048576) {
                         $size  = round(($fsize / 1048576), 2) . " M";
@@ -143,9 +141,8 @@ class Table {
                     $size = 0;
                     $md5  = "";
                 }
-                
-                $host = md5($host);
-                $host = substr($host, 12,20);
+
+                $host = substr(md5($host), 12,20);
                 
                 $class = ($j % 2) ? "row1" : "row2"; //BG color
                 $altClass = ($j % 2) ? "row2" : "row1"; //lol
@@ -170,7 +167,7 @@ class Table {
             //$mysql->free_result($result);
             $temp .=  "</table><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
             $all = (int) ($all / 1024);
-            //$temp .=  "<div align='center'/>[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]</div>";
+            $temp .=  "<div align='center'/>[ " . S_IMGSPACEUSAGE . $all . "</b> KB ]</div>";
 
             return $temp;
     }
