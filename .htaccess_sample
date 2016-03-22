@@ -9,6 +9,8 @@ RewriteRule ^res/(\d+).json$ api/$1.json [NC,L]          #res/#.json -> api/#.js
 RewriteRule ^(logs|catalog)/?$ $1.html [L]
 RewriteRule ^(?:page/)(\d+)/?$ $1.html [NC,L]            #page/# -> #.html (indexes)
 RewriteRule banned banned.php [NC]
+RewriteRule ^/?config\.php$ - [F,L]
+
 
 #RewriteRule friendly_pcre target
 #Flags: http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewriteflags

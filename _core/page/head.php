@@ -20,6 +20,8 @@ class Head {
     ];
 
     function generate() {
+		global $cssArray;
+		
         $dat = '';
         $boardTitle = '';
         $bannerImg = '';
@@ -46,15 +48,12 @@ class Head {
                 <link rel='shortcut icon' href='" . CSS_PATH . "imgs/favicon.ico'>
                 <title>" .  $this->info['page']['title'] ."</title>";
 
-        if (NSFW) {
-            $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
-                <link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />";
-        } else {
-            $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />
-            <link class='togglesheet' rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />";
-        }
-        //<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS4 . "' title='Burichan'/> RIP Burichan 1862-2015
-        $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";
+        $dat .= (NSFW) ? '<script type="text/javascript">var styleGroup = "nsfw";</script>' : '<script type="text/javascript">var styleGroup = "sfw";</script>';
+		$dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/saguaba.css' title='Saguaba' />"; //The root of all evil
+
+		foreach ($cssArray as $key => $value) {
+			$dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
+		}
 
         foreach($this->info['css']['extra'] as $css) {
             $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "$css'/>";
@@ -95,6 +94,8 @@ class Head {
     }
     
     function generateAdmin($noHead = 0) {
+		global $cssArray;
+		
         require_once(CORE_DIR . "/admin/report.php");
 
         $getReport = new Report;
@@ -114,19 +115,14 @@ class Head {
                     <meta http-equiv='pragma' content='no-cache' />
                     <link rel='shortcut icon' href='" . CSS_PATH . "imgs/favicon.ico'>
                     <title>" . $this->info['page']['title'] . "</title>";
-        
-        //$dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . "/panel.css' title='Admin Panel' />";
 
-        if (NSFW) {
-            $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />
-                <link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />";
-        } else {
-            $dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS2 . "' title='Sagurichan' />
-            <link class='togglesheet' rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . CSS1 . "' title='Saguaba' />";
-        }
-        //<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS4 . "' title='Burichan'/> RIP Burichan 1862-2015
-        $dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' media='screen'  href='" . CSS_PATH . CSS3 . "' title='Tomorrow' />";        
-        
+        $dat .= (NSFW) ? '<script type="text/javascript">var styleGroup = "nsfw";</script>' : '<script type="text/javascript">var styleGroup = "sfw";</script>';
+		$dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/saguaba.css' title='Saguaba' />"; //The root of all evil
+
+		foreach ($cssArray as $key => $value) {
+			$dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
+		}
+
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>
 				<script src='" . JS_PATH . "/jquery-ui-1.10.4.min.js' type='text/javascript'></script>

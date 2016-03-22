@@ -1,5 +1,3 @@
-@import url("mobile.css") (max-width: 480px);
-
 body {
     background: #1D1F22;
     font-size: 10pt;
@@ -95,10 +93,11 @@ hr {
     color: inherit;
     text-align: left;
 }
-.postarea { opacity: 0.9; }
-.postarea {} 
+.postarea { 
+	opacity: 0.9; 
+}
 .rules {
-    /**/
+    font-size: 11px;
 }
 .postblock {
     background: #282A2E;

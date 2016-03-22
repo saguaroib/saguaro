@@ -112,19 +112,17 @@ define(USE_UPDATER, false);     //Thread updater
 define(USE_THREAD_STATS, true);
 define(USE_EXTRAS, true);       //Automatically include all .js files in JS_PATH/extra/
 
-
-
 /*
-    CSS
+	CSS settings
+	To include additional CSS, drop them in your /css/stylesheets/ and add them to the array!
 */
-define(CSS1, '/stylesheets/saguaba.css');    //location of the first stylesheet.
-define(CSS2, '/stylesheets/sagurichan.css'); //location of the second stylesheet.
-define(CSS3, '/stylesheets/tomorrow.css');   //location of the third stylesheet.
-//define(CSS4, '/stylesheets/CHANGEME.css');   //location of the fourth stylesheet.
+$cssArray = array(
+	//"Display name" => "/path/to/cssfile.css",
+	"Sagurichan" => "/stylesheets/sagurichan.css",
+	"Tomorrow"	 => "/stylesheets/tomorrow.css"
+);
 
 define(EXTRA_SHIT, ''); //Any extra javascripts you want to include inside the <head>
-
-
 
 /*
     Advertisements.

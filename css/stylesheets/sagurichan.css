@@ -1,5 +1,3 @@
-@import url("mobile.css") (max-width: 480px);
-
 body {
     background: #EEF2FF url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADICAIAAACmkByiAAAASUlEQVR4AcWRuQ0AIBDDzuy/HAVrMAM9slCorqAJziNgrj2qSg/cGhHnjPqDDPxOfYiebwFj+XobeLGI7p39fW1/Ib58d55Bwh3x9wRv6r75UwAAAABJRU5ErkJggg==) top center repeat-x;
     font-size: 10pt;
@@ -56,10 +54,11 @@ hr {
     font-weight: 700;
     width: 100%;
 }
-.postarea { opacity: 0.9; }
-.postarea {}
+.postarea { 
+	opacity: 0.9; 
+}
 .rules {
-    /**/
+    font-size: 11px;
 }
 .postblock {
     background: #EEAA88;
