@@ -115,10 +115,12 @@ define(USE_EXTRAS, true);       //Automatically include all .js files in JS_PATH
 /*
 	CSS settings
 	To include additional CSS, drop them in your /css/stylesheets/ and add them to the array!
+	Format is: "Display Name" => "path/to/cssfile.css"
 */
 $cssArray = array(
-	//"Display name" => "/path/to/cssfile.css",
-	"Sagurichan" => "/stylesheets/sagurichan.css",
+	"Saguaba"	 => "/stylesheets/saguaba.css", 	//First array value is the default NSFW stylesheet
+	"Sagurichan" => "/stylesheets/sagurichan.css", 	//Second array value is the default SFW stylesheet
+	//Order doesnt matter for the rest of these
 	"Tomorrow"	 => "/stylesheets/tomorrow.css"
 );
 

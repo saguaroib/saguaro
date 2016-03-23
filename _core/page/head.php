@@ -49,10 +49,11 @@ class Head {
                 <title>" .  $this->info['page']['title'] ."</title>";
 
         $dat .= (NSFW) ? '<script type="text/javascript">var styleGroup = "nsfw";</script>' : '<script type="text/javascript">var styleGroup = "sfw";</script>';
-		$dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/saguaba.css' title='Saguaba' />"; //The root of all evil
 
+		$cs = array_keys($cssArray);
 		foreach ($cssArray as $key => $value) {
-			$dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
+			$type = (NSFW) ? (($key == $cs[0]) ? "stylesheet" : "alternate stylesheet") : ($key == $cs[1]) ? "stylesheet" : "alternate stylesheet" ;
+			$dat .= "<link class='togglesheet' rel='$type' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
 		}
 
         foreach($this->info['css']['extra'] as $css) {
@@ -117,10 +118,11 @@ class Head {
                     <title>" . $this->info['page']['title'] . "</title>";
 
         $dat .= (NSFW) ? '<script type="text/javascript">var styleGroup = "nsfw";</script>' : '<script type="text/javascript">var styleGroup = "sfw";</script>';
-		$dat .= "<link class='togglesheet' rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/saguaba.css' title='Saguaba' />"; //The root of all evil
 
+		$cs = array_keys($cssArray);
 		foreach ($cssArray as $key => $value) {
-			$dat .= "<link class='togglesheet' rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
+			$type = (NSFW) ? (($key == $cs[0]) ? "stylesheet" : "alternate stylesheet") : ($key == $cs[1]) ? "stylesheet" : "alternate stylesheet" ;
+			$dat .= "<link class='togglesheet' rel='$type' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
 		}
 
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
