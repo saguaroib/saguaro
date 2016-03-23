@@ -100,7 +100,7 @@ function adminify() {
 	if ($('input[name="resto"]').length <= 0) { //We're in reply mode, hide the special options
 		$('#comrow').after('<tr><td align="left" class="postblock" align="left">Options</td><td align="left">Sticky: <input type="checkbox" name="isSticky" value="isSticky">Event sticky: <input type="checkbox" name="eventSticky" value="eventSticky">Lock:<input type="checkbox" name="isLocked" value="isLocked">Capcode:<input type="checkbox" name="showCap" value="showCap"></td></tr>');
 	}
-	$('#captcha').css('display', 'none');
+	$('#captchaRow').remove();
 	//$('.quotejs').after("<span class='test'> [<a href='#' class='cmd' data-cmd='ban-window' data-id=''>Ban</a>]</span>");
 	$('#comtxt').attr('placeholder', 'HTML tags have been enabled.');
 }

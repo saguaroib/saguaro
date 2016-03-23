@@ -62,9 +62,9 @@ class PostForm {
 
         if (BOTCHECK && !$admin) { //Captcha
             if (RECAPTCHA) {
-                $temp .= "<tr><td class='postblock' id='captcha' align='left'>Verification</td><td><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></div></tr>";
+                $temp .= "<tr id='captchaRow'><td class='postblock' id='captcha' align='left'>Verification</td><td><script src='//www.google.com/recaptcha/api.js'></script><div class='g-recaptcha' data-sitekey='" . RECAPTCHA_SITEKEY ."'></div></tr>";
             } else {
-                $temp .= "<tr><td class='postblock' id='captcha' align='left'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
+                $temp .= "<tr id='captchaRow'><td class='postblock' id='captcha' align='left'><img src='" . CORE_DIR_PUBLIC . "/general/captcha.php' /></td><td align='left'><input type='text' name='num' size='28'></td></tr>";
             }
         }
 
