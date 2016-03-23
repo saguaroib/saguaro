@@ -114,6 +114,7 @@ switch ($_GET['mode']) {
     case 'logout':
         setcookie('saguaro_apass', '0', 1);
         setcookie('saguaro_auser', '0', 1);
+		setcookie('loadThis', 'null', 1);
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
         break;
     default:

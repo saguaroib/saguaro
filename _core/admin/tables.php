@@ -80,7 +80,7 @@ class Table {
                 $mode = 'ops';
             }            
 
-			$temp .= $postform->format(0, 1);
+			//$temp .= $postform->format(0, 1);
 			
             // Deletion screen display. Begin HTML generation.
             $temp .= "<div class='managerBanner'>" . S_MANAMODE . "</div>" . $banner;

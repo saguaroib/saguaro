@@ -1,4 +1,4 @@
-$(document).ready(function() { Admin.init(); });
+$(document).ready(function() { Admin.init(); adminify(); });
 
 Admin = {
 	
@@ -93,6 +93,16 @@ Admin = {
 			//Hook into RePod's suite.
 		}
 	}
+}
+
+function adminify() {
+	//Add admin options to the page
+	if ($('input.resto').length == 0) { //We're in reply mode, hide the special options
+		$('#comrow').after('<tr><td align="left" class="postblock" align="left">Options</td><td align="left">Sticky: <input type="checkbox" name="isSticky" value="isSticky">Event sticky: <input type="checkbox" name="eventSticky" value="eventSticky">Lock:<input type="checkbox" name="isLocked" value="isLocked">Capcode:<input type="checkbox" name="showCap" value="showCap"></td></tr>');
+	}
+	$('#captcha').css('display', 'none');
+	//$('.quotejs').after("<span class='test'> [<a href='#' class='cmd' data-cmd='ban-window' data-id=''>Ban</a>]</span>");
+	$('#comtxt').attr('placeholder', 'HTML tags have been enabled.');
 }
 
 //Admin popup

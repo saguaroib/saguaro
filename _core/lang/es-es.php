@@ -73,7 +73,7 @@ $S_BADDELPASS = 'Error: Contraseña incorrecta.';							//Returns error for wron
 $S_WRONGPASS = 'Error: contraseña de dirección incorrecta.';						//Returns error for wrong password (when trying to access Manager modes)
 $S_RETURNS = 'Regresar';										//Returns to HTML file instead of PHP--thus no log/SQLDB update occurs
 $S_LOGUPD = 'Actualizacion';										//Updates the log/SQLDB by accessing the PHP file
-$S_MANAMODE = "  [ <a href='#' onclick=\"toggle_visibility('adminForm');\" style='color:white;text-align:center;' >Toggle Admin Post Form</a> ]";                                   //Prints heading on top of Manager page
+$S_MANAMODE = "";                                   //Prints heading on top of Manager page
 $S_MANAREPDEL = 'Panel de Direccion';								//Defines Management Panel radio button--allows the user to view the management panel (overview of all posts)
 $S_MANAPOST = 'Poste de Gerente';									//Defines Manager Post radio button--allows the user to post using HTML code in the comment box
 $S_MANASUB = 'Enviar';										//Defines name for submit button in Manager Mode
