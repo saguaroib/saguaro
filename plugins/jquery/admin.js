@@ -1,27 +1,71 @@
-$(document).ready(function() { Admin.init(); adminify(); });
+$(document).ready(function() { Admin.init(); });
 
 Admin = {
 	
 	init: function() {
 		//try (repod.suite_settings) { Admin.repodHook.init();} catch { console.log("User suite not found, skipping.");} //The world isn't ready for this yet.
+		Admin.process.page();
+		Admin.process.form();
 		$(".cmd").click(function() { 
 			var action = $(this).attr('data-cmd'), data = $(this).attr('data-id');
 			Admin.cmd(action, data);
 		});
+		
 	},
 	
-	mod: {
-		del: function(data) {
+	process: {
+		page: function() {
+			var num;
+			$('.quotejs').each(function() {
+				num = $(this).text();
+				$(this).after("<span class='test'> [<a class='cmd' data-cmd='ban-window' data-id='" + num + "'>Ban</a>] ");
+				$(this).after(" [<a class='cmd' data-cmd='del-window' data-id='" + num + "'>Delete</a>]");
+				$(this).after("</span>");
+			});
+		},
+		
+		form: function() {
+			if ($('input[name="resto"]').length <= 0) { //We're in reply mode, hide the special options
+				$('#comrow').after('<tr><td align="left" class="postblock" align="left">Options</td><td align="left">Sticky: <input type="checkbox" name="isSticky" value="isSticky">Event sticky: <input type="checkbox" name="eventSticky" value="eventSticky">Lock:<input type="checkbox" name="isLocked" value="isLocked">Capcode:<input type="checkbox" name="showCap" value="showCap"></td></tr>');
+			}
+			$('#captchaRow').css('display', 'none');
+			$('#comtxt').attr('placeholder', 'HTML tags have been enabled.');
+		}
+	},
+	
+	del: {
+		toggle: function(data) {
+			if ($("div.delFrame").length < 1) { //Open
+				$("div.post#p" + data).append('<div class="delFrame" ><div class="" >Delete: [<a class="cmd" data-cmd="del-post" data-id="' + data + '" >Post</a>] [<a class="cmd" data-cmd="del-img" data-id="' + data + '" >Image only</a>]</div></div>');
+			} else { //Close
+				$("div.delFrame").remove();
+			}
+		},
+
+		post: function(data) {
 			if (data) {
 				$.ajax({
-					url: "admin.php?mode=adel&no=" + data,
-					success: function() { $('#tr' + data).remove(); $("#" + data + "a").remove();$("#" + data + "b").remove();},
+					url: site + "/admin.php?mode=adel&no=" + data,
+					success: function() { $('div.post#p' + data).remove();},
+					error: function() { Admin.msg("Connection error.", 1);}
+				});
+				
+			} else {
+				Admin.msg("Error! No post # given!", 1)
+			}
+		},
+		
+		img: function(data) {
+			if (data) {
+				$.ajax({
+					url: site + "/admin.php?mode=adel&no=" + data,
+					success: function() { $('div.post#p' + data).remove();},
 					error: function() { Admin.msg("Connection error.", 1);}
 				});
 			} else {
 				Admin.msg("Error! No post # given!", 1)
 			}
-		},
+		}
 	},
 	
 	ban: {
@@ -34,7 +78,7 @@ Admin = {
 		},
 		
 		open: function(data) {
-			$("body").append('<div class="banFrame" style=" position: absolute; top: 50px; border: 1px solid black;"><div class="postblock" style="text-align:center; border-left:none; border-top:none;border-right:none;">Ban No.' + data +' [<a class="cmd" onclick="Admin.ban.close()" >Close</a>]</div><iframe src="admin.php?mode=ban&no=' + data + '" width="300" height="250" frameborder="0"></iframe></div>');
+			$("body").append('<div class="banFrame" style=" position: absolute; top: 50px; border: 1px solid black;"><div class="postblock" style="text-align:center; border-left:none; border-top:none;border-right:none;">Ban No.' + data +' [<a class="cmd" onclick="Admin.ban.close()" >Close</a>]</div><iframe src="' + site + '/admin.php?mode=ban&no=' + data + '" width="300" height="250" frameborder="0"></iframe></div>');
 			$("div.banFrame").draggable();
 		},
 		
@@ -69,7 +113,10 @@ Admin = {
 				Admin.panel.close();
 				break;
 			case 'del-post':
-				Admin.mod.del(data);
+				Admin.del.post(data);
+				break;
+			case 'del-img':
+				Admin.del.img(data);
 				break;
 			case 'ban-usr':
 				Admin.ban.open(data);
@@ -80,6 +127,9 @@ Admin = {
 			case 'ban-window':
 				Admin.ban.toggle(data);
 				break;
+			case 'del-window':
+				Admin.del.toggle(data);
+				break;
 			case 'update-index':
 				Admin.update.index();
 			default:
@@ -87,22 +137,12 @@ Admin = {
 				break;
 		}
 	},
-	
+
 	repodHook: {
 		config: {
 			//Hook into RePod's suite.
 		}
 	}
-}
-
-function adminify() {
-	//Add admin options to the page
-	if ($('input[name="resto"]').length <= 0) { //We're in reply mode, hide the special options
-		$('#comrow').after('<tr><td align="left" class="postblock" align="left">Options</td><td align="left">Sticky: <input type="checkbox" name="isSticky" value="isSticky">Event sticky: <input type="checkbox" name="eventSticky" value="eventSticky">Lock:<input type="checkbox" name="isLocked" value="isLocked">Capcode:<input type="checkbox" name="showCap" value="showCap"></td></tr>');
-	}
-	$('#captchaRow').remove();
-	//$('.quotejs').after("<span class='test'> [<a href='#' class='cmd' data-cmd='ban-window' data-id=''>Ban</a>]</span>");
-	$('#comtxt').attr('placeholder', 'HTML tags have been enabled.');
 }
 
 //Admin popup

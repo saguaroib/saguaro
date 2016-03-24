@@ -133,6 +133,7 @@ class Head {
 	function headerJS($admin = false) {
 		//Going to serve as our ghetto mini-API for now
 		$temp .= "var phpself = '" . PHP_SELF . "';";
+		$temp .= "var site = '//" . SITE_ROOT_BD . "';";
 		$temp .= "var board = '" . BOARD_DIR . "';"; 
 		$temp .= "var jsPath = '" . JS_PATH . "';";
 		$temp .= (NSFW) ? 'var styleGroup = "nsfw";' : 'var styleGroup = "sfw";';

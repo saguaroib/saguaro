@@ -54,7 +54,7 @@ class Post {
             $spoiler = 0;
         }
         $temp .= "<div class='postContainer replyContainer' id='pc$no'/>";
-        $temp .= "<div class='sideArrows' id='sa$no'>&gt;&gt;</div><div id='$no' class='post reply'>";
+        $temp .= "<div class='sideArrows' id='sa$no'>&gt;&gt;</div><div id='p$no' class='post reply'>";
         
         $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span> ";
 
