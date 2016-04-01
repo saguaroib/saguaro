@@ -118,7 +118,7 @@ switch ($_GET['mode']) {
         echo "<META HTTP-EQUIV=\"refresh\" content=\"0;URL=" . PHP_SELF2_ABS . "\">";
         break;
     default:
-        $html = $table->landing();
+		$html = (valid("moderator")) ? $table->deleteTable('all', $_GET['no']) : $table->reportTable();
 		echo $page->generate($html, true, false);
         break;
 }

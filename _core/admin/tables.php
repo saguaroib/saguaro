@@ -18,6 +18,8 @@ class Table {
     function deleteTable($type = 0, $resource = 0) {
         global $mysql;
 		
+		if (!valid('moderator')) error(S_NOPERM);
+		
 		require_once(CORE_DIR . "/postform.php");
 		$postform = new PostForm;
 		
