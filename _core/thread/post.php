@@ -17,10 +17,8 @@ class Post {
         @extract($this->data);
         $temp = "<div class='thread' id='t$no'/><div class='post op' id='p$no'/><div class='postContainer opContainer' id='pc$no'/>";
 
-        $image = new Image;
-        $image->inIndex = $this->inIndex;
-        $temp .= $image->format($this->data);
-        
+        $temp .= $this->media();
+
         $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span>";
 
         $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky"> ' : "";
@@ -41,10 +39,12 @@ class Post {
         $temp .= ($com == "") ? "<blockquote style='display:none;' class='postMessage' id='m$no' >$com</blockquote>" : "<blockquote class='postMessage' id='m$no' >$com</blockquote>";
         $temp .= "</div></div>";
         return $temp;
-    }   
-    
+    }
+
     function format() {
         extract($this->data);
+
+        $temp = "";
 
         if ($email) $name = "<a href='mailto:$email' class='linkmail'>$name</a>";
         if (strpos($sub, "SPOILER<>") === 0) {
@@ -55,7 +55,7 @@ class Post {
         }
         $temp .= "<div class='postContainer replyContainer' id='pc$no'/>";
         $temp .= "<div class='sideArrows' id='sa$no'>&gt;&gt;</div><div id='p$no' class='post reply'>";
-        
+
         $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span> ";
 
         if (!$this->inIndex) {
@@ -64,16 +64,49 @@ class Post {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' name='$no' class='permalink' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
         }
 
-        $image = new Image;
-        $image->inIndex = $this->inIndex;
-        $temp .= $image->format($this->data);
+        if ($media) {
+
+        }
 
         $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $resto); //yeah sure whatever
-        $com = $this->auto_link($com, $resno); 
+        $com = $this->auto_link($com, $resno);
 
         $temp .= "<blockquote class='postMessage' id='m$no'>$com</blockquote>";
 
         $temp .= "</div></div>";
+
+        return $temp;
+    }
+
+    function media() {
+        global $mysql;
+
+        $media = explode(" ",$this->data['media']);
+        $temp = "";
+
+        foreach ($media as $lookup) {
+            //For now we'll trust the post table and just grab all media from the parent.
+            $query = "select * from ".SQLMEDIA." where no=$lookup";
+            $out = $mysql->fetch_assoc($query);
+            $stuff = [
+                'localname' => $out['localname'],
+                'localthumb' => $out['localthumbname'],
+                'ext' => $out['extension'],
+                'fname' => $out['filename'],
+                'md5' => $out['hash'],
+                'tn_w' => $out['thumb_width'],
+                'tn_h' => $out['thumb_height'],
+                'fsize' => $out['filesize']
+            ];
+            
+            $image = new Image;
+            $image->inIndex = $this->inIndex;
+            $temp .= $image->format($stuff);
+
+        }
+        /*$image = new Image;
+        $image->inIndex = $this->inIndex;
+        $temp .= $image->format($this->data);*/
 
         return $temp;
     }

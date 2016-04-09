@@ -99,7 +99,7 @@ class Regist {
                     'extension'    => "." . $file['original_extension'],
                     'width'        => $file['width'],
                     'height'       => $file['height'],
-                    'localthumbname' => ($file['thumbnail']) ? $file['thumbnail']['location'] : null,
+                    'localthumbname' => ($file['thumbnail']) ? $file['thumbnail']['filename'] : null,
                     'thumb_width'  => ($file['thumbnail']) ? $file['thumbnail']['width'] : null,
                     'thumb_height' => ($file['thumbnail']) ? $file['thumbnail']['height'] : null,
                     'hash'         => $file['md5'],

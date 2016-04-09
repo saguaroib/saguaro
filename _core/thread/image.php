@@ -19,17 +19,17 @@ class Image {
         $cssimg   = CSS_PATH;
 
         // Picture file name
-        $img        = $path . $tim . $ext;
-        $displaysrc = DATA_SERVER . BOARD_DIR . "/" . $imgdir . $tim . $ext;
-        $linksrc    = ((USE_SRC_CGI == 1) ? (str_replace(".cgi", "", $imgdir) . $tim . $ext) : $displaysrc);
+        $img        = $path . $localname;
+        $displaysrc = DATA_SERVER . BOARD_DIR . "/" . $imgdir . $localname;
+        $linksrc    = ((USE_SRC_CGI == 1) ? (str_replace(".cgi", "", $imgdir) . $localname) : $displaysrc);
         if (defined('INTERSTITIAL_LINK'))
             $linksrc = str_replace(INTERSTITIAL_LINK, "", $linksrc);
-        $src = IMG_DIR . $tim . $ext;
+        $src = IMG_DIR . $localname;
         if ($fname == 'image')
             $fname = time();
         $longname  = $fname;
         if (!$fname)
-            $longname = $tim.$ext; //Legacy support for boards that didn't store an $fname in the table pre saguaro 0.99.0
+            $longname = $localname; //Legacy support for boards that didn't store an $fname in the table pre saguaro 0.99.0
         $shortname = (strlen($fname) > 40) ? substr($fname, 0, 40) . "(...)" . $ext : $longname;
         // img tag creation
         $imgsrc    = "";
@@ -49,33 +49,38 @@ class Image {
                 $tn_h = $h;
             }
 
+            $local = THUMB_DIR . $localthumb;
+            $thumb = $thumbdir . $localthumb;
             if ($spoiler) {
                 $size   = "Spoiler Image, $size";
                 $imgsrc = "<a href='$displaysrc' target='_blank'><img src='" . CSS_PATH . "/imgs/spoiler.png' border='0' align='left' hspace='20' alt='{$size}B' md5='$shortmd5'></a>";
             } elseif ($tn_w && $tn_h) { //when there is size...
-                if (@is_file(THUMB_DIR . $tim . 's.jpg')) {
-                    $imgsrc = "<a href='" . $displaysrc . "' target='_blank'><img class='postimg' src='" . $thumbdir . $tim . 's.jpg' . "' style='margin: 0px 20px;' width='$tn_w' height='$tn_h'' alt='" . $size . "B' md5='$shortmd5'></a>";
+                if (@is_file($local)) {
+                    $imgsrc = "<a href='" . $displaysrc . "' target='_blank'><img class='postimg' src='" . $thumb . "' style='margin: 0px 20px;' width='$tn_w' height='$tn_h'' alt='" . $size . "B' md5='$shortmd5'></a>";
                 } else {
                     $imgsrc = "<a href='$displaysrc' target='_blank'><span class='tn_thread' title='{$size}B'>Thumbnail unavailable</span></a>";
                 }
             } else {
-                if (@is_file(THUMB_DIR . $tim . 's.jpg')) {
-                    $imgsrc = "<a href='$displaysrc' target='_blank'><img class='postimg' src='" . $thumbdir . $tim . 's.jpg' . "' style='margin: 0px 20px;' alt='{$size}B' md5='$shortmd5'></a>";
+                die('up');
+                if (@is_file($local)) {
+                    $imgsrc = "<a href='$displaysrc' target='_blank'><img class='postimg' src='" . $thumb . "' style='margin: 0px 20px;' alt='{$size}B' md5='$shortmd5'></a>";
                 } else {
                     $imgsrc = "<a href='$displaysrc' target='_blank'><span class='tn_thread' title='{$size}B'>Thumbnail unavailable</span></a>";
                 }
             }
 
-            if (!is_file($src)) {
+            if (!is_file($local)) {
                 return  "<img src='$cssimg/imgs/filedeleted.gif' alt='File deleted.'>";
             } else {
                 $dimensions = ($ext == ".pdf") ? "PDF" : "{$w}x{$h}";
                 $name = ($this->inIndex) ? $shortname : $longname;
                 $temp = "<div class='file'><span class='filesize'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$name</a> ({$size}B, $dimensions)</span>";
 
- /*               if (!$this->inIndex) //, <span title='" . $longname . "'>" . $shortname . "</span>)
+                /* 
+                    if (!$this->inIndex) //, <span title='" . $longname . "'>" . $shortname . "</span>)
                     $temp .= "</div><div class='fileThumb'>$imgsrc</div>";  //If something is wrong with images, this should be the first thing you check.
-                else*/
+                    else
+                */
                     $temp .= "</div><div class='fileThumb'>$imgsrc</div>";
 
                 return $temp;

@@ -44,7 +44,7 @@ class ProcessFile {
                 error(S_UPFAIL, $dest);
             }
         } else if ($extension == "webm") {
-            require('video.php');
+            require_once('video.php');
             $processor = new VideoProcessor;
             $info = $processor->process($dest);
         } else {
