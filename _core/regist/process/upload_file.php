@@ -54,6 +54,7 @@ class ProcessFile {
         }
 
         $post = [
+            'localname' => basename($dest),
             'location' => $dest,
             'md5' => md5_file($dest),
             'filesize' => $fsize,

@@ -99,11 +99,14 @@ class Regist {
                     'extension'    => "." . $file['original_extension'],
                     'width'        => $file['width'],
                     'height'       => $file['height'],
+                    'localthumbname' => ($file['thumbnail']) ? $file['thumbnail']['location'] : null,
                     'thumb_width'  => ($file['thumbnail']) ? $file['thumbnail']['width'] : null,
                     'thumb_height' => ($file['thumbnail']) ? $file['thumbnail']['height'] : null,
                     'hash'         => $file['md5'],
                     'filesize'     => $file['filesize'],
                     'filename'     => $file['original_name'],
+                    'localname'    => $file['localname']
+                    
                 ];
 
                 $set = $this->dynamicBuild($out);
@@ -113,6 +116,7 @@ class Regist {
                 array_push($items, $mysql->result('select last_insert_id()'));
             }
             $items = implode(" ", $items);
+            
             
             //Update the medial column of the parent.
             $query = "update ".SQLLOG." set media='$items' where no=$final";
