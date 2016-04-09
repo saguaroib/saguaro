@@ -96,6 +96,8 @@ class Post {
                 'md5' => $out['hash'],
                 'tn_w' => $out['thumb_width'],
                 'tn_h' => $out['thumb_height'],
+                'w' => $out['width'],
+                'h' => $out['height'],
                 'fsize' => $out['filesize']
             ];
             
