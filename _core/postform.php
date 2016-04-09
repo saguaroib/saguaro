@@ -69,7 +69,7 @@ class PostForm {
         }
 
         //File selection
-        $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile' accept='image/*|.webm' size='35'>";
+        $temp .= "<tr><td class='postblock' align='left'>" . S_UPLOADFILE . "</td><td><input type='file' name='upfile[]' accept='image/*|.webm' size='35' multiple='multiple'>";
 
         if (NOPICBOX && !SPOILER)
             $temp .= "[<label><input type='checkbox' name='textonly' value='on'>" . S_NOFILE . "</label>]</td></tr>";

@@ -9,13 +9,13 @@
 */
 
 class ProcessFile {
-    function run($upfile,$tim) {
+    function run($file) {
         global $path;
         $info = [];
 
         //upload processing
-        $extension = pathinfo($_FILES["upfile"]["name"], PATHINFO_EXTENSION); //Basic file extension, up for improvements.
-        $dest = $path . "$tim.$extension"; //Just name it right the first time.
+        $extension = pathinfo($file["name"], PATHINFO_EXTENSION); //Basic file extension, up for improvements.
+        $dest = $path . $file["tim"] . "-" . $file["index"] . "." . $extension; //Just name it right the first time.
         //$dest = $path.$tim.'.tmp';
         /*if (OEKAKI_BOARD == 1 && $_POST['oe_chk']) {
             rename($upfile, $dest);
@@ -24,7 +24,7 @@ class ProcessFile {
                 rename($pchfile, "$dest.pch");
         } else*/
 
-        move_uploaded_file($upfile, $dest);
+        move_uploaded_file($file['temp'], $dest);
         clearstatcache(); // otherwise $dest looks like 0 bytes!
 
         //$upfile_name = $sanitize->CleanStr($upfile_name, 0);
@@ -57,7 +57,7 @@ class ProcessFile {
             'location' => $dest,
             'md5' => md5_file($dest),
             'filesize' => $fsize,
-            'original_name' => $_FILES["upfile"]["name"],
+            'original_name' => $file["name"],
             'original_extension' => $extension
         ];
         $info = array_merge($info,$post);
