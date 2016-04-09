@@ -64,9 +64,7 @@ class Post {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' name='$no' class='permalink' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
         }
 
-        if ($media) {
-
-        }
+        $temp .= $this->media();
 
         $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $resto); //yeah sure whatever
         $com = $this->auto_link($com, $resno);
