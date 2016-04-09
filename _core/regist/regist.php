@@ -33,7 +33,7 @@ class Regist {
             'board' => null
         ];
         //Get the file info and copy/rename to target directory.
-        $info['files'] = (count($_FILES['upfile']['name']) > 0) ? $this->extractFiles($tim) : false;
+        $info['files'] = (count($_FILES['upfile']['name']) > 0) ? $this->extractFiles($tim) : null;
 
         $this->cache = $info; //Copy to cache.
 
@@ -91,22 +91,32 @@ class Regist {
         /* if (!$result = ?) { echo E_REGFAILED; }*/
 
         //Files
-        foreach($info['files'] as $file) {
-            $out = [
-                'extension'    => "." . $file['original_extension'],
-                'width'        => $file['width'],
-                'height'       => $file['height'],
-                'thumb_width'  => ($file['thumbnail']) ? $file['thumbnail']['width'] : null,
-                'thumb_height' => ($file['thumbnail']) ? $file['thumbnail']['height'] : null,
-                'hash'         => $file['md5'],
-                'filesize'     => $file['filesize'],
-                'filename'     => $file['original_name'],
-            ];
+        if ($info['files']) {
+            $items = [];
+            foreach($info['files'] as $file) {
+                $out = [
+                    'parent'       => $final,
+                    'extension'    => "." . $file['original_extension'],
+                    'width'        => $file['width'],
+                    'height'       => $file['height'],
+                    'thumb_width'  => ($file['thumbnail']) ? $file['thumbnail']['width'] : null,
+                    'thumb_height' => ($file['thumbnail']) ? $file['thumbnail']['height'] : null,
+                    'hash'         => $file['md5'],
+                    'filesize'     => $file['filesize'],
+                    'filename'     => $file['original_name'],
+                ];
 
-            $set = $this->dynamicBuild($out);
-            $query = "insert into ".SQLMEDIA." (" . $set['keys'] . ") values (" . $set['vals'] .")";
+                $set = $this->dynamicBuild($out);
+                $query = "insert into ".SQLMEDIA." (" . $set['keys'] . ") values (" . $set['vals'] .")";
+                $mysql->query($query);
+
+                array_push($items, $mysql->result('select last_insert_id()'));
+            }
+            $items = implode(" ", $items);
+            
+            //Update the medial column of the parent.
+            $query = "update ".SQLLOG." set media='$items' where no=$final";
             $mysql->query($query);
-            $final = (int) $mysql->result('select last_insert_id()');
         }
 
         return $final; //Return 'no', latest auto-incremented column.
