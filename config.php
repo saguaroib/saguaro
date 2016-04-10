@@ -95,6 +95,7 @@ define('RECAPTCHA_SECRET', "");//reCaptcha secret key.
 //Images
 define('DUPE_CHECK', true); //whether or not to check for duplicate images
 define('MAX_KB', 2048); //Maximum upload size in KB
+define('MAX_FILE_COUNT', 1); //Maximum number of media attachments to allow per post
 
 //WebM
 define('ALLOW_WEBMS', false); //This feature currently has prequisites. Please visit https://github.com/spootTheLousy/saguaro/wiki/Supporting-WEBMs before enabling.

@@ -105,8 +105,8 @@ class Regist {
                     'hash'         => $file['md5'],
                     'filesize'     => $file['filesize'],
                     'filename'     => $file['original_name'],
-                    'localname'    => $file['localname']
-                    
+                    'localname'    => $file['localname'],
+                    'board' => BOARD_DIR
                 ];
 
                 $set = $this->dynamicBuild($out);
@@ -223,6 +223,12 @@ class Regist {
         $f = $_FILES['upfile'];
         $max = count($f['name']); // (count($_FILES['upfile']['name']) > MAX_FILES) ? MAX_FILES : count($_FILES['upfile']['name'])
 
+        if ($max > MAX_FILE_COUNT) {
+            foreach ($f['fname'] as $key=> $value) {
+                unlink($value);
+            }
+            error(S_TOOMANYFILES);
+        }
         //$this->checkDuplicate($info['file']['md5']);
 
         require_once('process/upload_file.php');

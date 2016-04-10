@@ -56,7 +56,8 @@ class Head {
 		$dat .= $this->headerJS(true);
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>
-				<script src='" . JS_PATH . "/extension.js' type='text/javascript'></script>";	
+				<script src='" . JS_PATH . "/extension.js' type='text/javascript'></script>
+                <script src='" . JS_PATH . "/dropzone.js' type='text/javascript'></script>";	
 				
         $dat .= '</head><body class="is_index"><div class="beforePostform" />' . $titlebar . '
                 <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : ''). '</div>
@@ -135,6 +136,7 @@ class Head {
 		$temp .= "var phpself = '" . PHP_SELF . "';";
 		$temp .= "var site = '//" . SITE_ROOT_BD . "';";
 		$temp .= "var board = '" . BOARD_DIR . "';"; 
+        $temp .= "var fileCount = '" . MAX_FILE_COUNT . "';"; 
 		$temp .= "var jsPath = '" . JS_PATH . "';";
 		$temp .= (NSFW) ? 'var styleGroup = "nsfw";' : 'var styleGroup = "sfw";';
 		if (defined(EXTRA_SHIT)) $temp .= EXTRA_SHIT; 
