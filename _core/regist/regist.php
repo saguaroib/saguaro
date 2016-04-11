@@ -38,7 +38,6 @@ class Regist {
         $this->cache = $info; //Copy to cache.
 
         $this->insert($this->cache); //Returns 'no' (post number), however this is also stored back in $this->cache['post']['number']
-        //var_dump($this->cache);
         $this->updateCache();
     }
 
@@ -258,7 +257,7 @@ class Regist {
             }
         }
 
-        return $files;
+        return (count($files) > 0) ? $files : null;
     }
 
     private function generateThumbnail($location) {

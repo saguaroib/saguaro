@@ -12,15 +12,15 @@ class ProcessFile {
     private $last = "";
 
     function run($file) {
+        //Return early and do nothing if check fails.
+        if ($this->check($file) !== true) { return ['passCheck' => false, 'message' => $this->last]; }
+
         global $path;
-        if ($this->check($file) !== true) { //Return early and do nothing if check fails.
-            return ['passCheck' => false, 'message' => $this->last];
-        }
         $info = [];
 
         //upload processing
         $extension = pathinfo($file["name"], PATHINFO_EXTENSION); //Basic file extension, up for improvements.
-        $dest = $path . $file["tim"] . "-" . $file["index"] . "." . $extension; //Just name it right the first time.
+        $dest = $file['temp'];
         //$dest = $path.$tim.'.tmp';
         /*if (OEKAKI_BOARD == 1 && $_POST['oe_chk']) {
             rename($upfile, $dest);
@@ -28,9 +28,6 @@ class ProcessFile {
             if ($pchfile)
                 rename($pchfile, "$dest.pch");
         } else*/
-
-        move_uploaded_file($file['temp'], $dest);
-        clearstatcache(); // otherwise $dest looks like 0 bytes!
 
         //$upfile_name = $sanitize->CleanStr($upfile_name, 0);
         $fsize = filesize($dest);
@@ -51,12 +48,19 @@ class ProcessFile {
         } else if ($extension == "webm") {
             require_once('video.php');
             $processor = new VideoProcessor;
-            $info = $processor->process($dest);
+
+            $info = $processor->process(['name' => $file["name"], 'temp' => $dest]);
+
         } else {
             require_once('image.php');
             $process = new ProcessImage;
             $info = $process->run($dest);
         }
+        
+        //Move the file out of temp.
+        $dest = $path . $file["tim"] . "-" . $file["index"] . "." . $extension;
+        move_uploaded_file($file['temp'], $dest);
+        clearstatcache(); // otherwise $dest looks like 0 bytes!
 
         $post = [
             'passCheck' => true,
@@ -67,7 +71,7 @@ class ProcessFile {
             'original_name' => $file["name"],
             'original_extension' => $extension
         ];
-        $info = array_merge($info,$post);
+        $info = array_merge($post,$info);
         //$mes = $upfile_name . ' ' . S_UPGOOD;
 
         return $info;

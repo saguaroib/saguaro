@@ -7,7 +7,7 @@
 */
 
 class ProcessImage {
-    function run($dest) {
+    static function run($dest) {
         $size = getimagesize($dest);
         if (!is_array($size))
             error(S_NOREC, $dest);

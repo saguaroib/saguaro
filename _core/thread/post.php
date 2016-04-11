@@ -78,14 +78,11 @@ class Post {
 
     function media() {
         global $mysql;
-
-        $media = explode(" ",$this->data['media']);
         $temp = "";
 
-        foreach ($media as $lookup) {
-            //For now we'll trust the post table and just grab all media from the parent.
-            $query = "select * from ".SQLMEDIA." where no=$lookup";
-            $out = $mysql->fetch_assoc($query);
+        $no = $this->data['no'];
+        $result = $mysql->query("select * from ".SQLMEDIA." where parent=$no");
+        while ($out = $mysql->fetch_assoc($result)) {
             $stuff = [
                 'localname' => $out['localname'],
                 'localthumb' => $out['localthumbname'],
@@ -98,15 +95,11 @@ class Post {
                 'h' => $out['height'],
                 'fsize' => $out['filesize']
             ];
-            
+
             $image = new Image;
             $image->inIndex = $this->inIndex;
             $temp .= $image->format($stuff);
-
         }
-        /*$image = new Image;
-        $image->inIndex = $this->inIndex;
-        $temp .= $image->format($this->data);*/
 
         return $temp;
     }
