@@ -207,22 +207,25 @@ class Regist {
         ];
 
         //Basic sanitization.
+        $moderator = valid("moderator");
         $sanitize = ['name','subject','email','comment'];
         foreach ($sanitize as $key) {
-            $post[$key] = Sanitize::CleanStr($post[$key]);
+            $post[$key] = Sanitize::CleanStr($post[$key], $moderator);
         }
 
         $post['child'] = (bool) ($post['parent'] !== 0);
         $post['comment_md5'] = md5($post['comment']);
 
+        //Apply user IDs, dice, EXIF etc to post..
+        require_once("addons.php");
+        $post['now'] = userID($post['now'], $post['email'], $post['name']);
+        $ret = parseComment($post['comment'], $post['email'], $post['name']);
+        $post['comment'] = $ret['com'];
+        $post['name'] = $ret['name'];
+        
         require_once('tripcode.php');
         $post['name'] = Tripcode::format($post['name']);
         $post['name'] = ($post['special']['capcode']) ? Tripcode::adminify($post['name']) : $post['name'];
-
-        //Apply user IDs, dice, EXIF etc to post.
-        require_once("addons.php");
-        $post['now'] = userID($post['now'], $post['email']);
-        $post['comment'] = parseComment($post['comment'], $post['email']);
 
         return $post;
     }
