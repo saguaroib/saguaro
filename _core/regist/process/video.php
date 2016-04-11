@@ -14,15 +14,22 @@ class VideoProcessor {
 
         $info = $this->check($input['temp']);
 
+        //Holy duplicate lines.
         if (!$info['has_video'])
             $info['passCheck'] = false;
             $info['message'] = "\"$upfile_name\" is not a valid WebM.";
+        if ($info['width'] < MIN_W || $info['height'] < MIN_H)
+            $info['passCheck'] = false;
+            $info['message'] = "\"$upfile_name\"'s resolution is too small!";
         if (ALLOW_AUDIO == false && $info['has_audio'])
             $info['passCheck'] = false;
             $info['message'] = "\"$upfile_name\" contains audio!";
         if ($info['duration'] > MAX_DURATION)
             $info['passCheck'] = false;
             $info['message'] = "\"$upfile_name\" is longer than allowed! (" . MAX_DURATION . ")";
+        if ($info['duration'] == 0)
+            $info['passCheck'] = false;
+            $info['message'] = S_UNUSUAL;
 
         return $info;
     }
