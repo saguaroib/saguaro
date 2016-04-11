@@ -37,6 +37,11 @@ class Regist {
         //Get the file info and copy/rename to target directory, then append file info to post info cache.
         $this->cache['files'] = (count($_FILES['upfile']['name']) > 0) ? $this->extractFiles($tim) : null;
 
+        $check = $this->postCheck();
+        if ($check !== true) {
+            error($check);
+        }
+
         $this->insert($this->cache); //Returns 'no' (post number), however this is also stored back in $this->cache['post']['number']
         $this->updateCache();
     }
@@ -175,6 +180,11 @@ class Regist {
         require_once('process/upload.php');
         $check = new UploadCheck;
         $check->run();
+    }
+
+    function postCheck() {
+        if (max($this->cache['files'], strlen($this->cache['post']['comment'])) == 0) return "No comment or acceptable file included.";
+        return true;
     }
 
     function extractForm() {
