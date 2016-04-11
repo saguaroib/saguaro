@@ -116,8 +116,8 @@ class Regist {
                 array_push($items, $mysql->result('select last_insert_id()'));
             }
             $items = implode(" ", $items);
-            
-            
+
+
             //Update the medial column of the parent.
             $query = "update ".SQLLOG." set media='$items' where no=$final";
             $mysql->query($query);
@@ -221,14 +221,13 @@ class Regist {
     function extractFiles($tim) {
         $files = [];
         $f = $_FILES['upfile'];
-        $max = count($f['name']); // (count($_FILES['upfile']['name']) > MAX_FILES) ? MAX_FILES : count($_FILES['upfile']['name'])
-
-        if ($max > MAX_FILE_COUNT) {
-            foreach ($f['fname'] as $key=> $value) {
-                unlink($value);
-            }
+        $num_files = count($f['name']);
+        $max = min($num_files, MAX_FILE_COUNT); //Set the loop cap to the number of files or maximum allowed, whichever is lower.
+        if ($num_files > MAX_FILE_COUNT) { //IF we want to impose the file limit and disregard the post itself, this is how we do it.
+            //foreach ($f['fname'] as $key => $value) { unlink($value); } //By default, upload files should be in a temporary status and location which PHP should clean up on script completion.
             error(S_TOOMANYFILES);
         }
+
         //$this->checkDuplicate($info['file']['md5']);
 
         require_once('process/upload_file.php');
