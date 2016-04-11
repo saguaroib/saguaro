@@ -32,10 +32,10 @@ class Regist {
             'local_name' => $tim,
             'board' => null
         ];
-        //Get the file info and copy/rename to target directory.
-        $info['files'] = (count($_FILES['upfile']['name']) > 0) ? $this->extractFiles($tim) : null;
-
         $this->cache = $info; //Copy to cache.
+
+        //Get the file info and copy/rename to target directory, then append file info to post info cache.
+        $this->cache['files'] = (count($_FILES['upfile']['name']) > 0) ? $this->extractFiles($tim) : null;
 
         $this->insert($this->cache); //Returns 'no' (post number), however this is also stored back in $this->cache['post']['number']
         $this->updateCache();

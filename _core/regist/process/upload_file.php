@@ -48,19 +48,18 @@ class ProcessFile {
         } else if ($extension == "webm") {
             require_once('video.php');
             $processor = new VideoProcessor;
-
             $info = $processor->process(['name' => $file["name"], 'temp' => $dest]);
-
         } else {
             require_once('image.php');
             $process = new ProcessImage;
             $info = $process->run($dest);
         }
-        
-        //Move the file out of temp.
-        $dest = $path . $file["tim"] . "-" . $file["index"] . "." . $extension;
-        move_uploaded_file($file['temp'], $dest);
-        clearstatcache(); // otherwise $dest looks like 0 bytes!
+
+        if ($info['passCheck'] !== false) { //Move the file out of temp if it passed checks.
+            $dest = $path . $file["tim"] . "-" . $file["index"] . "." . $extension;
+            move_uploaded_file($file['temp'], $dest);
+            clearstatcache(); // otherwise $dest looks like 0 bytes!
+        }
 
         $post = [
             'passCheck' => true,

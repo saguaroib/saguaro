@@ -12,7 +12,7 @@ class ImageThumbnail {
 
     function run($input, $output, $width = 250, $height = 250) {
         $this->stats = $this->process($input,$width,$height);
-        $this->bumpMemory($stats); //Bump memory limit if we need it.
+        $this->bumpMemory(); //Bump memory limit if we need it.
 
         //Generate working.
         $scratch = $this->generateScratch($input);
@@ -20,7 +20,8 @@ class ImageThumbnail {
         //Generate working target.
         $target = $this->generateTarget();
 
-        ImageCopyResampled($target, $scratch, 0, 0, 0, 0, $this->stats['max_w'], $this->stats['max_h'], $this->stats['width'], $this->stats['height']);
+        ImageCopyResampled($target, $scratch, 0, 0, 0, 0, $this->stats['to_w'], $this->stats['to_h'], $this->stats['width'], $this->stats['height']);
+        //$target = imagescale($target, $width, $height); //PHP 5.5+
 
         //Write the file.
         $ext = pathinfo($output, PATHINFO_EXTENSION);
@@ -36,13 +37,14 @@ class ImageThumbnail {
         if (isset($pdfjpeg)) { unlink($pdfjpeg); } // if PDF was thumbnailed delete the orig jpeg
 
         return [
-            'width' => $this->stats['max_w'],
-            'height' => $this->stats['max_h'],
+            'width' => $this->stats['to_w'],
+            'height' => $this->stats['to_h'],
         ];
     }
 
     private function bumpMemory($input) {
         $this->memory_limit_increased = false;
+        $input = $this->stats;
         $pixels = $input['width'] * $input['height'];
 
         if ($pixels > 3000000) {
@@ -59,15 +61,13 @@ class ImageThumbnail {
 
         //Determine maximum resolution.
         if ($w > $width || $h[1] > $height || $info[2] == 1) {
-            $key_w = $width / $w;
-            $key_h = $height / $h;
-            $keys = ($key_w < $key_h) ? $key_w : $key_h;
-            $w = ceil($w * $keys) + 1;
-            $h = ceil($h * $keys) + 1;
+            $ratio = min(($width / $w), ($height / $h));
+            $w = ceil($w * $ratio);//+1
+            $h = ceil($h * $ratio);//+1
             /*if ($size[2]==1) {
             $out_w = $size[0];
             $out_h = $size[1];
-            } //what was this for again? */
+            }*/ //what was this for again?
         }
 
         return [
@@ -75,8 +75,8 @@ class ImageThumbnail {
             'width' => $info[0],
             'height' => $info[1],
             'type' => $info[2],
-            'max_w' => $w,
-            'max_h' => $h
+            'to_w' => $w,
+            'to_h' => $h
         ];
     }
 
@@ -98,8 +98,8 @@ class ImageThumbnail {
     }
 
     private function generateTarget() {
-        $out_w = $this->stats['max_w'];
-        $out_h = $this->stats['max_h'];
+        $out_w = $this->stats['to_w'];
+        $out_h = $this->stats['to_h'];
 
         $target = (function_exists("ImageCreateTrueColor")) ? ImageCreateTrueColor($out_w, $out_h) : ImageCreate($out_w, $out_h);
         ImageAlphaBlending($target, false);

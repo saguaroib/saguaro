@@ -28,7 +28,7 @@ function thumb($input, $child) {
     } else {
         require_once("image.php");
         $thumb = new ImageThumbnail;
-        $result = $thumb->run($input,$outpath);
+        $result = $thumb->run($input, $outpath, $width, $height);
         $width = $result['width'];
         $height = $result['height'];
     }
