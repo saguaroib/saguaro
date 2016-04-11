@@ -239,16 +239,23 @@ class Regist {
                 'type' => $f['type'][$i],
                 'temp' => $f['tmp_name'][$i],
                 'size' => $f['size'][$i],
+                'error' => $f['error'][$i],
                 'tim'  => $tim
             ];
 
             $check = new ProcessFile;
             $temp = $check->run($temp);
 
-            //If we made it this far, generate thumbnail if possible.
-            $temp['thumbnail'] = (USE_THUMB) ? $this->generateThumbnail($temp['location']) : null;
+            if ($temp['passCheck'] === true) {
+                //If we made it this far, generate thumbnail if possible.
+                $temp['thumbnail'] = (USE_THUMB) ? $this->generateThumbnail($temp['location']) : null;
 
-            array_push($files, $temp);
+                array_push($files, $temp);
+            } else {
+                //What to do if an individual file fails a check.
+                //Fortunately, failed checks leave the files in the temporary area which PHP cleans up itself upon script completion.
+                //error($temp['message']);
+            }
         }
 
         return $files;

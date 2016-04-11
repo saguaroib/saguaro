@@ -9,8 +9,13 @@
 */
 
 class ProcessFile {
+    private $last = "";
+
     function run($file) {
         global $path;
+        if ($this->check($file) !== true) { //Return early and do nothing if check fails.
+            return ['passCheck' => false, 'message' => $this->last];
+        }
         $info = [];
 
         //upload processing
@@ -54,6 +59,7 @@ class ProcessFile {
         }
 
         $post = [
+            'passCheck' => true,
             'localname' => basename($dest),
             'location' => $dest,
             'md5' => md5_file($dest),
@@ -65,6 +71,29 @@ class ProcessFile {
         //$mes = $upfile_name . ' ' . S_UPGOOD;
 
         return $info;
+    }
+
+    function check($file) {
+        //Very generic upload checks. Specific checks are done in the media processors.
+        //Currently errors are suppressed since these run in a loop and we don't want to stop on any given one.
+        //Actual handling of this check should be done in Regist after the status is returned.
+        if ($file['error'] > 0) {
+            if (in_array($file['error'], [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE])) {
+                $this->last = S_TOOBIG; //error(S_TOOBIG, $upfile);
+                return false;
+            }
+            if (in_array($file['error'], [UPLOAD_ERR_PARTIAL, UPLOAD_ERR_CANT_WRITE])) {
+                $this->last = S_UPFAIL; //error(S_UPFAIL, $upfile);
+                return false;
+            }
+        }
+
+        if (/*$upfile_name && */$file["size"] == 0) {
+            $this->last = S_TOOBIGORNONE; //error(S_TOOBIGORNONE, $upfile);
+            return false;
+        }
+
+        return true;
     }
 }
 

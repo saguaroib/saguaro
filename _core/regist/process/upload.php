@@ -17,7 +17,6 @@ class UploadCheck {
         if ($_SERVER["REQUEST_METHOD"] !== "POST") error(S_UNJUST, $upfile); //Ensure the data was sent via POST.
         if ($this->captcha() !== true) error($this->last, $upfile); //Captcha check.
         if ($this->proxy() !== true) error($this->last, $upfile); //Proxy check.
-        if ($this->uploadedFile() !== true) error($this->last, $upfile); //File check.
 
         //These checks access the SQL server so we should prioritize these last and then order based on how intensive they are.
         if ($this->banned() !== true) { header("Location: banned.php"); die();} //Ban check.
@@ -51,28 +50,6 @@ class UploadCheck {
                 //error(S_PROXY8080, $dest);
                 return false;
             }
-        }
-        return true;
-    }
-
-    function uploadedFile() {
-        if ($_FILES["upfile"]["error"] > 0) {
-            if ($_FILES["upfile"]["error"] == UPLOAD_ERR_INI_SIZE || $_FILES["upfile"]["error"] == UPLOAD_ERR_FORM_SIZE) {
-                $this->last = S_TOOBIG;
-                //error(S_TOOBIG, $upfile);
-                return false;
-            }
-            if ($_FILES["upfile"]["error"] == UPLOAD_ERR_PARTIAL || $_FILES["upfile"]["error"] == UPLOAD_ERR_CANT_WRITE) {
-                $this->last = S_UPFAIL;
-                //error(S_UPFAIL, $upfile);
-                return false;
-            }
-        }
-
-        if ($upfile_name && $_FILES["upfile"]["size"] == 0) {
-            $this->last = S_TOOBIGORNONE;
-            //error(S_TOOBIGORNONE, $upfile);
-            return false;
         }
         return true;
     }
@@ -167,7 +144,7 @@ class UploadCheck {
 
         return true;
     }
-    
+
 /*    function cooldown($upfile) {
         global $mysql;
 
