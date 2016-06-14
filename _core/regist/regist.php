@@ -184,7 +184,7 @@ class Regist {
     }
 
     function postCheck() {
-        if (max($this->cache['files'], strlen($this->cache['post']['comment'])) == 0) { 
+        if (max($this->cache['files'], strlen($this->cache['post']['comment'])) == 0) {
             $out = "No comment or acceptable file included.";
             foreach($this->cache['errors'] as $error) {
                 $out .= '<br><small>'.$error.'</small>';
@@ -229,7 +229,7 @@ class Regist {
         $ret = parseComment($post['comment'], $post['email'], $post['name']);
         $post['comment'] = $ret['com'];
         $post['name'] = $ret['name'];
-        
+
         require_once('tripcode.php');
         $post['name'] = Tripcode::format($post['name']);
         $post['name'] = ($post['special']['capcode']) ? Tripcode::adminify($post['name']) : $post['name'];
@@ -250,10 +250,11 @@ class Regist {
         //$this->checkDuplicate($info['file']['md5']);
 
         require_once('process/upload_file.php');
+        $index = 1; //File counter index.
 
         for ($i = 0; $i < $max; $i++) {
             $temp = [
-                'index'=> ($i + 1),
+                'index'=> $index,
                 'name' => $f['name'][$i],
                 'type' => $f['type'][$i],
                 'temp' => $f['tmp_name'][$i],
@@ -270,6 +271,7 @@ class Regist {
                 $temp['thumbnail'] = (USE_THUMB) ? $this->generateThumbnail($temp['location']) : null;
 
                 array_push($files, $temp);
+                $index++;
             } else {
                 //What to do if an individual file fails a check.
                 //Fortunately, failed checks leave the files in the temporary area which PHP cleans up itself upon script completion.
