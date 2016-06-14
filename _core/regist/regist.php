@@ -30,7 +30,8 @@ class Regist {
             'host' => $_SERVER['REMOTE_ADDR'],
             'time' => $time,
             'local_name' => $tim,
-            'board' => null
+            'board' => null,
+            'errors' => []
         ];
         $this->cache = $info; //Copy to cache.
 
@@ -183,7 +184,13 @@ class Regist {
     }
 
     function postCheck() {
-        if (max($this->cache['files'], strlen($this->cache['post']['comment'])) == 0) return "No comment or acceptable file included.";
+        if (max($this->cache['files'], strlen($this->cache['post']['comment'])) == 0) { 
+            $out = "No comment or acceptable file included.";
+            foreach($this->cache['errors'] as $error) {
+                $out .= '<br><small>'.$error.'</small>';
+            }
+            return $out;
+        }
         return true;
     }
 
@@ -267,6 +274,9 @@ class Regist {
                 //What to do if an individual file fails a check.
                 //Fortunately, failed checks leave the files in the temporary area which PHP cleans up itself upon script completion.
                 //error($temp['message']);
+                if ($temp['message']) {
+                    array_push($this->cache['errors'],$temp['message']);
+                }
             }
         }
 

@@ -55,25 +55,46 @@ class ProcessFile {
             $info = $process->run($dest);
         }
 
-        if ($info['passCheck'] !== false) { //Move the file out of temp if it passed checks.
-            $dest = $path . $file["tim"] . "-" . $file["index"] . "." . $extension;
-            move_uploaded_file($file['temp'], $dest);
-            clearstatcache(); // otherwise $dest looks like 0 bytes!
-        }
-
+        $dest = $path . $file["tim"] . "-" . $file["index"] . "." . $extension; //Premature.
         $post = [
             'passCheck' => true,
             'localname' => basename($dest),
             'location' => $dest,
-            'md5' => md5_file($dest),
+            'md5' => md5_file($file['temp']),
             'filesize' => $fsize,
             'original_name' => $file["name"],
             'original_extension' => $extension
         ];
         $info = array_merge($post,$info);
+
         //$mes = $upfile_name . ' ' . S_UPGOOD;
 
+        //Really weird. Several optimal ways, couldn't decide on the perfect way to trickle up this late.
+        $unique = $this->checkHash($info['md5']);
+        if (!$unique) {
+            $info['passCheck'] = false;
+            $info['message'] = S_SAMEPIC.' ('.$info['original_name'].')';
+        }
+
+        //Move the file out of temp if it passed checks.
+        if ($info['passCheck'] !== false) {
+            move_uploaded_file($file['temp'], $dest);
+            clearstatcache(); // otherwise $dest looks like 0 bytes!
+        }
+
         return $info;
+    }
+
+    function checkHash($hash) {
+        //Returns true (pass/unique/disabled) or false (fail/dupe).
+        global $mysql;
+        if (DUPE_CHECK) {
+            if (!preg_match('/^[a-z0-9]+$/i', $hash)) { return false; }
+            $dupe = !(bool) $mysql->num_rows($mysql->query("SELECT 1 FROM " . SQLMEDIA . " WHERE hash='{$hash}' LIMIT 1"));
+            return $dupe;
+        } else {
+            return true;
+        }
     }
 
     function check($file) {
