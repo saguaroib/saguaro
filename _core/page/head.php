@@ -20,8 +20,8 @@ class Head {
     ];
 
     function generate() {
-		global $cssArray;
-		
+        global $cssArray;
+
         $dat = '';
         $boardTitle = '';
         $bannerImg = '';
@@ -43,22 +43,24 @@ class Head {
                 <link rel='shortcut icon' href='" . CSS_PATH . "imgs/favicon.ico'>
                 <title>" .  $this->info['page']['title'] ."</title>";
 
-		$cs = array_keys($cssArray);
-		foreach ($cssArray as $key => $value) {
-			$type = (NSFW) ? (($key == $cs[0]) ? "stylesheet" : "alternate stylesheet") : ($key == $cs[1]) ? "stylesheet" : "alternate stylesheet" ;
-			$dat .= "<link class='togglesheet' rel='$type' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
-		}
+        $cs = array_keys($cssArray);
+        foreach ($cssArray as $key => $value) {
+            $type = (NSFW) ? (($key == $cs[0]) ? "stylesheet" : "alternate stylesheet") : ($key == $cs[1]) ? "stylesheet" : "alternate stylesheet" ;
+            $dat .= "<link class='togglesheet' rel='$type' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
+        }
 
         foreach($this->info['css']['extra'] as $css) {
             $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "$css'/>";
         }
-		
-		$dat .= $this->headerJS(true);
+
+        $dat .= $this->headerJS(true);
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>
-				<script src='" . JS_PATH . "/extension.js' type='text/javascript'></script>
-                <script src='" . JS_PATH . "/dropzone.js' type='text/javascript'></script>";	
-				
+                <script src='" . JS_PATH . "/extension.js' type='text/javascript'></script>
+                <script src='" . JS_PATH . "/dropzone.js' type='text/javascript'></script>";
+
+        $dat .= $this->suiteJS(); //Add what we can of the suite.
+
         $dat .= '</head><body class="is_index"><div class="beforePostform" />' . $titlebar . '
                 <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : ''). '</div>
                 <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
@@ -72,17 +74,17 @@ class Head {
 
         return $dat;
     }
-    
+
     function generateAdmin($noHead = 0) {
-		global $cssArray;
-		
+        global $cssArray;
+
         require_once(CORE_DIR . "/admin/report.php");
 
         $getReport = new Report;
-        
+
         $boardTitle = (SHOWTITLETXT > 0 && !$noHead) ? "<div class='boardTitle'>" . $this->info['page']['title'] . "</div><div class='boardSubtitle'>" . S_HEADSUB . "</div><hr>" : '';
         $bannerImg .= (SHOWTITLEIMG && !$noHead) ? '<img class="bannerImg" src="' . TITLEIMG . '" onclick="this.src=this.src;" alt="' . TITLE . '" /><br>' : '';
-        
+
         /* begin page content */
         $dat = "<!DOCTYPE html><head>
                     <meta name='description' content='" . S_DESCR . "'/></meta>
@@ -96,24 +98,26 @@ class Head {
                     <link rel='shortcut icon' href='" . CSS_PATH . "imgs/favicon.ico'>
                     <title>" . $this->info['page']['title'] . "</title>";
 
-		$cs = array_keys($cssArray);
-		foreach ($cssArray as $key => $value) {
-			$type = (NSFW) ? (($key == $cs[0]) ? "stylesheet" : "alternate stylesheet") : ($key == $cs[1]) ? "stylesheet" : "alternate stylesheet" ;
-			$dat .= "<link class='togglesheet' rel='$type' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
-		}
+        $cs = array_keys($cssArray);
+        foreach ($cssArray as $key => $value) {
+            $type = (NSFW) ? (($key == $cs[0]) ? "stylesheet" : "alternate stylesheet") : ($key == $cs[1]) ? "stylesheet" : "alternate stylesheet" ;
+            $dat .= "<link class='togglesheet' rel='$type' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
+        }
 
-		$dat .= $this->headerJS(true);
+        $dat .= $this->headerJS(true);
         $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
                 <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>
-				<script src='" . JS_PATH . "/jquery-ui-1.10.4.min.js' type='text/javascript'></script>
-				<script src='" . JS_PATH . "/admin.js' type='text/javascript'></script></head>";
+                <script src='" . JS_PATH . "/jquery-ui-1.10.4.min.js' type='text/javascript'></script>
+                <script src='" . JS_PATH . "/admin.js' type='text/javascript'></script></head>";
+
+        $dat .= $this->suiteJS(); //Add what we can of the suite.
 
         if (!$noHead) {
             $dat .= '<div class="beforePostform" />' . $titlebar . '
                     <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : '') . '</span></div>
                     <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]</div>
-                    <div class="boardBanner">' . $bannerImg . $boardTitle . '</div>';            
-            
+                    <div class="boardBanner">' . $bannerImg . $boardTitle . '</div>';
+
             $dat .= "<div class='panelOps' style='text-align:left;' />[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>][<a class='cmd' title='Update the index' href='javascript:;' data-cmd='update-index'>Update</a>]";
 
             if (valid('moderator')) {
@@ -129,27 +133,48 @@ class Head {
             $dat .= "[<a href='" . PHP_ASELF . "?mode=logout'>" . S_LOGOUT . "</a>]</div>";
         }
         return $dat;
-    } 
+    }
 
-	function headerJS($admin = false) {
-		//Going to serve as our ghetto mini-API for now
-		$temp .= "var phpself = '" . PHP_SELF . "';";
-		$temp .= "var site = '//" . SITE_ROOT_BD . "';";
-		$temp .= "var board = '" . BOARD_DIR . "';"; 
-        $temp .= "var fileCount = '" . MAX_FILE_COUNT . "';"; 
-		$temp .= "var jsPath = '" . JS_PATH . "';";
-		$temp .= (NSFW) ? 'var styleGroup = "nsfw";' : 'var styleGroup = "sfw";';
-		if (defined(EXTRA_SHIT)) $temp .= EXTRA_SHIT; 
+    function suiteJS() {
+        //Figure this out later. Apogate previously exploded it in favor of another extension which the repository lacked.
+        $dat = "";
 
-		if ($admin) {
-			//Admin js variables go here
-		}
+        if (USE_JS_SETTINGS)  $dat .= '<script src="'.JS_PATH.'/suite_settings.js" type="text/javascript"></script>';
+        if (USE_IMG_HOVER)    $dat .= '<script src="'.JS_PATH.'/image_hover.js" type="text/javascript"></script>';
+        if (USE_IMG_TOOLBAR)  $dat .= '<script src="'.JS_PATH.'/image_toolbar.js" type="text/javascript"></script>';
+        if (USE_IMG_EXP)      $dat .= '<script src="'.JS_PATH.'/image_expansion.js" type="text/javascript"></script>';
+        if (USE_UTIL_QUOTE)   $dat .= '<script src="'.JS_PATH.'/utility_quotes.js" type="text/javascript"></script>';
+        if (USE_INF_SCROLL)   $dat .= '<script src="'.JS_PATH.'/infinite_scroll.js" type="text/javascript"></script>';
+        if (USE_UPDATER)      $dat .= '<script src="'.JS_PATH.'/thread_updater.js" type="text/javascript"></script>';
+        if (USE_THREAD_STATS) $dat .= '<script src="'.JS_PATH.'/thread_stats.js" type="text/javascript"></script>';
+        if (USE_EXTRAS) {
+            foreach (glob(PLUG_PATH."/jquery/extra/*.js") as $path) {
+                $dat .= "<script src='".(JS_PATH.'/extra/'.basename($path))."' type='text/javascript'></script>";
+            }
+        }
 
-		$temp = "<script type='text/javascript'>" . $temp . "</script>";
-		
-		return $temp;
+        return $dat;
+    }
 
-	}
+    function headerJS($admin = false) {
+        //Going to serve as our ghetto mini-API for now
+        $temp .= "var phpself = '" . PHP_SELF . "';";
+        $temp .= "var site = '//" . SITE_ROOT_BD . "';";
+        $temp .= "var board = '" . BOARD_DIR . "';";
+        $temp .= "var fileCount = '" . MAX_FILE_COUNT . "';";
+        $temp .= "var jsPath = '" . JS_PATH . "';";
+        $temp .= (NSFW) ? 'var styleGroup = "nsfw";' : 'var styleGroup = "sfw";';
+        if (defined(EXTRA_SHIT)) $temp .= EXTRA_SHIT;
+
+        if ($admin) {
+            //Admin js variables go here
+        }
+
+        $temp = "<script type='text/javascript'>" . $temp . "</script>";
+
+        return $temp;
+
+    }
 }
 
 ?>
