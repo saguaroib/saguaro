@@ -49,11 +49,12 @@ class ModernInfo {
     }
     private function generateInfoHeader() {
         $post = $this->cache; $no = $post['no'];
-        $stat = "(" . (($post['resto'] == 0) ? 'OP' : 'Reply') . ")";
-        $url = RES_DIR . (($post['resto'] == 0) ? $post['no'] : $post['resto'] . PHP_EXT) . "#pc".$post['no'];
 
         //Generate header
+        $stat = "(".(($post['resto'] == 0)?'OP':'Reply').")";
+        $url = RES_DIR.(($post['resto'] == 0)?$post['no']:$post['resto']).PHP_EXT."#pc".$post['no'];
         $info = "<a href='$url' title='#$no' class='overflow' target='_blank'>$stat #$no</a>";
+        if ($post['resto'] > 0) { $info .= "<small><a href='?mode=more&no=".$post['resto']."'>(parent: #".$post['resto'].")</a></small>"; }
         //Terribly inefficient. Indicate special status.
         if ($post['sticky']) { $info .= "<img class='icon' src='sticky.gif' title='Sticky' alt='Sticky' />"; }
         if ($post['locked']) { $info .= "<img class='icon' src='locked.gif' title='Locked/Closed' alt='Locked/Closed' />"; }
@@ -66,27 +67,25 @@ class ModernInfo {
         $info = "<div id='post' class='section'><div class='info'>Post Information</div>";
         $info .= "<div class='info' id='res'>" . $this->generateInfoHeader() . "</div>";
 
-        $info .= "<div class='info' id='resx'>
-                <table style='width:100%;text-align:center'>
-                    <tr>
-                        <td style='border-bottom:1px solid #000'>Replies</td>
-                        <td style='border-bottom:1px solid #000'>Images</td>
-                        <td style='border-bottom:1px solid #000'>WebMs</td>
-                        <td style='border-bottom:1px solid #000'>Other</td>
-                    </tr>
-                    <tr>
-                        <td style='font-style:italic' title='Bump limit reached'>1337</td>
-                        <td>420</td>
-                        <td style='font-style:italic' title='WebM limit reached'>69</td>
-                        <td>4</td>
-                    </tr>
-                </table>
-            </div>
-            <div class='info' id='name'>" . $post['name'] . " <span class='inlinfo' style='float:right;'>(127.0.0.1)</span></div>
-            <div class='info' id='date'>" . $post['now'] . "</div>
-            <div class='info' id='subject'>" . $post['sub'] . "</div>
-            <div class='info' id='comment'>" . $post['com'] . "</div>
-        </div>";
+        //Exclusive stats for OPs.
+        if ($post['resto'] == 0) {
+            global $mysql;
+
+            $replies = $mysql->num_rows($mysql->query("SELECT no FROM ".SQLLOG." WHERE resto='".$no."'")); //Fetch replies. The query seems a bit overkill.
+            $media = count(explode(" ",$post['media']));
+            $info .= "<div class='info' id='resx'>
+                          <table style='width:100%;text-align:center'>
+                              <tr><td>Replies</td><td>Media</td></tr>
+                              <tr><td>$replies</td><td>$media</td></tr>
+                          </table>
+                      </div>";
+        }
+
+        $info .= "<div class='info' id='name'>" . $post['name'] . " <span class='inlinfo' style='float:right;'>(127.0.0.1)</span></div>
+                <div class='info' id='date'>" . $post['now'] . "</div>
+                <div class='info' id='subject'>" . $post['sub'] . "</div>
+                <div class='info' id='comment'>" . $post['com'] . "</div>
+            </div>";
         /*<div class='preview_holder'>
             <a href='small.png' target='_blank'><img class='preview' src='small.png'></img></a>
         </div>";*/
@@ -101,8 +100,17 @@ class ModernInfo {
         $html = "<div id='media' class='section'><div class='info'>Media Information</div>";
 
         while ($media = $mysql->fetch_assoc($query)) {
-            $html .= "<div class='info'><a href='" . IMG_DIR . $media['localname'] . "' title='" . $media['filename'] . "' target='_blank'>" . $media['filename'] . "</a></div>";
             //var_dump($media);
+            $html .= "<div class='info'><a href='" . IMG_DIR . $media['localname'] . "' title='Hash: " . $media['hash'] . "' target='_blank'>" . $media['filename'] . "</a>";
+
+            //Calculate size: http://stackoverflow.com/a/2510468
+            $base = log($media['filesize']) / log(1024);
+            $suffix = array("","K","M","G","T");
+            $size = round(pow(1024, $base - floor($base))).$suffix[floor($base)]."B";
+
+            //Extra info.
+            $html .= "<br><small>$size / " . $media['width']. "x" . $media['height'] . " / <a href='" . THUMB_DIR . $media['localthumbname'] . "'>Thumb</small>";
+            $html .= "</div>"; //Close.
         }
 
         $html .= "</div>";
@@ -268,6 +276,9 @@ class ModernInfo {
                     display:inline-block;
                     white-space:nowrap;
                 }
+                .info small { text-align:right;display:block; }
+                .info small span { text-decoration:underline; }
+                #resx table tr:first-child td { border-bottom:1px solid #000 };
 
                 .inlinfo { font-style:italic; text-align:right; }</style>';
         return $css;
