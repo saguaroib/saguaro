@@ -23,7 +23,7 @@ require_once("text_process.php");
 
 class GreenText extends TextProcessor {
     public $processors = [
-        "/^(?:\&gt;|\>)(.*?)$/Umi" => "<span class='greentext'>&gt;\\1</span>"
+        "/^(?:\>|\>)(.*?)$/Umi" => "<span class='quote'>&gt;\\1</span>"
     ];
 }
 

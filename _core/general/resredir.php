@@ -13,7 +13,7 @@ list($no, $resto) = $redir;
 if (!$no) {
     global $mysql;
     
-    $maxq = $mysql->query("select max(no) from " . SQLLOG);
+    $maxq = $mysql->query("SELECT max(no) from " . SQLLOG);
     list($max) = $mysql->fetch_row($maxq);
     if (!$max || ($res > $max))
         header("HTTP/1.0 404 Not Found");
@@ -22,7 +22,7 @@ if (!$no) {
     error(S_NOTHREADERR, $dest);
 }
 
-$redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
+$redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "" . (($resto == 0) ? $no : $resto) . '#' . $no;
 
 echo "<META HTTP-EQUIV='refresh' content='0;URL=$redirect'>";
 

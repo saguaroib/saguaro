@@ -32,7 +32,7 @@ class Thread {
         
         $temp = $this->generateOP($log[$op]);
         $temp .= $this->generateReplies($op);
-        if ($foot) $temp .= "</span><br clear='left'><hr>[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$op" . PHP_EXT . "#top'>Top</a>] [<a href='" . PHP_SELF_ABS . "?mode=catalog'>Catalog</a>]<hr>";
+        if ($foot) $temp .= "</span><br clear='left'><hr>[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$op" . "#top'>Top</a>] [<a href='" . PHP_SELF_ABS . "?mode=catalog'>Catalog</a>]<hr>";
 
         return $temp;
     }
@@ -89,7 +89,7 @@ class Thread {
             $image .= ($omit_images == 1) ? "" : "s";
             $and_images = ($omit_images > 0) ? "and $omit_images $image" : "";
 
-            $temp .= "<span class='summary'>$omit_replies $post $and_images omitted. Click <a href='" . RES_DIR . $op . PHP_EXT . "#" . $op . "'> " . S_REPLY . "</a> to view.</span>";
+            $temp .= "<span class='summary'>$omit_replies $post $and_images omitted. Click <a href='" . RES_DIR . $op . "#" . $op . "'> " . S_REPLY . "</a> to view.</span>";
 
         }
 

@@ -18,9 +18,7 @@ function rebuildqueue_add($no) {
     $board = BOARD_DIR;
     $no    = (int) $no;
     for ($i = 0; $i < 2; $i++)
-        if (!$mysql->query("INSERT IGNORE INTO rebuildqueue (board,no) VALUES ('$board','$no')"))
-            rebuildqueue_create_table();
-        else
+        if ($mysql->query("INSERT IGNORE INTO rebuildqueue (board,no) VALUES ('$board','$no')"))
             break;
 }
 
@@ -30,9 +28,7 @@ function rebuildqueue_remove($no) {
     $board = BOARD_DIR;
     $no    = (int) $no;
     for ($i = 0; $i < 2; $i++)
-        if (!$mysql->query("DELETE FROM rebuildqueue WHERE board='$board' AND no='$no'"))
-            rebuildqueue_create_table();
-        else
+        if ($mysql->query("DELETE FROM rebuildqueue WHERE board='$board' AND no='$no'"))
             break;
 }
 
@@ -42,9 +38,7 @@ function rebuildqueue_take_all() {
     $board = BOARD_DIR;
     $uid   = mt_rand(1, mt_getrandmax());
     for ($i = 0; $i < 2; $i++)
-        if (!$mysql->query("UPDATE rebuildqueue SET ownedby=$uid,ts=ts WHERE board='$board' AND ownedby=0"))
-            rebuildqueue_create_table();
-        else
+        if ($mysql->query("UPDATE rebuildqueue SET ownedby=$uid,ts=ts WHERE board='$board' AND ownedby=0"))
             break;
     $q     = $mysql->query("SELECT no FROM rebuildqueue WHERE board='$board' AND ownedby=$uid");
     $posts = array();
@@ -64,7 +58,8 @@ function rebuild($all = 0) {
 
     ob_end_flush();
     $starttime = microtime(true);
-    if (!$treeline = $mysql->query("select no,resto from " . SQLLOG . " where root>0 order by root desc")) {
+    $board = BOARD_DIR;
+    if (!$treeline = $mysql->query("SELECT no,resto FROM " . SQLLOG . " WHERE modified>0 AND board='$board' ORDER BY modified desc")) {
         echo S_SQLFAIL;
     }
 

@@ -3,7 +3,6 @@
 /*
 
     Tests if the server meets basic minimum requirements.
-
     Might want to make the autolock user-selectable.
         Redirect back to page with a get to call it?
 */
@@ -16,7 +15,7 @@ if (is_file($lockout)) {
 } else {
     //These should be the only things changed without knowing what you're doing, everything that uses them is automated.
     $defaults = [ //Default accounts.
-                    ['name' => 'admin', 'pass' => 'guest', 'priv' => 'janitor_board,moderator,admin,manager', 'deny' => 'none']
+                    ['name' => 'admin', 'pass' => 'guest', 'priv' => '99', 'deny' => 'none']
                 ];
 
     //Point of no return. Casual users shouldn't go past here.
@@ -30,15 +29,18 @@ if (is_file($lockout)) {
 
     $success = "<span class='success'>SUCCESS</span><br>";
     $fail = "<span class='fail'>FAIL</span><br>";
-    $css = "body { background-color:#EEF2FF; } #title { font-size:xx-large; text-align:center; font-weight:bold; font-style: italic; }
-            .extra { /*width:49%; display:inline-block;*/ } .box { background-color:#D6DAF0; padding:10px; border-radius:10px; margin: 2%; }
+    $css = "body { font-family: Arial, Helvetica, sans-serif; background-color:#EEF2FF; font-size: 16px; } #title { background: #9988EE; margin-bottom: -25px;text-align:center; font-weight:bold; font-style: italic; }
+            .extra { /*width:49%; display:inline-block;*/ }
+/*            .box { background-color:#D6DAF0; padding:10px; border-radius:10px; margin: 2%; */
             ul { margin: 5px 0px; }
             .spoiler { color:#000; background-color:#000; border-radius:8px; padding: 0 5px; }
             .spoiler:hover { color:#fff; }
             .success { color:green;font-weight:bold; }
             .fail { color:#B20;font-weight:bold; }
             .info { border-bottom: 1px dotted; }
-            td { padding-right: 10px; }";
+            td { padding-right: 10px; }
+            .box { background: #D7DBF2; margin: 20px 200px; border: 1px solid #000000; padding:25px; }
+            .header { background: #9988EE; border-bottom: 1px solid #000000; font-size: 18px; padding: 5px; text-align:center; margin: -25px; margin-bottom:15px;}";
 
     echo "<style>$css</style>";
 
@@ -80,7 +82,7 @@ if (is_file($lockout)) {
         if ($loaded['config'] == true) {
             $mysqli = new mysqli(SQLHOST, SQLUSER, SQLPASS);
 
-            echo "<div class='box'>";
+            echo "<div class='box container'>";
             if (mysqli_connect_errno()) {
                 echo "There was a problem with MySQL, cannot initialize MySQL data. (" . mysqli_connect_errno() . ")";
             } else {
@@ -149,7 +151,7 @@ if (is_file($lockout)) {
         $tests["MySQL version"] = $out;
 
         //Output results of tests.
-        echo "<div class='box extra' id='tests'>";
+        echo "<div class='box extra' id='tests'><div class='header'>Dependency testing:</div>";
 
         foreach ($tests as $key => $results) {
             $temp = "<strong>$key:</strong> ";
@@ -165,7 +167,7 @@ if (is_file($lockout)) {
 
         echo "</div>";
         
-        echo "<div class='box extra' id='dirs'>";
+        echo "<div class='box container' id='dirs'><div class='header'>Additional files and directories:</div>";
         //Create working directories.
         if (!$loaded['config']) {
             echo "Config was not loaded, cannot validate install files.";
@@ -228,7 +230,7 @@ if (is_file($lockout)) {
         echo "</div>";
 
         //Create MySQL database and tables.
-        echo "<div class='box extra' id='mysql'>";
+        echo "<div class='box container' id='mysql'><div class='header'>MySQL stats:</div>";
         if (!$loaded['config']) {
             echo "Config was not loaded, cannot initialize MySQL data.";
         } else {
@@ -262,13 +264,18 @@ if (is_file($lockout)) {
 
                     //Create tables.
                     $tables = [
-                        SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, sticky int, permasage int, locked int, last int, modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, resto int, board text",
+                        SQLLOG => "no mediumint(25) not null, now text, name text, email text, sub text, com text, host text, pwd text, ext text, w int, h int, tn_w int, tn_h int, tim text, time int, md5 text, fsize int, fname text, embed text, sticky int, permasage int, locked int, last int, modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, resto int, board VARCHAR(15), PRIMARY KEY(no,board)",
+						SQLTABLES => "tablename varchar(50) not null, board varchar(250), PRIMARY KEY(board)",
+                        //SQLBOARDS => "uri varchar(58) NOT NULL,title tinytext NOT NULL,subtitle tinytext NOT NULL,indexed tinyint(4) NOT NULL,public_bans tinyint(4) NOT NULL,public_logs tinyint(4) NOT NULL,  8archive tinyint(4) NOT NULL,  sfw tinyint(4) NOT NULL,  posts_total int(12) unsigned NOT NULL, PRIMARY KEY(uri)",
                         SQLBANLOG => "board VARCHAR(20), global INT(1), name VARCHAR(200), host VARCHAR(50), com VARCHAR(3000), reason VARCHAR(1000), length INT(25), admin VARCHAR(100), placed INT(25) NOT NULL, PRIMARY KEY (board, placed)",
-                        SQLMODSLOG => "user VARCHAR(25), password VARCHAR(250), public_salt VARCHAR(256), allowed VARCHAR(250), denied VARCHAR(250), PRIMARY KEY (user), UNIQUE KEY (user)",
-                        SQLDELLOG => "admin VARCHAR(250), postno VARCHAR(20) PRIMARY KEY, action VARCHAR(25), board VARCHAR(250), name VARCHAR(50), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . ")", //Why does S_POSTLENGTH start with S_?
-                        SQLBANNOTES => "board VARCHAR(25), host VARCHAR(250), type VARCHAR(50), com VARCHAR(3100), reason VARCHAR(2000), admin VARCHAR(250), PRIMARY KEY (host, com), UNIQUE KEY (com)",
-                        "reports" => "no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), ip VARCHAR(250), reported TIMESTAMP, PRIMARY KEY(no, ip)",
-                        "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)",
+                        SQLMODSLOG => "username VARCHAR(250) NOT NULL,  password VARCHAR(250) NOT NULL,  salt VARCHAR(250) NOT NULL,  type smallint(3) NOT NULL,  boards VARCHAR(250) NOT NULL,  email VARCHAR(250) NOT NULL, PRIMARY KEY (username), UNIQUE KEY (username)",
+                        SQLDELLOG => "admin VARCHAR(250), postno INT(25) PRIMARY KEY, action text, board text, name VARCHAR(50), sub VARCHAR(50), com text", //Why does S_POSTLENGTH start with S_?
+                        SQLBANNOTES => "board VARCHAR(25), host VARCHAR(250), type VARCHAR(50), com longtext, reason longtext, admin VARCHAR(250), PRIMARY KEY (host, board), UNIQUE KEY (host)",
+                        SQLPROFILING =>   "id VARCHAR(200) NOT NULL,  dump longtext NOT NULL, desc longtext, PRIMARY KEY(id)",
+                        SQLPROFILING2 =>  "board VARCHAR(200) NOT NULL,  run VARCHAR(100) NOT NULL,  time bigint(20), description VARCHAR(1000), PRIMARY KEY (time, run)",
+                        SQLBLACKLIST => " active tinyint(4) NOT NULL,  board VARCHAR(200) NOT NULL,  field text NOT NULL,  contents VARCHAR(500),  ban tinyint(4),  banlength bigint(20),  banreason longtext, PRIMARY KEY (board,contents), UNIQUE KEY (contents)",
+                        SQLREPORTS => "no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), global INT(1), note mediumtext, ip VARCHAR(250), reported int(25), PRIMARY KEY(no, ip)",
+                        //"loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)",
                         "rebuildqueue" => "board char(4) NOT NULL, no int(11) NOT NULL, ownedby int(11) NOT NULL default '0', ts timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, PRIMARY KEY (board,no,ownedby)"
                     ];
 
@@ -282,7 +289,7 @@ if (is_file($lockout)) {
                         } else {
                             echo "<strong>$table</strong> table does not exist, creating... ";
                             $status = mysqli_query($mysqli, "CREATE TABLE $table ($query)");
-                            echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $fail;
+                            echo ($status) ? $success : "(" . mysqli_error($mysqli) . ") " . $fail;
                         }
 
                         mysqli_free_result($q);
@@ -298,7 +305,7 @@ if (is_file($lockout)) {
                             //$pass = ($autolock === true) ? "<span class='spoiler'>" . $account['pass'] . "</span>" : "";
                             echo "<strong>" . $account['name'] . "</strong> $pass (<span class='info' title='Privileges'>" . $account['priv'] . "</span> / <span class='info' title='Denied'>" . $account['deny'] . "</span>) ";
 
-                            $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, public_salt, allowed, denied) VALUES ('{$account['name']}', '{$password['hash']}', '{$password['public_salt']}', '{$account['priv']}', '{$account['deny']}')");
+                            $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (username, password, salt, type, boards, email) VALUES ('{$account['name']}', '{$password['hash']}', '{$password['public_salt']}', '{$account['priv']}', '99', 'admin')");
                             $unfail = (mysqli_errno($mysqli) == 1062) ? "<span class='fail'>ALREADY EXISTS</span><br>" : $fail;
                             echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $unfail;
                         }
@@ -317,8 +324,7 @@ if (is_file($lockout)) {
     //Additional edge-case settings we can't easily change.
     $extra = ['short_open_tag', 'file_uploads', 'max_file_uploads', 'upload_max_filesize', 'upload_tmp_dir', 'post_max_size', 'memory_limit'];
 
-    echo "<div class='box'>" .
-        "<center><strong>PHP Core Directives</strong></center><table>";
+    echo "<div class='box container'><div class='header'>Current PHP Configuration:</div><table>";
 
     foreach ($extra as $val) {
         $valc = str_replace("_", "-", $val);
@@ -333,13 +339,13 @@ if (is_file($lockout)) {
     echo "</table></div>";
 
     //Follow-up links
-    echo "<div class='box'>
+    echo "<div class='box container' style='border: 2px solid red;'>
         <center><!-- <strong>some title</strong><br> -->
-        <a href='imgboard.php' target='_blank'>imgboard.php</a> | <a href='admin.php' target='_blank'>admin.php</a>
+        <a href='admin.php' target='_blank'>Visit the panel to get started!</a>
         </center></div>";
 
     //Additional resources.
-    echo "<div class='box'>" .
+    echo "<div class='box container'>" .
         "<center><strong>Additional Resources</strong></center>
             <a href='https://php.net/manual/en/ini.core.php' target='_blank'>PHP Core Directives</a><br>
             MySQL error codes: <ul><li>

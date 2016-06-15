@@ -2,7 +2,7 @@
 
 /*
 
-    Generate an index page.
+    Generate an index page. Prototype replacement for log.php.
 
     Need to do something about the parsing and sorting functions from Catalog.
 
@@ -152,6 +152,81 @@ class Index {
 
         $this->data = $temp;
     }
+
+    //Prototype log generation, moved here for safekeeping.
+/*function generate($type, $no, $inIndex = false) {
+        require_once(CORE_DIR . "/postform.php");
+        $pf   = new PostForm;
+        $dat  = '<form name= "delform" action="' . PHP_SELF_ABS . '" method="post">';
+        $foot = '<div class="delsettings" align="right">
+                <input type="hidden" name="mode" value="usrdel" />' . S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']
+                ' . S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />
+                <input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="Core.report();"></div></form>';
+        
+        if ($type == "index") {
+            return $pf->format() . $dat . $this->generate_index($no, $inIndex) . $foot;
+        } elseif ($type == "thread") {
+            return $pf->format($no) . $dat . $this->generate_thread($no, $inIndex) . $foot;
+        }
+    }
+    
+    function generate_index($no, $cacheThreads = false) {
+        $this->update_cache();
+        
+        require_once(CORE_DIR . "/index/index.php");
+        $index      = new Index;
+        $index_temp = $index->format($no, 0, $cacheThreads);
+        
+        $this->thread_cache = $index->thread_cache; //Copy Index thread cache.
+        
+        return $index_temp;
+    }
+    
+    function generate_thread($no, $inIndex) {
+        $this->update_cache();
+        
+        if ($inIndex && $this->thread_cache[$no]) { //Use $this->thread_cache if we want to generate an inIndex thread and it already exists.
+            return $this->thread_cache[$no];
+        } else {
+            require_once(CORE_DIR . "/thread/thread.php"); //Safety.
+            $thread->inIndex = $inIndex;
+            $thread          = new Thread;
+            
+            return $thread->format($no, true);
+        }
+    }
+    
+    function generate_all() {
+        $this->update_cache();
+        
+        require_once(CORE_DIR . "/page/page.php");
+        $pageC = new Page;
+        
+        $profile = microtime(); //Basic profiling.
+        for ($page = 1; $page <= ceil(count($this->cache['THREADS']) / PAGE_DEF); $page++) {
+            //Generate Index pages.
+            $pageC->headVars['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE;
+            $temp                             = $pageC->generate($this->generate("index", $page, false));
+            $logfilename                      = ($page == 1) ? PHP_SELF2 : ($page - 1) . PHP_EXT;
+            
+            echo "Writing out Index $page ($logfilename)... ";
+            $this->print_page($logfilename, $temp);
+            echo "Done!<br>";
+        }
+        
+        foreach ($this->cache['THREADS'] as $no) {
+            $pageC->headVars['page']['title'] = "/" . BOARD_DIR . "/" . (!empty($this->cache[$no]['sub']) ? " - " . $this->cache[$no]['sub'] : '') . " - " . TITLE;
+            $logfilename                      = RES_DIR . $no . PHP_EXT;
+            echo "Writing out #$no ($logfilename)... ";
+            $temp = $pageC->generate($this->generate("thread", $no, false));
+            
+            $this->print_page($logfilename, $temp);
+            echo "Done!<br>";
+        }
+        
+        echo sprintf("<br>Took %f", microtime() - $profile) . " seconds.";
+    }*/
+    
 }
 
 ?>
