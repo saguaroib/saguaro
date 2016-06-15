@@ -21,7 +21,8 @@ class ModernInfo {
         $no = $mysql->escape_string($no);
         $query = "SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'";
         $row = $mysql->fetch_assoc($query);
-        $this->cache = $row;
+        if (!$row) { return "Invalid or non-existent post number."; }
+        $this->cache = $row; //Copy to local cache.
 
         $html = $this->generateCSS(); //Inline CSS/style tag until the CSS is relocated.
 
@@ -43,7 +44,7 @@ class ModernInfo {
                     <div class='info' style='text-align:center'>
                         " . $this->generateInfoHeader() . "
                     </div>";
-        
+
         if ($this->cache['resto'] == 0) { //Functions unique to OPs only.
             $html .= "<div class='info'>
                         <select name='mode'>
@@ -95,7 +96,8 @@ class ModernInfo {
                       </div>";
         }
 
-        $info .= "<div class='info' id='name'>" . $post['name'] . " <span class='inlinfo' style='float:right;'>(127.0.0.1)</span></div>
+        $host = substr(md5($post['host']), 12,20);
+        $info .= "<div class='info' id='name'>" . $post['name'] . " <span class='inlinfo' style='float:right;'>($host)</span></div>
                 <div class='info' id='date'>" . $post['now'] . "</div>
                 <div class='info' id='subject'>" . $post['sub'] . "</div>
                 <div class='info' id='comment'>" . $post['com'] . "</div>
@@ -109,11 +111,13 @@ class ModernInfo {
         global $mysql;
         $query = $mysql->query("SELECT * FROM " . SQLMEDIA . " WHERE parent='" . $this->cache['no'] . "'");
         $html = "<div id='media' class='section'><div class='info'>Media Information</div>";
+        $html .= "<div class='info'><strong>Delete:</strong> <input value='All' type='submit'> <input value='Selected' type='submit'></div>";
+        /* Eventually wrap All and Selected in proper forms */
 
         while ($media = $mysql->fetch_assoc($query)) {
             array_push($this->mediacache,$media);
             //var_dump($media);
-            $html .= "<div class='info'><a href='" . IMG_DIR . $media['localname'] . "' title='Hash: " . $media['hash'] . "' target='_blank'>" . $media['filename'] . "</a>";
+            $html .= "<div class='info'><input type='checkbox' name='delete' value='".$media['no']."'><a href='".IMG_DIR.$media['localname']."' title='".$media['filename']."' target='_blank'><span class='overflow'>".$media['filename']."</span></a>";
 
             $size = $this->calculateSize($media['filesize']);
             //Extra info.
@@ -244,7 +248,7 @@ class ModernInfo {
                 .icon  { padding:0 2px; }
                 .icon { float:right; }
                 .overflow {
-                    max-width:80%;
+                    max-width:90%;
                     overflow:hidden;
                     text-overflow:ellipsis;
                     display:inline-block;
@@ -271,11 +275,12 @@ class ModernInfo {
             $size = $this->calculateSize($media['filesize']); //It was a this point I realized we weren't storing the thumbnail size, but we weren't before anyway!
 
             $right .= "<div class='item'>
-                        <div style='display:inline-block;'class='preview_holder'><a href='$url' target='_blank'><img class='preview' src='$thumb'></img></a></div>
-                        <div style='display:inline-block;'><span style='font-style:italic'>".$media['filename']."</span><br><small>".$media['hash']."<br>$size / ".$media['width']. "x" . $media['height']."
+                        <div style='display:inline-block;' class='preview_holder'><a href='$url' target='_blank'><img class='preview' src='$thumb'></img></a></div>
+                        <div style='display:inline-block;vertical-align:top;margin-top:5px;'><span style='font-style:italic'>".$media['filename']."</span><br><small>".$media['hash']."<br>$size / ".$media['width']. "x" . $media['height']."
                         <br><br>
-                        Thumb: ".$media['thumb_width']."x".$media['thumb_height']."</small></div>";
-            
+                        Local: ".$media['localname']."<br>
+                        Thumb: ".$media['localthumbname']." (".$media['thumb_width']."x".$media['thumb_height'].")</small></div>";
+
 
             $right .= "</div>";
         }
