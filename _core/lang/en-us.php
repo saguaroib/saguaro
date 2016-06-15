@@ -14,12 +14,11 @@ $S_UPLOADFILE = 'File';                                         //Describes file
 $S_NOFILE = 'No File';                                          //Describes file/no file checkbox
 $S_DELPASS = 'Password';                                        //Describes password field
 $S_DELEXPL = ' (For file deletion)';               //Prints explanation for password box (to the right)
-$temp = '<ul><li>Supported file types are: GIF, JPG, PNG</li>';
-if (GIF_ONLY)   $temp = '<ul><li>Supported file types are: GIF</li>';
+$temp = '<li>Supported file types are: GIF, JPG, PNG, WEBM</li>';
 if (USE_BBCODE) $temp .= '<li><b>BBCode</b> and <b>Markdown</b> are enabled for this board.';
 $S_RULES = $temp . '<li>Maximum file size allowed is '.MAX_KB.' KB.</li>
             <li>Images greater than '.MAX_W.'x'.MAX_H.' pixels will be thumbnailed.</li>
-            <li>Images smaller than '.MIN_W.'x'.MIN_H.' pixels will be refused.</li></ul>';                                             //Prints rules under posting section
+            <li>Images smaller than '.MIN_W.'x'.MIN_H.' pixels will be refused.</li>';                                             //Prints rules under posting section
 $S_REPORTERR = 'Error: Cannot find reply.';                     //Returns error when a reply (res) cannot be found
 $S_THUMB = '';                                                  //Prints instructions for viewing real source
 $S_PICNAME = 'File: ';                                         //Prints text before upload name/link
@@ -36,14 +35,14 @@ $S_PREV = 'Previous';                                           //Defines previo
 $S_FIRSTPG = 'Previous';                                        //Defines previous button
 $S_NEXT = 'Next';                                               //Defines next button
 $S_LASTPG = 'Next';                                             //Defines next button
-$S_FOOT = '- <a href="http://www.2chan.net/" target="_blank">futaba</a> + <a href="http://1chan.net/futallaby/" target="_blank">futallaby</a> + <a href="http://saguaroimgboard.tk/" target="_blank">saguaro 1.3.10</a> -'; //Prints footer (leave these credits)
+$S_FOOT = '- <a href="http://www.2chan.net/" target="_blank">futaba</a> + <a href="http://1chan.net/futallaby/" target="_blank">futallaby</a> + <a href="http://saguaroimgboard.tk/" target="_blank">saguaro</a> -'; //Prints footer (leave these credits)
 $S_RELOAD = 'Return';                                           //Reloads the image board (refresh)
 $S_UPFAIL = 'Error: Upload failed.';                            //Returns error for failed upload (reason: unknown?)
-$S_NOREC = 'Error: Cannot find record.';                        //Returns error when record cannot be found
+$S_NOREC = 'Error: Cannot find record.';                        //Returns error when record cannot be found. <-- GREAT COMMENT, USEFUL
 $S_SAMEPIC = 'Error: Duplicate md5 checksum detected.';         //Returns error when a md5 checksum dupe is detected
 $S_TOOBIG = 'This image is too large!  Upload something smaller!';
 $S_TOOBIGORNONE = 'Either this image is too big or there is no image at all.  Yeah.';
-$S_UPGOOD = ' '.$upfile_name.' uploaded!<br /><br />';          //Defines message to be displayed when file is successfully uploaded
+$S_UPGOOD = ' uploaded!<br /><br />';          //Defines message to be displayed when file is successfully uploaded
 $S_STRREF = 'Error: String refused.';                           //Returns error when a string is refused
 $S_UNJUST = 'Error: Unjust POST.';                              //Returns error on an unjust POST - prevents floodbots or ways not using POST method?
 $S_NOPIC = 'Error: No file selected.';                          //Returns error for no file selected and override unchecked
@@ -52,7 +51,7 @@ $S_MANAGEMENT = 'Manager : ';                                   //Defines prefix
 $S_DELETION = 'Deletion';                                       //Prints deletion message with quotes?
 $S_TOOLONG = 'Error: Field too long.';                          //Returns error for too many characters in a given field
 $S_UNUSUAL = 'Error: Abnormal reply.';                          //Returns error for abnormal reply? (this is a mystery!)
-$S_BADHOST = '';                                                //Returns error for banned host ($badip string)
+$S_BADHOST = 'You are banned!';                                                //Returns error for banned host ($badip string)
 $S_PROXY80 = 'Error: Proxy detected on :80.';                   //Returns error for proxy detection on port 80
 $S_PROXY8080 = 'Error: Proxy detected on :8080.';               //Returns error for proxy detection on port 8080
 $S_SUN = 'Sun';                                                 //Defines abbreviation used for "Sunday"
@@ -92,7 +91,7 @@ $S_CANNOTWRITE = 'Error: Cannot write to directory.<br />';     //Returns error 
 $S_NOTWRITE = 'Error: Cannot write to directory.<br />';        //Returns error when the script cannot write to the directory, the chmod (777) is wrong
 $S_NOTREAD = 'Error: Cannot read from directory.<br />';        //Returns error when the script cannot read from the directory, the chmod (777) is wrong
 $S_NOTDIR = 'Error: Directory does not exist.<br />';           //Returns error when the script cannot find/read from the directory (does not exist/isn't directory), the chmod (777) is wrong
-$S_SQLCONF = 'MySQL connection failure';                        //MySQL connection failure
+$S_SQLCONF = 'Database connection failure';                        //MySQL connection failure
 $S_SQLDBSF = 'Database error, check SQL settings <br />';       //database select failure
 $S_TCREATE = 'Creating table: ';                                //creating table
 $S_TCREATEF = 'Unable to create table: ';                       //table creation failed
@@ -103,21 +102,41 @@ $S_RESNUM = 'Reply to thread:';
 $S_BANS = 'Ban';
 $S_BANS_EXTRA = '';
 $S_CAPFAIL = 'Error: You forgot to solve the CAPTCHA. Please try again.';
-$S_THREADLOCKED = 'You cannot reply to a locked thread.';
+$S_THREADLOCKED = 'This thread is locked.';
 $S_LOGOUT = 'Logout';
 $S_SPOILERS = 'Spoiler Image';
-
+$S_OPMINIMUMLENGTH = "Your post needs at least " . MIN_COM_LEN . " characters to start a thread.";
+$S_NOSUB = "You forgot to add a subject!";
+$S_CATALOG = "Catalog";
+$S_LOGS = "Logs";
+$S_BOTTOM = "Bottom";
+$S_TOP = "Top";
+$S_INDEX = "Index";
+$S_EMBED = "Embed";
+$S_BADEMBED = "Invalid embed url.";
+$S_THREADARCHIVED = "This thread is archived.";
+$S_ARCHIVE = "Archive";
+$S_FSIZE = "Filesize";
+$S_REPLIES = "Replies";
+$S_FILE = "File";
+$S_TAG = "Tag";
+$S_NOW = "Date";
+$S_NUMPREFIX = "No.";
 
 $S_NOFILE = '---';
+$S_NOARCHIVE = "Board owner has disabled thread archiving.";
+$S_POSTNOFILE = 'No file';
 $S_DELRES = 'Deletion mode: Viewing thread #';
 $S_DELALL = 'Deletion mode: All';
 $S_DELIP = 'Deletion mode: Viewing all posts by IP from #';
 $S_DELOPS = 'Deletion mode: All opening posts (OPs)';
+$S_BADBOARD = 'That board does not exist.';
+$S_RELOGIN = 'You have to login again.';
+$S_LANDING = 'Saguaro  Moderation Panel';
+$S_BADTAG = 'Invalid tag!';
 
 
 //Introducing...new system error strings!
 $S_NOPERM = 'Permission denied!';
 $S_UPDERR = 'File could not be updated!';
 $S_REGFAILED = 'Post registration failed!';
-
-?>

@@ -1,0 +1,60 @@
+/*saguaba*/
+.container {
+    background: antiquewhite;
+    margin: auto;
+    border: 1px solid #800000;
+}
+
+.header {
+    background: #EEAA88;
+    border-bottom: 1px solid #800000;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.hasReports {
+    font-size: x-large;
+    color: red;
+    font-weight: 700;
+    padding: 10px;
+}
+
+.noReports {
+    font-size: large;
+    padding: 5px;
+}
+
+.centered {
+    text-align: center;
+}
+
+/*tomorrow
+.container {
+    background: #1D1F22;
+    margin: 20px 200px;
+    border: 1px solid #B9BDC3;
+}
+
+.header {
+    background: #5B5E63;
+    border-bottom: 1px solid #B9BDC3;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 5px;
+}
+
+/*sagurichan*
+.container {
+    background: #D7DBF2;
+    margin: 20px 200px;
+    border: 1px solid #000000;
+}
+
+.header {
+    background: #9988EE;
+    border-bottom: 1px solid #000000;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 5px;
+}*/

@@ -1,0 +1,43 @@
+body {
+    background-color:#FFFFEE;
+    color:#800000;
+/*    link="#0000EE" vlink="#0000EE"*/
+    font-size: 10pt;
+    font-family: Arial, Helvetica, sans-serif;
+}
+a:hover {
+    color: #DD0000;
+}
+.listHead {
+    padding: 10px;
+    border: 0px;
+    color: white;
+    font-weight: 500;
+}
+.postblock {
+    background-color: #eeaa88;
+    padding: 3px 10px;
+    border: 1px solid black;
+}
+.banner {
+    background-color: E08000;
+}
+.toolbox {
+    text-align: right;
+}
+.contribform {
+    float: left;
+}
+.quote {
+    color: #789922;
+}
+
+.subject {
+    color: #800000;
+    font-weight: 800;
+}
+
+hr {
+    color: #800000;
+    border-style: solid;
+}

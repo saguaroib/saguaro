@@ -1,0 +1,31 @@
+.fileList {
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing: 1px;
+}
+
+td { 
+    margin: 0px;
+    padding: 0px;
+    font-size: 10pt;
+}
+
+table.fileList td{
+    padding: 2px;
+    font-size: 9pt;
+}
+
+.namecol {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: break-word;
+}
+
+table.fileList td:not(.subject) {
+    text-align: center;
+}
+.alt {
+    background-color: #e0e5f6;
+}

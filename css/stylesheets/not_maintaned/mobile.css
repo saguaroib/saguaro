@@ -1,0 +1,23 @@
+@media only screen and (max-width: 480px) {
+    html {
+        -moz-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+    }
+    .sideArrows {
+        display: none;
+    }
+    
+    .navLinks {
+        text-align: center;
+    }
+    .noMobile {
+        display: none;
+    }
+}
+
+@media only screen and (min-width: 479px) {
+    .noDesktop {
+        display:none;
+    }
+}

@@ -1,91 +1,105 @@
 <?php
 
 class Valid {
-    function verify($action) {
+    function verify($action = "none") {
         global $mysql;
         
         static $valid_cache; // the access level of the user
         $access_level = array(
             'none' => 0,
-            'janitor_board' => 1,
-            'janitor' => 2,
-            'moderator' => 5,
-            'manager' => 10,
-            'admin' => 20
+            'has_account' => 1,
+            'janitor_board' => 5,
+            'janitor' => 25,
+            'moderator' => 30,
+            'admin' => 50,
+            'global' => 75,
+            'owner' => 99
        );
         if (!isset($valid_cache)) {
             $valid_cache = $access_level['none'];
+            $boardAuth = false;
+            $validBoard = false;
+            
             if (isset($_COOKIE['saguaro_auser']) && isset($_COOKIE['saguaro_apass'])) {
                 $user = $mysql->escape_string($_COOKIE['saguaro_auser']);
                 $pass = $mysql->escape_string($_COOKIE['saguaro_apass']);
+            } else {
+                return false;
             }
             if ($user && $pass) {
-                list($allow, $deny) = $mysql->fetch_row("SELECT allowed,denied FROM " . SQLMODSLOG . " WHERE user='$user' and password='$pass'");
-                //$mysql->free_result($result);
+                list($allow, $type) = $mysql->fetch_row("SELECT boards,type FROM " . SQLMODSLOG . " WHERE username='{$user}' and password='{$pass}'");
                 if ($allow) {
-                    $allows             = explode(',', $allow);
-                    $seen_janitor_token = false;
-                    // each token can increase the access level,
-                    // except that we only know that they're a moderator or a janitor for another board
-                    // AFTER we read all the tokens
-                    foreach ($allows as $token) {
-                        if ($token == 'janitor_board')
-                            $seen_janitor_token = true;
-                        /*  else if ($token == 'manager' && $valid_cache < $access_level['manager'])
-                        $valid_cache = $access_level['manager'];*/
-                        else if ($token == 'admin' && $valid_cache < $access_level['admin'])
-                            $valid_cache = $access_level['admin'];
-                        else if (($token == BOARD_DIR || $token == 'all') && $valid_cache < $access_level['janitor_board'])
-                            $valid_cache = $access_level['janitor_board']; // or could be moderator, will be increased in next step
-                    }
-                    // now we can set moderator or janitor status 
-                    if (!$seen_janitor_token) {
-                        if ($valid_cache < $access_level['moderator'])
-                            $valid_cache = $access_level['moderator'];
-                    } else {
-                        if ($valid_cache < $access_level['janitor'])
-                            $valid_cache = $access_level['janitor'];
-                    }
-                    if ($deny) {
-                        $denies = explode(',', $deny);
-                        if (in_array(BOARD_DIR, $denies)) {
-                            $valid_cache = $access_level['none'];
-                        }
+                    $allowed = ($allow == "*") ? "*" : explode(',', $allow);
+                    $type = (int) $type;
+                    //User has a valid account, time to check what boards they can perform actions on
+                    if (@in_array($_GET['b'], $allowed) || $allowed == "*" || @in_array(BOARD_DIR, $allowed)) {
+                        switch($type){
+                            case 5:
+                                $valid_cache = $access_level['janitor_board'];
+                                break;
+                            case 25:
+                                $valid_cache = $access_level['janitor'];
+                                break;
+                            case 30:
+                                $valid_cache = $access_level['moderator'];
+                                break;
+                            case 50:
+                                $valid_cache = $access_level['admin'];
+                                break;
+                            case 75:
+                                $valid_cache = $access_level['global'];
+                                break;
+                            case 99:
+                                $valid_cache = $access_level['owner'];
+                                break;
+                            default:
+                                $valid_cache = $access_level['none'];
+                                break;
+                        }   
+                    } else { //User has a valid account, but didn't request a permission level.
+                        $valid_cache = $access_level['has_account'];
                     }
                 }
             }
         }
         switch ($action) {
+            case 'user':
+                return $valid_cache >= $access_level['has_accounts'];
             case 'moderator':
                 return $valid_cache >= $access_level['moderator'];
+            case 'global':
+                return $valid_cache >= $access_level['global'];
             case 'admin':
                 return $valid_cache >= $access_level['admin'];
             case 'textonly':
                 return $valid_cache >= $access_level['moderator'];
             case 'janitor':
                 return $valid_cache >= $access_level['janitor'];
-            case 'janitor_board':
-                return $valid_cache >= $access_level['janitor_board'];
             case 'manager':
-            return $valid_cache >= $access_level['manager'];
+                return $valid_cache >= $access_level['manager'];
             case 'delete':
-                if ($valid_cache >= $access_level['janitor_board']) {
-                    return true;
-                }
-                // if they're a janitor on another board, check for illegal post unlock			
-                else if ($valid_cache >= $access_level['janitor']) {
-                    $query         = $mysql->query("SELECT COUNT(*) from reports WHERE board='" . BOARD_DIR . "' AND no=$no AND cat=2");
-                    $illegal_count = $mysql->result($query, 0, 0);
-                    $mysql->free_result($query);
-                    return $illegal_count >= 3;
-                }
-            case 'reportflood':
                 return $valid_cache >= $access_level['janitor'];
+            case 'reportflood':
+                return $valid_cach >= $access_level['janitor'];
             case 'floodbypass':
                 return $valid_cache >= $access_level['moderator'];
+            case 'owner':
+                return $valid_cache >= $access_level['owner'];
+            case 'boardlist':
+                return $this->userBoards();
             default: // unsupported action
                 return false;
         }
+    }
+    
+    private function userBoards() {
+        if (isset($_COOKIE['saguaro_auser']) && isset($_COOKIE['saguaro_apass'])) {
+            $user = $mysql->escape_string($_COOKIE['saguaro_auser']);
+            $pass = $mysql->escape_string($_COOKIE['saguaro_apass']);
+        } else {
+            return false;
+        }
+            return $mysql->result("SELECT boards FROM " . SQLMODSLOG . " WHERE username='{$user}' and password='{$pass}'");
     }
 }
 

@@ -64,6 +64,18 @@ hr {
     text-align: center;
     color: #AF0A0F;
 }
+.bannerImg {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .bannerImg {
+        height:100px;
+        width:300px;
+        border:1px solid black;
+        display: inline;
+    }
+}
 .theader {
     text-align: center;
     background-color: orange;
@@ -74,6 +86,8 @@ hr {
 .boardSubtitle {
     color: #666666;
     text-align: center;
+    font-size: 14px;
+    letter-spacing: 0px;
 }
 .globalNews.desktop {
     align-items: center;
@@ -172,7 +186,9 @@ hr {
 }
 .filesize {
     font-size: 10pt;
+    font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
+    display: block;
 }
 .subject {
     color: #CC1105;
@@ -207,8 +223,15 @@ hr {
     margin-top: 10px;
     color: gray;
 }
+.board.thread {
+    clear: both;
+    margin: auto;
+}
+.board>hr {
+    clear: both;
+}
 .reply {
-    background: rgba(240,224,214,0.85);/*#F0E0D6*/
+    background: rgba(240,224,214,1);/*#F0E0D6*/
     color: #800000;
     display: table;
     padding: 2px;
@@ -243,14 +266,6 @@ hr {
 .postInfoM {
     display: none;
 }
-
-/*Credits: Dynamic Drive CSS Library */
-/*URL: http://www.dynamicdrive.com/style/ */
-
-.gallerycontainer {
-    position: relative;
-    /*Add a height attribute and set to largest image's height to prevent overlaying*/
-}
 img.postimg {
     padding: inherit;
     padding-bottom: 4pt;
@@ -258,73 +273,8 @@ img.postimg {
 }
 .fileThumb {
     float: left;
-}
-.thumbnail img {
-    border: 1px solid white;
-    margin: 0 5px 5px 0;
-}
-.thumbnail:hover {
-    background-color: transparent;
-}
-.thumbnail:hover img {
-    border: 1px solid blue;
-}
-.thumbnail span {
-    /*CSS for enlarged image*/
-    
-    position: absolute;
-    background-color: lightyellow;
-    padding: 5px;
-    /*right: -1000px;*/    
-    border: 1px dashed gray;
-    visibility: hidden;
-    color: black;
-    text-decoration: none;
-}
-.thumbnail span img {
-    /*CSS for enlarged image*/
-    
-    border-width: 0;
-    padding: 2px;
-}
-.thumbnail:hover span {
-    /*CSS for enlarged image*/
-    
-    visibility: visible;
-    /*top: 0;*/
-    
-    right: 230px;
-    /*position where enlarged image should offset horizontally */
-    
-    z-index: 50;
-}
-
-.container {
-    background: antiquewhite;
-    margin: 20px 200px;
-    border: 1px solid #800000;
-}
-
-.header {
-    background: #EEAA88;
-    border-bottom: 1px solid #800000;
-    font-weight: 700;
-    font-size: 20px;
-    padding: 5px;
-}
-
-.banBody {
-    padding: 10px 20px;
-}
-
-.bannedHost {
-    font-weight: 700;
-}
-
-.reason {
-    font-weight: 700;
-}
-
-input[type="button"] {
-    border: 1px solid black;
+    margin-top: 3px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
 }

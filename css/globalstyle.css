@@ -1,0 +1,124 @@
+body {
+    background: #EEF2FF top center repeat-x;
+    font-size: 10pt;
+    color: #000000;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.homeTitle {
+    font-family: Tahoma, sans-serif;
+    font-size: 30px;
+    font-weight: bold;
+    letter-spacing: -2px;
+    width: 100%;
+    clear: both;
+    text-align: center;
+    color: #5599AA;
+}
+
+.homeSubtitle {
+	color: grey;
+    text-align: center;
+}
+hr {
+	border: none;
+    border-top: 1px solid #B7C5D9;
+    height: 0;
+}
+
+.linkbar {
+	text-align:center;
+}
+.linkbar li {
+	display: inline-block;
+	background: #598A96;
+	padding: 5pt;
+	color: #FFF;
+	font-weight: 700;
+	border: 1px solid white;
+}
+
+.linkbar .postHead {
+	background-color:red;
+}
+.linkbar a {
+	text-decoration:none;
+	color:#900;
+}
+
+.postHead {
+    background: #598A96;
+    color: #FFFFFF;
+    padding: 5px;
+    font-weight: 600;
+}
+.posthead .postTitle {
+	font-weight:800;
+}
+.postContent {
+	margin: 10px;
+}
+.box{
+	float:right;
+	width: 50%;
+	border: 1px solid black;
+	background: #FFF;
+	margin-bottom: 5pt;
+}
+.news {
+	/*width: 49%;*/
+	border: 1px solid black;
+	background: #FFF;
+	border-bottom: none;
+}
+
+.list {
+    float: left;
+    width: 12em;
+}
+
+li {
+list-style-type: none;}
+.post {
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+.boardList a {
+    text-decoration: none;
+}
+.content:not(max-width: 480px) {
+    margin: 0px 75px;
+}
+
+.linkbar li:hover {
+    color: #000000;
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    text-decoration: none;
+}
+
+li:hover {
+    text-decoration: underline;
+}
+.containerBox {
+    padding: 0px 15px;
+}
+.containerBox:target{
+    background-color:red;
+    }
+
+.container {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    margin-bottom:10px;
+}
+
+.container.panel {
+    float:left;width:20%; margin:5px 0px 0px 5px;
+}
+
+h3 {
+    color: #55ACCC;
+    border-bottom: 1px solid black;
+}
