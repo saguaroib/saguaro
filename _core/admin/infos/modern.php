@@ -12,6 +12,7 @@
 
 class ModernInfo {
     private $cache = [];
+    private $mediacache = [];
 
     function generate($no) {
         global $mysql;
@@ -22,13 +23,29 @@ class ModernInfo {
         $row = $mysql->fetch_assoc($query);
         $this->cache = $row;
 
-        $html = $this->generateCSS() . "<div id='left'>
-                <div id='manage' class='section'>
+        $html = $this->generateCSS(); //Inline CSS/style tag until the CSS is relocated.
+
+        //Generate boxes. Order here determines order on the page (obviously).
+        $html .= "<div id='left'>"; //Start the left column.
+        $html .= $this->generateManager(); //Potentially most functional box.
+        $html .= $this->generateBanForm();
+        $html .= $this->generatePostInfo(); //This polls the log table an extra time to determine reply count for OPs only.
+        $html .= $this->generateMediaInfo(); //This polls the file table, and also caches results to $this->mediacache[].
+        $html .= "</div>"; //Close left column.
+        $html .= $this->generateRightColumn(); //Generate the right column to show the images.
+
+        //$html = "<div>".$html."</div>"; //Wrap in container?
+        return $html;
+    }
+    private function generateManager() {
+        $html = "<div id='manage' class='section'>
                     <div class='info'>Post Management</div>
                     <div class='info' style='text-align:center'>
                         " . $this->generateInfoHeader() . "
-                    </div>
-                    <div class='info'>
+                    </div>";
+        
+        if ($this->cache['resto'] == 0) { //Functions unique to OPs only.
+            $html .= "<div class='info'>
                         <select name='mode'>
                             <option value='sticky'>Sticky</option>
                             <option value='lock'>Lock</option>
@@ -36,15 +53,11 @@ class ModernInfo {
                             <option value='unsticky'>Unsticky</option>
                             <option value='unlock'>Unlock</option>
                         </select>
-                        <input name='no' value='221' type='hidden'>
+                        <input name='no' value='".$this->cache['no']."' type='hidden'>
                         <input value='Submit' type='submit'>
-                    </div>
-                </div>";
-        $html .= $this->generateBanForm() . $this->generatePostInfo() . $this->generateMediaInfo(); //Generate boxes.
+                    </div>";
+        }
         $html .= "</div>";
-        $a = "<div id='right' class='preview_holder'>
-                <a href='huge.png' target='_blank'><img class='preview' src='huge.png'></img></a>
-            </div>";
         return $html;
     }
     private function generateInfoHeader() {
@@ -63,13 +76,14 @@ class ModernInfo {
         return $info;
     }
     private function generatePostInfo() {
+        //This polls the log table an extra time to determine reply count for OPs only.
         $post = $this->cache; $no = $post['no'];
         $info = "<div id='post' class='section'><div class='info'>Post Information</div>";
         $info .= "<div class='info' id='res'>" . $this->generateInfoHeader() . "</div>";
 
         //Exclusive stats for OPs.
         if ($post['resto'] == 0) {
-            global $mysql;
+            global $mysql; //Unique global.
 
             $replies = $mysql->num_rows($mysql->query("SELECT no FROM ".SQLLOG." WHERE resto='".$no."'")); //Fetch replies. The query seems a bit overkill.
             $media = count(explode(" ",$post['media']));
@@ -86,9 +100,6 @@ class ModernInfo {
                 <div class='info' id='subject'>" . $post['sub'] . "</div>
                 <div class='info' id='comment'>" . $post['com'] . "</div>
             </div>";
-        /*<div class='preview_holder'>
-            <a href='small.png' target='_blank'><img class='preview' src='small.png'></img></a>
-        </div>";*/
 
         return $info;
     }
@@ -100,16 +111,13 @@ class ModernInfo {
         $html = "<div id='media' class='section'><div class='info'>Media Information</div>";
 
         while ($media = $mysql->fetch_assoc($query)) {
+            array_push($this->mediacache,$media);
             //var_dump($media);
             $html .= "<div class='info'><a href='" . IMG_DIR . $media['localname'] . "' title='Hash: " . $media['hash'] . "' target='_blank'>" . $media['filename'] . "</a>";
 
-            //Calculate size: http://stackoverflow.com/a/2510468
-            $base = log($media['filesize']) / log(1024);
-            $suffix = array("","K","M","G","T");
-            $size = round(pow(1024, $base - floor($base))).$suffix[floor($base)]."B";
-
+            $size = $this->calculateSize($media['filesize']);
             //Extra info.
-            $html .= "<br><small>$size / " . $media['width']. "x" . $media['height'] . " / <a href='" . THUMB_DIR . $media['localthumbname'] . "'>Thumb</small>";
+            $html .= "<br><small>$size / " . $media['width']. "x" . $media['height'] . " / <a href='" . THUMB_DIR . $media['localthumbname'] . "'>Thumb</a></small>";
             $html .= "</div>"; //Close.
         }
 
@@ -176,25 +184,10 @@ class ModernInfo {
 
     private function generateCSS() {
         //Temporary until a stylesheet location is determined.
-        $css = '<style>body {
-                    background: #EEF2FF url(fade-blue.png) top center repeat-x;
-                    font-size: 10pt;
-                    color: #000000;
-                    font-family: Arial, Helvetica, sans-serif;
-                }
-
-                /*
-
-                    Post info page specific CSS.
-
-                */
-
+        $css = '<style> /* Post info page specific CSS. */
                 .section table { font-size: 10pt; }
 
-                div#container {
-                    max-width:100%;
-                    width:100%;
-                }
+                div#left, div#right { margin-top:10px; }
 
                 div#left {
                     display:inline-block;
@@ -211,34 +204,15 @@ class ModernInfo {
                 div#right {
                     display:inline-block;
                     vertical-align:top;
-                    margin-right:10px;
-                    position:absolute;
+                    margin-right:5px;
+                    margin-left:5px;
+                    /*position:absolute;*/
                 }
 
                 div.preview_holder {
-                    background-color: #434343;
-                    background-image:linear-gradient(#434343, #282828);
-                }
-
-                img.preview {
-                    width:100%;
-                    background-color: transparent;
-
-                    /* https://codepen.io/jasonadelia/pen/DnrAe */
-                    /*background-image: linear-gradient(0deg,transparent 24%,rgba(255,255,255,.05) 25%,rgba(255,255,255,.05) 26%,transparent 27%,transparent 74%,rgba(255,255,255,.05) 75%,rgba(255,255,255,.05) 76%,transparent 77%,transparent),linear-gradient(90deg,transparent 24%,rgba(255,255,255,.05) 25%,rgba(255,255,255,.05) 26%,transparent 27%,transparent 74%,rgba(255,255,255,.05) 75%,rgba(255,255,255,.05) 76%,transparent 77%,transparent);
-                    background-size:12% 12%;*/
-
-                    /* http://lea.verou.me/css3patterns/#blueprint-grid */
-                    background-color:#269;
-                    background-image: linear-gradient(white 2px, transparent 2px),
-                    linear-gradient(90deg, white 2px, transparent 2px),
-                    linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
-                    background-size:33.33% 33.33%, 33.33% 33.33%, 5.555% 5.555%, 5.555% 5.555%;
-                    background-position:-2px -2px, -2px -2px, -1px -1px, -1px -1px
-                }
-                img.preview:hover {
-                    background: #FFF url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAQMAAADaua+7AAAABlBMVEXj4+OwsLB082AeAAAAAnRSTlOzs+sT0nUAAAATSURBVAjXY/j/gYEkzMD/nxQMALcpI92VPFGdAAAAAElFTkSuQmCC);
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin:5px 5px 0px 5px;
                 }
 
                 .section {
@@ -280,8 +254,44 @@ class ModernInfo {
                 .info small span { text-decoration:underline; }
                 #resx table tr:first-child td { border-bottom:1px solid #000 };
 
-                .inlinfo { font-style:italic; text-align:right; }</style>';
+                .inlinfo { font-style:italic; text-align:right; }
+
+                #right > div:first-child { background-color:#000;color:#fff;font-weight:bold;text-align:center;padding:3px 4px; }
+                #right .item { /*display:inline-block;float:left;*/padding-right:5px; }
+                #right .item:hover { background-color:rgba(0,0,0,0.1); }
+                </style>';
         return $css;
+    }
+
+    private function generateRightColumn() {
+        $right = "<div id='right'><div>Media (".count($this->mediacache).")</div>"; //Start right column.
+        foreach ($this->mediacache as $media) { //$this->mediacache populated by $this->generateMediaInfo();
+            $url = IMG_DIR.$media['localname'];
+            $thumb = THUMB_DIR.$media['localthumbname'];
+            $size = $this->calculateSize($media['filesize']); //It was a this point I realized we weren't storing the thumbnail size, but we weren't before anyway!
+
+            $right .= "<div class='item'>
+                        <div style='display:inline-block;'class='preview_holder'><a href='$url' target='_blank'><img class='preview' src='$thumb'></img></a></div>
+                        <div style='display:inline-block;'><span style='font-style:italic'>".$media['filename']."</span><br><small>".$media['hash']."<br>$size / ".$media['width']. "x" . $media['height']."
+                        <br><br>
+                        Thumb: ".$media['thumb_width']."x".$media['thumb_height']."</small></div>";
+            
+
+            $right .= "</div>";
+        }
+        $right .= "</div>";
+
+        return $right;
+    }
+
+    private function calculateSize($size) {
+        //Calculate size: http://stackoverflow.com/a/2510468
+        //$size is in bytes, obviously.
+        $base = log($size) / log(1024);
+        $suffix = array("","K","M","G","T");
+        $size = round(pow(1024, $base - floor($base))).$suffix[floor($base)]."B";
+
+        return $size;
     }
 }
 
