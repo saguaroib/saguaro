@@ -12,28 +12,26 @@
 class Head {
     public $info = [ //These are the defaults used unless specified otherwise.
         'page' => [
-            'title' => ''
+            'title' => '',
+            'sub' => ''
         ],
         'css' => [
-            'extra' => []
+            'raw' => array(), //Raw css to push to <style> tags
+            'sheet' => array() ////Names of css files to include
+        ],
+        'js' => [
+            'raw' => array(), //Raw js to push to <script> tags
+            'script' => array() //Names of js files to include
         ]
     ];
 
-    function generate() {
-		global $cssArray;
+    public function generate($noHead = false) {
+		global $cssArray, $headVars;
 		
-        $dat = '';
-        $boardTitle = '';
-        $bannerImg = '';
-        $headSub = '';
+        $headSub .= '<div class="boardSubtitle">' . $this->info['page']['sub'] . '</div>';
+        $boardTitle = "<div class='boardTitle'>" . $this->info['page']['title'] . "</div>" . $headSub;
 
-        if (SHOWTITLETXT > 0) {
-            $boardTitle = "<div class='boardTitle'>" . TITLE . "</div>" . $headSub;
-            $headSub .= '<div class="boardSubtitle">' . S_HEADSUB . '</div><hr>';
-            if (SHOWTITLETXT == 2)  //you cannot stop me repod i am invincible
-                $boardTitle ="<div class='boardTitle'/>/" . BOARD_DIR . "/ - " . TITLE . "</div>";
-        }
-        $bannerImg .= (SHOWTITLEIMG) ? '<img class="bannerImg" src="' . TITLEIMG . '" onclick="this.src=this.src;" alt="' . TITLE . '" /><br>' : '';
+        $bannerImg .= (defined('SHOWTITLEIMG') && SHOWTITLEIMG) ? '<img class="bannerImg" data-src="' . $this->randomBanner . '" /><br>' : '';
 
         /* begin page content */
         $dat .= "<!DOCTYPE html><head>
@@ -43,111 +41,77 @@ class Head {
                 <link rel='shortcut icon' href='" . CSS_PATH . "imgs/favicon.ico'>
                 <title>" .  $this->info['page']['title'] ."</title>";
 
-		$cs = array_keys($cssArray);
-		foreach ($cssArray as $key => $value) {
-			$type = (NSFW) ? (($key == $cs[0]) ? "stylesheet" : "alternate stylesheet") : ($key == $cs[1]) ? "stylesheet" : "alternate stylesheet" ;
-			$dat .= "<link class='togglesheet' rel='$type' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
-		}
+        $defaultStyle = (NSFW) ? "saguaba" : "sagurichan";
+        $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "stylesheets/{$defaultStyle}.css'/>";
+                
+		foreach ($cssArray as $key => $value) 
+			$dat .= "<link rel='alternate stylesheet' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
 
-        foreach($this->info['css']['extra'] as $css) {
-            $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "$css'/>";
+        foreach ($this->info['css']['raw'] as $css) { //adding raw css to the head in <style> tags
+            $dat .= "<style type='text/css'>{$css}</style>";
         }
+            
+        foreach($this->info['css']['sheet'] as $sheet) //Adding CSS stylesheets to the head
+            $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . $sheet . "'>";
+
+		$dat .= $this->headerJS();
+
+        foreach($this->info['js']['raw'] as $script) //Adding js code in <script tags> to the head
+            $dat .= "<script type='text/javascript'>{$raw}</script>";
+
+        foreach($this->info['js']['script'] as $script) //Adding scripts to the head
+            $dat .= "<script src='" . JS_PATH . "/{$script}' type='text/javascript'></script>";
+
+		if (defined('EXTRA_SHIT')) $dat .= EXTRA_SHIT; 
 		
-		$dat .= $this->headerJS(true);
-        $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
-                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>
-				<script src='" . JS_PATH . "/extension.js' type='text/javascript'></script>";	
-				
-        $dat .= '</head><body class="is_index"><div class="beforePostform" />' . $titlebar . '
-                <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : ''). '</div>
-                <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]
-                </span><div class="boardBanner">' . $bannerImg . $boardTitle . '</div>' . $headSub . '
-                <a id="top"></a>';
-
-        if (USE_ADS1) {
-            $dat .= ADS1 . '<hr>';
+        $dat .= '</head>';
+        
+        if ($noHead !== true) {
+            $dat .= '<body><div class="beforePostform" /><div id="boardNavDesktop">' . $this->get_cached_file(BOARDLIST) . '</div>
+                <div class="linkBar">[<a href="javascript:void(0);" id="settingsWindowLink">Settings</a>][<a href="' . HOME . '" target="_top">' . S_HOME . '</a>]</div><div class="boardBanner">' . $bannerImg . $boardTitle . '</div><hr><a id="top"></a>';
+            $dat .= (ENABLE_ADS) ? "<div class='ads aboveForm'>" . ADS_ABOVEFORM . '<hr></div></div>' : "</div>";
+        } else {
+            $dat .= "<body>";
         }
-        $dat .= "</div>";
 
         return $dat;
     }
+
+    private function randomBanner() {
+       /* $list = glob(CSS_PATH . '/banners/' . BOARD_DIR . '/*.*');
+        echo $list;
+        $ret = array_rand($list);
+        return $list[$ret];*/
+        return null;
+    }
     
-    function generateAdmin($noHead = 0) {
-		global $cssArray;
-		
-        require_once(CORE_DIR . "/admin/report.php");
-
-        $getReport = new Report;
-        
-        $boardTitle = (SHOWTITLETXT > 0 && !$noHead) ? "<div class='boardTitle'>" . $this->info['page']['title'] . "</div><div class='boardSubtitle'>" . S_HEADSUB . "</div><hr>" : '';
-        $bannerImg .= (SHOWTITLEIMG && !$noHead) ? '<img class="bannerImg" src="' . TITLEIMG . '" onclick="this.src=this.src;" alt="' . TITLE . '" /><br>' : '';
-        
-        /* begin page content */
-        $dat = "<!DOCTYPE html><head>
-                    <meta name='description' content='" . S_DESCR . "'/></meta>
-                    <meta http-equiv='content-type'  content='text/html;charset=utf-8' /></meta>
-                    <meta name='viewport' content='width=device-width, initial-scale=1'></meta>
-                    <meta http-equiv='cache-control' content='max-age=0' />
-                    <meta http-equiv='cache-control' content='no-cache' />
-                    <meta http-equiv='expires' content='0' />
-                    <meta http-equiv='expires' content='Tue, 01 Jan 1980 1:00:00 GMT' />
-                    <meta http-equiv='pragma' content='no-cache' />
-                    <link rel='shortcut icon' href='" . CSS_PATH . "imgs/favicon.ico'>
-                    <title>" . $this->info['page']['title'] . "</title>";
-
-		$cs = array_keys($cssArray);
-		foreach ($cssArray as $key => $value) {
-			$type = (NSFW) ? (($key == $cs[0]) ? "stylesheet" : "alternate stylesheet") : ($key == $cs[1]) ? "stylesheet" : "alternate stylesheet" ;
-			$dat .= "<link class='togglesheet' rel='$type' type='text/css' href='" . CSS_PATH . $value . "' title='" . $key . "' />";
-		}
-
-		$dat .= $this->headerJS(true);
-        $dat .= "<script src='" . JS_PATH . "/jquery.min.js' type='text/javascript'></script>
-                <script src='" . JS_PATH . "/main.js' type='text/javascript'></script>
-				<script src='" . JS_PATH . "/jquery-ui-1.10.4.min.js' type='text/javascript'></script>
-				<script src='" . JS_PATH . "/admin.js' type='text/javascript'></script></head>";
-
-        if (!$noHead) {
-            $dat .= '<div class="beforePostform" />' . $titlebar . '
-                    <span class="boardList desktop">' . ((file_exists(BOARDLIST)) ? file_get_contents(BOARDLIST) : '') . '</span></div>
-                    <div class="linkBar">[<a href="' . HOME . '" target="_top">' . S_HOME . '</a>][<a href="' . PHP_ASELF_ABS . '">' . S_ADMIN . '</a>]</div>
-                    <div class="boardBanner">' . $bannerImg . $boardTitle . '</div>';            
-            
-            $dat .= "<div class='panelOps' style='text-align:left;' />[<a href=\"" . PHP_SELF2 . "\">" . S_RETURNS . "</a>][<a class='cmd' title='Update the index' href='javascript:;' data-cmd='update-index'>Update</a>]";
-
-            if (valid('moderator')) {
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=rebuild' title='Rebuild all pages' >Rebuild all</a>]";
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=all' >Deletion panel</a>]";
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=reports' >" . $getReport->countBoard() . "</a>]";
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=blist' >Bans</a>]";
-            }
-            if (valid('admin')) {
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=staff' >Users</a>]";
-                $dat .= "[<a href='" . PHP_ASELF_ABS . "?mode=news' >Edit News/Boardlist</a>]";
-            }
-            $dat .= "[<a href='" . PHP_ASELF . "?mode=logout'>" . S_LOGOUT . "</a>]</div>";
-        }
-        return $dat;
-    } 
-
-	function headerJS($admin = false) {
-		//Going to serve as our ghetto mini-API for now
+	private function headerJS($admin = false) {
+        global $cssArray;
 		$temp .= "var phpself = '" . PHP_SELF . "';";
-		$temp .= "var site = '//" . SITE_ROOT_BD . "';";
+		$temp .= "var site = '//" . SITE_ROOT . "';";
+        $temp .= "var cssPath = '" . CSS_PATH . "';";
 		$temp .= "var board = '" . BOARD_DIR . "';"; 
 		$temp .= "var jsPath = '" . JS_PATH . "';";
-		$temp .= (NSFW) ? 'var styleGroup = "nsfw";' : 'var styleGroup = "sfw";';
-		if (defined(EXTRA_SHIT)) $temp .= EXTRA_SHIT; 
+        $temp .= "var inPanel = 'false';";
+		$temp .= (NSFW) ? 'var style_group = "nsfw";' : 'var style_group = "sfw";';
 
-		if ($admin) {
-			//Admin js variables go here
+		if ($admin) { //Admin js variables go here
+            $temp .= "var inPanel = 'true';";
 		}
 
 		$temp = "<script type='text/javascript'>" . $temp . "</script>";
 		
 		return $temp;
-
 	}
+    
+    //Only read a file once instead of reading it for EACH page rebuild in a single post.
+    private function get_cached_file($filename) { 
+        static $cache = array();
+        if (isset($cache[$filename]))
+            return $cache[$filename];
+        $cache[$filename] = @file_get_contents($filename);
+        return $cache[$filename];
+    }
 }
 
 ?>
