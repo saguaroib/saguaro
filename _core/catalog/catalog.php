@@ -19,36 +19,52 @@ require("post.php");
 class Catalog extends Log {
     private $data = [];
 
-    function formatPage() {     
+    function formatPage($static = false) {     
         require_once(CORE_DIR . "/page/page.php");
         $page = new Page;
         $page->headVars['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . " - Catalog";
-        array_push($page->headVars['css']['extra'], "stylesheets/catalog.css");
-        $out = $page->generate($this->format());
-        
-        $this->print_page("catalog" . PHP_EXT, $out, 0);
+        if ($static !== true) array_push($page->headVars['js']['script'], "catalog.js");
+        array_push($page->headVars['css']['sheet'], "stylesheets/catalog.css");
+        $out = $page->generate($this->format($static));
+
+        $this->print_page("catalog.html", $out, 0);
     }
 
-    function format() {
+    function format($static) {
         global $my_log;
 
-        $my_log->update_cache();
-        $log = $my_log->cache;
         $temp = "";
-
-        $this->parseOPs();
-        $this->parseReplies();
-        $this->sortOPs();
-
-        foreach ($this->data as $entry) {
-            $temp .= $this->generateOP($log[$entry['no']],$entry);
+        
+        if ($static) {
+            $my_log->update_cache();
+            $log = $my_log->cache;
+            $this->parseOPs();
+            $this->parseReplies();
+            $this->sortOPs();
         }
 
-        $temp = "<div class='catalog_container'>" . $temp . "</div>";
+
+        require_once(CORE_DIR . "/postform.php");
+        $pf = new PostForm;
+        $temp =$pf->format(0,0,1);
+        
+        if ($static) {
+            foreach ($this->data as $entry) {
+                $temp2 .= $this->generateOP($log[$entry['no']],$entry);
+            }
+        } else {
+            $temp .= "<noscript>The board owner currently uses the javascript catalog.</noscript>";
+        }
+
+        
+        
+        $temp .= "<div id='catalog_container'>" . $temp2 . "</div>";
+        $temp .= "<hr>";
 
         return $temp;
     }
-    function sortOPs() {
+   
+   function sortOPs() {
         //Seperate stickies from non-stickies to process further.
         $temp = ['sticky' => [], 'regular' => []];
         
