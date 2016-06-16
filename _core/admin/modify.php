@@ -1,19 +1,20 @@
 <?php
 
 class Modify {
-    function mod($no, $action = 'none') {
-        global $mysql;
+    function mod() {
+        global $mysql, $csrf;
+        
+        $no = (is_numeric($_GET['no'])) ? (int) $_GET['no'] : error("Invalid post");
         
 		if (!valid('moderator')) error(S_NOPERM);
-		
-        $no = $mysql->escape_string($no);
-        
-        switch ($action) {
+        if (!$csrf->validate()) error(S_RELOGIN);
+
+        switch ($_GET['action']) {
             case 'eventsticky':
                 $sqlValue = "sticky";
                 $rootnum  = "2027-07-07 00:00:00";
                 $sqlBool  = "'2', modified='" . $rootnum . "'";
-                $verb     = "Stuck (event mode) ";
+                $verb     = "Stuck (cylical) ";
                 break;
             case 'sticky':
                 $sqlValue = "sticky";
@@ -48,15 +49,14 @@ class Modify {
                 $verb     = "Normally bumping";
                 break;
             default:
-				header("Location: index.html");
+				echo "Error!";
                 break;
         }
 
-        $mysql->query('UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='" . ((int) $no) . "' LIMIT 1");
-        
-        $temp = head($dat);
-        $temp .= $verb . " thread $no. Redirecting...<META HTTP-EQUIV=\"refresh\" content=\"3;URL=" . PHP_ASELF_ABS . "\">";
-        
+        $mysql->query('UPDATE ' . SQLLOG . " SET  $sqlValue=$sqlBool WHERE no='{$no}' LIMIT 1");
+
+        $temp = "{$thread} thread {$no}";
+        $temp = json_encode($temp);
         return $temp;
     }
 }
