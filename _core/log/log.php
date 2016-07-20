@@ -212,7 +212,7 @@ class Log {
                     $deferred = $this->update(0);
                 break;
             }
-            $logfilename = (!$page) ? PHP_SELF2 : $page / PAGE_DEF . PHP_EXT;
+            $logfilename = ($page === 1) ? PHP_SELF2 : $page / PAGE_DEF . PHP_EXT;
 
             $this->print_page($logfilename, $dat);
         }
