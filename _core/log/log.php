@@ -191,7 +191,7 @@ class Log {
                     $dat .= "</form></div>";
                 }
                 for ($i = 1; $i <= PAGE_MAX; $i+=1) {
-                    $dat .= ($i !== $page && ($numThreads > (PAGE_DEF *  $i))) ? "[<a href='{$i}'>{$i}</a>] " : ($i === $page) ? "[<strong>{$i}</strong>] ": "[{$i}] "; //this ones for you hitler
+                    $dat .= ($i !== $page && ($numThreads > (PAGE_DEF *  $i))) ? "[<a href='" . $i . PHP_EXT . "'>{$i}</a>] " : ($i === $page) ? "[<strong>{$i}</strong>] ": "[{$i}] "; //this ones for you hitler
                 }
                 if ($page < PAGE_MAX && ($numThreads > (PAGE_DEF *  $i))) {
                     $dat .= "<div class='nextPage'><form action='" . ($page + 1) . "'>";
