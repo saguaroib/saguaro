@@ -22,8 +22,21 @@ class Log {
     function update($resno = 0, $rebuild = 0) {
         global $path, $mysql;
 
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') { //User accessing imgboard.php directly, halt execution.
+            if (is_file(PHP_SELF2) && DEBUG_MODE !== true) { //Unless the index file doesn't exist (probably first run)
+                exit("<META HTTP-EQUIV='refresh' content='0;URL=" . PHP_SELF2 . "'>Done!");
+            }
+            echo "Generating index...";
+        }
+
         require_once(CORE_DIR . "/postform.php");
         require_once(CORE_DIR . "/page/head.php");
+        require_once(CORE_DIR . "/catalog/catalog.php");
+        require_once(CORE_DIR . "/thread/thread.php");
+        require_once(CORE_DIR . "/page/foot.php");
+        $foot = new Footer;
+        $thread = new Thread;
+        $catalog = new Catalog;
         $postform = new PostForm;
         $head = new Head;
 
@@ -43,15 +56,7 @@ class Log {
             }
         }
 
-        if ($resno) {
-            $treeline = array(
-                 $resno
-           );
-            //if(!$treeline=$mysql->query("select * from ".SQLLOG." where root>0 and no=".$resno." order by root desc")){echo S_SQLFAIL;}
-        } else {
-            $treeline = $log['THREADS'];
-            //if(!$treeline=$mysql->query("select * from ".SQLLOG." where root>0 order by root desc")){echo S_SQLFAIL;}
-        }
+        $treeline = ($resno) ? array($resno) : $log['THREADS'];
 
         //Finding the last entry number
         if (!$result = $mysql->query("select max(no) from " . SQLLOG)) {
@@ -62,28 +67,25 @@ class Log {
         $lastno = (int) $row[0];
         $mysql->free_result($result);
 
-        $counttree = count($treeline);
-        //$counttree=mysql_num_rows($treeline);
-        if (!$counttree) {
+        $numThreads = count($treeline);
+        
+        if (!$numThreads) { //No threads on the board yet
             $logfilename = PHP_SELF2;
             $dat = $head->generate() . $postform->format($resno);
-
+            
             $this->print_page($logfilename, $dat);
         }
 
-        if (UPDATE_THROTTLING >= 1) {
+        if (UPDATE_THROTTLING >= 1) { //Throttling for Index pages (Bulk page updating, save disk I/O)
             $update_start = time();
-            touch("updatelog.stamp", $update_start);
+            touch("update.stamp", $update_start);
             $low_priority = false;
             clearstatcache();
             if (@filemtime(PHP_SELF) > $update_start - UPDATE_THROTTLING) {
                 $low_priority = true;
-                //touch($update_start . ".lowprio");
             } else {
                 touch(PHP_SELF, $update_start);
             }
-            // 	$mt = @filemtime(PHP_SELF);
-            //  	touch($update_start . ".$mt.highprio");
         }
 
 
@@ -102,13 +104,21 @@ class Log {
             }
         }
 
-        for ($page = 0; $page < $counttree; $page += PAGE_DEF) {
+        for ($page = 1; $page <= $numThreads; $page += PAGE_DEF) { //This loop generates every index page
+            if (UPDATE_THROTTLING >= 1) {
+                clearstatcache();
+                if ($low_priority && @filemtime("update.stamp") > $update_start) {
+                    return;
+                }
+                if (mt_rand(0, 15) == 0)
+                    return;
+            }
             $head->info['page']['title'] = "/" . BOARD_DIR . "/" . (($resno && !empty($log[$resno]['sub'])) ? " - " . $log[$resno]['sub'] : '') . " - " . TITLE;
             $dat = $head->generate();
             $dat .= $postform->format($resno);
-            if (!$resno) {
-                $st = $page;
-            }
+            
+            $st = ($resno) ? $page : null;
+            
             $dat .= '<form name= "delform" action="' . PHP_SELF_ABS . '" method="post">';
 
             for ($i = $st; $i < $st + PAGE_DEF; $i++) {
@@ -118,8 +128,6 @@ class Log {
                 }
 
                 //This won't need needed once the extra fluff is dealt with as we can just use the Index class.
-                require_once(CORE_DIR . "/thread/thread.php");
-                $thread = new Thread;
                 $thread->inIndex = ($resno) ? false : true;
                 $dat .= $thread->format($no);
 
@@ -130,15 +138,11 @@ class Log {
                 $resline = $log[$no]['children'];
                 ksort($resline);
                 $countres = count($log[$no]['children']);
-                $t        = 0;
-                if ($sticky == 1) {
-                    $disam = 1;
-                } elseif (defined('REPLIES_SHOWN')) {
-                    $disam = REPLIES_SHOWN;
-                } else {
-                    $disam = 5;
-                }
-                $s   = $countres - $disam;
+                $t = 0;
+                
+                $disam = ($log[$no]['sticky'] != 0) ? 1 : (defined('REPLIES_SHOWN')) ? REPLIES_SHOWN : 5;
+
+                $s = $countres - $disam;
                 $cur = 1;
                 while ($s >= $cur) {
                     list($row) = each($resline);
@@ -177,56 +181,26 @@ class Log {
             l();
             //--></script>';*/
 
-            //Delete this after implementing Index class.
-             if ( !$resno ) { // if not in reply to mode
-                $prev = $st - PAGE_DEF;
-                $next = $st + PAGE_DEF;
-                //  Page processing
-                $dat .= "<table align=left border=1 class=pages><tr>";
-                if ( $prev >= 0 ) {
-                    if ( $prev == 0 ) {
-                        $dat .= "<form action=\"" . PHP_SELF2 . "\" method=\"get\" /><td>";
-                    } else {
-                        $dat .= "<form action=\"" . $prev / PAGE_DEF . PHP_EXT . "\" method=\"get\"><td>";
-                    }
-                    $dat .= "<input type=\"submit\" value=\"" . S_PREV . "\" />";
-                    $dat .= "</td></form>";
-                } else {
-                    $dat .= "<td>" . S_FIRSTPG . "</td>";
+            //Page switcher
+            if (!$resno) {
+                $dat .= "<div class='pages' style='float:left;padding:8px;'>";
+                if ($page > 1) {
+                    $prevPage = (($page - 1) > 1) ? ($page - 1) : "./";
+                    $dat .= "<div class='prevPage'><form action='{$prevPage}'>";
+                    $dat .= "<input type='submit' value='" . S_PREV . "' />";
+                    $dat .= "</form></div>";
                 }
-
-                $dat .= "<td>";
-                for ( $i = 0; $i < $counttree; $i += PAGE_DEF ) {
-                    if ( $i && !( $i % ( PAGE_DEF * 2 ) ) ) {
-                        $dat .= " ";
-                    }
-                    if ( $st == $i ) {
-                        $dat .= "[" . ( $i / PAGE_DEF ) . "] ";
-                    } else {
-                        if ( $i == 0 ) {
-                            $dat .= "[<a href=\"" . PHP_SELF2 . "\">0</a>] ";
-                        } else {
-                            $dat .= "[<a href=\"" . ( $i / PAGE_DEF ) . PHP_EXT . "\">" . ( $i / PAGE_DEF ) . "</a>]";
-                        }
-                    }
+                for ($i = 1; $i <= PAGE_MAX; $i+=1) {
+                    $dat .= ($i !== $page && ($numThreads > (PAGE_DEF *  $i))) ? "[<a href='{$i}'>{$i}</a>] " : ($i === $page) ? "[<strong>{$i}</strong>] ": "[{$i}] "; //this ones for you hitler
                 }
-                $dat .= "</td>";
-
-                if ( $p >= PAGE_DEF && $counttree > $next ) {
-                    $dat .= "<td><form action=\"" . $next / PAGE_DEF . PHP_EXT . "\" method=\"get\">";
-                    $dat .= "<input type=\"submit\" value=\"" . S_NEXT . "\" />";
-                    $dat .= "</form></td><td> | <a href='#top'>Top</a> | <a href='catalog'>Catalog</a></td>";
-                } else {
-                    $dat .= "<td>" . S_LASTPG . "</td><td> | <a href='#top'>Top</a> | <a href='catalog'>Catalog</a></td>";
+                if ($page < PAGE_MAX && ($numThreads > (PAGE_DEF *  $i))) {
+                    $dat .= "<div class='nextPage'><form action='" . ($page + 1) . "'>";
+                    $dat .= "<input type='submit' value='" . S_NEXT . "' />";
+                    $dat .= "</form></div>";
                 }
-                $dat .= "</tr></table><br clear=\"all\" />\n";
-            } else {
-                $dat .= "<br />";
+                $dat .= "</div>";
             }
-            //end delete
-
-            require_once(CORE_DIR . "/page/foot.php");
-            $foot = new Footer;
+            //End page switcher
 
             $dat .= $foot->format();
 
@@ -241,16 +215,12 @@ class Log {
             $logfilename = (!$page) ? PHP_SELF2 : $page / PAGE_DEF . PHP_EXT;
 
             $this->print_page($logfilename, $dat);
-            //chmod($logfilename,0666);
         }
 
 		if (!$resno) { //Rebuild catalog page if index is changed. Eventually should handle catalog stuff client side...
-            require_once(CORE_DIR . "/catalog/catalog.php");
-            $catalog = new Catalog;
             $catalog->formatPage();
         }
 
-        //mysql_free_result($treeline);
         if (isset($deferred))
             return $deferred;
 
