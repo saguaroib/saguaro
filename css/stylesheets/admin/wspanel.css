@@ -1,0 +1,54 @@
+/*sagurichan*/
+.container {
+    background: #D7DBF2;
+    /*margin: 20px 200px;*/
+    border: 1px solid #000000;
+}
+
+.header {
+    background: #9988EE;
+    border-bottom: 1px solid #000000;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.hasReports {
+    font-size: x-large;
+    color: red;
+    font-weight: 700;
+    padding: 10px;
+}
+
+.noReports {
+    font-size: large;
+    padding: 5px;
+}
+
+.centered {
+    text-align: center;
+}
+
+.row1 {
+    background: #9AD2F6;
+    font-size: 10pt;
+    color: #000000;
+}
+.row2 {
+    background: #FFFFFF;
+    font-size: 10pt;
+    color: #000000;
+}
+
+.inline {
+    display: inline;
+}
+
+.banner {
+    background-color: #9988EE;
+    border: 1px solid black;
+    color: #ffffff;
+    padding: 10px;
+    font-size: 16px;
+    margin: auto;
+}

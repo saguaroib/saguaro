@@ -1,0 +1,12 @@
+.listContainer {
+    margin: auto;
+}
+
+.list {
+    display: inline;
+}
+
+.centered {
+    margin: 0 auto;
+    text-align: center;
+}

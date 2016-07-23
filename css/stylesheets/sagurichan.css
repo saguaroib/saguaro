@@ -1,162 +1,88 @@
 body {
     background: #EEF2FF url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADICAIAAACmkByiAAAASUlEQVR4AcWRuQ0AIBDDzuy/HAVrMAM9slCorqAJziNgrj2qSg/cGhHnjPqDDPxOfYiebwFj+XobeLGI7p39fW1/Ib58d55Bwh3x9wRv6r75UwAAAABJRU5ErkJggg==) top center repeat-x;
-    font-size: 10pt;
     color: #000000;
-    font-family: Arial, Helvetica, sans-serif;
-}
-form {
-    margin: 0px 0px 0px 0px;
-}
-.postButton {
-    font-size: 26px;
-    font-weight: 700;
-}
-.linkBar {
-    text-align: right;
 }
 a {
     color: #34345C;
-    text-decoration: none;
-
 }
 a:visited {
     color: #34345C;
-    text-decoration: none;
 }
 a:hover {
     color: #DD0000;
-    text-decoration: underline;
 }
 hr {
-    border: none;
     border-top: 1px solid #B7C5D9;
-    height: 0;
 }
 .boardBanner {
-    font-family: Tahoma, sans-serif;
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: -2px;
-    margin-top: 0px;
-    width: 100%;
-    clear: both;
-    text-align: center;
     color: #AF0A0F;
 }
 .boardSubtitle {
-    color: grey;
-    text-align: center;
+    color: inherit;
+}
+@media (min-width: 900px) {
+    .bannerImg {
+        border-color: #000;
+    }
 }
 .theader {
     text-align: center;
     background-color: blue;
     color: white;
-    font-weight: 700;
-    width: 100%;
 }
 .postarea { 
 	opacity: 0.9; 
 }
-.rules {
-    font-size: 11px;
-}
 .postblock {
     background: #EEAA88;
     color: #800000;
-    font-weight: bold;
-    border: 1px solid #800000;
-    padding: 4px;
+    border-color: #800000;
 }
 .postblock {
     background: #9988EE;
     color: #000000;
-    padding: 4px;
-    border: 1px solid black;
+    border-color: #000;
 }
 .globalNews.desktop {
-    align-items: center;
-    text-align: center;
     color: red;
-    font-weight: 700;
-    font-size: large;
 }
 .globalNewsM {
-    display: none;
-    align-items: center;
-    text-align: center;
     color: red;
-    font-weight: 700;
-    font-size: large;
-}
-.footer {
-    text-align: center;
-    font-size: 12px;
 }
 .managerBanner {
     background: #9988EE;
-    text-align: center;
-    width: 100%;
     color: #ffffff;
-}
-.dellist {
-    text-align: center;
-}
-.delbuttons {
-    text-align: center;
-    padding-bottom: 4px;
 }
 .postTable.head {
     background: #0F8FE1;
     color: #000000;
-    font-size: 14px;
-    padding: 0px;
-    text-align: center;
 }
 .postlists {
-    border-collapse: collapse;
     background: #FFFFFF;
-    width: 100%;
-    padding: 0px;
     color: #000000;
-}
-.postlists td {
-    padding: 0px 1px;
-    text-align: center;
 }
 .row1 {
     background: #9AD2F6;
-    font-size: 10pt;
     color: #000000;
 }
 .row2 {
     background: #FFFFFF;
-    font-size: 10pt;
     color: #000000;
 }
 .quote {
     color: #789922;
-    text-decoration: none;
-}
-.filesize {
-    font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
-    text-decoration: none;
 }
 .filetitle {
     color: #0E07B7;
-    font-weight: bold;
 }
 .name {
     color: #117743;
-    font-weight: bold;
 }
 .postertrip {
     color: #117743;
-    font-weight: 500;
 }
 .subject {
     color: #0F0C5D;
-    font-weight: bold;
 }
 .cap.jani {
     color: #4169E1;
@@ -170,8 +96,10 @@ hr {
 .cap.manager {
     color: #2E2EFE;
 }
+.cap.global {
+    color: #0096d2;
+}
 .spoiler {
-    display:inline-block;
     color: #000;
     background: #000;
 }
@@ -179,124 +107,23 @@ hr {
     color: #FFF;
 }
 .oldpost {
-    font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif;
     color: #0F0C5D;
 }
 .summary {
-    font-size: 10pt;
-    margin-top: 10px;
     color: gray;
 }
 .reply {
-    background: rgba(214,218,240,0.85); /*#D6DAF0;*/
+    background: rgba(214,218,240,1); /*#D6DAF0;*/
     color: #000000;
-    font-family: Arial, Helvetica, sans-serif;
-    display: table;
-    padding: 2px;
-}
-.post {
-    margin: 4px;
 }
 .sideArrows {
     color: #B7C5D9;
-    float: left;
-    margin-right: 2px;
-    margin-top: 0px;
-    margin-left: 2px;
-}
-.postLink.mobile {
-    display: none;
 }
 .thumbnailmsg {
-    font-size: 9px;
     color: #000000;
-    padding-left: 20px;
 }
 .pages {
-    border:1px solid black;
+    border-color: #000;
     background: rgba(214,218,240,0.85); /*#D6DAF0;*/
     color:#89A;
-}
-.pages td {
-    border:none;padding:1px 5px;
-}
-.postInfoM {
-    display: none;
-}
-
-/*Credits: Dynamic Drive CSS Library */
-/*URL: http://www.dynamicdrive.com/style/ */
-
-.gallerycontainer {
-    position: relative;
-    /*Add a height attribute and set to largest image's height to prevent overlaying*/
-}
-.thumbnail img {
-    border: 1px solid white;
-    margin: 0 5px 5px 0;
-}
-img.postimg {
-    padding: inherit;
-    padding-bottom: 4pt;
-    float: left;
-}
-.fileThumb {
-    float: left;
-}
-.thumbnail:hover {
-    background-color: transparent;
-}
-.thumbnail:hover img {
-    border: 1px solid blue;
-}
-.thumbnail span {
-    /*CSS for enlarged image*/
-    
-    position: absolute;
-    background-color: lightyellow;
-    padding: 5px;
-    /*right: -1000px;*/ 
-    border: 1px dashed gray;
-    visibility: hidden;
-    color: black;
-    text-decoration: none;
-}
-.thumbnail span img {
-    /*CSS for enlarged image*/   
-    border-width: 0;
-    padding: 2px;
-}
-.thumbnail:hover span {
-    /*CSS for enlarged image*/   
-    visibility: visible;
-    /*top: 0;*/   
-    right: 230px;
-    /*position where enlarged image should offset horizontally */    
-    z-index: 50;
-}
-.container {
-    background: #D7DBF2;
-    margin: 20px 200px;
-    border: 1px solid #000000;
-}
-
-.header {
-    background: #9988EE;
-    border-bottom: 1px solid #000000;
-    font-weight: 700;
-    font-size: 20px;
-    padding: 5px;
-}
-
-.banBody {
-    padding: 10px 20px;
-}
-
-.bannedHost {
-    font-weight: 700;
-}
-
-.reason {
-    font-weight: 700;
 }

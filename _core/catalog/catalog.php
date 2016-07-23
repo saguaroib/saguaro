@@ -19,12 +19,13 @@ require("post.php");
 class Catalog extends Log {
     private $data = [];
 
-    function formatPage() {     
+    function formatPage($static = false) {     
         require_once(CORE_DIR . "/page/page.php");
         $page = new Page;
         $page->headVars['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . " - Catalog";
-        array_push($page->headVars['css']['extra'], "stylesheets/catalog.css");
-        $out = $page->generate($this->format());
+        //if ($static !== true) array_push($page->headVars['js']['script'], "catalog.js");
+        array_push($page->headVars['css']['sheet'], "/stylesheets/catalog.css");
+        $out = $page->generate($this->format($static));
         
         $this->print_page("catalog" . PHP_EXT, $out, 0);
     }
@@ -43,8 +44,12 @@ class Catalog extends Log {
         foreach ($this->data as $entry) {
             $temp .= $this->generateOP($log[$entry['no']],$entry);
         }
+        
+        require_once(CORE_DIR . "/postform.php");
+        $form = new PostForm;
+        $temp = $form->format();
 
-        $temp = "<div class='catalog_container'>" . $temp . "</div>";
+        $temp .= "<div class='catalog_container'>" . $temp . "</div>";
 
         return $temp;
     }

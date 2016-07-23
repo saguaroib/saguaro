@@ -1,0 +1,241 @@
+body {
+    font-size: 10pt;
+    font-family: Arial, Helvetica, sans-serif;
+}
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+a.qu {
+    font-size: 10pt;
+    text-decoration: none;
+}
+a.qu:hover {
+    font-weight: bold;
+    font-size: 10pt;
+    font-weight: 800;
+}
+a.qu:visited {
+    font-size: 10pt;
+    text-decoration: none;
+}
+form {
+    margin: 0px 0px 0px 0px;
+}
+.postButton {
+    font-size: 26px;
+    font-weight: 700;
+}
+/*^ new to saguaro ^*/
+
+a {
+    text-decoration: none;
+}
+a:visited {
+    text-decoration: underline;
+    font-family: inherit;
+}
+a:hover {
+    text-decoration: underline;
+}
+hr {
+    border: none;
+    border-top: 1px solid;
+    height: 0;
+}
+.linkBar {
+    text-align: right;
+}
+.boardBanner {
+    font-family: Tahoma, sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: -2px;
+    margin-top: 0px;
+    width: 100%;
+    clear: both;
+    text-align: center;
+    color: #AF0A0F;
+}
+.bannerImg {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .bannerImg {
+        height:100px;
+        width:300px;
+        border:1px solid black;
+        display: inline;
+    }
+}
+.theader {
+    text-align: center;
+    color: white;
+    font-weight: 700;
+    width: 100%;
+}
+.boardSubtitle {
+    text-align: center;
+    font-size: 14px;
+    letter-spacing: 0px;
+}
+.globalNews.desktop {
+    align-items: center;
+    text-align: center;
+    font-weight: 700;
+    font-size: large;
+}
+.globalNewsM {
+    display: none;
+    align-items: center;
+    text-align: center;
+    font-weight: 700;
+    font-size: large;
+}
+.boardlist {
+    text-align: left;
+}
+.postarea { 
+	opacity: 0.9; 
+}
+.rules {
+    font-size: 11px;
+}
+.postblock {
+    font-weight: bold;
+    border: 1px solid;
+    padding: 4px;
+}
+.postblock {
+    border: 1px solid;
+    padding: 4px;
+}
+.spoiler {
+    display:inline-block;
+}
+.footer {
+    text-align: center;
+    font-size: 12px;
+}
+.managerBanner {
+    text-align: center;
+    width: 100%;
+}
+.dellist {
+    text-align: center;
+}
+.delbuttons {
+    text-align: center;
+    padding-bottom: 4px;
+}
+.postTable.head {
+    border-collapse: collapse;
+    font-size: 14px;
+    padding: 0px;
+    text-align: center;
+}
+.postlists td{
+    padding: 0px 1px;
+    text-align: center;
+}
+.postlists {
+    width: 100%;
+    padding: 0px;
+}
+.row1 {
+    font-size: 10pt;
+}
+.row2 {
+    font-size: 10pt;
+}
+.quote {
+    text-decoration: none;
+}
+.filesize {
+    font-size: 10pt;
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    display: block;
+}
+.subject {
+    font-weight: bold;
+}
+.name {
+    font-weight: bold;
+}
+.postertrip {
+    font-weight: 500;
+}
+.cap.jani {
+    color: #4169E1;
+}
+.cap.moderator {
+    color: #770099;
+}
+.cap.admin {
+    color: #FF101A;
+}
+.cap.manager {
+    color: #2E2EFE;
+}
+.cap.global {
+    color: #0096d2;
+}
+.oldpost {
+    font-size: 8pt;
+    padding-left: 20px;
+}
+.summary {
+    font-size: 10pt;
+    margin-top: 10px;
+    color: gray;
+}
+.board.thread {
+    clear: both;
+    margin: auto;
+}
+.board>hr {
+    clear: both;
+}
+.reply {
+    display: table;
+    padding: 2px;
+}
+.post {
+    margin: 4px;
+}
+.sideArrows {
+    float: left;
+    margin-right: 2px;
+    margin-top: 0px;
+    margin-left: 2px;
+}
+.postLink.mobile {
+    display: none;
+}
+.thumbnailmsg {
+    font-size: 9px;
+    padding-left: 20px;
+}
+.pages {
+    border:1px solid;
+}
+.pages td {
+    border:none;
+    padding:1px 5px;
+}
+.postInfoM {
+    display: none;
+}
+img.postimg {
+    padding: inherit;
+    padding-bottom: 4pt;
+    float: left;
+}
+.fileThumb {
+    float: left;
+    margin-top: 3px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
+}

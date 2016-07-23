@@ -1,0 +1,50 @@
+.content {
+    text-align: center;
+}
+.report {
+    width: 300px;
+    border: 1px solid black;
+    margin: 10px;
+    display: inline-block;
+    background-color: #c1c1c1;
+    text-align: left;
+}
+.button {
+    border: 1px solid gray;
+    border-radius: 3px;
+    padding: 5px 3px 5px;
+    margin-right: 5px;
+    background-color: #d3d3d3;
+    color: black;
+}
+a.button {
+    text-decoration: none;
+    margin-left: 85px;
+}
+span.button:hover {
+    background-color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+}
+.report-controls {
+    padding: 10px;
+}
+.post-meta {
+    padding: 10px;
+    height: 30px;
+}
+
+.post-content {
+    height: 150px;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #fff;
+    margin: 10px 3px;
+}
+
+.post-thumb {
+    max-width: 130px;
+    max-height: 130px;
+    float: left;
+    margin-right: 10px;
+}
