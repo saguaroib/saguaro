@@ -69,6 +69,17 @@ class Log {
 
         $numThreads = count($treeline);
         
+        $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE;
+        $head->info['page']['sub'] = S_HEADSUB;
+        $head->info['scripts'] = array("jquery.min.js", "main.js", "extension.js", "jquery-ui-1.10.4.min", "jquery.form.js"); //Add extra scripts to be included on every page <head> here.
+        if (COUNTRY_FLAGS) array_push($head->info['css']['sheet'], "/flags/flags.css");
+        if (MOBILE_THEME) array_push($head->info['css']['sheet'], "/stylesheets/mobile.css");
+        if (FILE_BOARD) {
+            array_push($head->info['js']['script'], "fileboard.js");
+            array_push($head->info['css']['sheet'], "/stylesheets/fileboard.css");
+        }
+        
+        
         if (!$numThreads) { //No threads on the board yet
             $logfilename = PHP_SELF2;
             $dat = $head->generate() . $postform->format($resno);
@@ -113,7 +124,8 @@ class Log {
                 if (mt_rand(0, 15) == 0)
                     return;
             }
-            $head->info['page']['title'] = "/" . BOARD_DIR . "/" . (($resno && !empty($log[$resno]['sub'])) ? " - " . $log[$resno]['sub'] : '') . " - " . TITLE;
+            //$head->info['page']['title'] = "/" . BOARD_DIR . "/" . (($resno && !empty($log[$resno]['sub'])) ? " - " . $log[$resno]['sub'] : '') . " - " . TITLE; //apo note: this isn't the cleanest way to do it, disabling for now
+            if (!$resno && $page > 1) $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . "- Page {$page}";
             $dat = $head->generate();
             $dat .= $postform->format($resno);
             
