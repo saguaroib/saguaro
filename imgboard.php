@@ -82,6 +82,11 @@ switch ($mode) {
         $del = new Delete;
         $del->userDel();
         break;
+    case 'logs':
+        require_once(CORE_DIR . "/admin/logs.php");
+        $newlog = new SaguaroAdminLog;
+        echo $newlog->generate();
+        break;
     case 'ping':
         echo "pong!";
         break;
