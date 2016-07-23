@@ -67,6 +67,21 @@ hr {
 .boardSubtitle {
     color: inherit;
     text-align: center;
+    font-size: 14px;
+    letter-spacing: 0px;
+}
+
+.bannerImg {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .bannerImg {
+        height:100px;
+        width:300px;
+        border:1px solid black;
+        display: inline;
+    }
 }
 .theader {
     text-align: center;
@@ -166,7 +181,9 @@ th {} .row1 {
 }
 .filesize {
     font-size: 10pt;
+    font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
+    display: block;
 }
 .subject {
     color: #F7ABFF;
@@ -192,6 +209,9 @@ th {} .row1 {
 .cap.manager {
     color: #2E2EFE;
 }
+.cap.global {
+    color: #0096d2;
+}
 .oldpost {
     font-size: 8pt;
     padding-left: 20px;
@@ -201,8 +221,15 @@ th {} .row1 {
     margin-top: 10px;
     color: gray;
 }
+.board.thread {
+    clear: both;
+    margin: auto;
+}
+.board>hr {
+    clear: both;
+}
 .reply {
-    background: rgba(40,42,46,0.85); /*#282A2E;*/ 
+    background: rgba(40,42,46,1); /*#282A2E;*/ 
     color: inherit;
     display: table;
     padding: 2px;
@@ -240,78 +267,15 @@ th {} .row1 {
 .postInfoM {
     display: none;
 }
-
-/*Credits: Dynamic Drive CSS Library */
-/*URL: http://www.dynamicdrive.com/style/ */
-.gallerycontainer {
-    position: relative;
-    /*Add a height attribute and set to largest image's height to prevent overlaying*/
-}
 img.postimg {
     padding: inherit;
     padding-bottom: 4pt;
     float: left;
 }
-.thumbnail img {
-    border: 1px solid white;
-    margin: 0 5px 5px 0;
-}
 .fileThumb {
     float: left;
-}
-.thumbnail:hover {
-    background-color: transparent;
-}
-.thumbnail:hover img {
-    border: 1px solid blue;
-}
-.thumbnail span {
-    /*CSS for enlarged image*/ 
-    position: absolute;
-    background-color: lightyellow;
-    padding: 5px;
-    /*right: -1000px;*/
-    border: 1px dashed gray;
-    visibility: hidden;
-    color: black;
-    text-decoration: none;
-}
-.thumbnail span img {
-    /*CSS for enlarged image*/ 
-    border-width: 0;
-    padding: 2px;
-}
-.thumbnail:hover span {
-    /*CSS for enlarged image*/  
-    visibility: visible;
-    /*top: 0;*/  
-    right: 230px;
-    /*position where enlarged image should offset horizontally */
-    z-index: 50;
-}
-
-.container {
-    background: #1D1F22;
-    margin: 20px 200px;
-    border: 1px solid #B9BDC3;
-}
-
-.header {
-    background: #5B5E63;
-    border-bottom: 1px solid #B9BDC3;
-    font-weight: 700;
-    font-size: 20px;
-    padding: 5px;
-}
-
-.banBody {
-    padding: 10px 20px;
-}
-
-.bannedHost {
-    font-weight: 700;
-}
-
-.reason {
-    font-weight: 700;
+    margin-top: 3px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
 }

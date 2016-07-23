@@ -1,0 +1,69 @@
+/*saguaba*/
+.container {
+    background: antiquewhite;
+    /*margin: auto;*/
+    border: 1px solid #800000;
+}
+
+.header {
+    background: #EEAA88;
+    border-bottom: 1px solid #800000;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.hasReports {
+    font-size: x-large;
+    color: red;
+    font-weight: 700;
+    padding: 10px;
+}
+
+.noReports {
+    font-size: large;
+    padding: 5px;
+}
+
+.centered {
+    text-align: center;
+}
+
+.row1 {
+    background: #EEAA88;
+    font-size: 10pt;
+    color: #800000;
+}
+.row2 {
+    background: #FFFFFF;
+    font-size: 10pt;
+    color: #800000;
+}
+
+.inline {
+    display: inline;
+}
+
+.banner {
+    background-color: #af0a0f;
+    border: 1px solid black;
+    color: #ffffff;
+    padding: 10px;
+    font-size: 16px;
+    margin: auto;
+}
+
+/*tomorrow
+.container {
+    background: #1D1F22;
+    margin: 20px 200px;
+    border: 1px solid #B9BDC3;
+}
+
+.header {
+    background: #5B5E63;
+    border-bottom: 1px solid #B9BDC3;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 5px;
+}
