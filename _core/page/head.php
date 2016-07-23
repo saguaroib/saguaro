@@ -39,6 +39,7 @@ class Head {
                 <link rel='shortcut icon' href='" . CSS_PATH . "imgs/favicon.ico'>
                 <title>" .  strip_tags($this->info['page']['title']) ."</title>";
 
+        $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "stylesheets/base.css'/>";
         $defaultStyle = (NSFW) ? "saguaba" : "sagurichan";
         $dat .= "<link rel='stylesheet' type='text/css' href='" . CSS_PATH . "stylesheets/{$defaultStyle}.css'/>";
                 

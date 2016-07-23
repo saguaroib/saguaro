@@ -1,201 +1,107 @@
 body {
     background: #1D1F22;
-    font-size: 10pt;
     color: #C5C8C6;
-    font-family: Arial, Helvetica, sans-serif;
 }
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px white inset;
 }
 a.qu {
     color: inherit;
-    font-size: 10pt;
-    text-decoration: none;
 }
 a.qu:hover {
-    font-weight: bold;
     color: inherit;
-    font-size: 10pt;
-    font-weight: 800;
 }
 a.qu:visited {
     color: #800000;
-    font-size: 10pt;
-    text-decoration: none;
 }
-form {
-    margin: 0px 0px 0px 0px;
-}
-.postButton {
-    font-size: 26px;
-    font-weight: 700;
-}
-/*^ new to saguaro ^*/
-
 a {
     color: #C5C8C6;
-    text-decoration: none;
 }
 a:visited {
     color: inherit;
-    text-decoration: underline;
-    font-family: inherit;
 }
 a:hover {
     color: inherit;
-    text-decoration: underline;
 }
 hr {
     border: none;
     border-top: 1px solid #D9BFB7;
     height: 0;
 }
-.linkBar {
-    text-align: right;
-}
 .boardBanner {
-    font-family: Tahoma, sans-serif;
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: -2px;
-    margin-top: 0px;
-    width: 100%;
-    clear: both;
-    text-align: center;
     color: inherit;
 }
 .boardSubtitle {
     color: inherit;
-    text-align: center;
-    font-size: 14px;
-    letter-spacing: 0px;
-}
-
-.bannerImg {
-    display: none;
 }
 
 @media (min-width: 900px) {
     .bannerImg {
-        height:100px;
-        width:300px;
-        border:1px solid black;
-        display: inline;
+        border-color: #000;
     }
 }
 .theader {
-    text-align: center;
     background-color: #C5C8C6;
-    color: black;
-    font-weight: 700;
+    color: #000;
 }
 .globalNews.desktop {
-    align-items: center;
-    text-align: center;
     color: red;
-    font-weight: 700;
-    font-size: large;
 }
 .globalNewsM {
-    display: none;
-    align-items: center;
-    text-align: center;
     color: red;
-    font-weight: 700;
-    font-size: large;
 }
 .boardlist {
     color: inherit;
-    text-align: left;
 }
 .postarea { 
 	opacity: 0.9; 
 }
-.rules {
-    font-size: 11px;
-}
 .postblock {
     background: #282A2E;
     color: #ECECEC;
-    border: 1px solid #ECECEC;
-    padding: 4px;
-    font-weight: bold;
+    border-color: #000;
 }
 .spoiler {
-    display:inline-block;
     color: #000;
     background: #000;
 }
 .spoiler:hover {
     color: #FFF;
 }
-.footer {
-    text-align: center;
-    font-size: 12px;
-
-}
 .managerBanner {
     background: #FF0000;
-    text-align: center;
-    width: 100%;
     color: #ffffff;
-    border-radius: 20px;
-}
-.dellist {
-    text-align: center;
-}
-.delbuttons {
-    text-align: center;
-    padding-bottom: 4px;
 }
 .postTable.head {
     background: #595959;
     color: #FFFFEE;
-    font-size: 14px;
-    padding: 0px;
-    text-align: center;
 }
 .postlists {
-    border-collapse: collapse;
     background: #FFFFFF;
-    width: 100%;
-    padding: 0px;
 }
 .postlist td {
     padding: 0px 1px;
     text-align: center;
 }
-th {} .row1 {
+ .row1 {
     background: #A6A6A6;
-    font-size: 10pt;
     color: #000000;
 }
 .row2 {
     background: #F9F9F9;
-    font-size: 10pt;
     color: #000000;
 }
 .quote {
     color: #789922;
-    text-decoration: none;
-}
-.filesize {
-    font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
-    text-decoration: none;
-    display: block;
 }
 .subject {
     color: #F7ABFF;
-    font-weight: bold;
 }
 .name {
     color: #c5c8c6;
-    font-weight: bold;
 }
 .postertrip {
     color: #c5c8c6;
-    font-weight: 500;
 }
 .cap.jani {
     color: #4169E1;
@@ -212,70 +118,22 @@ th {} .row1 {
 .cap.global {
     color: #0096d2;
 }
-.oldpost {
-    font-size: 8pt;
-    padding-left: 20px;
-}
 .summary {
-    font-size: 10pt;
-    margin-top: 10px;
     color: gray;
-}
-.board.thread {
-    clear: both;
-    margin: auto;
-}
-.board>hr {
-    clear: both;
 }
 .reply {
     background: rgba(40,42,46,1); /*#282A2E;*/ 
     color: inherit;
-    display: table;
-    padding: 2px;
-}
-.post {
-    margin: 4px;
 }
 .sideArrows {
     color: white;
-    float: left;
-    margin-right: 2px;
-    margin-top: 0px;
-    margin-left: 2px;
-}
-.postLink.mobile {
-    display: none;
 }
 .thumbnailmsg {
-    font-size:9px;
-    font-family: Arial,
-    Helvetica,
-    sans-serif;
     color:#800000;
-    padding-left: 20px;
 }
 .pages {
     border:1px solid whitesmoke;
     background: rgba(40,42,46,0.85); /*#282A2E;*/ 
     color: whitesmoke;
     
-}
-.pages td {
-    border:none;padding:1px 5px;
-}
-.postInfoM {
-    display: none;
-}
-img.postimg {
-    padding: inherit;
-    padding-bottom: 4pt;
-    float: left;
-}
-.fileThumb {
-    float: left;
-    margin-top: 3px;
-    margin-bottom: 5px;
-    margin-left: 20px;
-    margin-right: 20px;
 }

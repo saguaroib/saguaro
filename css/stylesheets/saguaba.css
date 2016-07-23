@@ -1,206 +1,107 @@
 body {
     background: #FFFFEE url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADICAIAAACmkByiAAAAWElEQVR4AaWSwQ3AIAwDbfbfpdt0nKrPUp3QCfHgkfjsCMh47mskmU5HGvbmuuh9dVce8M4it/SfMZglGeZx/ccyu/Vsv4/N29f331AY5Bi3+hdo4A92+wXvCwR9mXztrAAAAABJRU5ErkJggg==) top center repeat-x;
-    font-size: 10pt;
     color: #800000;
-    font-family: Arial, Helvetica, sans-serif;
 }
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px white inset;
 }
 a.qu {
     color: #800000;
-    font-size: 10pt;
-    text-decoration: none;
 }
 a.qu:hover {
-    font-weight: bold;
     color: #800000;
-    font-size: 10pt;
-    font-weight: 800;
 }
 a.qu:visited {
     color: #800000;
-    font-size: 10pt;
-    text-decoration: none;
 }
-form {
-    margin: 0px 0px 0px 0px;
-}
-.postButton {
-    font-size: 26px;
-    font-weight: 700;
-}
-/*^ new to saguaro ^*/
-
 a {
     color: #0000EE;
-    text-decoration: none;
 }
 a:visited {
     color: #0000EE;
-    text-decoration: underline;
-    font-family: inherit;
 }
 a:hover {
     color: #DD0000;
-    text-decoration: underline;
 }
 hr {
-    border: none;
-    border-top: 1px solid #D9BFB7;
-    height: 0;
-}
-.linkBar {
-    text-align: right;
+    border-color: #D9BFB7;
 }
 .boardBanner {
-    font-family: Tahoma, sans-serif;
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: -2px;
-    margin-top: 0px;
-    width: 100%;
-    clear: both;
-    text-align: center;
     color: #AF0A0F;
-}
-.bannerImg {
-    display: none;
 }
 
 @media (min-width: 900px) {
     .bannerImg {
-        height:100px;
-        width:300px;
-        border:1px solid black;
-        display: inline;
+        border-color: #000;
     }
 }
 .theader {
-    text-align: center;
     background-color: orange;
     color: white;
-    font-weight: 700;
-    width: 100%;
 }
 .boardSubtitle {
     color: #666666;
-    text-align: center;
-    font-size: 14px;
-    letter-spacing: 0px;
 }
 .globalNews.desktop {
-    align-items: center;
-    text-align: center;
     color: red;
-    font-weight: 700;
-    font-size: large;
 }
 .globalNewsM {
-    display: none;
-    align-items: center;
-    text-align: center;
     color: red;
-    font-weight: 700;
-    font-size: large;
 }
 .boardlist {
     color: #800000;
-    text-align: left;
 }
 .postarea { 
 	opacity: 0.9; 
 }
-.rules {
-    font-size: 11px;
+.postblock {
+    background: #EEAA88;
+    color: #800000;
+    border-color: #800000;
 }
 .postblock {
     background: #EEAA88;
     color: #800000;
-    font-weight: bold;
-    border: 1px solid #800000;
-    padding: 4px;
-}
-.postblock {
-    background: #EEAA88;
-    color: #800000;
-    border: 1px solid #800000;
-    padding: 4px;
+    border-color: #800000;
 }
 .spoiler {
-    display:inline-block;
     color: #000;
     background: #000;
 }
 .spoiler:hover {
     color: #FFF;
 }
-.footer {
-    text-align: center;
-    font-size: 12px;
-}
 .managerBanner {
     background: #EEAA88;
-    text-align: center;
-    width: 100%;
     color: #ffffff;
 }
-.dellist {
-    text-align: center;
-}
-.delbuttons {
-    text-align: center;
-    padding-bottom: 4px;
-}
 .postTable.head {
-    border-collapse: collapse;
     background: #AF0A0F;
     color: #FFFFEE;
-    font-size: 14px;
-    padding: 0px;
-    text-align: center;
-}
-.postlists td{
-    padding: 0px 1px;
-    text-align: center;
 }
 .postlists {
     background: #FFFFFF;
-    width: 100%;
-    padding: 0px;
     color: #800000;
 }
 .row1 {
     background: #EEAA88;
-    font-size: 10pt;
     color: #800000;
 }
 .row2 {
     background: #FFFFFF;
-    font-size: 10pt;
     color: #800000;
 }
 .quote {
     color: #789922;
-    text-decoration: none;
-}
-.filesize {
-    font-size: 10pt;
-    font-family: Arial, Helvetica, sans-serif;
-    text-decoration: none;
-    display: block;
 }
 .subject {
     color: #CC1105;
-    font-weight: bold;
 }
 .name {
     color: #117743;
-    font-weight: bold;
 }
 .postertrip {
     color: #117743;
-    font-weight: 500;
 }
 .cap.jani {
     color: #4169E1;
@@ -217,67 +118,21 @@ hr {
 .cap.global {
     color: #0096d2;
 }
-.oldpost {
-    font-size: 8pt;
-    padding-left: 20px;
-}
 .summary {
-    font-size: 10pt;
-    margin-top: 10px;
     color: gray;
-}
-.board.thread {
-    clear: both;
-    margin: auto;
-}
-.board>hr {
-    clear: both;
 }
 .reply {
     background: rgba(240,224,214,1);/*#F0E0D6*/
     color: #800000;
-    display: table;
-    padding: 2px;
-}
-.post {
-    margin: 4px;
 }
 .sideArrows {
     color: #B7C5D9;
-    float: left;
-    margin-right: 2px;
-    margin-top: 0px;
-    margin-left: 2px;
-}
-.postLink.mobile {
-    display: none;
 }
 .thumbnailmsg {
-    font-size: 9px;
     color: #800000;
-    padding-left: 20px;
 }
 .pages {
-    border:1px solid #800000;
+    border-color: #800000;
     background: rgba(240,224,214,0.85); /*#F0E0D6*/
     color:#800;
-}
-.pages td {
-    border:none;
-    padding:1px 5px;
-}
-.postInfoM {
-    display: none;
-}
-img.postimg {
-    padding: inherit;
-    padding-bottom: 4pt;
-    float: left;
-}
-.fileThumb {
-    float: left;
-    margin-top: 3px;
-    margin-bottom: 5px;
-    margin-left: 20px;
-    margin-right: 20px;
 }
