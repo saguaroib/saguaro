@@ -71,7 +71,7 @@ class Head {
             
             $ribbon = ($admin) ? $this->adminRibbon() . "<hr>" : null;
             
-            $dat .= '<body><div class="beforePostform" /><div id="boardNavDesktop">' . get_cached_file(BOARDLIST) . '</div>
+            $dat .= '<body><div class="beforePostform" /><div id="boardNavDesktop">' . $this->get_cached_file(BOARDLIST) . '</div>
                 <div class="linkBar">[<a href="javascript:void(0);" id="settingsWindowLink">Settings</a>][<a href="' . HOME . '" target="_top">' . S_HOME . '</a>]</div><div class="boardBanner">' . $bannerImg . $boardTitle . '</div><hr>' . $ribbon . '<a id="top"></a>';
             $dat .= (ENABLE_ADS) ? "<div class='ads aboveForm'>" . ADS_ABOVEFORM . '<hr></div></div>' : "</div>";
         } else {
