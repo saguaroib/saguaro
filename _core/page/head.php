@@ -93,7 +93,7 @@ class Head {
     private function adminRibbon() {
         $modes = array("panel", "reports", "appeals", "filters", "assets", "users", "settings", "rebuild", "logout");
         $temp .= "<div class='adminRibbon'>";
-        $temp .= "[<a href='/" . BOARD_DIR . "/'>Return</a>] ";
+        $temp .= "[<a href='/" . BOARD_DIR . "/'>Return to Index</a>] ";
         
         foreach($modes as $mode) 
             if (($mode === 'logout' || $mode === 'panel') || valid($mode)) $temp .= "[<a href='" . PHP_SELF_ABS . "?mode=admin&admin={$mode}'>" . ucfirst($mode) . "</a>] "; //Truly php has functions for everything
