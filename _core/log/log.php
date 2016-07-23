@@ -71,7 +71,7 @@ class Log {
         
         $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE;
         $head->info['page']['sub'] = S_HEADSUB;
-        $head->info['scripts'] = array("jquery.min.js", "main.js", "extension.js", "jquery-ui-1.10.4.min", "jquery.form.js"); //Add extra scripts to be included on every page <head> here.
+        $head->info['js']['script'] = array("jquery.min.js", "main.js", "extension.js", "jquery-ui-1.10.4.min", "jquery.form.js"); //Add extra scripts to be included on every page <head> here.
         if (COUNTRY_FLAGS) array_push($head->info['css']['sheet'], "/flags/flags.css");
         if (MOBILE_THEME) array_push($head->info['css']['sheet'], "/stylesheets/mobile.css");
         if (FILE_BOARD) {
