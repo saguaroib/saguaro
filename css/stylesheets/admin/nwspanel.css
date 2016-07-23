@@ -1,7 +1,6 @@
 /*saguaba*/
 .container {
-    background: antiquewhite;
-    /*margin: auto;*/
+    background: #faebd7;
     border: 1px solid #800000;
 }
 
@@ -46,7 +45,7 @@
 
 .banner {
     background-color: #af0a0f;
-    border: 1px solid black;
+    border: 1px solid #000;
     color: #ffffff;
     padding: 10px;
     font-size: 16px;
@@ -66,4 +65,4 @@
     font-weight: 700;
     font-size: 20px;
     padding: 5px;
-}
+}*/
