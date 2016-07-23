@@ -2,64 +2,27 @@
 
 class Table {
 
-    //Initial display for admin.php
-    function landing() {
-        global $mysql;
+    function deleteTable() {
+        global $mysql, $uboard, $csrf;
         
-        define(S_LANDING, "");
-        $temp .= "<div class='managerBanner'>" . S_LANDING . "</div>";
-        $temp .= "<div class='container'><div class='header'>Boards</div>TEST</div><br><div class='container' id='1'><div class='header'>Boards</div>TEST</div><br>
-        <div class='container' id='2'><div class='header'>Boards</div>TEST</div><br>
-        <div class='container' id='3'><div class='header'>Boards</div>TEST</div><br>
-        <div class='container' id='4'><div class='header'>Boards</div>TEST</div><br>";
-        return $temp;
-    }
-    
-    function deleteTable($type = 0, $resource = 0) {
-        global $mysql;
-		
-		if (!valid('moderator')) error(S_NOPERM);
-		
-		require_once(CORE_DIR . "/postform.php");
-		$postform = new PostForm;
-		
-            function calculate_age($timestamp, $comparison = '') {
-                $units = array(
-                     'second' => 60,
-                    'minute' => 60,
-                    'hour' => 24,
-                    'day' => 7,
-                    'week' => 4.25,
-                    'month' => 12
-               );
+            if (!valid('moderator')) error(S_NOPERM);  
 
-                if (empty($comparison)) {
-                    $comparison = $_SERVER['REQUEST_TIME'];
+            if (!isset($_GET['b'], $_GET['m'])) error(S_BADBOARD);
+            $type = $_GET['m'];
+            $board = $mysql->escape_string($_GET['b']);
+            
+            if (isset($_GET['no'])) {
+                $resource = (is_numeric($_GET['no']) && isset($_GET['no'])) ? (int) $_GET['no'] : error("Invalid post");
+            } else {
+                if ($type == 'res' || $type =='ip') {
+                     error("Invalid post");
                 }
-                $age_current_unit = abs($comparison - $timestamp);
-                foreach ($units as $unit => $max_current_unit) {
-                    $age_next_unit = $age_current_unit / $max_current_unit;
-                    if ($age_next_unit < 1) {
-                        // are there enough of the current unit to make one of the next unit?
-                        $age_current_unit = floor($age_current_unit);
-                        $formatted_age    = $age_current_unit . ' ' . $unit;
-                        return $formatted_age . ($age_current_unit == 1 ? '' : 's');
-                    }
-                    $age_current_unit = $age_next_unit;
-                }
-
-                $age_current_unit = round($age_current_unit, 1);
-                $formatted_age    = $age_current_unit . ' year';
-                return $formatted_age . (floor($age_current_unit) == 1 ? '' : 's');
-
             }
-
-            if ($resource)
-                $mysql->escape_string($resource);
-                
+            
+            
             if ($type === 'res') {
                 $banner = "<div class='managerBanner'>" . S_DELRES . $resource . "</div>";
-                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE resto='$resource' OR no='$resource' OR host='$resource' ORDER BY time ASC");
+                $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE (resto='$resource' OR no='$resource') and board='$board' ORDER BY time ASC");
                 $mode = 'res';
             }
             
@@ -81,22 +44,20 @@ class Table {
                 $query = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE resto='0' ORDER BY time DESC");
                 $mode = 'ops';
             }            
-
-			//$temp .= $postform->format(0, 1);
 			
             // Deletion screen display. Begin HTML generation.
             $temp .= "<div class='managerBanner'>" . S_MANAMODE . "</div>" . $banner;
-            $temp .= '<br><form action="' . PHP_ASELF . '" method="get" id="delForm"><input type="hidden" name="mode" value="res">
+            $temp .= '<br><form action="' . PHP_ASELF . '" method="get" id="delForm"><input type="hidden" name="mode" value="del">
             <input type="text" name="no" placeholder="Post # or IP" required><input type="submit" value="Search">
-            <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=ops\';" value="Only opening posts">
-            <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=all\';" value="View all"></form>';
-            $temp .= "<form action='" . PHP_ASELF . "?mode=del' method='post' id='delForm'><input type=hidden name=admin value=del checked>";
+            <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=del&m=ops\';" value="Only opening posts">
+            <input type="button" text-align="center" onclick="location.href=\'' . PHP_ASELF_ABS . '?mode=del&m=all\';" value="View all"></form>';
+            $temp .= "<form action='" . PHP_ASELF . "?mode=admindel' method='post' id='delForm'><input type='hidden' name='admin' value='admindel' checked>";
             /*$temp .=  "<input type=hidden name=mode value=admin>";
             $temp .=  "<input type=hidden name=admin value=del>";
-            $temp .=  "<input type=hidden name=pass value='$pass'>";
+            $temp .=  "<input type=hidden name=pass value='$pass'>";*/
             $temp .=  "<div class='delbuttons'><input type=submit value='" . S_ITDELETES . "'>";
-            $temp .=  "<input type=reset value='" . S_MDRESET . "'>";
-            $temp .=  "[<input type=checkbox name=onlyimgdel value=on>" . S_MDONLYPIC . "]</div><br>";*/
+            $temp .=  "<input type='reset' value='" . S_MDRESET . "'>";
+            $temp .=  "[<input type=checkbox name='onlyimgdel' value='on'>" . S_MDONLYPIC . "]</div><br>";
             $temp .= "<br>";
             $temp .=  "<table cellpadding='0' cellspacing='0' class='postlists' style='border-collapse:collapse;' cellspacing='0' cellpadding='0'>";
             $temp .=  "<tr class='postTable head'>" . S_MDTABLE1;
@@ -150,21 +111,21 @@ class Table {
                 $altClass = ($j % 2) ? "row2" : "row1"; //lol
                 $resdo = ($resto) ? 'Reply to thread' : 'Opening post';
                 $ssno = ($resto) ? $resto : $no;
-                $linknum = /*($resto) ?*/ '<a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a>';// : '<b><a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a></b>';
+                $linknum = /*($resto) ?*/ '<a href="' . $thisBoard . '/' . PHP_SELF . "?res=" . $no . '" target="_blank" />' . $no . '</a>';// : '<b><a href="' . PHP_SELF_ABS . "?res=" . $no . '" target="_blank" />' . $no . '</a></b>';
                 $sno = ($sticky) ? "<b><font color=\"FF101A\">$linknum</font></b>" : $linknum;
                 $threadmode = ($last) ? $resto : $no;    
                 $delim = ($size) ? "<td colspan='2'>&nbsp;</td><td colspan='1'>[<b><a href='?mode=adel&no=$no&imgonly=1&refer=$mode'>Delete image?</a>]</b></td><td colspan='3'>&nbsp;</td>" : "<td colspan='6'>&nbsp;</td>";
                 
                 //Actual panel html
-                //$temp .=  "<tr class='$class'><td><input type=checkbox name=\"$no\" value=delete></td>"; //<input value='x' alt='Delete post' onclick=\"location.href='?mode=adel&no=$no';\" type='button'>
-                $temp .=  "<tr class='$class' id='tr$no'><td><input value='x' alt='Delete post' class='cmd' data-cmd='del-post' data-id='$no' type='button'></td>";          
-                $temp .=  "<td colspan='1'>$sno</td><td>$now</td><td>$sub</td>";
+                $temp .=  "<tr class='{$class}'><td><input type=checkbox name='{$no}' value='delete'></td>"; //<input value='x' alt='Delete post' onclick=\"location.href='?mode=adel&no=$no';\" type='button'>
+                //$temp .=  "<tr class='$class' id='tr$no'><td><input value='x' alt='Delete post' class='cmd' data-cmd='del-post' data-id='$no' type='button'></td>";          
+                $temp .=  "<td colspan='1'>{$sno}</td><td>{$now}</td><td>{$sub}</td>";
                 $temp .=  "<td>$name</b></td><td><span title='Double-click to preview full comment' ondblclick='swap(\"trunc$no\", \"full$no\")' id='trunc$no'>$trunccom</span><span ondblclick='swap(\"full$no\", \"trunc$no\")' id='full$no' style='display:none;'>$com</span></td>";
-                $temp .=  "<td class='postimg' >$clip</td><td>$host</td><td>" . calculate_age($time) . "</td><td><input type='button' value='More' onclick='more(\"" . $no . "a\",\"" . $no . "b\");'></td>";
+                $temp .=  "<td class='postimg' >$clip</td><td>$host</td><td>" . $this->calculate_age($time) . "</td><td><input type='button' value='More' onclick='more(\"" . $no . "a\",\"" . $no . "b\");'></td>";
                 $temp .=  "</tr><tr id='" . $no . "a' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td><td colspan='2' align='left'><b>$resdo</b></td>$delim";
                 $temp .=  "</tr><tr id='" . $no . "b' class='$class' style='display:none;'><td colspan='2'>&nbsp;</td>
-                <td colspan='2'><a href='" . PHP_SELF_ABS . "?res=$ssno'>$ssno</a><td colspan='2'>&nbsp;</td></td>
-                <td colspan='4' align='center'><input value='View all by this IP' onclick=\"location.href='?mode=ip&no=$no';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='View in threadmode' onclick=\"location.href='?mode=res&no=$threadmode';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Delete everything by this IP' onclick=\"popup('admin=delall&no=$no');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Ban user' class='cmd' data-cmd='ban-window' data-id='$no' type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=" . $no . "';\" value=\"More info\" /></td>";                
+                <td colspan='2'><a href='$thisBoard/" . PHP_SELF . "?res=$ssno'>$ssno</a><td colspan='2'>&nbsp;</td></td>
+                <td colspan='4' align='center'><input value='View all by this IP' onclick=\"location.href='?mode=ip&no=$no&b=$thisBoard';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='View in threadmode' onclick=\"location.href='?mode=res&no=$threadmode&b=$thisBoard';\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Delete everything by this IP' onclick=\"popup('admin=delall&no=$no&b=$thisBoard');\" type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input value='Ban user' class='cmd' data-cmd='ban-window' data-id='$no' type='button'>&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' onclick=\"location.href='" . PHP_ASELF_ABS . "?mode=more&no=$no&b=$thisBoard';\" value=\"More info\" /></td>";                
             }//
             //$mysql->free_result($result);
             $temp .=  "</table><link rel='stylesheet' type='text/css' href='" . CSS_PATH . "/stylesheets/img.css' />";
@@ -176,15 +137,23 @@ class Table {
      
     function moreInfo($no) {
         global $mysql;
+        
+		if (!valid('moderator')) error(S_NOPERM);
+        
+        $thisBoard = $mysql->escape_string($_GET['b']);
 		
-		$no = $mysql->escape_string($no);
+		if (is_numeric($_GET['no'])) 
+            $no = (int) $no;
+        else 
+            error("Invalid post");
+
         $query = "SELECT * FROM " . SQLLOG . " WHERE no='" . $no . "'";
-        $row = $mysql->fetch_row($query);
+        $row = $mysql->fetch_array($query);
 		
-		if (!$row) echo S_SQLFAIL;
+		if (!$row) error(S_SQLFAIL);
 		
         //Cleaner looking to do it this way lol
-        list($no, $now, $name, $email, $sub, $com, $host, $pwd, $ext, $w, $h, $tn_w, $tn_h, $tim, $time, $md5, $fsize, $fname, $sticky, $permasage, $locked, $root, $resto, $board, ) = $row;
+        extract($row);
         $temp = "<table border='0' cellpadding='0' cellspacing='0'  />";
         $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br><hr><br>";
         if ($sticky || $locked || $permasage) {
@@ -211,8 +180,9 @@ class Table {
         } else
             $temp .= "<td>No file</td></tr>";
         if (!$resto) {
-            $temp .= "<form action='admin.php' />
-            <tr><td class='postblock'>Action</td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
+            $temp .= "<form action='admin.php' />";
+            $temp .= $csrf->field();
+            $temp .= "<tr><td class='postblock'>Action</td><td><input type='hidden' name='mode' value='modipost' /><select name='action' />
             <option value='sticky' />Sticky</option>
             <option value='eventsticky' />Event sticky</option>
             <option value='unsticky' />Unsticky</option>
@@ -227,8 +197,9 @@ class Table {
         $alart = $mysql->result("SELECT COUNT(*) FROM " . SQLBANLOG . " WHERE host='" . $host . "'", 0, 0);
         $alert = ($alart) ? "<b><font color=\"FF101A\"> $alart ban(s) on record for $hashedip!</font></b>" : "No bans on record for IP $hashedip";
         
-        $temp .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' />
-        <input type='hidden' name='no' value='$no' />
+        $temp .= "<br><table border='0' cellpadding='0' cellspacing='0' /><form action='admin.php?mode=ban' method='POST' ";
+        $temp .= $csrf->field();
+        $temp .= "<input type='hidden' name='no' value='$no' />
         <input type='hidden' name='ip' value='$hashedip' />
         <center><th class='postblock'><b>Ban panel</b></th></center>
         <tr><td class='postblock'>IP History: </td><td>$alert</td></tr>
@@ -263,11 +234,16 @@ class Table {
   
 	function reportTable() {
         global $mysql;
-        if (!$active = $mysql->query(" SELECT * FROM reports WHERE board='" . BOARD_DIR . "' AND type>0 ORDER BY `type` DESC "))
-            echo S_SQLFAIL;
-        $j = 0;
         
-        $temp .= "<br><div class='managerBanner'>Active reports for /" . BOARD_DIR . "/ - " . TITLE . "</div>";
+        $global = (valid('global') && !isset($_GET['b']));
+        
+        $query = ($global) ?  "SELECT * FROM reports WHERE type>4 ORDER BY `type` DESC " : "SELECT * FROM reports WHERE board='" . $mysql->escape_string($_GET['b']) . "' AND type>0 ORDER BY `type` DESC ";
+        
+        if (!$active = $mysql->query($query))
+            error(S_SQLFAIL);
+        $j = 0;
+        $title = ($global) ? "global moderators" : "/" . $_GET['b'] . "/";
+        $temp .= "<br><div class='managerBanner'>Active reports for $title</div>";
         $temp .= "<table class='postlists'>";
         $temp .= "<tr class=\"postTable head\"><th>Clear Report</th><th>Post Number</th><th>Board</th><th>Reason</th><th>Reporting IP</th><th>Post info</th>";
         $temp .= "</tr>";
@@ -303,43 +279,47 @@ class Table {
         return $temp;
     }
   
+    //Staff list for panel    
     function staffTable() {
+        global $mysql, $csrf;
+		if (!valid('admin')) error(S_NOPERM);
+        if (!validBoard($_GET['b'], true)) error(S_BADBOARD); //If passes, we're good to go with the board.
         
-        if (!valid('admin'))  error(S_NOPERM);
+        $thisBoard = $mysql->escape_string($_GET['b']);
         
-        global $mysql;
-        //Staff list for panel
+        if (!defined('SQLLOG')) {
+            define('SQLLOG', PREFIX . $thisBoard);
+        }
         
-        if (!$active = $mysql->query("SELECT * FROM " . SQLMODSLOG . "")) 
-            echo S_SQLFAIL;
+        
+        if (!$active = $mysql->query("SELECT username,type FROM " . SQLMODSLOG . " WHERE FIND_IN_SET('" . $thisBoard . "', boards) > 0")) 
+            error(S_SQLFAIL);
         $j = 0;
         $temp = '';
-        $temp .= "<input type='hidden' name='mode' value='admin'>";
-        $temp .= "<input type=hidden name=pass value=\"$pass\">";
         $temp .= "<div class='delbuttons'>";
         $temp .= "<table class='postlists'><br>";
-        $temp .=  "<tr class='postTable head'><th>User</th><th>Allowed permissions</th><th>Denied permission</th><th>Delete user</th>";
+        $temp .=  "<tr class='postTable head'><th>User</th><th>Permission type</th><th>Delete user</th>";
         $temp .=  "</tr>";
 
         while ($row = $mysql->fetch_assoc($active)) {
                 $j++;               
                 $class = 'row' . ($j % 2 + 1); //BG color
                 $temp .= "<form action='" . PHP_ASELF_ABS ."?mode=staff' method='post' ><tr class='$class'>";
-                $temp .= "<td>" . $row['user'] . "</td><td>" . $row['allowed'] . "</td><td>" . $row['denied'] . "</td>
-                <td><input type='submit' value='" . $row['user'] . "' name='delete' /></td>";
-                $temp .= "</tr>";
+                $temp .= "<td>" . $row['username'] . "</td><td>" . $row['type'] . "</td>
+                <td><input type='submit' value='" . $row['username'] . "' name='delete' /></td>";
+                $temp .= "</tr></form>";
         }	
-        $temp .= "</form><div class='managerBanner' >[<a href='#' onclick=\"toggle_visibility('userForm');\" style='color:white;text-align:center;'>Toggle New User Form</a>]</div>";
+        $temp .= "</table><div class='managerBanner' >[<a href='#' onclick=\"toggle_visibility('userForm');\" style='color:white;text-align:center;'>Toggle New User Form</a>]</div>";
         $temp .= "<div><table id='userForm' style='text-align:center;display:none;'><br><hr style='width:50%;'>";
-        $temp .= "<form action='" . PHP_ASELF_ABS ."?mode=staff' method='post'><tr><td>New username: <input type='text' name='user' required></td>";
+        $temp .= "<form action='" . PHP_ASELF_ABS ."?mode=staff' method='post'>";
+        $temp .= $csrf->field();
+        $temp .= "<tr><td>New username: <input type='text' name='username' required></td>";
         $temp .= "<td>New password: <input type='password' name='pwd1' required></td><td>Confirm password: <input type='password' name='pwd2' required></td>";
         $temp .= "<td>Access level: <select name='action' required>
             <option value='' /></option>
-            <option class='cap admin' value='admin' />Admin</option>
             <option class='cap manager' value='manager' />Manager</option>
             <option class='cap moderator' value='mod' />Moderator</option>
-            <option class='cap jani' value='janitor' />Global Janitor</option>
-            <option value='janitor_board' />Janitor (/" . BOARD_DIR . "/ only)</option>
+            <option class='cap jani' value='janitor_board' />Janitor</option>
             </select></td><td><input type='submit' value='Submit'/></td></tr></table></div>";
         return $temp;
     } 
@@ -361,7 +341,7 @@ class Table {
         while ($row = $mysql->fetch_assoc($active)) {
             $j++;
 
-            $expires = ($row['global']) ? "<strong>Permanent</strong>" : date("d, Y", $row['length']) . " (<strong>" . $ban->calculate_age($row['length'], $row['placed']) . "</strong>)";
+            $expires = ($row['length'] == 0) ? "<strong>Permanent</strong>" : date("d, Y", $row['length']) . " (<strong>" . $ban->calculate_age($row['length'], $row['placed']) . "</strong>)";
             $class = ($j % 2) ? "row1" : "row2"; //BG color
             $placed = date("l, F d, Y" , $row['placed']);
 
@@ -374,6 +354,38 @@ class Table {
         $temp .= "</table>";
         
         return $temp;
+    }
+    
+    function calculate_age($timestamp, $comparison = '') {
+        $units = array(
+            'second' => 60,
+            'minute' => 60,
+            'hour' => 24,
+            'day' => 7,
+            'week' => 4.25,
+            'month' => 12
+        );
+
+        if (empty($comparison)) {
+            $comparison = $_SERVER['REQUEST_TIME'];
+        }
+        $age_current_unit = abs($comparison - $timestamp);
+        foreach ($units as $unit => $max_current_unit) {
+            $age_next_unit = $age_current_unit / $max_current_unit;
+            if ($age_next_unit < 1) { // are there enough of the current unit to make one of the next unit?
+                $age_current_unit = floor($age_current_unit);
+                $formatted_age    = $age_current_unit . ' ' . $unit;
+                return $formatted_age . ($age_current_unit == 1 ? '' : 's');
+            }
+
+        $age_current_unit = $age_next_unit;
+        }
+
+        $age_current_unit = round($age_current_unit, 1);
+        $formatted_age    = $age_current_unit . ' year';
+        
+        return $formatted_age . (floor($age_current_unit) == 1 ? '' : 's');
+
     }
 }
 

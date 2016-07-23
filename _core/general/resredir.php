@@ -2,33 +2,22 @@
 
 global $my_log, $mysql;
 
-$res = (int) $res;
+if (!is_numeric($_GET['res']))
+    error("no");
 
-if (!$redir = $mysql->fetch_row("select no,resto from " . SQLLOG . " where no=" . $res)) {
-    echo S_SQLFAIL;
-}
+$res = (int) $_GET['res'];
 
-list($no, $resto) = $redir;
+$redir = $mysql->fetch_assoc("SELECT no,resto FROM " . SQLLOG . " WHERE no='{$res}'");
 
-if (!$no) {
-    global $mysql;
-    
-    $maxq = $mysql->query("select max(no) from " . SQLLOG);
-    list($max) = $mysql->fetch_row($maxq);
-    if (!$max || ($res > $max))
-        header("HTTP/1.0 404 Not Found");
-    else // res < max, so it must be deleted!
-        header("HTTP/1.0 410 Gone");
+$resto = (int) $redir['resto'];
+$no = (int) $redir['no'];
+
+if (!$redir['no']) {
     error(S_NOTHREADERR, $dest);
 }
 
-$redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
+$redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "" . (($resto == 0) ? $redir['no'] . PHP_EXT : $redir['resto']) . PHP_EXT'#' . $redir['no'];
 
-echo "<META HTTP-EQUIV='refresh' content='0;URL=$redirect'>";
-
-if ($resto == "0") {
-    $my_log->update_cache();
-    $my_log->update($res);
-}
+echo "<META HTTP-EQUIV='refresh' content='0;URL={$redirect}'>";
 
 ?>

@@ -19,8 +19,8 @@ Remember to look through older threads and see if your problem wasn't solved alr
 
 */
 
-require "config.php";
-session_start();
+require("config.php");
+require_once(CORE_DIR . "/lang/language.php");
 
 require_once(CORE_DIR . "/log/log.php");
 $my_log = new Log;
@@ -30,12 +30,10 @@ $mysql = new SaguaroMySQL;
 $mysql->init();
 
 $host = $mysql->escape_string($_SERVER['REMOTE_ADDR']); //Get this once here at the root instead of 300 different times. Use globally.
-
-extract($_POST, EXTR_SKIP);
-extract($_GET, EXTR_SKIP);
-extract($_COOKIE, EXTR_SKIP);
-
 $path = realpath("./") . '/' . IMG_DIR;
+
+extract($_POST, EXTR_SKIP); //We're almost free
+
 ignore_user_abort(TRUE);
 
 // check whether the current user can perform $action (on $no, for some actions)
@@ -46,38 +44,60 @@ function valid($action = 'moderator', $no = 0) {
     return $validate->verify($action);
 }
 
-function error($mes, $dest, $fancy = 0) {
+function logme($mes) {
+    if (defined("PROFILING") && PROFILING) {
+        require_once(CORE_DIR . "/profiling/logging.php");
+        $log = new Profiling;
+        $log->log($mes);
+    }
+    return;
+}
+
+function error($mes, $dest = null, $fancy = 0) {
     require_once(CORE_DIR . "/general/error.php");
     $error = new Error();
     $error->format($mes, $dest, $fancy);
 }
 
+$mode = (isset($_POST['mode'])) ? $_POST['mode'] : $_GET['mode'];
+
 /*-----------Main-------------*/
 switch ($mode) {
-    case 'regist':
+    case 'regist': //Making a post
+        $my_log->update_cache();
         require_once(CORE_DIR . "/regist/regist.php"); // $name, $email, $sub, $com, $url, $pwd, $resto
         break;
-    case 'report':
-        require_once(CORE_DIR . "/admin/report.php");
+    case 'report': //Filing a report
+        require_once(CORE_DIR . "/admin/reports/report.php");
         $report = new Report;
-        $report->process();
+        echo $report->init();
         break;
-    case 'catalog':
-        header("Location: catalog.html"); //let go of the past
+    case 'banned': //You are banned/warned! screen
+        require_once(CORE_DIR . "/admin/bans/banned.php");
+        $ban  = new BanishScreen;
+        echo $ban->init($host);
         break;
-    case 'usrdel':
+    case 'usrdel': //User deleting a post
         require_once(CORE_DIR . "/admin/delete.php");
         $del = new Delete;
         $del->userDel();
         break;
+    case 'logs':
+        require_once(CORE_DIR . "/admin/logs.php");
+        $newlog = new SaguaroAdminLog;
+        echo $newlog->generate();
+        break;
+    case 'ping':
+        echo "pong!";
+        break;
     default:
-        if ($res) {
+        if ($_GET['res']) { //Jump to any post based on given post #
             require_once(CORE_DIR . "/general/resredir.php");
-            echo "<META HTTP-EQUIV='refresh' content='10;URL=" . PHP_SELF2_ABS . "'>";
-        } else {
-            echo S_SCRCHANGE;
+            echo "<META HTTP-EQUIV='refresh' content='5;URL=" . PHP_SELF2_ABS . "'>";
+        } else { //Update index.
             $my_log->update();
             echo "<META HTTP-EQUIV='refresh' content='0;URL=" . PHP_SELF2_ABS . "'>";
         }
 }
+?>
 ?>
