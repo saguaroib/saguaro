@@ -1,0 +1,33 @@
+.container {
+    background: antiquewhite;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #800000;
+}
+
+.header {
+    background: #EEAA88;
+    border-bottom: 1px solid #800000;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.return {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.banBody {
+    padding: 10px 20px;
+}
+
+.bannedHost {
+    font-weight: 700;
+}
+
+.reason {
+    font-weight: 700;
+}
+

@@ -1,190 +1,107 @@
 body {
     background: #FFFFEE url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADICAIAAACmkByiAAAAWElEQVR4AaWSwQ3AIAwDbfbfpdt0nKrPUp3QCfHgkfjsCMh47mskmU5HGvbmuuh9dVce8M4it/SfMZglGeZx/ccyu/Vsv4/N29f331AY5Bi3+hdo4A92+wXvCwR9mXztrAAAAABJRU5ErkJggg==) top center repeat-x;
-    font-size: 10pt;
     color: #800000;
-    font-family: Arial, Helvetica, sans-serif;
 }
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px white inset;
 }
 a.qu {
     color: #800000;
-    font-size: 10pt;
-    text-decoration: none;
 }
 a.qu:hover {
-    font-weight: bold;
     color: #800000;
-    font-size: 10pt;
-    font-weight: 800;
 }
 a.qu:visited {
     color: #800000;
-    font-size: 10pt;
-    text-decoration: none;
 }
-form {
-    margin: 0px 0px 0px 0px;
-}
-.postButton {
-    font-size: 26px;
-    font-weight: 700;
-}
-/*^ new to saguaro ^*/
-
 a {
     color: #0000EE;
-    text-decoration: none;
 }
 a:visited {
     color: #0000EE;
-    text-decoration: underline;
-    font-family: inherit;
 }
 a:hover {
     color: #DD0000;
-    text-decoration: underline;
 }
 hr {
-    border: none;
-    border-top: 1px solid #D9BFB7;
-    height: 0;
-}
-.linkBar {
-    text-align: right;
+    border-color: #D9BFB7;
 }
 .boardBanner {
-    font-family: Tahoma, sans-serif;
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: -2px;
-    margin-top: 0px;
-    width: 100%;
-    clear: both;
-    text-align: center;
     color: #AF0A0F;
 }
+
+@media (min-width: 900px) {
+    .bannerImg {
+        border-color: #000;
+    }
+}
 .theader {
-    text-align: center;
     background-color: orange;
     color: white;
-    font-weight: 700;
-    width: 100%;
 }
 .boardSubtitle {
     color: #666666;
-    text-align: center;
 }
 .globalNews.desktop {
-    align-items: center;
-    text-align: center;
     color: red;
-    font-weight: 700;
-    font-size: large;
 }
 .globalNewsM {
-    display: none;
-    align-items: center;
-    text-align: center;
     color: red;
-    font-weight: 700;
-    font-size: large;
 }
 .boardlist {
     color: #800000;
-    text-align: left;
 }
 .postarea { 
 	opacity: 0.9; 
 }
-.rules {
-    font-size: 11px;
+.postblock {
+    background: #EEAA88;
+    color: #800000;
+    border-color: #800000;
 }
 .postblock {
     background: #EEAA88;
     color: #800000;
-    font-weight: bold;
-    border: 1px solid #800000;
-    padding: 4px;
-}
-.postblock {
-    background: #EEAA88;
-    color: #800000;
-    border: 1px solid #800000;
-    padding: 4px;
+    border-color: #800000;
 }
 .spoiler {
-    display:inline-block;
     color: #000;
     background: #000;
 }
 .spoiler:hover {
     color: #FFF;
 }
-.footer {
-    text-align: center;
-    font-size: 12px;
-}
 .managerBanner {
     background: #EEAA88;
-    text-align: center;
-    width: 100%;
     color: #ffffff;
 }
-.dellist {
-    text-align: center;
-}
-.delbuttons {
-    text-align: center;
-    padding-bottom: 4px;
-}
 .postTable.head {
-    border-collapse: collapse;
     background: #AF0A0F;
     color: #FFFFEE;
-    font-size: 14px;
-    padding: 0px;
-    text-align: center;
-}
-.postlists td{
-    padding: 0px 1px;
-    text-align: center;
 }
 .postlists {
     background: #FFFFFF;
-    width: 100%;
-    padding: 0px;
     color: #800000;
 }
 .row1 {
     background: #EEAA88;
-    font-size: 10pt;
     color: #800000;
 }
 .row2 {
     background: #FFFFFF;
-    font-size: 10pt;
     color: #800000;
 }
 .quote {
     color: #789922;
-    text-decoration: none;
-}
-.filesize {
-    font-size: 10pt;
-    text-decoration: none;
 }
 .subject {
     color: #CC1105;
-    font-weight: bold;
 }
 .name {
     color: #117743;
-    font-weight: bold;
 }
 .postertrip {
     color: #117743;
-    font-weight: 500;
 }
 .cap.jani {
     color: #4169E1;
@@ -198,133 +115,24 @@ hr {
 .cap.manager {
     color: #2E2EFE;
 }
-.oldpost {
-    font-size: 8pt;
-    padding-left: 20px;
+.cap.global {
+    color: #0096d2;
 }
 .summary {
-    font-size: 10pt;
-    margin-top: 10px;
     color: gray;
 }
 .reply {
-    background: rgba(240,224,214,0.85);/*#F0E0D6*/
+    background: rgba(240,224,214,1);/*#F0E0D6*/
     color: #800000;
-    display: table;
-    padding: 2px;
-}
-.post {
-    margin: 4px;
 }
 .sideArrows {
     color: #B7C5D9;
-    float: left;
-    margin-right: 2px;
-    margin-top: 0px;
-    margin-left: 2px;
-}
-.postLink.mobile {
-    display: none;
 }
 .thumbnailmsg {
-    font-size: 9px;
     color: #800000;
-    padding-left: 20px;
 }
 .pages {
-    border:1px solid #800000;
+    border-color: #800000;
     background: rgba(240,224,214,0.85); /*#F0E0D6*/
     color:#800;
-}
-.pages td {
-    border:none;
-    padding:1px 5px;
-}
-.postInfoM {
-    display: none;
-}
-
-/*Credits: Dynamic Drive CSS Library */
-/*URL: http://www.dynamicdrive.com/style/ */
-
-.gallerycontainer {
-    position: relative;
-    /*Add a height attribute and set to largest image's height to prevent overlaying*/
-}
-img.postimg {
-    padding: inherit;
-    padding-bottom: 4pt;
-    float: left;
-}
-.fileThumb {
-    float: left;
-}
-.thumbnail img {
-    border: 1px solid white;
-    margin: 0 5px 5px 0;
-}
-.thumbnail:hover {
-    background-color: transparent;
-}
-.thumbnail:hover img {
-    border: 1px solid blue;
-}
-.thumbnail span {
-    /*CSS for enlarged image*/
-    
-    position: absolute;
-    background-color: lightyellow;
-    padding: 5px;
-    /*right: -1000px;*/    
-    border: 1px dashed gray;
-    visibility: hidden;
-    color: black;
-    text-decoration: none;
-}
-.thumbnail span img {
-    /*CSS for enlarged image*/
-    
-    border-width: 0;
-    padding: 2px;
-}
-.thumbnail:hover span {
-    /*CSS for enlarged image*/
-    
-    visibility: visible;
-    /*top: 0;*/
-    
-    right: 230px;
-    /*position where enlarged image should offset horizontally */
-    
-    z-index: 50;
-}
-
-.container {
-    background: antiquewhite;
-    margin: 20px 200px;
-    border: 1px solid #800000;
-}
-
-.header {
-    background: #EEAA88;
-    border-bottom: 1px solid #800000;
-    font-weight: 700;
-    font-size: 20px;
-    padding: 5px;
-}
-
-.banBody {
-    padding: 10px 20px;
-}
-
-.bannedHost {
-    font-weight: 700;
-}
-
-.reason {
-    font-weight: 700;
-}
-
-input[type="button"] {
-    border: 1px solid black;
 }
