@@ -54,7 +54,7 @@ class Head {
 		$dat .= $this->headerJS();
 
         foreach($this->info['js']['raw'] as $raw) //Adding js code in <script tags> to the head
-            $dat .= "<script type='text/javascript'>{$raw}</script>";
+            $dat .= "<script type='text/javascript'>{$raw}</script>"; 
 
         foreach($this->info['js']['script'] as $script) //Adding whole scripts to the head
             $dat .= "<script src='" . JS_PATH . "/{$script}' type='text/javascript'></script>";
@@ -64,8 +64,8 @@ class Head {
         $dat .= '</head>';
         
         if ($noHead !== true) {
-            $headSub .= '<div class="boardSubtitle">' . $this->info['page']['sub'] . '</div>';
-            $boardTitle = "<div class='boardTitle'>" . $this->info['page']['title'] . "</div>" . $headSub;
+            $headSub .= '<div class="boardSubtitle">' . strip_tags($this->info['page']['sub']) . '</div>';
+            $boardTitle = "<div class='boardTitle'>" . strip_tags($this->info['page']['title']) . "</div>" . $headSub;
 
             $bannerImg .= (defined('SHOWTITLEIMG') && SHOWTITLEIMG) ? '<img class="bannerImg" data-src="' . $this->randomBanner() . '" src="' . $this->randomBanner() . '" /><br>' : '';
             
