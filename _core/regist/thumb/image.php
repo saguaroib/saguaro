@@ -25,11 +25,11 @@ class ImageThumbnail {
 
         //Write the file.
         $ext = pathinfo($output, PATHINFO_EXTENSION);
-        if ($ext == "gif" || $ext == "png") {
+        /*if ($ext == "gif" || $ext == "png") {
             ImagePNG($target, $output, 6);
-        } else {
+        } else {*/
             ImageJPEG($target, $output, 60);
-        }
+        //}
 
         //General clean up.
         if ($this->memory_limit_increased) ini_restore('memory_limit'); //Restore memory limit if we bumped it.
