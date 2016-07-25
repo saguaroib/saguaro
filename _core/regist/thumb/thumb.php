@@ -13,7 +13,7 @@ function thumb($input, $child) {
 
     //$fname = $path . $tim . $ext;
     $ext = pathinfo($input, PATHINFO_EXTENSION);
-    $outpath = THUMB_DIR . pathinfo($input, PATHINFO_FILENAME) . 's.' . (($ext == 'gif' || $ext == 'png') ? 'png' : 'jpg');
+    $outpath = THUMB_DIR . pathinfo($input, PATHINFO_FILENAME) . 's.jpg';// . (($ext == 'gif' || $ext == 'png') ? 'png' : 'jpg');
 
     //Determine thumbnail resolution.
     $width = (!$child) ? MAX_W : MAXR_W;
