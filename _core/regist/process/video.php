@@ -10,16 +10,31 @@
 
 class VideoProcessor {
     function process($input) {
-        $upfile_name = $_FILES["upfile"]["name"];
+        $upfile_name = $input['name'];
 
-        $info = $this->check($input);
+        $info = $this->check($input['temp']);
 
-        if (!$info['has_video'])
-            error("\"$upfile_name\ is not a valid WebM.", $dest);
-        if (ALLOW_AUDIO == false && $info['has_audio'])
-            error("\"$upfile_name\" contains audio!", $dest);
-        if ($info['duration'] > MAX_DURATION)
-            error("\"$upfile_name\" is too long! ({$info['duration']} > " . MAX_DURATION . ")", $dest);
+        //Holy duplicate lines.
+        if (!$info['has_video']) {
+            $info['passCheck'] = false;
+            $info['message'] = "\"$upfile_name\" is not a valid WebM.";
+        }
+        if ($info['width'] < MIN_W || $info['height'] < MIN_H) {
+            $info['passCheck'] = false;
+            $info['message'] = "\"$upfile_name\"'s resolution is too small!";
+        }
+        if (ALLOW_AUDIO == false && $info['has_audio']) {
+            $info['passCheck'] = false;
+            $info['message'] = "\"$upfile_name\" contains audio!";
+        }
+        if ($info['duration'] > MAX_DURATION) {
+            $info['passCheck'] = false;
+            $info['message'] = "\"$upfile_name\" is longer than allowed! (" . MAX_DURATION . ")";
+        }
+        if ($info['duration'] == 0) {
+            $info['passCheck'] = false;
+            $info['message'] = "Generic video problem.";
+        }
 
         return $info;
     }

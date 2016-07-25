@@ -7,10 +7,9 @@
 */
 
 class ProcessImage {
-    function run($dest) {
+    static function run($dest) {
         $size = getimagesize($dest);
-        if (!is_array($size))
-            error(S_NOREC, $dest);
+        if (!is_array($size)) return ['passCheck' => false, 'message' => S_NOREC];
 
         $W = $size[0];
         $H = $size[1];
@@ -24,45 +23,9 @@ class ProcessImage {
             case 3:
                 $ext = ".png";
                 break;
-            case 4:
-                $ext = ".swf";
-                error(S_UPFAIL, $dest);
-                break;
-            case 5:
-                $ext = ".psd";
-                error(S_UPFAIL, $dest);
-                break;
-            case 6:
-                $ext = ".bmp";
-                error(S_UPFAIL, $dest);
-                break;
-            case 7:
-                $ext = ".tiff";
-                error(S_UPFAIL, $dest);
-                break;
-            case 8:
-                $ext = ".tiff";
-                error(S_UPFAIL, $dest);
-                break;
-            case 9:
-                $ext = ".jpc";
-                error(S_UPFAIL, $dest);
-                break;
-            case 10:
-                $ext = ".jp2";
-                error(S_UPFAIL, $dest);
-                break;
-            case 11:
-                $ext = ".jpx";
-                error(S_UPFAIL, $dest);
-                break;
-            case 13:
-                $ext = ".swf";
-                error(S_UPFAIL, $dest);
-                break;
             default:
-                $ext = ".xxx";
-                error(S_UPFAIL, $dest);
+                //4 swf, 5 psd, 6 bmp, 7 tiff, 8 tiff, 9 jpc, 10 jp2, 11 jpx, 13 swf
+                return ['passCheck' => false, 'message' => S_UPFAIL];
                 break;
         }
 
@@ -71,10 +34,11 @@ class ProcessImage {
         if (defined('MIN_H') && MIN_H > $H) error(S_UPFAIL, $dest);
         $maxdimension = (defined('MAX_DIMENSION')) ? MAX_DIMENSION : 5000;
         if ($W > $maxdimension || $H > $maxdimension) {
-            error(S_TOOBIGRES, $dest);
+            return ['passCheck' => false, 'message' => S_TOOBIGRES];
         }
 
         $info = [
+            'passCheck' => true,
             'width' => (int) $W,
             'height' => (int) $H
         ];

@@ -95,6 +95,7 @@ define('RECAPTCHA_SECRET', "");//reCaptcha secret key.
 //Images
 define('DUPE_CHECK', true); //whether or not to check for duplicate images
 define('MAX_KB', 2048); //Maximum upload size in KB
+define('MAX_FILE_COUNT', 1); //Maximum number of media attachments to allow per post
 
 //WebM
 define('ALLOW_WEBMS', false); //This feature currently has prequisites. Please visit https://github.com/spootTheLousy/saguaro/wiki/Supporting-WEBMs before enabling.
@@ -170,6 +171,7 @@ define('SQLBANLOG', PREFIX.'_ban');  //Table for ban information.
 define('SQLMODSLOG', PREFIX.'_mod'); //Table for mod information (authentication).
 define('SQLDELLOG', PREFIX.'_del');  //Table for deleted information.
 define('SQLBANNOTES', PREFIX.'_ipnotes'); //Table containing IP notes for warned/banned users
+define('SQLMEDIA', PREFIX.'_media'); //Table for media (or files in general) information.
 
 //URL pathing.
 define('SITE_SUFFIX', preg_replace('/^.*\.(\w+)$/', '\1', SITE_ROOT));//Domain TLD. By default, this is obtained automatically with regex using SITE_ROOT.

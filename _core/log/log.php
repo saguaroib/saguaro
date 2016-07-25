@@ -287,17 +287,30 @@ class Log {
                 }
 
                 // add this post to list of children
-                $log[$row['resto']]['children'][$row['no']] = 1;
+                /*$log[$row['resto']]['children'][$row['no']] = 1;
                 if ($row['fsize']) {
                     if (!isset($log[$row['resto']]['imgreplycount'])) {
                         $log[$row['resto']]['imgreplycount'] = 0;
                     } else {
                         $log[$row['resto']]['imgreplycount']++;
                     }
+                }*/
+            }
+        }
+        
+        $mysql->free_result($query); //Since the data has been moved to $log, free up $query
+        $query = $mysql->query("SELECT * FROM " . SQLMEDIA . " WHERE board='" . BOARD_DIR . "'");
+        
+        while ($row = $mysql->fetch_assoc($query)) {
+            if (!isset($log[$row['parent']][$row['no']])) {
+                $log[$row['parent']][$row['no']] = $row;
+            } else { // otherwise merge it with $row
+                foreach ($row as $key => $val) {
+                    $log[$row['parent']][$row['no']][$key] = $val;
                 }
             }
-
         }
+        $mysql->free_result($query); //Since the data has been moved to $log, free up $query
 
         //Basic support for bump order with new 'last' column.
         $query = $mysql->query('SELECT no FROM `'. SQLLOG . '` WHERE `resto` = 0 ORDER BY sticky DESC, IF(sticky=0, last, sticky) DESC');

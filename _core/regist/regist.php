@@ -22,25 +22,28 @@ class Regist {
         $this->initialCheck(); //Run preliminary checks.
 
         $file = $_FILES["upfile"]["tmp_name"];
-        $time = time(); $tim  = $time . substr(microtime(), 2, 3);
+        $time = time();
+        $tim  = $time . substr(microtime(), 2, 3);
 
         $info = [
             'post' => $this->extractForm(), //Get the post info.
-            'file' => (is_uploaded_file($file)) ? $this->extractFile($file,$tim) : false, //Get the file info and copy/rename to target directory.
             'host' => $_SERVER['REMOTE_ADDR'],
             'time' => $time,
             'local_name' => $tim,
-            'board' => null
+            'board' => null,
+            'errors' => []
         ];
         $this->cache = $info; //Copy to cache.
 
-        if ($info['file']) {
-            $this->checkDuplicate($info['file']['md5']);
-            $this->generateThumbnail(); //If we made it this far, generate the thumbnail.
+        //Get the file info and copy/rename to target directory, then append file info to post info cache.
+        $this->cache['files'] = (count($_FILES['upfile']['name']) > 0) ? $this->extractFiles($tim) : null;
+
+        $check = $this->postCheck();
+        if ($check !== true) {
+            error($check);
         }
 
         $this->insert($this->cache); //Returns 'no' (post number), however this is also stored back in $this->cache['post']['number']
-        //var_dump($this->cache);
         $this->updateCache();
     }
 
@@ -49,10 +52,11 @@ class Regist {
     }
 
     private function checkDuplicate($md5) {
+        //Fix this.
         //If there is a file (hopefully), check the table for duplicates.
         global $mysql;
 
-        if (DUPE_CHECK) {
+        if (1 == 2 && DUPE_CHECK) {
             $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
             if ($mysql->num_rows($result)) {
                 list($dupeno, $duperesto) = $mysql->fetch_row($result);
@@ -61,20 +65,6 @@ class Regist {
                 $this->cleanup('<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>');
             }
             $mysql->free_result($result);
-        }
-    }
-
-    private function generateThumbnail() {
-        if (USE_THUMB) {
-            require_once("thumb/thumb.php");
-            require_once("process/image.php"); //Required for video thumbnail stats.
-            $output = thumb($this->cache['file']['location'], ($this->cache['post']['child']));
-            if (!$output['location'] && $ext != ".pdf") {
-                cleanup(S_UNUSUAL);
-            }
-            $this->cache['file']['thumbnail'] = $output;
-        } else {
-
         }
     }
 
@@ -88,27 +78,65 @@ class Regist {
             'sub'       => $info['post']['subject'],
             'com'       => $info['post']['comment'],
             'host'      => $info['host'],
-            'pwd'       => $info['post']['password'],
-            'ext'       => "." . $info['file']['original_extension'],
-            'w'         => $info['file']['width'],
-            'h'         => $info['file']['height'],
-            'tn_w'      => $info['file']['thumbnail']['width'],
-            'tn_h'      => $info['file']['thumbnail']['height'],
-            'tim'       => $info['local_name'],
+            //'tim'     => $info['local_name'],
             'time'      => $info['time'],
-            'md5'       => $info['file']['md5'],
-            'fsize'     => $info['file']['filesize'],
-            'fname'     => $info['file']['original_name'],
+            'pwd'       => $info['post']['password'],
             'sticky'    => $info['post']['special']['sticky'],
             'permasage' => $info['post']['special']['permasage'],
             'locked'    => $info['post']['special']['locked'],
             'resto'     => ($_POST['resto']) ? (int) $_POST['resto'] : 0,
-            'board'		=> BOARD_DIR
+            'board'     => BOARD_DIR
         ];
+
+        $set = $this->dynamicBuild($data);
+        $query = "insert into ".SQLLOG." (" . $set['keys'] . ") values (" . $set['vals'] .")";
+        $mysql->query($query);
+        $final = (int) $mysql->result('select last_insert_id()');
+        $this->cache['post']['number'] = $final;
+        /* if (!$result = ?) { echo E_REGFAILED; }*/
+
+        //Files
+        if ($info['files']) {
+            $items = [];
+            foreach($info['files'] as $file) {
+                $out = [
+                    'parent'       => $final,
+                    'extension'    => "." . $file['original_extension'],
+                    'width'        => $file['width'],
+                    'height'       => $file['height'],
+                    'localthumbname' => ($file['thumbnail']) ? $file['thumbnail']['filename'] : null,
+                    'thumb_width'  => ($file['thumbnail']) ? $file['thumbnail']['width'] : null,
+                    'thumb_height' => ($file['thumbnail']) ? $file['thumbnail']['height'] : null,
+                    'hash'         => $file['md5'],
+                    'filesize'     => $file['filesize'],
+                    'filename'     => $file['original_name'],
+                    'localname'    => $file['localname'],
+                    'board' => BOARD_DIR
+                ];
+
+                $set = $this->dynamicBuild($out);
+                $query = "insert into ".SQLMEDIA." (" . $set['keys'] . ") values (" . $set['vals'] .")";
+                $mysql->query($query);
+
+                array_push($items, $mysql->result('select last_insert_id()'));
+            }
+            $items = implode(" ", $items);
+
+
+            //Update the medial column of the parent.
+            $query = "update ".SQLLOG." set media='$items' where no=$final";
+            $mysql->query($query);
+        }
+
+        return $final; //Return 'no', latest auto-incremented column.
+    }
+
+    private function dynamicBuild($set) {
+        global $mysql;
 
         //Dynamically build the SQL command, numerous advantages.
         $keys = []; $vals = [];
-        foreach($data as $column => $value) {
+        foreach($set as $column => $value) {
             array_push($keys,$column);
 
             //If the value is numeric (but may be a string) or a boolean, cast it to an integer. Otherwise wrap in doublequotes and escape it.
@@ -117,13 +145,7 @@ class Regist {
         $keys = implode(",",$keys);
         $vals = implode(",",$vals);
 
-        $query = "insert into ".SQLLOG." ($keys) values ($vals)";
-        $mysql->query($query);
-        $final = (int) $mysql->result('select last_insert_id()');
-        /* if (!$result = ?) { echo E_REGFAILED; }*/
-
-        $this->cache['post']['number'] = $final;
-        return $final; //Return 'no', latest auto-incremented column.
+        return ['keys' => $keys, 'vals' => $vals];
     }
 
     private function updateCache() {
@@ -134,13 +156,13 @@ class Regist {
         $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
         $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
 
-		//Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
-		require_once("prune.php");
-		prune_old(); //Does the page pruning
-		
-		if ($this->cache['post']['special']['sticky'] == 2)
-			pruneThread($parent); //Event stickies.
-		
+        //Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
+        require_once("prune.php");
+        prune_old(); //Does the page pruning
+
+        if ($this->cache['post']['special']['sticky'] == 2)
+            pruneThread($parent); //Event stickies.
+
         //Run update process.
         $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
         $target = ($child) ? $parent : $number;
@@ -159,6 +181,17 @@ class Regist {
         require_once('process/upload.php');
         $check = new UploadCheck;
         $check->run();
+    }
+
+    function postCheck() {
+        if (max($this->cache['files'], strlen($this->cache['post']['comment'])) == 0) {
+            $out = "No comment or acceptable file included.";
+            foreach($this->cache['errors'] as $error) {
+                $out .= '<br><small>'.$error.'</small>';
+            }
+            return $out;
+        }
+        return true;
     }
 
     function extractForm() {
@@ -181,37 +214,90 @@ class Regist {
         ];
 
         //Basic sanitization.
+        $moderator = valid("moderator");
         $sanitize = ['name','subject','email','comment'];
         foreach ($sanitize as $key) {
-            $post[$key] = Sanitize::CleanStr($post[$key]);
+            $post[$key] = Sanitize::CleanStr($post[$key], $moderator);
         }
 
         $post['child'] = (bool) ($post['parent'] !== 0);
         $post['comment_md5'] = md5($post['comment']);
 
+        //Apply user IDs, dice, EXIF etc to post..
+        require_once("addons.php");
+        $post['now'] = userID($post['now'], $post['email'], $post['name']);
+        $ret = parseComment($post['comment'], $post['email'], $post['name']);
+        $post['comment'] = $ret['com'];
+        $post['name'] = $ret['name'];
+
         require_once('tripcode.php');
         $post['name'] = Tripcode::format($post['name']);
-        $post['name'] = ($post['special']['capcode']) ? Tripcode::adminify($post['name']) : $post['name']; 
-
-		//Apply user IDs, dice, EXIF etc to post.
-		require_once("addons.php");
-		$post['now'] = userID($post['now'], $post['email']);
-		$post['comment'] = parseComment($post['comment'], $post['email']);
+        $post['name'] = ($post['special']['capcode']) ? Tripcode::adminify($post['name']) : $post['name'];
 
         return $post;
     }
 
-    function extractFile($file,$tim) {
-        //Need the file's width/height, MD5 hash, and size.
-        //Determine the file type and load the appropriate processor.
+    function extractFiles($tim) {
+        $files = [];
+        $f = $_FILES['upfile'];
+        $num_files = count($f['name']);
+        $max = min($num_files, MAX_FILE_COUNT); //Set the loop cap to the number of files or maximum allowed, whichever is lower.
+        if ($num_files > MAX_FILE_COUNT) { //IF we want to impose the file limit and disregard the post itself, this is how we do it.
+            //foreach ($f['fname'] as $key => $value) { unlink($value); } //By default, upload files should be in a temporary status and location which PHP should clean up on script completion.
+            error(S_TOOMANYFILES);
+        }
+
+        //$this->checkDuplicate($info['file']['md5']);
 
         require_once('process/upload_file.php');
-        $check = new ProcessFile;
-        return $check->run($file,$tim);
-    }
-    
-    private function sortSpecial() {
+        $index = 1; //File counter index.
 
+        for ($i = 0; $i < $max; $i++) {
+            $temp = [
+                'index'=> $index,
+                'name' => $f['name'][$i],
+                'type' => $f['type'][$i],
+                'temp' => $f['tmp_name'][$i],
+                'size' => $f['size'][$i],
+                'error' => $f['error'][$i],
+                'tim'  => $tim
+            ];
+
+            $check = new ProcessFile;
+            $temp = $check->run($temp);
+
+            if ($temp['passCheck'] === true) {
+                //If we made it this far, generate thumbnail if possible.
+                $temp['thumbnail'] = (USE_THUMB) ? $this->generateThumbnail($temp['location']) : null;
+
+                array_push($files, $temp);
+                $index++;
+            } else {
+                //What to do if an individual file fails a check.
+                //Fortunately, failed checks leave the files in the temporary area which PHP cleans up itself upon script completion.
+                //error($temp['message']);
+                if ($temp['message']) {
+                    array_push($this->cache['errors'],$temp['message']);
+                }
+            }
+        }
+
+        return (count($files) > 0) ? $files : null;
+    }
+
+    private function generateThumbnail($location) {
+        require_once("thumb/thumb.php");
+        require_once("process/image.php"); //Required for video thumbnail stats.
+
+        $output = thumb($location, ($this->cache['post']['child']));
+        if (!$output['location'] && $ext != ".pdf") {
+            cleanup(S_UNUSUAL);
+        }
+
+        return $output;
+    }
+
+    private function sortSpecial() {
         if (valid('janitor')) {
             //Must leave int values as ints, bool values as bools
             $cap = (isset($_POST['showCap'])) ? true : false;
@@ -226,7 +312,6 @@ class Regist {
             'capcode' => $cap
         ];
     }
-
 }
 
 $regist = new Regist;

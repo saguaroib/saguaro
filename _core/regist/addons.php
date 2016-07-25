@@ -1,11 +1,15 @@
 <?php
 
-function parseComment($com, $email) {
+function parseComment($com, $email, $name) {
 	//Parses comments for special features. Accepts email for #triggering some actions
 	
 	$com = dice($com, $email); //Dice roll
+    $ret = fortune($com, $name);
 	
-	return $com;
+	return [
+        'com' => $ret['com'],
+        'name' => $ret['name']
+    ];
 }
 
 function userID($now) {
@@ -18,6 +22,21 @@ function userID($now) {
 		$now .= "<span class=\"posteruid\" id=\"posterid\" style=\"border-radius:10px;font-size:8pt;\" />" . $id . "</span>";
 	}
 	return $now;
+}
+
+function fortune($com, $name) {
+    if (FORTUNE_TRIP) {
+        if (stripos($name, "#fortune") !== false) {
+            require_once("fortune.php");
+            $fortune = new Fortune;
+            $com .= "<br><br>" . $fortune->giveFortune();
+            $name = S_ANONAME;
+        }
+    }
+    return [
+        'com' => $com,
+        'name' => $name
+    ];
 }
 
 function dice($com, $email) {
