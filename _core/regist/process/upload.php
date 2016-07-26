@@ -14,15 +14,15 @@ class UploadCheck {
     private $last = "";
 
     function run() {
-        if ($_SERVER["REQUEST_METHOD"] !== "POST") error(S_UNJUST); //Ensure the data was sent via POST.
-        if ($this->captcha() !== true) error($this->last); //Captcha check.
-        if ($this->proxy() !== true) error($this->last); //Proxy check.
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") { error(S_UNJUST); } //Ensure the data was sent via POST.
+        if ($this->captcha() !== true) { error($this->last); } //Captcha check.
+        if ($this->proxy() !== true) { error($this->last); } //Proxy check.
 
         //These checks access the SQL server so we should prioritize these last and then order based on how intensive they are.
-        if ($this->banned() !== true) { header("Location: banned.php"); die();} //Ban check.
-        if ($this->locked() !== true) error($this->last); //Lock check.
-        if ($this->media() !== true) error($this->last); //Media check.
-        if ($this->cooldown() !== true) error($this->last); //Flood/cooldown checks.
+        if ($this->banned() !== true) { header("Location: banned.php"); die(); } //Ban check.
+        if ($this->locked() !== true) { error($this->last); } //Lock check.
+        if ($this->media() !== true) { error($this->last); } //Media check.
+        if ($this->cooldown() !== true) { error($this->last); }//Flood/cooldown checks.
     }
 
     function captcha() {
