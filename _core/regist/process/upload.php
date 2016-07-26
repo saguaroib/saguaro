@@ -65,14 +65,13 @@ class UploadCheck {
 
     function locked() {
         //Check if replying to locked thread
-        $resto = (int) $resto;
+        $resto = (int) $_POST['resto'];
         if ($resto) {
             global $mysql;
-            $resto = (int) $resto;
+
             $result = $mysql->fetch_array("SELECT * FROM " . SQLLOG . " WHERE no=$resto");
             if ($result["locked"] == '1' && !valid('moderator')) {
-                $this->last = S_THREADLOCKED;
-                //error(S_THREADLOCKED, $upfile);
+                $this->last = S_THREADLOCKED; //error(S_THREADLOCKED);
                 return false;
             }
         }
