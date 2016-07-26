@@ -65,12 +65,17 @@ class UploadCheck {
 
     function locked() {
         //Check if replying to locked thread
+        if (valid('moderator')) { return true; }
+
         $resto = (int) $_POST['resto'];
+
         if ($resto) {
             global $mysql;
 
-            $result = $mysql->fetch_array("SELECT * FROM " . SQLLOG . " WHERE no=$resto");
-            if ($result["locked"] == '1' && !valid('moderator')) {
+            //Could potentially just WHERE locked=1 with a count or something, but is that better?
+            $locked = $mysql->fetch_assoc("SELECT locked FROM ".SQLLOG." WHERE no=$resto")['locked'];
+
+            if ($locked) {
                 $this->last = S_THREADLOCKED; //error(S_THREADLOCKED);
                 return false;
             }
@@ -113,14 +118,11 @@ class UploadCheck {
 
         //Pull all recent rows (to the highest timeout) from the SQL table.
         $min = $time - max(COOLDOWN_POST,COOLDOWN_FILE,COOLDOWN_THREAD);
-        echo "$time -> $min";
         $query = "SELECT time,resto FROM `".SQLLOG."` WHERE host='{$host}' AND time>=$min";
         $query = $mysql->query($query);
-        $result = $mysql->result($query);
         $amount = $mysql->num_rows($query);
 
         if ($amount > 0) { //We have at least one post that violates the cooldown periods.
-            //echo " / ".$amount; die();
             $this->last = S_RENZOKU; //We could theoretically stop here if we don't care to give a SPECIFIC error message or care about the differences.
 
             //Check each row.
@@ -141,7 +143,6 @@ class UploadCheck {
                 }
             }
         }
-
         return true;
     }
 
