@@ -56,7 +56,7 @@ class Regist {
         //If there is a file (hopefully), check the table for duplicates.
         global $mysql;
 
-        if (1 == 2 && DUPE_CHECK) {
+        if (DUPE_CHECK) {
             $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
             if ($mysql->num_rows($result)) {
                 list($dupeno, $duperesto) = $mysql->fetch_row($result);
