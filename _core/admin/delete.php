@@ -1,133 +1,130 @@
 <?php
 
-require_once(CORE_DIR . "/log/log.php");
-
-class Delete extends Log {
-    function userDel() {
-        global $mysql, $host;
+class SaguaroDelete {
+    //Receive & process POST info submitted from checkbox deletion method
+    public function userDel() {
+        global $my_log, $mysql, $host;
         
-        $pwdc = $mysql->escape_string($_COOKIE['saguaro_pwdc']);
-        $imgonly = $mysql->escape_string($_POST['onlyimgdel']);
-        $pwd = $mysql->escape_string($_POST['pwd']);
+        $pwdc = (isset($_COOKIE['saguaro_pwdc']) && !empty($_COOKIE['saguaro_pwdc'])) ? $mysql->escape_string($_COOKIE['saguaro_pwdc']) : false;
+        $imgonly = ($_POST['onlyimgdel'] == "on") ? true : false;
+        $pwd = (!empty($_POST['pwd'])) ? $mysql->escape_string($_POST['pwd']) : $pwdc;
         $delno        = array();
         $rebuildindex = !(defined("STATIC_REBUILD") && STATIC_REBUILD);
-        $delflag      = FALSE;
-        $resnum = $_POST['anchor'];
-
+        $resnum = (is_numeric($_POST['resnum'])) ? (int) $_POST['resnum'] : null;
+        
         reset($_POST);
         while ($item = each($_POST)) {
             if ($item[1] == 'delete') {
                 array_push($delno, $item[0]);
-                $delflag = TRUE;
             }
         }
-
-        if ($pwd == "" && $pwdc != "")
-            $pwd = $pwdc;
+        
+        $my_log->update_cache(1);
+        
         $countdel = count($delno);
-        $rebuild  = array(); // keys are pages that need to be rebuilt (0 is index, of course)
+        $rebuild  = array(); //Keys are pages to be rebuilt, 0 is the index
         for ($i = 0; $i < $countdel; $i++) {
-            $resto = $this->targeted($delno[$i], $pwd, $onlyimgdel, 0, 1, $countdel == 1); // only show error for user deletion, not multi
+            $resto = $this->delete_post($delno[$i], $pwd, $imgonly, 0, 1, $countdel == 1); //Only show error for single post/user deletion, not multipost deletion
             if ($resto)
                 $rebuild[$resto] = 1;
         }
-        
-        $this->update_cache(1);
-        $log = $this->cache;
 
         foreach ($rebuild as $key => $val) {
-            $this->update($key, 1); // leaving the second parameter as 0 rebuilds the index each time!
+            if (ENABLE_API) {
+                require_once(CORE_DIR . "/api/apoi.php");
+                $api = new SaguaroAPI;
+                $api->formatThread($key, 0); //Update .json files to reflect deleted posts
+            }
+            $my_log->update($key, 1); //Leaving second parameter as 0 rebuilds the index each time!
         }
         if ($rebuildindex)
-            $this->update(0, 1); // update the index page last
-        
-        if (isset($log[$resnum])) { 
-            $redir = RES_DIR . $resnum . ".html"; //Thread was deleted, redirect to index
-            header("Location: $redir");
-        } else { 
-            header("Location: " . PHP_SELF2); //User deleted a reply to a thread while in a thread, redirect to that thread.
-        }
-            
+            $my_log->update(0, 1); //Update indexes after all deletions are done
+
+        //If posts were deleted from a thread and the thread still exists, redirect the user to that same thread.
+        $redir = (!empty($my_log->cache[$resnum])) ? RES_DIR . $resnum . PHP_EXT : "//" . SITE_ROOT_BD; 
+        header("Location: $redir");
     }
 
-    function targeted($no, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1, $delhost = '') {
-        global $path, $mysql, $host;
+    //Deletion handler, accepts one post at a time.
+    private function delete_post($no, $pwd, $imgonly = 0, $automatic = 0, $children = 1, $die = 1) {
+        global $path, $mysql, $host, $my_log;
 
-        $this->update_cache(1);
-        $log = $this->cache;
-        $no = $mysql->escape_string($no);
-        //$no = (int) $no;
+        $no = (int) $no;
 
-        if (!isset($log[$no])) //Does post exist?
-            if ($die) exit(S_NODELPOST . $no);
+        if (empty($my_log->cache[$no])) //Does post exist?
+            if ($die) error(S_NODELPOST . $no);
 
-        $row = $log[$no];
+        $row = $my_log->cache[$no];
         //Check password. If no password, check admin status
         $delete_ok = ($automatic || (substr(md5($pwd), 2, 8) == $row['pwd']) || ($row['host'] == $host));
         if (valid('janitor') && !$automatic)
-            $admindel = valid('delete', $no);
+            $admindel = true;//valid('delete');
 
         if (!$delete_ok && !$admindel)
             error(S_BADDELPASS);
 
-        if ($admindel) { //Actions for staff go here
+        if ($admindel) { //Any actions for staff deletions
             $auser   = $mysql->escape_string($_COOKIE['saguaro_auser']);
-            $adfsize = ($row['fsize'] > 0) ? 1 : 0;
-            $adname  = str_replace('</span> <span class="postertrip">!', '#', $row['name']);
-            $imgonly2 = ($imgonly) ? "image" : "post";
-            
-            $row['sub']      = $mysql->escape_string($row['sub']);
-            $row['com']      = $mysql->escape_string($row['com']);
-            $row['filename'] = $mysql->escape_string($row['filename']);
-            $mysql->query("INSERT INTO " . SQLDELLOG . " (admin, postno, action, board,name,sub,com,img) 
-            VALUES('$auser','$no', '$imgonly2', '" . BOARD_DIR . ", '$adname','{$row['sub']}','{$row['com']}')");
+            $mysql->query("INSERT INTO " . SQLDELLOG . " (admin, type, action, time, board, postno) VALUES ('{$auser}', '2', 'Deleted post #{$no}', '" . time() . "', '" . BOARD_DIR . "', '{$no}')");
         }
-
-        if ($delhost !== ''): //Select all posts by IP
-            $result = $mysql->query("SELECT no,resto,tim,ext FROM " . SQLLOG . " WHERE host='" . $delhost . "'");
-        elseif ($row['resto'] == 0 && $children && !$imgonly): //Select thread and children
-            $result = $mysql->query("SELECT no,resto,tim,ext FROM " . SQLLOG . " WHERE no=$no OR resto=$no");
-        else: //Only selecting the post
-            $result = $mysql->query("SELECT no,resto,tim,ext FROM " . SQLLOG . " WHERE no=$no");
-        endif;
+        
+        $conditions = ($row['resto'] == 0 && $children && !$imgonly) ? "(no='{$no}' OR resto='{$no}')" : "no='{$no}'"; 
+        $result = $mysql->query("SELECT no,resto,tim,ext FROM " . SQLLOG . " WHERE {$conditions} AND board='" . BOARD_DIR . "'");
 
         while ($delrow = $mysql->fetch_assoc($result)) { //This does the resource deletions
-            $path = realpath("./") . '/' . IMG_DIR;
-            $delfile  = $path . $delrow['tim'] . $delrow['ext']; //Path to files
-            $delthumb = THUMB_DIR . $delrow['tim'] . 's.jpg';
-            if (is_file($delfile))
-                unlink($delfile); //Delete image
-            if (is_file($delthumb))
-                unlink($delthumb); //Delete thumbnail
-            if (OEKAKI_BOARD == 1 && is_file($path . $delrow['tim'] . '.pch'))
-                unlink($path . $delrow['tim'] . '.pch'); // delete oe animation
-            if (!$imgonly) { //Delete cached HTML page and log cache
-                if ($delrow['resto'])
-                    unset($log[$delrow['resto']]['children'][$delrow['no']]);
-                unset($log[$delrow['no']]);
-                $log['THREADS'] = array_diff($log['THREADS'], array($delrow['no'])); //Remove from THREADS array
-                $mysql->query("DELETE FROM reports WHERE no=" . $delrow['no']); //Clear associated reports
-                if (USE_GZIP == 1)
-                    @unlink(RES_DIR . $delrow['no'] . PHP_EXT . '.gz');
-                @unlink(RES_DIR . $delrow['no'] . PHP_EXT);
-            }
+            $this->deleteFile($delrow, $imgonly); //Delete all associated media.
+            $this->deleteResources($delrow, $imgonly); //Delete API, HTML page if necessary
         }
 
-        //This actually does the database deletion
-        if ($row['resto'] == 0 && $children && !$imgonly) //Delete thread and children
-            $result = $mysql->query("DELETE FROM " . SQLLOG . " WHERE no=$no OR resto=$no");
-        elseif (!$imgonly) //We're only deleting the post
-            $result = $mysql->query("DELETE FROM " . SQLLOG . " WHERE no=$no");
+        //Remove posts from the database
+        $mysql->query("DELETE FROM " . SQLLOG . " WHERE {$conditions} AND board='" . BOARD_DIR . "'");
         
         return $row['resto']; // so the caller can know what pages need to be rebuilt
     }
-    
-    function deleteUploaded($file, $path) {
-        global $upfile, $dest;
-        if ($dest || $upfile) {
-            @unlink($upfile);
-            @unlink($dest);
+
+    //Deletes all media associated with post.
+    private function deleteFile($post, $imgonly = false) {
+        global $mysql;
+
+        $path = realpath("./") . '/' . IMG_DIR;
+        $delfile  = $path . $post['tim'] . $post['ext']; //Path to file
+        $delthumb = THUMB_DIR . $post['tim'] . 's.jpg';//Path to thumbnail
+        
+        if ($imgonly) {
+            $mysql->query("UPDATE " . SQLLOG . " SET fsize='-1' WHERE no='$no' and board='" . BOARD_DIR ."'");
+        }
+        if ($post['embed']) { //Unset embed
+            $mysql->query("UPDATE " . SQLLOG . " SET embed='deleted' WHERE no='$no'");
+        }
+        if (is_file($delfile)) {
+            unlink($delfile); //Delete image
+        }
+        if (is_file($delthumb)) {
+            unlink($delthumb); //Delete thumbnail
+        }
+        if (OEKAKI_BOARD == 1 && is_file($path . $post['tim'] . '.pch')) {
+            unlink($path . $post['tim'] . '.pch'); // delete oe animation
         }
     }
+
+    //Delete API files, thread HTML, any other associated files
+    private function deleteResources($post, $imgonly) {
+        global $mysql, $my_log;
+        if ($imgonly)
+            return true;
+        if ($post['resto']) {
+            unset($my_log->cache[$post['resto']]['children'][$post['no']]);
+        }
+        unset($my_log->cache[$post['no']]);
+        
+        if (API_ENABLED) {
+            @unlink(API_DIR_RES . $post['no'] . ".json"); //Delete API json. Catalog/threads/index files are rebuilt later anyway.
+        } 
+        $my_log->cache['THREADS'] = array_diff($my_log->cache['THREADS'], array($post['no'])); //Remove from THREADS array
+        $mysql->query("DELETE FROM " . SQLREPORTS . " WHERE no='{$post['no']}'"); //Clear associated reports
+        if (USE_GZIP) {
+            @unlink(RES_DIR . $post['no'] . PHP_EXT . '.gz');
+        }
+        @unlink(RES_DIR . $post['no'] . PHP_EXT);
+    }
 }
-?>
