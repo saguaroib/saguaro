@@ -51,23 +51,6 @@ class Regist {
         error($message,$this->cache['file']['location']);
     }
 
-    private function checkDuplicate($md5) {
-        //Fix this.
-        //If there is a file (hopefully), check the table for duplicates.
-        global $mysql;
-
-        if (1 == 2 && DUPE_CHECK) {
-            $result = $mysql->query("select no,resto from " . SQLLOG . " where md5='$md5'");
-            if ($mysql->num_rows($result)) {
-                list($dupeno, $duperesto) = $mysql->fetch_row($result);
-                if (!$duperesto)
-                    $duperesto = $dupeno;
-                $this->cleanup('<a href="' . DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "/" . $duperesto . PHP_EXT . '#' . $dupeno . '">' . S_DUPE . '</a>');
-            }
-            $mysql->free_result($result);
-        }
-    }
-
     private function insert($info) {
         global $mysql;
 
