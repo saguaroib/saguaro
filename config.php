@@ -78,10 +78,11 @@ define('NOPICBOX', false);    //Whether or not to have the [No Picture] checkbox
 define('USE_THUMB', true);    //Use thumbnails.
 define('PROXY_CHECK', true);  //Enable proxy check.
 
-define('RENZOKU', 10);        //Seconds between posts (floodcheck)
-define('RENZOKU2', 15);       //Seconds between image posts (floodcheck)
-define('RENZOKU3', 13);		//Seconds between thread creation (floodcheck)
+define('COOLDOWN_POST', 10);    //Cooldown between new posts without files, in seconds.
+define('COOLDOWN_FILE', 15);    //Cooldown between new posts with files, in seconds.
+define('COOLDOWN_THREAD', 13);  //Cooldown between new threads, in seconds.
 define('MAX_RES', 500);       //Maximum thread bumps from posts.
+define('STRICT_FILE_COUNT', false); //If true, accounts for multi-file posts otherwise each post is counted as one regardless of amount of files.
 define('MAX_IMGRES', 300);    //Maximum thread bumps from images
 define('EVENT_STICKY_RES', 1500); //The number of replies allowed to an event sticky before in-thread pruning begins. These stickies self delete the oldest posts once the number of replies exceeds this number.
 define('S_OMITT_NUM', 5);     //number of posts to display in each thread on the index.

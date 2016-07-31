@@ -71,6 +71,7 @@ class Regist {
     private function insert($info) {
         global $mysql;
 
+        $resto = ($_POST['resto']) ? (int) $_POST['resto'] : 0;
         $data = [ //Ironically aligned to "permasage".
             'now'       => $info['post']['now'],
             'name'      => $info['post']['name'],
@@ -84,7 +85,7 @@ class Regist {
             'sticky'    => $info['post']['special']['sticky'],
             'permasage' => $info['post']['special']['permasage'],
             'locked'    => $info['post']['special']['locked'],
-            'resto'     => ($_POST['resto']) ? (int) $_POST['resto'] : 0,
+            'resto'     => $resto,
             'board'     => BOARD_DIR
         ];
 
@@ -101,6 +102,7 @@ class Regist {
             foreach($info['files'] as $file) {
                 $out = [
                     'parent'       => $final,
+                    'resto'        => $resto,
                     'extension'    => "." . $file['original_extension'],
                     'width'        => $file['width'],
                     'height'       => $file['height'],

@@ -4,7 +4,9 @@
 
     Upload check for Regist
 
-    Validates all received information, and halts if there's a problem.
+    Validates early instance of upload information to determine if we should care to process it.
+    For instance: if not via POST, captcha failed, replying to locked thread, or spamming = discard.
+    Per-file validation is done uniquely in "process/upload_file.php", not here.
 
 */
 
@@ -12,17 +14,15 @@ class UploadCheck {
     private $last = "";
 
     function run() {
-        $upfile = $_FILES["upfile"]["tmp_name"];
-
-        if ($_SERVER["REQUEST_METHOD"] !== "POST") error(S_UNJUST, $upfile); //Ensure the data was sent via POST.
-        if ($this->captcha() !== true) error($this->last, $upfile); //Captcha check.
-        if ($this->proxy() !== true) error($this->last, $upfile); //Proxy check.
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") { error(S_UNJUST); } //Ensure the data was sent via POST.
+        if ($this->captcha() !== true) { error($this->last); } //Captcha check.
+        if ($this->proxy() !== true) { error($this->last); } //Proxy check.
 
         //These checks access the SQL server so we should prioritize these last and then order based on how intensive they are.
-        if ($this->banned() !== true) { header("Location: banned.php"); die();} //Ban check.
-        if ($this->locked() !== true) error($this->last, $upfile); //Lock check.
-        if ($this->media() !== true) error($this->last, $upfile); //Media check.
-        if ($this->cooldown($upfile) !== true) error($this->last, $upfile); //Flood/cooldown checks.
+        if ($this->banned() !== true) { header("Location: banned.php"); die(); } //Ban check.
+        if ($this->locked() !== true) { error($this->last); } //Lock check.
+        if ($this->media() !== true) { error($this->last); } //Media check.
+        if ($this->cooldown() !== true) { error($this->last); }//Flood/cooldown checks.
     }
 
     function captcha() {
@@ -67,14 +67,18 @@ class UploadCheck {
 
     function locked() {
         //Check if replying to locked thread
-        $resto = (int) $resto;
+        if (valid('moderator')) { return true; }
+
+        $resto = (int) $_POST['resto'];
+
         if ($resto) {
             global $mysql;
-            $resto = (int) $resto;
-            $result = $mysql->fetch_array("SELECT * FROM " . SQLLOG . " WHERE no=$resto");
-            if ($result["locked"] == '1' && !valid('moderator')) {
-                $this->last = S_THREADLOCKED;
-                //error(S_THREADLOCKED, $upfile);
+
+            //Could potentially just WHERE locked=1 with a count or something, but is that better?
+            $locked = $mysql->fetch_assoc("SELECT locked FROM ".SQLLOG." WHERE no=$resto")['locked'];
+
+            if ($locked) {
+                $this->last = S_THREADLOCKED; //error(S_THREADLOCKED);
                 return false;
             }
         }
@@ -82,16 +86,19 @@ class UploadCheck {
     }
 
     function media() {
-        $resto = (int) $resto;
+        $resto = (int) $_POST['resto'];
         if ($resto) {
             global $mysql;
-            if (!$result = $mysql->query("select COUNT(*) from " . SQLLOG . " where resto=$resto and fsize!=0")) {
-                echo S_SQLFAIL;
-            }
 
-            $countimgres = $mysql->result($result, 0, 0);
-            if ($countimgres > MAX_IMGRES) {
-                $mysql->free_result($result);
+            //The latter (default) replicates old behavior where each post counts as one file, regardless of its actual amount.
+            $query = (STRICT_FILE_COUNT === true) ? '*' : 'DISTINCT parent';
+            $query = "select COUNT({$query}) from ".SQLMEDIA." where resto=$resto OR parent=$resto";
+
+            $file_count = $mysql->query($query);
+            $file_count = $mysql->fetch_row($file_count)[0];
+
+            if ($file_count > MAX_IMGRES) {
+                $mysql->free_result($file_count);
                 $this->last = 'Media bump limit reached.';
                 //error("Max limit of " . MAX_IMGRES . " image replies has been reached.", $upfile);
                 return false;
@@ -100,97 +107,46 @@ class UploadCheck {
         return true;
     }
 
-    function cooldown($upfile) {
-		$canFlood = (valid('moderator')) ? true : false;
-        if ($canFlood) return true;
+    function cooldown() {
+        //Check for cooldown violations for text posts, file posts, and thread creation.
+        if (valid('moderator')) { return true; }
 
-		global $mysql;
+        global $mysql;
 
         $resto = (int) $_POST['resto'];
-        $host = $_SERVER['REMOTE_ADDR'];
+        $host = $mysql->escape_string($_SERVER['REMOTE_ADDR']);
         $time = time();
+        $has_file = ($_FILES['upfile']['error'][0] == UPLOAD_ERR_NO_FILE) ? 0 : 1;
 
         //Pull all recent rows (to the highest timeout) from the SQL table.
-        $min = $time - max(RENZOKU,RENZOKU2,RENZOKU3);
-        $query = "SELECT time,resto FROM `".SQLLOG."` WHERE host='".$mysql->escape_string($host)."' AND time>=$min";
+        $min = $time - max(COOLDOWN_POST, COOLDOWN_FILE, COOLDOWN_THREAD);
+        $query = "SELECT time,resto FROM `".SQLLOG."` WHERE host='{$host}' AND time>=$min";
         $query = $mysql->query($query);
-        $result = $mysql->result($query);
-        $recent = $mysql->num_rows($query);
+        $amount = $mysql->num_rows($query);
 
-        if ($recent > 0) { //We have at least one post that violates the cooldown periods.
-            //We could theoretically stop here if we don't care to give a SPECIFIC error message or care about the differences.
-            $this->last = S_RENZOKU;
+        if ($amount > 0) { //We have at least one post that violates the cooldown periods.
+            $this->last = S_RENZOKU; //We could theoretically stop here if we don't care to give a SPECIFIC error message or care about the differences.
 
             //Check each row.
             while ($row = $mysql->fetch_assoc($query)) {
-                //Replies (in general).
-                if ($resto > 0 && $row['time'] > ($time - RENZOKU))
-                    $this->last = 'reply';
-                    return false;
+                //Types: text post, text post (dupe?), file post, thread
+                $diff = ($time - $row['time']); //Time difference before valid.
 
-                //Image replies.
-                if ($upfile && $row['time'] > ($time - RENZOKU2))
-                    $this->last = 'image '.S_RENZOKU2;
+                if (!$has_file && $resto > 0 && $diff <= COOLDOWN_POST) { //Text replies
+                    $this->last = 'Please wait '.(COOLDOWN_POST - $diff).' seconds and try again. (Post)';
                     return false;
-
-                //Thread creation. If no parent specified, and a pulled row is an OP (no parent): exit.
-                if (!$resto || $resto == 0 && $row['resto'] == 0 && $row['time'] > ($time - RENZOKU)) {
+                } else if ($has_file && $resto > 0 && $diff <= COOLDOWN_FILE) { //File replies
+                    $this->last = 'Please wait '.(COOLDOWN_FILE - $diff).' seconds and try again. (File)';
+                    return false;
+                } else if (!$resto || $resto == 0 && $row['resto'] == 0 && $diff <= COOLDOWN_THREAD) { //Thread creation
                     //$this->last = S_RENZOKU3;
-                    $this->last = 'thread';
+                    $this->last = 'Please wait '.(COOLDOWN_THREAD - $diff).' seconds and try again. (Thread)';
                     return false;
                 }
             }
         }
-
         return true;
     }
-
-/*    function cooldown($upfile) {
-        global $mysql;
-
-        $resto = (int) $resto;
-        $host = $_SERVER['REMOTE_ADDR'];
-        $time = time();
-
-        $canFlood = (valid('moderator')) ? true : false;
-
-        if (!$canFlood) {
-
-            //Reply cooldown
-            if (!$upfile) {
-                $query  = "SELECT COUNT(no)>0 FROM " . SQLLOG . " WHERE time>" . ($time - RENZOKU) . " " . "AND host='" . $mysql->escape_string($host) . "' AND resto>0";
-                $result = $mysql->query($query);
-                if ($mysql->result($result, 0, 0)) {
-                    $this->last = S_RENZOKU;
-                    $mysql->free_result($result);
-                    return false;
-                }
-            }
-
-            //Thread creation cooldown
-            if (!$resto) {
-                $query  = "SELECT COUNT(no)>0 FROM " . SQLLOG . " WHERE time>" . ($time - RENZOKU3) . " " . "AND host='" . $mysql->escape_string($host) . "' AND root>0"; //root>0 == non-sticky
-                $result = $mysql->query($query);
-                if ($mysql->result($result, 0, 0)) {
-                    $this->last = S_RENZOKU3;
-                    $mysql->free_result($result);
-                    return false;
-                }
-            }
-
-            //Image cooldown
-            if ($upfile) {
-                $query  = "SELECT COUNT(no)>0 FROM " . SQLLOG . " WHERE time>" . ($time - RENZOKU2) . " " . "AND host='" . $mysql->escape_string($host) . "' AND resto>0";
-                $result = $mysql->query($query);
-                if ($mysql->result($result, 0, 0)) {
-                    $this->last = S_RENZOKU2;
-                    $mysql->free_result($result);
-                    return false;
-                }
-            }
-        }
-        return true;
-    }*/
 }
 
 ?>
