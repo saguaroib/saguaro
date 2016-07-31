@@ -67,7 +67,7 @@ switch ($mode) {
         break;
     case 'usrdel':
         require_once(CORE_DIR . "/admin/delete.php");
-        $del = new Delete;
+        $del = new SaguaroDelete;
         $del->userDel();
         break;
     default:
