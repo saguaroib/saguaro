@@ -159,7 +159,7 @@ class Regist {
         $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
 
         //Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
-        require_once("prune.php");
+        require_once("inc/prune.php");
         prune_old(); //Does the page pruning
 
         if ($this->cache['post']['special']['sticky'] == 2)
@@ -180,7 +180,7 @@ class Regist {
     }
 
     function initialCheck() {
-        require_once('process/upload.php');
+        require_once('inc/process/upload.php');
         $check = new UploadCheck;
         $check->run();
     }
@@ -197,7 +197,7 @@ class Regist {
     }
 
     function extractForm() {
-        require_once('sanitize.php'); //Load sanitation class.
+        require_once('inc/sanitize.php'); //Load sanitation class.
         //Default post information.
         srand((double) microtime() * 1000000); //Seed the RNG.
 
@@ -226,13 +226,13 @@ class Regist {
         $post['comment_md5'] = md5($post['comment']);
 
         //Apply user IDs, dice, EXIF etc to post..
-        require_once("addons.php");
+        require_once("inc/addons.php");
         $post['now'] = userID($post['now'], $post['email'], $post['name']);
         $ret = parseComment($post['comment'], $post['email'], $post['name']);
         $post['comment'] = $ret['com'];
         $post['name'] = $ret['name'];
 
-        require_once('tripcode.php');
+        require_once('inc/tripcode.php');
         $post['name'] = Tripcode::format($post['name']);
         $post['name'] = ($post['special']['capcode']) ? Tripcode::adminify($post['name']) : $post['name'];
 
@@ -251,7 +251,7 @@ class Regist {
 
         //$this->checkDuplicate($info['file']['md5']);
 
-        require_once('process/upload_file.php');
+        require_once('inc/process/upload_file.php');
         $index = 1; //File counter index.
 
         for ($i = 0; $i < $max; $i++) {
@@ -288,8 +288,8 @@ class Regist {
     }
 
     private function generateThumbnail($location) {
-        require_once("thumb/thumb.php");
-        require_once("process/image.php"); //Required for video thumbnail stats.
+        require_once("inc/thumb/thumb.php");
+        require_once("inc/process/image.php"); //Required for video thumbnail stats.
 
         $output = thumb($location, ($this->cache['post']['child']));
         if (!$output['location'] && $ext != ".pdf") {
