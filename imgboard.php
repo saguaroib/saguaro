@@ -66,7 +66,7 @@ switch ($mode) {
         header("Location: catalog.html"); //let go of the past
         break;
     case 'usrdel':
-        require_once(CORE_DIR . "/admin/delete.php");
+        require_once(CORE_DIR . "/delete/delete.php");
         $del = new SaguaroDelete;
         $del->userDel();
         break;
