@@ -142,7 +142,7 @@ class ProcessFile {
             Shorter signatures may return false positives and therefore should be avoided with this method.
         */
         $bad_signatures = [
-            'ZIP' => 'PK(\x03\x04|\x05\x06|\x07|x08)',
+            'ZIP' => 'PK(\x03\x04|\x05\x06|\x07|\x08)',
             'RAR' => 'Rar!\x1A\x07',
             '7ZIP' => '\x37\x7A\xBC\xAF\x27\x1C',
             'TAR' => 'ustar(\x00\x30\x30|\x20\x20\x00)'
