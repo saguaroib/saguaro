@@ -73,8 +73,7 @@ switch ($mode) {
     case 'banned':
         require_once(CORE_DIR . "/admin/bans.php");
         $ban  = new Banish;
-        $html = $ban->banScreen($host); 				//Returns all the html for banned.php from the ban class
-        echo $page->generate($html); 					//Page class outputs. 
+        echo $ban->banScreen($host); //Returns all the html for banned.php from the ban class
         break;
     default:
         if ($res) {
