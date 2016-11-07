@@ -52,7 +52,7 @@ $S_MANAGEMENT = 'Manager : ';                                   //Defines prefix
 $S_DELETION = 'Deletion';                                       //Prints deletion message with quotes?
 $S_TOOLONG = 'Error: Field too long.';                          //Returns error for too many characters in a given field
 $S_UNUSUAL = 'Error: Abnormal reply.';                          //Returns error for abnormal reply? (this is a mystery!)
-$S_BADHOST = '';                                                //Returns error for banned host ($badip string)
+$S_BADHOST = 'Error: You are <a href="' . PHP_SELF_ABS . '?mode=banned">banned</a>.';                                                //Returns error for banned host ($badip string)
 $S_PROXY80 = 'Error: Proxy detected on :80.';                   //Returns error for proxy detection on port 80
 $S_PROXY8080 = 'Error: Proxy detected on :8080.';               //Returns error for proxy detection on port 8080
 $S_SUN = 'Sun';                                                 //Defines abbreviation used for "Sunday"
