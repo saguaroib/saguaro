@@ -70,6 +70,11 @@ switch ($mode) {
         $del = new SaguaroDelete;
         $del->userDel();
         break;
+    case 'banned':
+        require_once(CORE_DIR . "/admin/bans.php");
+        $ban  = new Banish;
+        echo $ban->banScreen($host); //Returns all the html for banned.php from the ban class
+        break;
     default:
         if ($res) {
             require_once(CORE_DIR . "/general/resredir.php");
