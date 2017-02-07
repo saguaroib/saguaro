@@ -95,7 +95,7 @@ class SaguaroDelete {
 				return $mysql->query("UPDATE " . SQLMEDIA . " SET filesize='-1' WHERE no='$no' and board='" . BOARD_DIR ."'");
 			}
 			
-			$mysql->query("DELETE FROM " . SQLMEDIA . " WHERE parent='{$post['no']}'");
+			$mysql->query("DELETE FROM " . SQLMEDIA . " WHERE parent='{$post['no']}' and board='" . BOARD_DIR ."'");
 			
 			if (is_file($delfile)) unlink($delfile); //Delete image
 			if (is_file($delthumb)) unlink($delthumb); //Delete thumbnail
