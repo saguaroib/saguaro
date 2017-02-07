@@ -101,14 +101,16 @@ class Regist {
 
                 $set = $this->dynamicBuild($out);
                 $query = "insert into ".SQLMEDIA." (" . $set['keys'] . ") values (" . $set['vals'] .")";
-                $mysql->query($query);
+                $mysql->query($query); //Disable this to skip writing to the media table.
 
-                array_push($items, $mysql->result('select last_insert_id()'));
+                //array_push($items, $mysql->result('select last_insert_id()')); //Old behavior of just pushing out the media row numbers.
+                unset($out['parent'], $out['resto'], $out['board']); //Delete unnecessary keys.
+                array_push($items, $out); //Push.
             }
-            $items = implode(" ", $items);
+            //$items = implode(" ", $items); //Old behavior of joining the media row numbers.
+            $items = json_encode($items);
 
-
-            //Update the medial column of the parent.
+            //Update the media column of the parent.
             $query = "update ".SQLLOG." set media='$items' where no=$final";
             $mysql->query($query);
         }

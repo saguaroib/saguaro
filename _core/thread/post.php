@@ -17,7 +17,13 @@ class Post {
         @extract($this->data);
         $temp = "<div class='thread' id='t$no'/><div class='post op' id='p$no'/><div class='postContainer opContainer' id='pc$no'/>";
 
-        $temp .= $this->media();
+		$image = new Image;
+		$image->inIndex = $this->inIndex;
+
+		$files = json_decode($media, true);
+		foreach ($files as $file) {
+			$temp .= $image->format($file);
+		}
 
         $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span>";
 
@@ -64,42 +70,19 @@ class Post {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' name='$no' class='permalink' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
         }
 
-        $temp .= $this->media();
+		$image = new Image;
+		$image->inIndex = $this->inIndex;
 
+		$files = json_decode($media, true);
+		foreach ($files as $file) {
+			$temp .= $image->format($file);
+		}
         $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $resto); //yeah sure whatever
         $com = $this->auto_link($com, $resno);
 
         $temp .= "<blockquote class='postMessage' id='m$no'>$com</blockquote>";
 
         $temp .= "</div></div>";
-
-        return $temp;
-    }
-
-    function media() {
-        global $mysql;
-        $temp = "";
-
-        $no = $this->data['no'];
-        $result = $mysql->query("select * from ".SQLMEDIA." where parent=$no");
-        while ($out = $mysql->fetch_assoc($result)) {
-            $stuff = [
-                'localname' => $out['localname'],
-                'localthumb' => $out['localthumbname'],
-                'ext' => $out['extension'],
-                'fname' => $out['filename'],
-                'md5' => $out['hash'],
-                'tn_w' => $out['thumb_width'],
-                'tn_h' => $out['thumb_height'],
-                'w' => $out['width'],
-                'h' => $out['height'],
-                'fsize' => $out['filesize']
-            ];
-
-            $image = new Image;
-            $image->inIndex = $this->inIndex;
-            $temp .= $image->format($stuff);
-        }
 
         return $temp;
     }
