@@ -97,7 +97,7 @@ class PostForm {
         else
             $temp .= '</table></form></div></div>';
 
-        if (USE_ADS2) $temp .= ADS2 . "<hr>";
+        if (ENABLE_ADS) $temp .= ADS_BELOWFORM . "<hr>";
             
         if (file_exists(GLOBAL_NEWS)) {
             $news = file_get_contents(GLOBAL_NEWS);

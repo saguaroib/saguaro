@@ -181,8 +181,8 @@ class Log {
                 } //only one tree line at time of res
             }
 
-            if (USE_ADS3)
-                $dat .= ADS3 . '<hr>';
+            if (ENABLE_ADS)
+                $dat .= ADS_BELOWFORM . '<hr>';
 
             //afterPosts div is closed in general/foot.php
             $dat .= '<div class="afterPosts" /><table align="right"><tr><td class="delsettings" nowrap="nowrap" align="center">

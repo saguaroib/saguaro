@@ -131,12 +131,10 @@ define('EXTRA_SHIT', ''); //Any extra javascripts you want to include inside the
 /*
     Advertisements.
 */
-define('USE_ADS1', false);                      //Use advertisements (top)
-define('ADS1', '<center>ads ads ads</center>'); //advertisement code (top)
-define('USE_ADS2', false);                      //Use advertisements (below post form)
-define('ADS2', '<center>ads ads ads</center>'); //advertisement code (below post form)
-define('USE_ADS3', false);                      //Use advertisements (bottom)
-define('ADS3', '<center>ads ads ads</center>'); //advertisement code (bottom)
+define('ENABLE_ADS', false);                      //Use advertisements (top)
+define('ADS_ABOVEFORM', '<center>ads ads ads</center>'); //advertisement code (top)
+define('ADS_BELOWFORM', '<center>ads ads ads</center>'); //advertisement code (below post form)
+define('ADS_AFTERPOSTS', '<center>ads ads ads</center>'); //advertisement code (bottom)
 
 
 /*
@@ -173,6 +171,7 @@ define('SQLMODSLOG', PREFIX.'_mod'); //Table for mod information (authentication
 define('SQLDELLOG', PREFIX.'_del');  //Table for deleted information.
 define('SQLBANNOTES', PREFIX.'_ipnotes'); //Table containing IP notes for warned/banned users
 define('SQLMEDIA', PREFIX.'_media'); //Table for media (or files in general) information.
+define('SQLREPORTS', PREFIX.'_reports'); //Table for report information.
 
 //URL pathing.
 define('SITE_SUFFIX', preg_replace('/^.*\.(\w+)$/', '\1', SITE_ROOT));//Domain TLD. By default, this is obtained automatically with regex using SITE_ROOT.

@@ -65,15 +65,15 @@ class SaguaroDelete {
 
         if ($admindel) { //Any actions for staff deletions
             $auser   = $mysql->escape_string($_COOKIE['saguaro_auser']);
-            $mysql->query("INSERT INTO " . SQLDELLOG . " (admin, type, action, time, board, postno) VALUES ('{$auser}', '2', 'Deleted post #{$no}', '" . time() . "', '" . BOARD_DIR . "', '{$no}')");
+            //$mysql->query("INSERT INTO " . SQLDELLOG . " (admin, type, action, time, board, postno) VALUES ('{$auser}', '2', 'Deleted post #{$no}', '" . time() . "', '" . BOARD_DIR . "', '{$no}')");
         }
         
         $conditions = ($row['resto'] == 0 && $children && !$imgonly) ? "(no='{$no}' OR resto='{$no}')" : "no='{$no}'"; 
-        $result = $mysql->query("SELECT no,resto,tim,ext FROM " . SQLLOG . " WHERE {$conditions} AND board='" . BOARD_DIR . "'");
+        $result = $mysql->query("SELECT * FROM " . SQLLOG . " WHERE {$conditions} AND board='" . BOARD_DIR . "'");
 
         while ($delrow = $mysql->fetch_assoc($result)) { //This does the resource deletions
-            $this->deleteFile($delrow, $imgonly); //Delete all associated media.
-            $this->deleteResources($delrow, $imgonly); //Delete API, HTML page if necessary
+			$this->deleteFile($delrow, $imgonly); //Delete all associated media.
+			$this->deleteResources($delrow, $imgonly); //Delete API, HTML page if necessary
         }
 
         //Remove posts from the database
@@ -86,25 +86,20 @@ class SaguaroDelete {
     private function deleteFile($post, $imgonly = false) {
         global $mysql;
 
-        $path = realpath("./") . '/' . IMG_DIR;
-        $delfile  = $path . $post['tim'] . $post['ext']; //Path to file
-        $delthumb = THUMB_DIR . $post['tim'] . 's.jpg';//Path to thumbnail
-        
-        if ($imgonly) {
-            $mysql->query("UPDATE " . SQLLOG . " SET fsize='-1' WHERE no='$no' and board='" . BOARD_DIR ."'");
-        }
-        if ($post['embed']) { //Unset embed
-            $mysql->query("UPDATE " . SQLLOG . " SET embed='deleted' WHERE no='$no'");
-        }
-        if (is_file($delfile)) {
-            unlink($delfile); //Delete image
-        }
-        if (is_file($delthumb)) {
-            unlink($delthumb); //Delete thumbnail
-        }
-        if (OEKAKI_BOARD == 1 && is_file($path . $post['tim'] . '.pch')) {
-            unlink($path . $post['tim'] . '.pch'); // delete oe animation
-        }
+		$files = json_decode($post['media'], true);
+		$path = realpath("./") . '/' . IMG_DIR;
+		foreach($files as $file) {
+			$delfile = IMG_DIR . $file['localname']; //Path to file
+			$delthumb = THUMB_DIR . $file['localthumbname'];//Path to thumbnail
+			if ($imgonly) {
+				return $mysql->query("UPDATE " . SQLMEDIA . " SET filesize='-1' WHERE no='$no' and board='" . BOARD_DIR ."'");
+			}
+			
+			$mysql->query("DELETE FROM " . SQLMEDIA . " WHERE parent='{$post['no']}'");
+			
+			if (is_file($delfile)) unlink($delfile); //Delete image
+			if (is_file($delthumb)) unlink($delthumb); //Delete thumbnail
+		}
     }
 
     //Delete API files, thread HTML, any other associated files
