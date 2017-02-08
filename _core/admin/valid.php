@@ -1,7 +1,7 @@
 <?php
 
 class Valid {
-    function verify($action, $no) {
+    function verify($action, $no = 0) {
         global $mysql;
         
         static $valid_cache; // the access level of the user
@@ -14,14 +14,14 @@ class Valid {
                 return false;
             }
             if ($user && $pass) {
-				$row = $mysql->result("SELECT perms FROM " . SQLBACKEND . "." . SQLMODSLOG . " WHERE username='{$user}' and password='{$pass}' LIMIT 1");
+				$row = $mysql->result("SELECT perms FROM " . SQLMODSLOG . " WHERE user='{$user}' and password='{$pass}' LIMIT 1");
 				$valid_cache = json_decode($row, true);
             }
         }
 
         switch ($action) {
             case 'delete': //If they're a janitor on another board, check for illegal post unlock	
-				$illegal_count = $mysql->result("SELECT COUNT(*) FROM " . SQLBACKEND . "." . SQLREPORTS . " WHERE board='" . BOARD_DIR . "' AND no='{$no}' AND cat=2");
+				$illegal_count = $mysql->result("SELECT COUNT(*) FROM " . SQLREPORTS . " WHERE board='" . BOARD_DIR . "' AND no='{$no}' AND cat=2");
 				return $illegal_count >= 3;
             case 'boardlist':
 				return $valid_cache['_boards'];
