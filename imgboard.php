@@ -62,9 +62,6 @@ switch ($mode) {
         $report = new Report;
         $report->process();
         break;
-    case 'catalog':
-        header("Location: catalog.html"); //let go of the past
-        break;
     case 'usrdel':
         require_once(CORE_DIR . "/delete/delete.php");
         $del = new SaguaroDelete;
@@ -74,6 +71,9 @@ switch ($mode) {
         require_once(CORE_DIR . "/admin/bans.php");
         $ban  = new Banish;
         echo $ban->banScreen($host); //Returns all the html for banned.php from the ban class
+        break;
+    case 'admin':
+        require_once(CORE_DIR . "/admin/root.php");
         break;
     default:
         if ($res) {
