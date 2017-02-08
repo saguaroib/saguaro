@@ -45,7 +45,7 @@ class Login {
                 $page = new Page;
                 
                 $page->headVars['page']['title'] = "Moderation login";
-                $page->headVars['page']['sub'] = "Manage your board!";
+                $page->headVars['page']['sub'] = "Manage your boards!";
                 
                 $temp = "<div align='center' vertical-align='middle'>";
                 $temp .= "<style type='text/css'>input[type='text'] { border: .5px solid black; padding:2px;} input[type='password'] { border: 1px solid black; padding:2px;}</style>";

@@ -31,10 +31,6 @@ $mysql->init();
 
 $host = $mysql->escape_string($_SERVER['REMOTE_ADDR']); //Get this once here at the root instead of 300 different times. Use globally.
 
-extract($_POST, EXTR_SKIP);
-extract($_GET, EXTR_SKIP);
-extract($_COOKIE, EXTR_SKIP);
-
 $path = realpath("./") . '/' . IMG_DIR;
 ignore_user_abort(TRUE);
 
@@ -52,15 +48,15 @@ function error($mes, $dest, $fancy = 0) {
     $error->format($mes, $dest, $fancy);
 }
 
+$mode = (isset($_POST['mode'])) ? $_POST['mode'] : $_GET['mode'];
+
 /*-----------Main-------------*/
 switch ($mode) {
     case 'regist':
         require_once(CORE_DIR . "/regist/regist.php"); // $name, $email, $sub, $com, $url, $pwd, $resto
         break;
     case 'report':
-        require_once(CORE_DIR . "/admin/report.php");
-        $report = new Report;
-        $report->process();
+        require_once(CORE_DIR . "/admin/reports/switch.php");
         break;
     case 'usrdel':
         require_once(CORE_DIR . "/delete/delete.php");
