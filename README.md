@@ -14,7 +14,7 @@ This has been cobbled together from stuff I myself have written and the contribu
 While there is no official licensing info due to this being a fork of a fork [...], a lot of great people have worked on saguaro (in spirit) and leaving in credits (specifically in the page's footer, ***S_FOOT***) attributing them is very much appreciated.
 
 #Installation Dependencies 
-- PHP >= 4.2.x (PHP 5 or newer is also recommended)
+- PHP >= 5.2.x (PHP 7 support is not guaranteed)
 - MySQL >= 4.0 
 - GD 2.x
 - libav (avconv/avprobe) for WebMs
