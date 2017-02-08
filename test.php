@@ -16,7 +16,7 @@ if (is_file($lockout)) {
 } else {
     //These should be the only things changed without knowing what you're doing, everything that uses them is automated.
     $defaults = [ //Default accounts.
-                    ['name' => 'admin', 'pass' => 'guest', 'priv' => 'janitor_board,moderator,admin,manager', 'deny' => 'none']
+                    ['name' => 'admin', 'pass' => 'guest', '_flags' => ['janitor'=>1,'developer'=>1,'janitor_board'=>1,'moderator'=>1,'admin'=>1,'manager'=>1], '_boards' => ['*']]
                 ];
 
     //Point of no return. Casual users shouldn't go past here.
@@ -264,7 +264,7 @@ if (is_file($lockout)) {
                     $tables = [
                         SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, media text, time int, sticky int, permasage int, locked int, last int, modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, resto int, board text",
                         SQLBANLOG => "board VARCHAR(20), global INT(1), name VARCHAR(200), host VARCHAR(50), com VARCHAR(3000), reason VARCHAR(1000), length INT(25), admin VARCHAR(100), placed INT(25) NOT NULL, PRIMARY KEY (board, placed)",
-                        SQLMODSLOG => "user VARCHAR(25), password VARCHAR(250), public_salt VARCHAR(256), allowed VARCHAR(250), denied VARCHAR(250), PRIMARY KEY (user), UNIQUE KEY (user)",
+                        SQLMODSLOG => "user VARCHAR(25), password VARCHAR(250), public_salt VARCHAR(256), perms TEXT, PRIMARY KEY (user), UNIQUE KEY (user)",
                         SQLDELLOG => "admin VARCHAR(250), postno VARCHAR(20) PRIMARY KEY, action VARCHAR(25), board VARCHAR(250), name VARCHAR(50), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . ")", //Why does S_POSTLENGTH start with S_?
                         SQLBANNOTES => "board VARCHAR(25), host VARCHAR(250), type VARCHAR(50), com VARCHAR(3100), reason VARCHAR(2000), admin VARCHAR(250), PRIMARY KEY (host, com), UNIQUE KEY (com)",
                         SQLMEDIA => "primary key(no), no int not null auto_increment, parent int, resto int, filename text, localname text, localthumbname text, filesize int, extension text, width int, height int, thumb_width int, thumb_height int, hash text, board text",
@@ -297,9 +297,11 @@ if (is_file($lockout)) {
                             $password = $crypt->generate_hash($account['pass']); //Generate password hash and public salt with SaguaroCrypt.
 
                             //$pass = ($autolock === true) ? "<span class='spoiler'>" . $account['pass'] . "</span>" : "";
-                            echo "<strong>" . $account['name'] . "</strong> $pass (<span class='info' title='Privileges'>" . $account['priv'] . "</span> / <span class='info' title='Denied'>" . $account['deny'] . "</span>) ";
+                            echo "<strong>" . $account['name'] . "</strong> $pass (<span class='info' title='Privileges'>" . $account['_flags'] . "</span>) ";
 
-                            $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, public_salt, allowed, denied) VALUES ('{$account['name']}', '{$password['hash']}', '{$password['public_salt']}', '{$account['priv']}', '{$account['deny']}')");
+                            $permArr = ['_flags' => $account['_flags'], '_boards' => $account['_boards']];
+                            $permissions = json_encode($permArr);
+                            $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, public_salt, perms) VALUES ('{$account['name']}', '{$password['hash']}', '{$password['public_salt']}', '{$permissions}')");
                             $unfail = (mysqli_errno($mysqli) == 1062) ? "<span class='fail'>ALREADY EXISTS</span><br>" : $fail;
                             echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $unfail;
                         }
