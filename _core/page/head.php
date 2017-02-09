@@ -16,15 +16,15 @@ class Head {
             'sub' => ''
         ],
         'css' => [
-            'raw' => array(), //Raw css to push to <style> tags
-            'sheet' => array() ////Names of css files to include
+            'raw' => [], //Raw css to push to <style> tags
+            'sheet' => [] ////Names of css files to include
         ],
         'js' => [
-            'raw' => array(), //Raw js to push to <script> tags
-            'script' => array() //Names of js files to include
+            'raw' => [], //Raw js to push to <script> tags
+            'script' => [] //Names of js files to include
         ],
         'ribbon' => [ //[Navigation] ribbon items
-            'item' => array()
+            'item' => []
         ]
     ];
 
@@ -105,15 +105,14 @@ class Head {
     
 	private function headerJS($admin = false) {
         global $cssArray;
-		$temp .= "var phpself = '" . PHP_SELF . "';";
-		$temp .= "var site = '//" . SITE_ROOT . "';";
-        $temp .= "var cssPath = '" . CSS_PATH . "';";
-		$temp .= "var board = '" . BOARD_DIR . "';"; 
-		$temp .= "var jsPath = '" . JS_PATH . "';";
-        $temp .= "var imgSRC = '" . PUBLIC_IMG_DIR . "';";
-        $temp .= "var thumbSRC = '" . PUBLIC_THUMB_DIR . "';";
+        $temp .= "var SaguaroSelfAbsolute = '" . PHP_SELF_ABS . "';";
+        $temp .= "var SaguaroSiteRoot = '" . SITE_ROOT . "';";
+        $temp .= "var SaguaroStaticPath = '" . CSS_PATH . "';";
+        $temp .= "var SaguaroBoard = '" . BOARD_DIR . "';";
+        $temp .= "var SaguaroImageSource = '" . PUBLIC_IMAGE_DIR . "';";
+        $temp .= "var SaguaroThumbSource = '" . PUBLIC_THUMB_DIR . "';";
         //$temp .= "var inPanel = 'false';";
-		$temp .= (NSFW) ? 'var style_group = "nsfw";' : 'var style_group = "sfw";';
+        $temp .= (NSFW) ? 'var style_group = "nsfw";' : 'var style_group = "sfw";';
 
 		if ($admin) { //Admin js variables go here
             $temp .= "var inPanel = 'true';";

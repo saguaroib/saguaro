@@ -42,8 +42,11 @@ hr {
     border-top: 1px solid;
     height: 0;
 }
-.linkBar {
-    text-align: right;
+.boardNavDesktop {
+    display: block;
+}
+#navtopright {
+   float: right;
 }
 .boardBanner {
     font-family: Tahoma, sans-serif;
@@ -82,8 +85,7 @@ hr {
 .globalNews.desktop {
     align-items: center;
     text-align: center;
-    font-weight: 700;
-    font-size: large;
+	color: red;
 }
 .globalNewsM {
     display: none;
@@ -95,20 +97,17 @@ hr {
 .boardlist {
     text-align: left;
 }
-.postarea { 
-	opacity: 0.9; 
-}
 .rules {
     font-size: 11px;
+    margin: 0px;
+}
+textarea#comtxt {
+    width: 280px;
 }
 .postblock {
     font-weight: bold;
     border: 1px solid;
-    padding: 4px;
-}
-.postblock {
-    border: 1px solid;
-    padding: 4px;
+    padding: 0px 5px;
 }
 .spoiler {
     display:inline-block;
@@ -151,6 +150,9 @@ hr {
 .quote {
     text-decoration: none;
 }
+.deadlink {
+	text-decoration:line-through!important;
+}
 .filesize {
     font-size: 10pt;
     font-family: Arial, Helvetica, sans-serif;
@@ -178,9 +180,16 @@ hr {
 .cap.manager {
     color: #2E2EFE;
 }
+.cap.developer {
+    color: #2E2EFE;
+}
 .cap.global {
     color: #0096d2;
 }
+span.cap span.postertrip {
+    color: inherit !important;
+}
+
 .oldpost {
     font-size: 8pt;
     padding-left: 20px;
@@ -238,4 +247,41 @@ img.postimg {
     margin-bottom: 5px;
     margin-left: 20px;
     margin-right: 20px;
+}
+#blotter {
+    width: 468px;
+    margin: auto;
+}
+table {
+    border-spacing: 1px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#blotter td {
+    vertical-align: top;
+    font-size: 11px;
+}
+td {
+    margin: 0px;
+    padding: 0px;
+    font-size: 10pt;
+}
+#postForm {
+    width: 468px;
+}
+.blotter-date {
+	width: 50px;
+    text-align: center;
+}
+
+@media only screen and (max-width: 480px) {
+    #postForm {
+		width:auto!important;
+	}
+	.rules {
+		display: none!important;
+	}
+	#blotter {
+		display: none!important;
+	}
 }
