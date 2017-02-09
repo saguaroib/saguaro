@@ -103,17 +103,6 @@ define('ALLOW_WEBMS', false); //This feature currently has prequisites. Please v
 define('ALLOW_AUDIO', false); //If true, allows WebMs containing an audio stream.
 define('MAX_DURATION', 60);   //The maximum duration allowed in seconds.
 
-//RePod's JS suite. The majority of these should remain disabled until the suite is updated (as of 11-14-15)
-define('USE_JS_SETTINGS', true);  //Include the JS suite's settings - enables user side configuration.
-define('USE_IMG_HOVER', true); //Image hover
-define('USE_IMG_TOOLBAR', true); //Image search toolbar
-define('USE_IMG_EXP', true);      //Image expansion
-define('USE_UTIL_QUOTE', true);  //Utility quotes1
-define('USE_INF_SCROLL', false);  //Infinite scroll
-define('USE_UPDATER', false);     //Thread updater
-define('USE_THREAD_STATS', true);
-define('USE_EXTRAS', true);       //Automatically include all .js files in JS_PATH/extra/
-
 /*
 	CSS settings
 	To include additional CSS, drop them in your /css/stylesheets/ and add them to the array!
