@@ -3525,7 +3525,7 @@ ThreadStats.init = function() {
   
   cnt = $.cls('navLinks');
   cnt[0] && cnt[0].appendChild(this.nodeTop);
-  cnt[3] && cnt[3].appendChild(this.nodeBot);
+  cnt[1] && cnt[1].appendChild(this.nodeBot);
   
   this.pageNumber = null;
   this.updatePageNumber();

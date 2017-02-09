@@ -173,7 +173,7 @@ class Log {
                 $dat .= "</span><hr>";
 
                 if ($resno)
-                    $dat .= "[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]<hr>";
+                    $dat .= "<div class='navLinks navLinksBot'>[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]</div><hr>";
 
                 clearstatcache(); //clear stat cache of a file
                 //mysql_free_result($resline);
