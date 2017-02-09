@@ -20,7 +20,7 @@ class Log {
     private $thread_cache = [];
 
     function update($resno = 0, $rebuild = 0) {
-        global $path, $mysql;
+        global $path, $mysql, $cssArray;
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') { //User accessing imgboard.php directly, halt execution.
             if (is_file(PHP_SELF2) && DEBUG_MODE !== true) { //Unless the index file doesn't exist (probably first run)
