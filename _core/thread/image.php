@@ -10,7 +10,7 @@
 class Image {
     public $inIndex = false; //Really want to start extending as of 30 years ago.
 
-    function format($input) {
+    function format($no, $input) {
         global $spoiler;
         @extract($input);
 

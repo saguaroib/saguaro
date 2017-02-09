@@ -188,15 +188,18 @@ define('DATA_SERVER', '//'.SITE_ROOT.'/');                //Your site's root htm
 define('CSS_PATH', '//'.SITE_ROOT_BD.'/css/');            //absolute html path to the css folder with the trailing slash
 define('HOME', '..'); //Site home directory (up one level by default)
 
+
 //Working directories.
 define('CORE_DIR', '_core/');          //Local path to the "_core" directory, which contains the main assets of Saguaro.
 define('CORE_DIR_PUBLIC', '//'.SITE_ROOT_BD.'/'.CORE_DIR); //Public URL path to _core folder.
 define('RES_DIR', 'res/');             //Stores cached threads.
 define('IMG_DIR', 'src/');             //Stores images.
 define('THUMB_DIR','thumb/');          //Stores thumbnails.
-define('PLUG_PATH', 'plugins/');       //Plugins folder.
+define('PLUG_PATH', 'js/');       //Plugins folder.
 define('PLUG_PATH_PUBLIC', '//'.SITE_ROOT_BD.'/'.PLUG_PATH); //Public URL path to plugins folder.
-define('JS_PATH', PLUG_PATH_PUBLIC.'jquery'); //jQuery folder. (usually in the plugins folder)
+define('JS_PATH', PLUG_PATH_PUBLIC); //jQuery folder. (usually in the plugins folder)
+define('PUBLIC_IMAGE_DIR', '//'.SITE_ROOT_BD.'/'.IMG_DIR); //Web path to a board's image folder
+define('PUBLIC_THUMB_DIR', '//'.SITE_ROOT_BD.'/'.THUMB_DIR);//Web path to a board's thumbnail folder
 
 //Posting and Threads
 define('CACHE_TTL', true);          //Thread caching

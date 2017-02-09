@@ -71,10 +71,10 @@ class Log {
         
         $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE;
         $head->info['page']['sub'] = S_HEADSUB;
-        $head->info['js']['script'] = array("jquery.min.js", "main.js", "extension.js", "jquery-ui-1.10.4.min", "jquery.form.js"); //Add extra scripts to be included on every page <head> here.
+        $head->info['js']['script'] = ["extension.js"]; //Add extra scripts to be included on every page <head> here.
         if (COUNTRY_FLAGS) array_push($head->info['css']['sheet'], "/flags/flags.css");
-        if (MOBILE_THEME) array_push($head->info['css']['sheet'], "/stylesheets/mobile.css");
-        if (FILE_BOARD) {
+        if (defined(MOBILE_THEME) && MOBILE_THEME) array_push($head->info['css']['sheet'], "/stylesheets/mobile.css");
+        if (defined(FILE_BOARD) && FILE_BOARD) {
             array_push($head->info['js']['script'], "fileboard.js");
             array_push($head->info['css']['sheet'], "/stylesheets/fileboard.css");
         }
@@ -131,8 +131,10 @@ class Log {
             
             $st = ($resno) ? $page : null;
             
-            $dat .= '<form name= "delform" action="' . PHP_SELF_ABS . '" method="post">';
+            $dat .= '<form name="delform" id="delform" action="' . PHP_SELF_ABS . '" method="post">';
 
+            $dat .= "<div class='board'>";
+            
             for ($i = $st; $i < $st + PAGE_DEF; $i++) {
                 list($_unused, $no) = each($treeline);
                 if (!$no) {
@@ -168,7 +170,7 @@ class Log {
 
 
                 /*possibility for ads after each post*/
-                $dat .= "</span><br clear=\"left\" /><hr />\n";
+                $dat .= "</span><hr>";
 
                 if ($resno)
                     $dat .= "[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]<hr>";
@@ -181,21 +183,29 @@ class Log {
                 } //only one tree line at time of res
             }
 
+            
+            $dat .= "</div>";
+
             if (ENABLE_ADS)
                 $dat .= ADS_BELOWFORM . '<hr>';
 
-            //afterPosts div is closed in general/foot.php
-            $dat .= '<div class="afterPosts" /><table align="right"><tr><td class="delsettings" nowrap="nowrap" align="center">
-    <input type="hidden" name="mode" value="usrdel" />' . S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']
-    ' . S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />
-    <input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="var o=document.getElementsByTagName(\'INPUT\');for(var i=0;i<o.length;i++)if(o[i].type==\'checkbox\' && o[i].checked && o[i].value==\'delete\') return reppop(\'' . PHP_SELF_ABS . '?mode=report&no=\'+o[i].name+\'\');"></tr></td></form><script>l();</script></td></tr></table>';
-            /*<script language="JavaScript" type="script"><!--
-            l();
-            //--></script>';*/
+            //afterPosts div is closed in page/foot.php
+            $dat .= '<div class="afterPosts"><div align="right" class="delsettings">';
+            if ($resno) $dat .= "<input type='hidden' name='resnum' value='{$resno}'>";
+            $delmode = ($is_archived) ? "arcdel" : "usrdel";
+            $dat .= '<input type="hidden" name="mode" value="' . $delmode . '"/>';
+            $dat .= S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']';
+            //$dat .= S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />';
+            $dat .= '<input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="report();"></form>';
+			$dat .= "<span class='styleChanger'> Style: <select id='styleSelector'>";
+			foreach($cssArray as $styleName => $stylePath) {
+				$dat .= "<option value='{$styleName}'>{$styleName}</option>";
+			}
+			$dat .= "</select></span></div>";
 
             //Page switcher
             if (!$resno) {
-                $dat .= "<div class='pages' style='float:left;padding:8px;'>";
+                $dat .= "<div class='pagelist pages' style='float:left;padding:8px;'>";
                 if ($page > 1) {
                     $prevPage = (($page - 1) > 1) ? ($page - 1) : "./";
                     $dat .= "<div class='prevPage'><form action='{$prevPage}'>";
