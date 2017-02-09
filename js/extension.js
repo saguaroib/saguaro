@@ -2041,7 +2041,7 @@ QR.resetFile = function() {
 
 QR.checkBan = function() {
   QR.banXhr = new XMLHttpRequest();
-  QR.banXhr.open('GET', '//api.4chan.org/banned?' + Date.now(), true); //FIX ME
+  QR.banXhr.open('GET', '//api.extension.org/banned?' + Date.now(), true); //FIX ME
   QR.banXhr.timeout = 3000;
   QR.banXhr.onload = function() {
     if (this.status == 403) {
@@ -2137,7 +2137,7 @@ QR.submit = function(force) {
       }
       
       cd = Date.now() + '-' + cd;
-      localStorage.setItem('4chan-cd-' + Main.board, cd);
+      localStorage.setItem('extension-cd-' + Main.board, cd);
       
       if (Config.persistentQR) {
         QR.startCooldown(cd);
@@ -2203,7 +2203,7 @@ QR.submit = function(force) {
 QR.purgeCooldown = function() {
   var data, cd, type, time, thres, elapsed;
   
-  if (data = localStorage.getItem('4chan-cd-' + Main.board)) {
+  if (data = localStorage.getItem('extension-cd-' + Main.board)) {
     cd = data.split('-');
     time = parseInt(cd[0], 10);
     type = +cd[1];
@@ -2221,7 +2221,7 @@ QR.purgeCooldown = function() {
     elapsed = Date.now() - time;
     
     if (elapsed >= thres || elapsed < 0) {
-      localStorage.removeItem('4chan-cd-' + Main.board);
+      localStorage.removeItem('extension-cd-' + Main.board);
     }
     else {
       return data;
@@ -2303,7 +2303,7 @@ ThreadHiding.clear = function(silent) {
     ++i;
   }
   
-  key = '4chan-hide-t-' + Main.board;
+  key = 'extension-hide-t-' + Main.board;
   
   if (!silent) {
     if (!i) {
@@ -2398,7 +2398,7 @@ ThreadHiding.hide = function(tid) {
 ThreadHiding.load = function() {
   var storage;
   
-  if (storage = localStorage.getItem('4chan-hide-t-' + Main.board)) {
+  if (storage = localStorage.getItem('extension-hide-t-' + Main.board)) {
     this.hidden = JSON.parse(storage);
   }
 };
@@ -2418,12 +2418,12 @@ ThreadHiding.purge = function() {
 
 ThreadHiding.save = function() {
   for (var i in this.hidden) {
-    localStorage.setItem('4chan-hide-t-' + Main.board,
+    localStorage.setItem('extension-hide-t-' + Main.board,
       JSON.stringify(this.hidden)
     );
     return;
   }
-  localStorage.removeItem('4chan-hide-t-' + Main.board);
+  localStorage.removeItem('extension-hide-t-' + Main.board);
 };
 
 /**
@@ -2483,7 +2483,7 @@ ReplyHiding.hide = function(pid) {
 ReplyHiding.load = function() {
   var storage;
   
-  if (storage = localStorage.getItem('4chan-hide-r-' + Main.board)) {
+  if (storage = localStorage.getItem('extension-hide-r-' + Main.board)) {
     this.hidden = JSON.parse(storage);
   }
 };
@@ -2503,12 +2503,12 @@ ReplyHiding.purge = function() {
 
 ReplyHiding.save = function() {
   for (var i in this.hidden) {
-    localStorage.setItem('4chan-hide-r-' + Main.board,
+    localStorage.setItem('extension-hide-r-' + Main.board,
       JSON.stringify(this.hidden)
     );
     return;
   }
-  localStorage.removeItem('4chan-hide-r-' + Main.board);
+  localStorage.removeItem('extension-hide-r-' + Main.board);
 };
 
 /**
@@ -2579,14 +2579,14 @@ ThreadWatcher.syncStorage = function(e) {
   
   key = e.key.split('-');
   
-  if (key[0] == '4chan' && key[1] == 'watch' && e.newValue != e.oldValue) {
+  if (key[0] == 'extension' && key[1] == 'watch' && e.newValue != e.oldValue) {
     ThreadWatcher.watched = JSON.parse(e.newValue);
     ThreadWatcher.build(true);
   }
 };
 
 ThreadWatcher.load = function() {
-  if (storage = localStorage.getItem('4chan-watch')) {
+  if (storage = localStorage.getItem('extension-watch')) {
     this.watched = JSON.parse(storage);
   }
 };
@@ -2696,20 +2696,20 @@ ThreadWatcher.toggle = function(tid, board, synced) {
 };
 
 ThreadWatcher.save = function() {
-  localStorage.setItem('4chan-watch', JSON.stringify(ThreadWatcher.watched));
+  localStorage.setItem('extension-watch', JSON.stringify(ThreadWatcher.watched));
 };
 
 ThreadWatcher.canAutoRefresh = function() {
   var time;
   
-  if (time = localStorage.getItem('4chan-tw-timestamp')) {
+  if (time = localStorage.getItem('extension-tw-timestamp')) {
     return Date.now() - (+time) >= 60000;
   }
   return false;
 };
 
 ThreadWatcher.setRefreshTimestamp = function() {
-  localStorage.setItem('4chan-tw-timestamp', Date.now());
+  localStorage.setItem('extension-tw-timestamp', Date.now());
 };
 
 ThreadWatcher.refresh = function() {
@@ -3060,7 +3060,7 @@ ThreadUpdater.init = function() {
   
   this.initControls();
   
-  if (sessionStorage.getItem('4chan-auto-' + Main.tid)) {
+  if (sessionStorage.getItem('extension-auto-' + Main.tid)) {
     this.start();
   }
 };
@@ -3181,7 +3181,7 @@ ThreadUpdater.start = function() {
   this.delayId = 0;
   this.timeLeft = this.delayRange[0];
   this.pulse();
-  sessionStorage.setItem('4chan-auto-' + Main.tid, 1);
+  sessionStorage.setItem('extension-auto-' + Main.tid, 1);
 };
 
 ThreadUpdater.stop = function(manual) {
@@ -3196,7 +3196,7 @@ ThreadUpdater.stop = function(manual) {
     this.setStatus('');
     this.setIcon(this.defaultIcon);
   }
-  sessionStorage.removeItem('4chan-auto-' + Main.tid);
+  sessionStorage.removeItem('extension-auto-' + Main.tid);
 };
 
 ThreadUpdater.pulse = function() {
@@ -3789,7 +3789,7 @@ Filter.load = function() {
   
   this.activeFilters = [];
   
-  if (!(rawFilters = localStorage.getItem('4chan-filters'))) {
+  if (!(rawFilters = localStorage.getItem('extension-filters'))) {
     return;
   }
   
@@ -3899,7 +3899,7 @@ Filter.openHelp = function() {
 + Main.icons.cross + '"></span></div>\
 <h4>Tripcode, Name and ID filters:</h4>\
 <ul><li>Those use simple string comparison.</li>\
-<li>Type them exactly as they appear on 4chan, including the exclamation mark for tripcode filters.</li>\
+<li>Type them exactly as they appear in posts, including the exclamation mark for tripcode filters.</li>\
 <li>Example: <code>!Ep8pui8Vw2</code></li></ul>\
 <h4>Comment, Subject and E-mail filters:</h4>\
 <ul><li><strong>Matching whole words:</strong></li>\
@@ -3971,7 +3971,7 @@ Filter.open = function() {
   
   filterList = $.id('filter-list');
   
-  if (rawFilters = localStorage.getItem('4chan-filters')) {
+  if (rawFilters = localStorage.getItem('extension-filters')) {
     rawFilters = JSON.parse(rawFilters);
     for (i = 0; f = rawFilters[i]; ++i) {
       filterList.appendChild(this.buildEntry(f, i));
@@ -4046,10 +4046,10 @@ Filter.save = function() {
 
   
   if (rawFilters[0]) {
-    localStorage.setItem('4chan-filters', JSON.stringify(rawFilters));
+    localStorage.setItem('extension-filters', JSON.stringify(rawFilters));
   }
   else {
-    localStorage.removeItem('4chan-filters');
+    localStorage.removeItem('extension-filters');
   }
 };
 
@@ -4391,7 +4391,7 @@ var CustomCSS = {};
 
 CustomCSS.init = function() {
   var style, css;
-  if (css = localStorage.getItem('4chan-css')) {
+  if (css = localStorage.getItem('extension-css')) {
     style = document.createElement('style');
     style.id = 'customCSS';
     style.setAttribute('type', 'text/css');
@@ -4416,7 +4416,7 @@ CustomCSS.open = function() {
 <span><img alt="Close" title="Close" class="pointer" data-cmd="css-close" src="'
 + Main.icons.cross + '"></span></div>\
 <textarea id="customCSSBox">'
-+ (localStorage.getItem('4chan-css') || '') + '</textarea>\
++ (localStorage.getItem('extension-css') || '') + '</textarea>\
 <div class="center"><button data-cmd="css-save">Save CSS</button></div>\
 </td></tr></tfoot></table></div>';
   
@@ -4429,7 +4429,7 @@ CustomCSS.save = function() {
   var ta, style;
   
   if (ta = $.id('customCSSBox')) {
-    localStorage.setItem('4chan-css', ta.value);
+    localStorage.setItem('extension-css', ta.value);
     if (Config.customCSS && (style = $.id('customCSS'))) {
       document.head.removeChild(style);
       CustomCSS.init();
@@ -4869,7 +4869,7 @@ var Config = {
 };
 
 Config.load = function() {
-  if (storage = localStorage.getItem('4chan-settings')) {
+  if (storage = localStorage.getItem('extension-settings')) {
     storage = JSON.parse(storage);
     $.extend(Config, storage);
   }
@@ -4890,10 +4890,10 @@ Config.loadFromURL = function() {
       $.extend(Config, JSON.parse(data.settings));
       Config.save();
       if (data.filters) {
-        localStorage.setItem('4chan-filters', data.filters);
+        localStorage.setItem('extension-filters', data.filters);
       }
       if (data.css) {
-        localStorage.setItem('4chan-css', data.css);
+        localStorage.setItem('extension-css', data.css);
       }
       return true;
     }
@@ -4908,13 +4908,13 @@ Config.loadFromURL = function() {
 Config.toURL = function() {
   var data, cfg = {};
   
-  cfg.settings = localStorage.getItem('4chan-settings');
+  cfg.settings = localStorage.getItem('extension-settings');
   
-  if (data = localStorage.getItem('4chan-filters')) {
+  if (data = localStorage.getItem('extension-filters')) {
     cfg.filters = data;
   }
   
-  if (data = localStorage.getItem('4chan-css')) {
+  if (data = localStorage.getItem('extension-css')) {
     cfg.css = data;
   }
   
@@ -4922,7 +4922,7 @@ Config.toURL = function() {
 };
 
 Config.save = function() {
-  localStorage.setItem('4chan-settings', JSON.stringify(Config));
+  localStorage.setItem('extension-settings', JSON.stringify(Config));
 };
 
 /**
@@ -4981,7 +4981,7 @@ SettingsMenu.options = {
     compactThreads: [ 'Force long posts to wrap', 'Long posts will wrap at 75% screen width' ],
     reportButton: [ 'Report button', 'Add a report button next to posts for easy reporting' ],
     inlineReport: [ 'Inline report panel', 'Open report panel in browser window, instead of a popup'],
-    localTime: [ 'Convert dates to local time', 'Convert 4chan server time (US Eastern Time) to your local time' ]
+    localTime: [ 'Convert dates to local time', 'Convert server timestamps to your local time' ]
   }
 };
 
@@ -5217,7 +5217,7 @@ browser or computer to restore your settings.</p>\
 <p style="margin-top:15px" class="center">Alternatively, you can drag the link below into your \
 bookmarks bar and click it to restore.</p>\
 <p class="center">[<a target="_blank" href="'
-+ str + '">Restore 4chan Settings</a>]</p>';
++ str + '">Restore extension Settings</a>]</p>';
 
   document.body.appendChild(cnt);
   cnt.addEventListener('click', this.onExportClick, false);
@@ -5349,7 +5349,7 @@ Main.init = function() {
     Keybinds.init();
   }
   
-  UA.dispatchEvent('4chanMainInit');
+  UA.dispatchEvent('extensionMainInit');
 };
 
 Main.run = function() {
@@ -5654,7 +5654,7 @@ Main.initGlobalMessage = function() {
     btn.alt = 'Toggle';
     btn.title = 'Toggle announcement';
     
-    oldTs = localStorage.getItem('4chan-global-msg');
+    oldTs = localStorage.getItem('extension-global-msg');
     thisTs = msg.getAttribute('data-utc');
     
     if (oldTs && thisTs <= oldTs) {
@@ -5679,13 +5679,13 @@ Main.toggleGlobalMessage = function() {
     msg.style.display = '';
     btn.src = Main.icons.minus;
     btn.style.opacity = '1';
-    localStorage.removeItem('4chan-global-msg');
+    localStorage.removeItem('extension-global-msg');
   }
   else {
     msg.style.display = 'none';
     btn.src = Main.icons.plus;
     btn.style.opacity = '0.5';
-    localStorage.setItem('4chan-global-msg', msg.getAttribute('data-utc'));
+    localStorage.setItem('extension-global-msg', msg.getAttribute('data-utc'));
   }
 };
 
