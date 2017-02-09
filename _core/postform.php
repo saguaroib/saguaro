@@ -107,9 +107,9 @@ class PostForm {
         }
         
         if ($resno) //Navigation bar above thread.
-            $temp .= "<div class='threadnav' /> [<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='" . $resno . PHP_EXT . "#bottom'/>Bottom</a>] </div>\n<hr>";
+            $temp .= "<div class='navlinks desktop' /> [<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='" . $resno . PHP_EXT . "#bottom'/>Bottom</a>] </div>\n<hr>";
         else
-            $temp .= "<div class='threadnav' /> [<a href='" . PHP_SELF2_ABS . "#bottom'/>Bottom</a>]  [<a href='/" . BOARD_DIR . "/" . PHP_SELF . "?mode=catalog'>Catalog</a>]</div><hr>";
+            $temp .= "<div id='ctrl-top' class='desktop' /> [<a href='" . PHP_SELF2_ABS . "#bottom'/>Bottom</a>]  [<a href='/" . BOARD_DIR . "/" . PHP_SELF . "?mode=catalog'>Catalog</a>]</div><hr>";
         
 		if ($admin) $temp = "<div id='adminForm' style='display:none; align:center;' />" . $temp . "</div>";
 		
