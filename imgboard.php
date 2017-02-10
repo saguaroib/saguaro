@@ -19,7 +19,8 @@ Remember to look through older threads and see if your problem wasn't solved alr
 
 */
 
-require "config.php";
+require("config.php");
+require("config.json");
 session_start();
 
 require_once(CORE_DIR . "/log/log.php");
@@ -28,6 +29,10 @@ $my_log = new Log;
 require_once(CORE_DIR . "/mysql/mysql.php");
 $mysql = new SaguaroMySQL;
 $mysql->init();
+
+require_once(CORE_DIR . "/board/load.php");
+$loader = new SaguaroLoader;
+$loader->loadConfig();
 
 $host = $mysql->escape_string($_SERVER['REMOTE_ADDR']); //Get this once here at the root instead of 300 different times. Use globally.
 
