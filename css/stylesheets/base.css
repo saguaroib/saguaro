@@ -151,7 +151,7 @@ textarea#comtxt {
     text-decoration: none;
 }
 .deadlink {
-	text-decoration:line-through!important;
+    text-decoration:line-through!important;
 }
 .filesize {
     font-size: 10pt;
@@ -236,17 +236,30 @@ span.cap span.postertrip {
 .postInfoM {
     display: none;
 }
-img.postimg {
-    padding: inherit;
-    padding-bottom: 4pt;
-    float: left;
+.no-multi .fileImg .fileText {
+    text-align: left!important;
+}
+.multi-op, .multi-reply {
+    display: flex;
+    text-align: center;
+    font-size: smaller;
+}
+.multi-reply, .no-multi-reply  .fileImg .fileText {
+    font-size: smaller;
+}
+.no-multi-reply .fileImg {
+    float:left;
+    text-align:center;
+}
+
+.no-multi-reply .fileThumb, .multi-reply .fileThumb {
+    margin-right: 20px;
 }
 .fileThumb {
     float: left;
     margin-top: 3px;
     margin-bottom: 5px;
     margin-left: 20px;
-    margin-right: 20px;
 }
 #blotter {
     width: 468px;
