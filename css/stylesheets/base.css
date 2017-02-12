@@ -236,15 +236,18 @@ span.cap span.postertrip {
 .postInfoM {
     display: none;
 }
+.file.no-multi{
+    float:left;
+}
 .no-multi .fileImg .fileText {
-    text-align: left!important;
+    text-align: center!important;
 }
 .multi-op, .multi-reply {
     display: flex;
     text-align: center;
     font-size: smaller;
 }
-.multi-reply, .no-multi-reply  .fileImg .fileText {
+.fileText {
     font-size: smaller;
 }
 .no-multi-reply .fileImg {
@@ -260,6 +263,7 @@ span.cap span.postertrip {
     margin-top: 3px;
     margin-bottom: 5px;
     margin-left: 20px;
+    margin-right: 20px;
 }
 #blotter {
     width: 468px;
