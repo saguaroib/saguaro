@@ -31,26 +31,12 @@ $mysql->init();
 
 $host = $mysql->escape_string($_SERVER['REMOTE_ADDR']); //Get this once here at the root instead of 300 different times. Use globally.
 
-extract($_POST, EXTR_SKIP);
-extract($_GET, EXTR_SKIP);
-extract($_COOKIE, EXTR_SKIP);
-
 $path = realpath("./") . '/' . IMG_DIR;
 ignore_user_abort(TRUE);
 
-// check whether the current user can perform $action (on $no, for some actions)
-// board-level access is cached in $valid_cache.
-function valid($action = 'moderator', $no = 0) {
-    require_once(CORE_DIR . "/admin/valid.php");
-    $validate = new Valid;
-    return $validate->verify($action);
-}
+require_once(CORE_DIR . "/general/global_functions.php");
 
-function error($mes, $dest, $fancy = 0) {
-    require_once(CORE_DIR . "/general/error.php");
-    $error = new Error();
-    $error->format($mes, $dest, $fancy);
-}
+$mode = (isset($_POST['mode'])) ? $_POST['mode'] : $_GET['mode'];
 
 /*-----------Main-------------*/
 switch ($mode) {
@@ -58,17 +44,20 @@ switch ($mode) {
         require_once(CORE_DIR . "/regist/regist.php"); // $name, $email, $sub, $com, $url, $pwd, $resto
         break;
     case 'report':
-        require_once(CORE_DIR . "/admin/report.php");
-        $report = new Report;
-        $report->process();
-        break;
-    case 'catalog':
-        header("Location: catalog.html"); //let go of the past
+        require_once(CORE_DIR . "/admin/reports/switch.php");
         break;
     case 'usrdel':
         require_once(CORE_DIR . "/delete/delete.php");
         $del = new SaguaroDelete;
         $del->userDel();
+        break;
+    case 'banned':
+        require_once(CORE_DIR . "/admin/bans.php");
+        $ban  = new Banish;
+        echo $ban->banScreen($host); //Returns all the html for banned.php from the ban class
+        break;
+    case 'admin':
+        require_once(CORE_DIR . "/admin/root.php");
         break;
     default:
         if ($res) {

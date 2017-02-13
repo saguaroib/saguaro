@@ -83,5 +83,3 @@ function pruneThread($no) {
     }
     $mysql->free_result($result);
 }
-
-?>

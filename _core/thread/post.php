@@ -15,11 +15,9 @@ class Post {
 
     function formatOP() {
         @extract($this->data);
-        $temp = "<div class='thread' id='t$no'/><div class='post op' id='p$no'/><div class='postContainer opContainer' id='pc$no'/>";
+        $temp = "<div class='thread' id='t$no'/><div class='postContainer opContainer' id='pc$no'/><div class='post op' id='p$no'/>";
 
-        $temp .= $this->media();
-
-        $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span>";
+        $temp .= "<div class='postInfo desktop' id='pi{$no}'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' data-utc='{$time}'>$now</span>";
 
         $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky"> ' : "";
 
@@ -35,6 +33,20 @@ class Post {
         $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $no); //lol
         $com = $this->auto_link($com, $no);
 
+        
+        $image = new Image;
+        $image->inIndex = $this->inIndex;
+
+        if ($media != null) {
+            $files = json_decode($media, true);
+            $xls = (count($files) > 1) ? "file multi-op" : "file no-multi";
+            $temp .= "<div class='{$xls}'  id='f{$no}'>";
+            foreach ($files as $file) {
+                $temp .= $image->format($no, 0, $file);
+            }
+            $temp .= "</div>";
+        }        
+        
         //$temp .= "<br>";
         $temp .= ($com == "") ? "<blockquote style='display:none;' class='postMessage' id='m$no' >$com</blockquote>" : "<blockquote class='postMessage' id='m$no' >$com</blockquote>";
         $temp .= "</div></div>";
@@ -56,7 +68,7 @@ class Post {
         $temp .= "<div class='postContainer replyContainer' id='pc$no'/>";
         $temp .= "<div class='sideArrows' id='sa$no'>&gt;&gt;</div><div id='p$no' class='post reply'>";
 
-        $temp .= "<div class='postInfo desktop'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime'>$now</span> ";
+        $temp .= "<div class='postInfo desktop' id='pi{$no}'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' data-utc='{$time}'>$now</span> ";
 
         if (!$this->inIndex) {
             $temp .= "<a href='" . $resto . PHP_EXT . "#$no' name='$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></span></div>";
@@ -64,42 +76,25 @@ class Post {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' name='$no' class='permalink' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
         }
 
-        $temp .= $this->media();
+        $image = new Image;
+        $image->inIndex = $this->inIndex;
 
+        if ($media != null) {
+            $files = json_decode($media, true);
+            $xls = (count($files) > 1) ? "file multi-reply" : "file no-multi-reply";
+            $temp .= "<div class='{$xls}'  id='f{$no}'>";
+            foreach ($files as $file) {
+                $temp .= $image->format($no, $resto, $file);
+            }
+            $temp .= "</div>";
+        }
+        
         $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $resto); //yeah sure whatever
         $com = $this->auto_link($com, $resno);
 
         $temp .= "<blockquote class='postMessage' id='m$no'>$com</blockquote>";
 
         $temp .= "</div></div>";
-
-        return $temp;
-    }
-
-    function media() {
-        global $mysql;
-        $temp = "";
-
-        $no = $this->data['no'];
-        $result = $mysql->query("select * from ".SQLMEDIA." where parent=$no");
-        while ($out = $mysql->fetch_assoc($result)) {
-            $stuff = [
-                'localname' => $out['localname'],
-                'localthumb' => $out['localthumbname'],
-                'ext' => $out['extension'],
-                'fname' => $out['filename'],
-                'md5' => $out['hash'],
-                'tn_w' => $out['thumb_width'],
-                'tn_h' => $out['thumb_height'],
-                'w' => $out['width'],
-                'h' => $out['height'],
-                'fsize' => $out['filesize']
-            ];
-
-            $image = new Image;
-            $image->inIndex = $this->inIndex;
-            $temp .= $image->format($stuff);
-        }
 
         return $temp;
     }
@@ -147,5 +142,3 @@ class Post {
         return $link->format($com);
     }
 }
-
-?>

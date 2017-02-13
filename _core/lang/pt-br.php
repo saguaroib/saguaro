@@ -102,5 +102,3 @@ $S_BANS_EXTRA = '';
 $S_CAPFAIL = 'Voc&#234; parece ter errado a verifica&#231;&#227;o.';
 $S_THREADLOCKED = 'Responder proibido';
 $S_LOGOUT = 'Logout';
-
-?>

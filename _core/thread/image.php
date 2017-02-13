@@ -10,7 +10,7 @@
 class Image {
     public $inIndex = false; //Really want to start extending as of 30 years ago.
 
-    function format($input) {
+    function format($no, $resto, $input) {
         global $spoiler;
         @extract($input);
 
@@ -25,64 +25,56 @@ class Image {
         if (defined('INTERSTITIAL_LINK'))
             $linksrc = str_replace(INTERSTITIAL_LINK, "", $linksrc);
         $src = IMG_DIR . $localname;
-        if ($fname == 'image')
-            $fname = time();
-        $longname  = $fname;
-        if (!$fname)
+        if ($filename == 'image.jpg')
+            $filename = time();
+        $longname  = $filename;
+        if (!$filename)
             $longname = $localname; //Legacy support for boards that didn't store an $fname in the table pre saguaro 0.99.0
-        $shortname = (strlen($fname) > 40) ? substr($fname, 0, 40) . "(...)" . $ext : $longname;
+        $shortname = (strlen($filename) > 40) ? substr($filename, 0, 40) . "(...)" . $extension : $longname;
         // img tag creation
         $imgsrc    = "";
-        if ($ext !=='.') {
+        if ($extension !=='.') {
             // turn the 32-byte ascii md5 into a 24-byte base64 md5
-            $shortmd5 = base64_encode(pack("H*", $md5));
-            if ($fsize >= 1048576) {
-                $size = round(($fsize / 1048576), 2) . " M";
-            } else if ($fsize >= 1024) {
-                $size = round($fsize / 1024) . " K";
+            $shortmd5 = base64_encode(pack("H*", $hash));
+            if ($filesize >= 1048576) {
+                $size = round(($filesize / 1048576), 2) . " M";
+            } else if ($filesize >= 1024) {
+                $size = round($filesize / 1024) . " K";
             } else {
-                $size = $fsize . " ";
+                $size = $filesize . " ";
             }
 
-            if (!$tn_w && !$tn_h && $ext == ".gif") {
-                $tn_w = $w;
-                $tn_h = $h;
+            if (!$thumb_width && !$thumb_height && $extension == ".gif") {
+                $thumb_width = $width;
+                $thumb_height = $height;
             }
 
             $local = THUMB_DIR . $localthumb;
             $thumb = $thumbdir . $localthumb;
+
             if ($spoiler) {
                 $size   = "Spoiler Image, $size";
-                $imgsrc = "<a href='$displaysrc' target='_blank'><img src='" . CSS_PATH . "/imgs/spoiler.png' border='0' align='left' hspace='20' alt='{$size}B' md5='$shortmd5'></a>";
-            } elseif ($tn_w && $tn_h) { //when there is size...
-                if (@is_file($local)) {
-                    $imgsrc = "<a href='" . $displaysrc . "' target='_blank'><img class='postimg' src='" . $thumb . "' style='margin: 0px 20px;' width='$tn_w' height='$tn_h' alt='" . $size . "B' md5='$shortmd5'></a>";
-                } else {
-                    $imgsrc = "<a href='$displaysrc' target='_blank'><span class='tn_thread' title='{$size}B'>Thumbnail unavailable</span></a>";
-                }
+                $imageFile = "<img src='" . CSS_PATH . "/imgs/spoiler.png' alt='{$size}B' md5='{$shortmd5}'>";
             } else {
-                die('up');
-                if (@is_file($local)) {
-                    $imgsrc = "<a href='$displaysrc' target='_blank'><img class='postimg' src='" . $thumb . "' style='margin: 0px 20px;' alt='{$size}B' md5='$shortmd5'></a>";
-                } else {
-                    $imgsrc = "<a href='$displaysrc' target='_blank'><span class='tn_thread' title='{$size}B'>Thumbnail unavailable</span></a>";
+                if (!$filedeleted && ($thumb_width && $thumb_height)) {
+                    $imageFile = "<img class='postimg' src='" . $thumbdir . $localthumbname . "' {$style} alt='{$size}B' data-md5='{$shortmd5}'>";
                 }
             }
 
-            if (!is_file($local)) {
-                return  "<img src='$cssimg/imgs/filedeleted.gif' alt='File deleted.'>";
+            if ($filedeleted) {
+                return  "<img class='deleted' src='$cssimg/imgs/filedeleted.gif' alt='File deleted.'>";
             } else {
-                $dimensions = ($ext == ".pdf") ? "PDF" : "{$w}x{$h}";
+                $dimensions = ($ext == ".pdf") ? "PDF" : "{$width}x{$height}";
                 $name = ($this->inIndex) ? $shortname : $longname;
-                $temp = "<div class='file'><span class='filesize'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$name</a> ({$size}B, $dimensions)</span>";
-
-                /* 
-                    if (!$this->inIndex) //, <span title='" . $longname . "'>" . $shortname . "</span>)
-                    $temp .= "</div><div class='fileThumb'>$imgsrc</div>";  //If something is wrong with images, this should be the first thing you check.
-                    else
-                */
-                    $temp .= "</div><div class='fileThumb'>$imgsrc</div>";
-
+                
+                //if ($resto) {
+                    $temp = "<div class='fileImg' id='fim{$no}'>";
+                    $temp .= "<a class='fileThumb' href='$displaysrc' target='_blank'>$imageFile</a><br><div class='fileText' id='fT{$no}'><a href='$linksrc' target='_blank'>$name</a> <br>{$size}B, $dimensions</div></div>";
+                /*} else {
+                    $temp = "<div class='fileImg' id='fim{$no}'><div class='fileText' id='fT{$no}'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$name</a> ({$size}B, $dimensions)</div>";
+                    $temp .= "<a class='fileThumb' href='$displaysrc' target='_blank'>$imageFile</a></div>";
+                }*/
+                clearstatcache();
                 return $temp;
             }
 
@@ -90,5 +82,3 @@ class Image {
         }
     }
 }
-
-?>

@@ -153,5 +153,3 @@ class Index {
         $this->data = $temp;
     }
 }
-
-?>

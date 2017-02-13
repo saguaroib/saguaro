@@ -27,5 +27,3 @@ class BBCode extends TextProcessor {
         "/\[spoiler\](.*?)\[\/spoiler\]/" => "<span class='spoiler'>\\1</span>" //Spoilers
     ];
 }
-
-?>

@@ -103,5 +103,3 @@ function interboard_links( $proto ) {
     //$proto  = preg_replace_callback( '@>>>/rs/([^\s<>]+)@', 'interboard_rs_link_cb', $proto );
     return $proto;
 }
-
-?>

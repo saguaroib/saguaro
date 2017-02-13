@@ -28,8 +28,6 @@ define('PREFIX', 'imgboard'); //Prefix to automatically use for the database tab
 
 define('PANEL_PASS', 'CHANGEME');  //Staff action key  (CHANGE THIS YO)
 define('SITE_ROOT', 'example.com');//Site domain.
-define('BOARDLIST', '');           //the text file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
-define('GLOBAL_NEWS', 'CHANGEME'); //Absolute html path to your global board news file. Appears below post form, above index body
 define('SALTFILE', 'salt');        //Name of the salt file, do not add a file extension for security
 
 //Basic settings
@@ -56,8 +54,7 @@ define('PAGE_DEF', 10); //Threads per page.
 define('PAGE_MAX', 10); //Maximum number of pages, posts that are pushed past the last page are deleted.
 define('LOG_MAX',  1500); //Maximum number of posts to store in the table.
 define('UPDATE_THROTTLING', false); //Leave this as 0 unless you recieve /a lot/ of traffic
-define('SHOW_BLOTTER', false);      //Experimental. Added to the top of each board, ex: ex: http://yoursite.com/resources/globalnews.txt
-define('BLOTTER_PATH', 'CHANGEME'); //Experimental. Absolute html path to your blotter file'', this feature is experimental and still is not fully functional.
+define('ENABLE_BLOTTER', false); //Show blotter under postform. Edit blotter contents from admin panel.
 
 //Administrative
 define('JANITOR_CAPCODES', false); //Allow janitors to post with a capcode
@@ -103,17 +100,6 @@ define('ALLOW_WEBMS', false); //This feature currently has prequisites. Please v
 define('ALLOW_AUDIO', false); //If true, allows WebMs containing an audio stream.
 define('MAX_DURATION', 60);   //The maximum duration allowed in seconds.
 
-//RePod's JS suite. The majority of these should remain disabled until the suite is updated (as of 11-14-15)
-define('USE_JS_SETTINGS', true);  //Include the JS suite's settings - enables user side configuration.
-define('USE_IMG_HOVER', true); //Image hover
-define('USE_IMG_TOOLBAR', true); //Image search toolbar
-define('USE_IMG_EXP', true);      //Image expansion
-define('USE_UTIL_QUOTE', true);  //Utility quotes1
-define('USE_INF_SCROLL', false);  //Infinite scroll
-define('USE_UPDATER', false);     //Thread updater
-define('USE_THREAD_STATS', true);
-define('USE_EXTRAS', true);       //Automatically include all .js files in JS_PATH/extra/
-
 /*
 	CSS settings
 	To include additional CSS, drop them in your /css/stylesheets/ and add them to the array!
@@ -131,12 +117,10 @@ define('EXTRA_SHIT', ''); //Any extra javascripts you want to include inside the
 /*
     Advertisements.
 */
-define('USE_ADS1', false);                      //Use advertisements (top)
-define('ADS1', '<center>ads ads ads</center>'); //advertisement code (top)
-define('USE_ADS2', false);                      //Use advertisements (below post form)
-define('ADS2', '<center>ads ads ads</center>'); //advertisement code (below post form)
-define('USE_ADS3', false);                      //Use advertisements (bottom)
-define('ADS3', '<center>ads ads ads</center>'); //advertisement code (bottom)
+define('ENABLE_ADS', false);                      //Use advertisements (top)
+define('ADS_ABOVEFORM', '<center>ads ads ads</center>'); //advertisement code (top)
+define('ADS_BELOWFORM', '<center>ads ads ads</center>'); //advertisement code (below post form)
+define('ADS_AFTERPOSTS', '<center>ads ads ads</center>'); //advertisement code (bottom)
 
 
 /*
@@ -173,6 +157,8 @@ define('SQLMODSLOG', PREFIX.'_mod'); //Table for mod information (authentication
 define('SQLDELLOG', PREFIX.'_del');  //Table for deleted information.
 define('SQLBANNOTES', PREFIX.'_ipnotes'); //Table containing IP notes for warned/banned users
 define('SQLMEDIA', PREFIX.'_media'); //Table for media (or files in general) information.
+define('SQLREPORTS', PREFIX.'_reports'); //Table for report information.
+define('SQLRESOURCES', PREFIX.'_resources'); //Table for boardList, announcements and blotter.
 
 //URL pathing.
 define('SITE_SUFFIX', preg_replace('/^.*\.(\w+)$/', '\1', SITE_ROOT));//Domain TLD. By default, this is obtained automatically with regex using SITE_ROOT.
@@ -189,15 +175,18 @@ define('DATA_SERVER', '//'.SITE_ROOT.'/');                //Your site's root htm
 define('CSS_PATH', '//'.SITE_ROOT_BD.'/css/');            //absolute html path to the css folder with the trailing slash
 define('HOME', '..'); //Site home directory (up one level by default)
 
+
 //Working directories.
 define('CORE_DIR', '_core/');          //Local path to the "_core" directory, which contains the main assets of Saguaro.
 define('CORE_DIR_PUBLIC', '//'.SITE_ROOT_BD.'/'.CORE_DIR); //Public URL path to _core folder.
 define('RES_DIR', 'res/');             //Stores cached threads.
 define('IMG_DIR', 'src/');             //Stores images.
 define('THUMB_DIR','thumb/');          //Stores thumbnails.
-define('PLUG_PATH', 'plugins/');       //Plugins folder.
+define('PLUG_PATH', 'js/');       //Plugins folder.
 define('PLUG_PATH_PUBLIC', '//'.SITE_ROOT_BD.'/'.PLUG_PATH); //Public URL path to plugins folder.
-define('JS_PATH', PLUG_PATH_PUBLIC.'jquery'); //jQuery folder. (usually in the plugins folder)
+define('JS_PATH', PLUG_PATH_PUBLIC); //jQuery folder. (usually in the plugins folder)
+define('PUBLIC_IMAGE_DIR', '//'.SITE_ROOT_BD.'/'.IMG_DIR); //Web path to a board's image folder
+define('PUBLIC_THUMB_DIR', '//'.SITE_ROOT_BD.'/'.THUMB_DIR);//Web path to a board's thumbnail folder
 
 //Posting and Threads
 define('CACHE_TTL', true);          //Thread caching

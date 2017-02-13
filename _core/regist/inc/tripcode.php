@@ -86,5 +86,3 @@ class Tripcode {
         return $name;
     }
 }
-
-?>

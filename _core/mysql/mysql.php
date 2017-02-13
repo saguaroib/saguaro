@@ -94,5 +94,3 @@ class SaguaroMySQL extends SaguaroQL {
         return mysql_stat($this->connection);
     }
 }
-
-?>

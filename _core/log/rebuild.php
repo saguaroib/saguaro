@@ -91,5 +91,3 @@ function rebuild($all = 0) {
     $totaltime = microtime(true) - $starttime;
     echo "<br>Time elapsed (lock excluded): $totaltime seconds", "<br>Pages created.<br><br>\nRedirecting back to board.\n<META HTTP-EQUIV=\"refresh\" content=\"10;URL=" . PHP_SELF2 . "\">";
 }
-
-?>

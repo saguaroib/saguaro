@@ -80,5 +80,3 @@ class VideoProcessor {
         var_dump($out);
     }
 }
-
-?>

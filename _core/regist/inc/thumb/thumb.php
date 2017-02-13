@@ -7,7 +7,7 @@
 */
 
 //OP thumbnail creation
-function thumb($input, $child) {
+function thumb($input, $child, $filecount) {
     if (!function_exists("ImageCreate") || !function_exists("ImageCreateFromJPEG"))
         return;
 
@@ -16,8 +16,8 @@ function thumb($input, $child) {
     $outpath = THUMB_DIR . pathinfo($input, PATHINFO_FILENAME) . 's.jpg';// . (($ext == 'gif' || $ext == 'png') ? 'png' : 'jpg');
 
     //Determine thumbnail resolution.
-    $width = (!$child) ? MAX_W : MAXR_W;
-    $height = (!$child) ? MAX_H : MAXR_H;
+    $width = (!$child && $filecount < 2) ? MAX_W : MAXR_W;
+    $height = (!$child && $filecount < 2) ? MAX_H : MAXR_H;
 
     if ($ext == "webm") {
         require_once("video.php");
@@ -40,5 +40,3 @@ function thumb($input, $child) {
         'height' => $height
     ];
 }
-
-?>
