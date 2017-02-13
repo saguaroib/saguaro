@@ -28,7 +28,7 @@ class Catalog extends Log {
         $page->headVars['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . " - Catalog";
         array_push($page->headVars['css']['sheet'], "stylesheets/catalog.css");
 
-        $pf->ribbon = [['link' => PUBLIC_SERVER . BOARD_DIR,'name' => 'Return']];
+        $pf->ribbon = [['link' => SITE_ROOT_BD,'name' => 'Return']];
         $temp = $pf->format();
 
        $static = (defined('STATIC_CATALOG') && STATIC_CATALOG);
