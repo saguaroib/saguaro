@@ -64,7 +64,9 @@ class PostForm {
         //Deletion password entry
         $temp .= "<tr><td align='left' class='postblock' id='delField' align='left'>" . S_DELPASS . "</td><td align='left'><input type='password' name='pwd' size='8' maxlength='8' value='' />" . S_DELEXPL . "</td></tr>";
 
-        $temp .= '<tfoot><tr><td colspan="2"><div id="postFormError"></div></td></tr></tfoot></table></form><hr>';
+        $temp .= "</tbody>";
+        $temp .= "<tfoot><tr><td colspan='2'><div id='postFormError'></div></td></tr></tfoot>";
+        $temp .= "</table></form>";
 
         if (defined('ENABLE_BLOTTER') && ENABLE_BLOTTER)
             $temp .= $this->generateBlotter();
