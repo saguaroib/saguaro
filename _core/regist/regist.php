@@ -228,6 +228,7 @@ class Regist {
         $files = [];
         $f = $_FILES['upfile'];
         $num_files = count($f['name']);
+        $this->cache['filecount'] = (int) $num_files;
         $max = min($num_files, MAX_FILE_COUNT); //Set the loop cap to the number of files or maximum allowed, whichever is lower.
         if ($num_files > MAX_FILE_COUNT) { //IF we want to impose the file limit and disregard the post itself, this is how we do it.
             //foreach ($f['fname'] as $key => $value) { unlink($value); } //By default, upload files should be in a temporary status and location which PHP should clean up on script completion.
@@ -276,7 +277,7 @@ class Regist {
         require_once("inc/thumb/thumb.php");
         require_once("inc/process/image.php"); //Required for video thumbnail stats.
 
-        $output = thumb($location, ($this->cache['post']['child']));
+        $output = thumb($location, ($this->cache['post']['child']), $this->cache['filecount']);
         if (!$output['location'] && $ext != ".pdf") {
             cleanup(S_UNUSUAL);
         }

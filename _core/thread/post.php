@@ -17,14 +17,6 @@ class Post {
         @extract($this->data);
         $temp = "<div class='thread' id='t$no'/><div class='postContainer opContainer' id='pc$no'/><div class='post op' id='p$no'/>";
 
-		$image = new Image;
-		$image->inIndex = $this->inIndex;
-
-		$files = json_decode($media, true);
-		foreach ($files as $file) {
-			$temp .= $image->format($no, $file);
-		}
-
         $temp .= "<div class='postInfo desktop' id='pi{$no}'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' data-utc='{$time}'>$now</span>";
 
         $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky"> ' : "";
@@ -41,6 +33,20 @@ class Post {
         $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $no); //lol
         $com = $this->auto_link($com, $no);
 
+        
+        $image = new Image;
+        $image->inIndex = $this->inIndex;
+
+        if ($media != null) {
+            $files = json_decode($media, true);
+            $xls = (count($files) > 1) ? "file multi-op" : "file no-multi";
+            $temp .= "<div class='{$xls}'  id='f{$no}'>";
+            foreach ($files as $file) {
+                $temp .= $image->format($no, 0, $file);
+            }
+            $temp .= "</div>";
+        }        
+        
         //$temp .= "<br>";
         $temp .= ($com == "") ? "<blockquote style='display:none;' class='postMessage' id='m$no' >$com</blockquote>" : "<blockquote class='postMessage' id='m$no' >$com</blockquote>";
         $temp .= "</div></div>";
@@ -70,13 +76,19 @@ class Post {
             $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' name='$no' class='permalink' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
         }
 
-		$image = new Image;
-		$image->inIndex = $this->inIndex;
+        $image = new Image;
+        $image->inIndex = $this->inIndex;
 
-		$files = json_decode($media, true);
-		foreach ($files as $file) {
-			$temp .= $image->format($no, $file);
-		}
+        if ($media != null) {
+            $files = json_decode($media, true);
+            $xls = (count($files) > 1) ? "file multi-reply" : "file no-multi-reply";
+            $temp .= "<div class='{$xls}'  id='f{$no}'>";
+            foreach ($files as $file) {
+                $temp .= $image->format($no, $resto, $file);
+            }
+            $temp .= "</div>";
+        }
+        
         $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $resto); //yeah sure whatever
         $com = $this->auto_link($com, $resno);
 

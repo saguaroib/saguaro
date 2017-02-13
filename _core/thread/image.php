@@ -10,7 +10,7 @@
 class Image {
     public $inIndex = false; //Really want to start extending as of 30 years ago.
 
-    function format($no, $input) {
+    function format($no, $resto, $input) {
         global $spoiler;
         @extract($input);
 
@@ -66,8 +66,14 @@ class Image {
             } else {
                 $dimensions = ($ext == ".pdf") ? "PDF" : "{$width}x{$height}";
                 $name = ($this->inIndex) ? $shortname : $longname;
-                $temp = "<div class='file'  id='f{$no}'><div class='fileText' id='fT{$no}'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$name</a> ({$size}B, $dimensions)</div>";
-                $temp .= "<a class='fileThumb' href='$displaysrc' target='_blank'>$imageFile</a></div>";
+                
+                //if ($resto) {
+                    $temp = "<div class='fileImg' id='fim{$no}'>";
+                    $temp .= "<a class='fileThumb' href='$displaysrc' target='_blank'>$imageFile</a><br><div class='fileText' id='fT{$no}'><a href='$linksrc' target='_blank'>$name</a> <br>{$size}B, $dimensions</div></div>";
+                /*} else {
+                    $temp = "<div class='fileImg' id='fim{$no}'><div class='fileText' id='fT{$no}'>" . S_PICNAME . "<a href='$linksrc' target='_blank'>$name</a> ({$size}B, $dimensions)</div>";
+                    $temp .= "<a class='fileThumb' href='$displaysrc' target='_blank'>$imageFile</a></div>";
+                }*/
                 clearstatcache();
                 return $temp;
             }
