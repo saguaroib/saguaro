@@ -97,7 +97,7 @@ class PostForm {
     private function afterForm($resno) {
 
         //Navigation bar above thread, below postform.
-        $temp .= ($resno) ? "<div class='navLinks' />" : "<div id='ctrl-top' class='desktop'>";
+        $temp .= ($resno) ? "<div class='navLinks'>" : "<div id='ctrl-top' class='desktop'>";
         if ($resno) $temp .= "[<a class='navButton' href='/" . BOARD_DIR  . "'>" . S_RETURN . "</a>] ";
 
         foreach($this->ribbon as $item) {
