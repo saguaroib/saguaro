@@ -55,6 +55,7 @@ define('PAGE_MAX', 10); //Maximum number of pages, posts that are pushed past th
 define('LOG_MAX',  1500); //Maximum number of posts to store in the table.
 define('UPDATE_THROTTLING', false); //Leave this as 0 unless you recieve /a lot/ of traffic
 define('ENABLE_BLOTTER', false); //Show blotter under postform. Edit blotter contents from admin panel.
+define('STATIC_CATALOG', false); //Enables catalog that doesn't need javascript to load. Catalog page may load slower if you have a lot of threads.
 
 //Administrative
 define('JANITOR_CAPCODES', false); //Allow janitors to post with a capcode
