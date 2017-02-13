@@ -75,11 +75,11 @@ SaguaroCat.build = function() {
                 z += "<img class='deleted' src='" + this.imgs + "'>";
             }
             z += "</a>";
-            item.r = (item.r) ? item.r : 0;
-            item.i = (item.i) ? item.i : 0;
+            item.r = (item.r || 0);
+            item.i = (item.i || 0);
             z += "<span class='catalog-stats' id='cs" + item.no + "' title='Reply count / Image count'> R: " + item.r + " / I: " +  item.i + "</span>";
             if (item.sub) {
-                z += "<b>" + item.sub + "</b>: ";
+                z += "<strong>" + item.sub + "</strong>: ";
             }
             z += (item.teaser) ? "<span class='catalog-com' id='cc" + item.no + "'>" + item.teaser + "</span>" : "";
 
