@@ -4,17 +4,10 @@ SaguaroCat.init = function() {
     SaguaroCat.build();
     //SaguaroCat.appendToolbar();
     //SaguaroCat.applySettings();
-    
-    this.urlList = {
-        imgLink: window.SaguaroImageSource,
-        thumbLink: window.SaguaroThumbSource,
-        resDirLink: window.SaguaroResDirSource
-    };
 
-
-    document.getElementById('opComment').addEventListener('change', SaguaroCat.onOptionChange, false);
+    /*document.getElementById('opComment').addEventListener('change', SaguaroCat.onOptionChange, false);
     document.getElementById('imageSize').addEventListener('change', SaguaroCat.onOptionChange, false);
-    document.getElementById('typeFilter').addEventListener('change', SaguaroCat.onOptionChange, false);
+    document.getElementById('typeFilter').addEventListener('change', SaguaroCat.onOptionChange, false);*/
 };
 
 SaguaroCat.onOptionChange = function() {
@@ -54,7 +47,7 @@ SaguaroCat.build = function() {
             item = catalog.threads[i];
 
             z += "<div class='catalog-item' id='ci" + item.no + "'>";
-            z += "<a href='" + SaguaroCat.urlList.resDirLink + item.no + ".html'>";
+            z += "<a href='//" + window.SaguaroResDirSource + item.no + ".html'>";
             item.spoiler = false;
 
             if (/SPOILER<>/.test(item.sub)) {
@@ -68,7 +61,7 @@ SaguaroCat.build = function() {
                     tn_w = (item.tn_w > 150) ? 150 : item.tn_w;
                     tn_h = (item.tn_h > 150) ? 150 : item.tn_h;
                     
-                    imgLoc = SaguaroCat.urlList.thumbLink + item.imgurl + "s.jpg";
+                    imgLoc = window.SaguaroThumbSource + item.imgurl;
                     
                     if (item.spoiler !== false) {
                         z += "<img class='catalog-thumb' src='" + this.imgs + "spoiler.png' style='height:150px; width:150px;'>";

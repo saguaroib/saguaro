@@ -111,7 +111,7 @@ class Head {
         $temp .= "var SaguaroBoard = '" . BOARD_DIR . "';";
         $temp .= "var SaguaroImageSource = '" . PUBLIC_IMAGE_DIR . "';";
         $temp .= "var SaguaroThumbSource = '" . PUBLIC_THUMB_DIR . "';";
-        $temp .= "var SaguaroResDirSource = '" . SITE_ROOT . "/" . BOARD_DIR . "/" . RES_DIR . ';";
+        $temp .= "var SaguaroResDirSource = '" . SITE_ROOT . "/" . BOARD_DIR . "/" . RES_DIR . "';";
         //$temp .= "var inPanel = 'false';";
         $temp .= (NSFW) ? 'var style_group = "nsfw";' : 'var style_group = "sfw";';
 

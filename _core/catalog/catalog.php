@@ -81,13 +81,13 @@ class Catalog extends Log {
             $pushMe = [
                 'no'   => $key,
                 'date' => $my_log->cache[$key]['time'],
-                'file' => ($file) ? $file[0]['filename'] : null,
+                'file' => (($file) ? $file[0]['filename'] : null),
                 'r'    => count($my_log->cache[$key]['children']),
                 'i'    => $my_log->cache[$key]['images'],
                 'author' => $my_log->cache[$key]['name'],
-                'imgurl' => $file[0]['localthumbname'] : null,
-                'tn_w' => $file[0]['thumb_width'] : null,
-                'tn_h' => $file[0]['thumb_height'] : null,
+                'imgurl' => (($file) ? $file[0]['localthumbname'] : null),
+                'tn_w' => (($file) ? $file[0]['thumb_width'] : null),
+                'tn_h' => (($file) ? $file[0]['thumb_height'] : null),
                 'sub'  => $my_log->cache[$key]['sub'],
                 'teaser' => $my_log->cache[$key]['com']
             ];
