@@ -240,8 +240,8 @@ class Log {
             $this->print_page($logfilename, $dat);
         }
 
-		if (!$resno) { //Rebuild catalog page if index is changed. Eventually should handle catalog stuff client side...
-            $catalog->formatPage();
+        if (!$resno) { //Rebuild catalog page if index is changed
+            $catalog->generate();
         }
 
         if (isset($deferred))
