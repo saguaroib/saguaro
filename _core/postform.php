@@ -73,7 +73,7 @@ class PostForm {
         
         if (ENABLE_ADS) $temp .= ADS_BELOWFORM . "<hr>";
             
-        $temp .= (get_cached("news") != "") ? "<hr><div class='globalNews desktop'>" . get_cached("news") . "</div><hr>" : "";
+        $temp .= (get_cached("news") != "") ? "<hr><div id='globalMessage' class='globalNews desktop'>" . get_cached("news") . "</div><hr>" : "";
         $temp .= $this->afterForm($resno);
 
         return $temp;

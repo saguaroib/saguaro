@@ -124,13 +124,14 @@ class Log {
                 if (mt_rand(0, 15) == 0)
                     return;
             }
-            //$head->info['page']['title'] = "/" . BOARD_DIR . "/" . (($resno && !empty($log[$resno]['sub'])) ? " - " . $log[$resno]['sub'] : '') . " - " . TITLE; //apo note: this isn't the cleanest way to do it, disabling for now
+
             if (!$resno && $page > 1) $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . "- Page {$page}";
             $dat = $head->generate();
+            $postform->ribbon = [['link' => 'catalog.html','name' => 'Catalog']/*,['link' => PUBLIC_SERVER . BOARD_DIR . '/imgboard.php?mode=arc','name' => 'Archive'], ['link' => PUBLIC_SERVER . BOARD_DIR . '/imgboard.php?mode=logs','name' => 'Logs']*/];
+
             $dat .= $postform->format($resno);
-            
             $st = ($resno) ? $page : null;
-            
+
             $dat .= '<form name="delform" id="delform" action="' . PHP_SELF_ABS . '" method="post">';
 
             $dat .= "<div class='board'>";
