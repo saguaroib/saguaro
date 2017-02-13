@@ -9,6 +9,8 @@
 */
 
 class PostForm {
+    public $ribbon = [];
+
     function format($resno = null, $admin = false) {
         //echo debug_backtrace()[1]['function'];
 
@@ -62,21 +64,47 @@ class PostForm {
         //Deletion password entry
         $temp .= "<tr><td align='left' class='postblock' id='delField' align='left'>" . S_DELPASS . "</td><td align='left'><input type='password' name='pwd' size='8' maxlength='8' value='' />" . S_DELEXPL . "</td></tr>";
 
-        $temp .= '<tfoot><tr><td colspan="2"><div id="postFormError"></div></td></tr></tfoot></table></form><hr>';
+        $temp .= "</tbody>";
+        $temp .= "<tfoot><tr><td colspan='2'><div id='postFormError'></div></td></tr></tfoot>";
+        $temp .= "</table></form>";
 
+        if (defined('ENABLE_BLOTTER') && ENABLE_BLOTTER) $temp .= $this->generateBlotter();
+        
         if (ENABLE_ADS) $temp .= ADS_BELOWFORM . "<hr>";
             
-        if (file_exists(GLOBAL_NEWS)) {
-            $news = file_get_contents(GLOBAL_NEWS);
+        $temp .= (get_cached("news") != "") ? "<hr><div id='globalMessage' class='globalNews desktop'>" . get_cached("news") . "</div><hr>" : "";
+        $temp .= $this->afterForm($resno);
 
-            if ($news !== "")
-                $temp .= "<div class='globalNews desktop'>" . file_get_contents( GLOBAL_NEWS ) . "</div><hr>";
+        return $temp;
+    }
+    
+    private function generateBlotter() {
+        static $blotter;
+
+        if (!isset($blotter)) {
+            global $mysql;
+            $blotter .= '<table id="blotter" class="desktop"><thead><tr><td colspan="2"><hr class="aboveMidAd"></td></tr></thead><tbody id="blotter-msgs">';
+            $query = $mysql->query("SELECT * FROM " . SQLRESOURCES . " WHERE type='blotter' ORDER BY timestamp ASC LIMIT 3");
+            while($row = $mysql->fetch_assoc($query)) {
+                $blotter .= "<tr><td data-utc='{$row['timestamp']}' class='blotter-date'>" . date("m/d/y", $row['timestamp']) . "</td>";
+                $blotter .= "<td class='blotter-content'>{$row['message']}</td></tr>";
+            }
+            $blotter .= '</tbody></table>';
         }
-        
-        if ($resno) //Navigation bar above thread.
-            $temp .= "<div class='navLinks desktop' /> [<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='" . $resno . PHP_EXT . "#bottom'/>Bottom</a>] </div>\n<hr>";
-        else
-            $temp .= "<div id='ctrl-top' class='desktop' /> [<a href='" . PHP_SELF2_ABS . "#bottom'/>Bottom</a>]  [<a href='/" . BOARD_DIR . "/" . PHP_SELF . "?mode=catalog'>Catalog</a>]</div><hr>";
+        return $blotter;
+    }
+
+    private function afterForm($resno) {
+
+        //Navigation bar above thread, below postform.
+        $temp .= ($resno) ? "<div class='navLinks'>" : "<div id='ctrl-top' class='desktop'>";
+        if ($resno) $temp .= "[<a class='navButton' href='/" . BOARD_DIR  . "'>" . S_RETURN . "</a>] ";
+
+        foreach($this->ribbon as $item) {
+            $temp .= "[<a class='navButton' href='{$item['link']}'>{$item['name']}</a>] ";
+        }
+        $temp .= "</div><hr>"; //End nav bar.
+
         return $temp;
     }
 }

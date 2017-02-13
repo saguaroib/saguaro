@@ -34,19 +34,7 @@ $host = $mysql->escape_string($_SERVER['REMOTE_ADDR']); //Get this once here at 
 $path = realpath("./") . '/' . IMG_DIR;
 ignore_user_abort(TRUE);
 
-// check whether the current user can perform $action (on $no, for some actions)
-// board-level access is cached in $valid_cache.
-function valid($action = 'moderator', $no = 0) {
-    require_once(CORE_DIR . "/admin/valid.php");
-    $validate = new Valid;
-    return $validate->verify($action);
-}
-
-function error($mes, $dest, $fancy = 0) {
-    require_once(CORE_DIR . "/general/error.php");
-    $error = new Error();
-    $error->format($mes, $dest, $fancy);
-}
+require_once(CORE_DIR . "/general/global_functions.php");
 
 $mode = (isset($_POST['mode'])) ? $_POST['mode'] : $_GET['mode'];
 

@@ -28,8 +28,6 @@ define('PREFIX', 'imgboard'); //Prefix to automatically use for the database tab
 
 define('PANEL_PASS', 'CHANGEME');  //Staff action key  (CHANGE THIS YO)
 define('SITE_ROOT', 'example.com');//Site domain.
-define('BOARDLIST', '');           //the text file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
-define('GLOBAL_NEWS', 'CHANGEME'); //Absolute html path to your global board news file. Appears below post form, above index body
 define('SALTFILE', 'salt');        //Name of the salt file, do not add a file extension for security
 
 //Basic settings
@@ -56,8 +54,7 @@ define('PAGE_DEF', 10); //Threads per page.
 define('PAGE_MAX', 10); //Maximum number of pages, posts that are pushed past the last page are deleted.
 define('LOG_MAX',  1500); //Maximum number of posts to store in the table.
 define('UPDATE_THROTTLING', false); //Leave this as 0 unless you recieve /a lot/ of traffic
-define('SHOW_BLOTTER', false);      //Experimental. Added to the top of each board, ex: ex: http://yoursite.com/resources/globalnews.txt
-define('BLOTTER_PATH', 'CHANGEME'); //Experimental. Absolute html path to your blotter file'', this feature is experimental and still is not fully functional.
+define('ENABLE_BLOTTER', false); //Show blotter under postform. Edit blotter contents from admin panel.
 
 //Administrative
 define('JANITOR_CAPCODES', false); //Allow janitors to post with a capcode
@@ -161,6 +158,7 @@ define('SQLDELLOG', PREFIX.'_del');  //Table for deleted information.
 define('SQLBANNOTES', PREFIX.'_ipnotes'); //Table containing IP notes for warned/banned users
 define('SQLMEDIA', PREFIX.'_media'); //Table for media (or files in general) information.
 define('SQLREPORTS', PREFIX.'_reports'); //Table for report information.
+define('SQLRESOURCES', PREFIX.'_resources'); //Table for boardList, announcements and blotter.
 
 //URL pathing.
 define('SITE_SUFFIX', preg_replace('/^.*\.(\w+)$/', '\1', SITE_ROOT));//Domain TLD. By default, this is obtained automatically with regex using SITE_ROOT.
