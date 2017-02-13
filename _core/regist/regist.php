@@ -202,9 +202,10 @@ class Regist {
 
         //Basic sanitization.
         $moderator = valid("moderator");
-        $sanitize = ['name','subject','email','comment'];
-        foreach ($sanitize as $key) {
-            $post[$key] = Sanitize::CleanStr($post[$key], $moderator);
+        $saniCls = new Sanitize;
+        $sanitize = $saniCls->process($post, $moderator); //['name','subject','email','comment'];
+        foreach ($sanitize as $key => $value) {
+            $post[$key] = $value;
         }
 
         $post['child'] = (bool) ($post['parent'] !== 0);
@@ -304,5 +305,3 @@ class Regist {
 
 $regist = new Regist;
 $regist->run();
-
-?>

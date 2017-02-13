@@ -1,76 +1,79 @@
 <?php
 
 class Sanitize {
-    function process($name, $com, $sub, $email, $resto, $url, $dest, $moderator = 0) {
-        $email = $this->CleanStr($email, 0); //Don't allow moderators to fuck with this
-        $email = preg_replace("[\r\n]", "", $email);
-        $sub   = $this->CleanStr($sub, 0); //Or this
-        $sub   = preg_replace("[\r\n]", "", $sub);
-        $url   = $this->CleanStr($url, 0); //Or this
-        $url   = preg_replace("[\r\n]", "", $url);
-        $resto = $this->CleanStr($resto, 0); //Or this
-        $resto = preg_replace("[\r\n]", "", $resto);
-        $com   = $this->CleanStr($com, $moderator); //But they can with this.
+    function process($post, $moderator = 0) {
+        $post['email'] = $this->CleanStr($post['email'], 0);
+        $post['email'] = preg_replace("[\r\n]", "", $post['email']);
+        $post['subject']   = $this->CleanStr($post['subject'], 0);
+        $post['subject']   = preg_replace("[\r\n]", "", $post['subject']);
+        /*$url   = $this->CleanStr($url, 0); //Or this
+        $url   = preg_replace("[\r\n]", "", $url);*/
+        $post['parent'] = $this->CleanStr($post['parent'], 0);
+        $post['parent'] = preg_replace("[\r\n]", "", $post['parent']);
+        $post['comment']   = $this->CleanStr($post['comment'], 1);
 
-        if (!$name || preg_match("/^[ |&#12288;|]*$/", $name))
-            $name = "";
-        if (!$com || preg_match("/^[ |&#12288;|\t]*$/", $com))
-            $com = "";
-        if (!$sub || preg_match("/^[ |&#12288;|]*$/", $sub))
-            $sub = "";
+        if (!$post['name'] || preg_match("/^[ |&#12288;|]*$/", $post['name']))
+            $post['name'] = "";
+        if (!$post['comment'] || preg_match("/^[ |&#12288;|\t]*$/", $post['comment']))
+            $post['comment'] = "";
+        if (!$post['subject'] || preg_match("/^[ |&#12288;|]*$/", $post['subject']))
+            $post['subject'] = "";
 
-        $name = str_replace(S_MANAGEMENT, '"' . S_MANAGEMENT . '"', $name);
-        $name = str_replace(S_DELETION, '"' . S_DELETION . '"', $name);
+        $post['name'] = str_replace(S_MANAGEMENT, '"' . S_MANAGEMENT . '"', $post['name']);
+        $post['name'] = str_replace(S_DELETION, '"' . S_DELETION . '"', $post['name']);
 
-        if (strlen($com) > S_POSTLENGTH)
-            return error(S_TOOLONG, $dest);
-        if (strlen($name) > 100)
-            return error(S_TOOLONG, $dest);
-        if (strlen($email) > 100)
-            return error(S_TOOLONG, $dest);
-        if (strlen($sub) > 100)
-            return error(S_TOOLONG, $dest);
-        if (strlen($resto) > 10)
-            return error(S_UNUSUAL, $dest);
-        if (strlen($url) > 10)
-            return error(S_UNUSUAL, $dest);
+        if (strlen($post['comment']) > S_POSTLENGTH)    return error(S_TOOLONG);
+        if (strlen($post['name']) > 100)                return error(S_TOOLONG);
+        if (strlen($post['email']) > 100)               return error(S_TOOLONG);
+        if (strlen($post['subject']) > 100)             return error(S_TOOLONG);
+        if (strlen($post['parent']) > 10)               return error(S_UNUSUAL);
+        //if (strlen($url) > 10)                        return error(S_UNUSUAL);
 
         // Standardize new character lines
-        $com = str_replace("\r\n", "\n", $com);
-        $com = str_replace("\r", "\n", $com);
+        $post['comment'] = str_replace("\r\n", "\n", $post['comment']);
+        $post['comment'] = str_replace("\r", "\n", $post['comment']);
 
         // Continuous lines
-        $com = preg_replace("/\n((&#12288;|)*\n){3,}/", "\n", $com);
+        $post['comment'] = preg_replace("/\n((&#12288;|)*\n){3,}/", "\n", $post['comment']);
 
-        if (!$moderator && substr_count($com, "\n") > MAX_LINES)
+        if (!$moderator && substr_count($post['comment'], "\n") > MAX_LINES)
             return error("Error: Too many lines.", $dest);
 
-        $com = nl2br($com); //br is substituted before newline char
-        $com = str_replace("\n", "", $com); //\n is erased
+        $post['comment'] = nl2br($post['comment']); //br is substituted before newline char
+        $post['comment'] = str_replace("\n", "", $post['comment']); //\n is erased
 
-        $name  = preg_replace("[\r\n]", "", $name);
-        $com   = $this->wordwrap2($com, 100, "<br />");
+        $post['name']  = preg_replace("[\r\n]", "", $post['name']);
+        $post['comment']   = $this->wordwrap2($post['comment'], 100, "<br />");
 
         return [
-        'name' => $name,
-        'comment' => $com,
-        'subject' => $sub,
-        'email' => $email
+        'name' => $post['name'],
+        'comment' => $post['comment'],
+        'subject' => $post['subject'],
+        'email' => $post['email']
         ];
     }
 
-    /* text plastic surgery */
-    function CleanStr($str, $moderator = 0) {
+    function CleanStr($str, $skip_bidi = 0) {
+        /* text plastic surgery */
+        // you can call with skip_bidi=1 if cleaning a paragraph element (like $com)
         $str = trim($str); //blankspace removal
         if (get_magic_quotes_gpc()) { //magic quotes is deleted (?)
             $str = stripslashes($str);
         }
-        if (!$moderator) { //If not moderator+, disable html tags
-            $str = htmlspecialchars($str); //remove html special chars
-            $str = str_replace("&amp;", "&", $str); //remove ampersands
-            $str = str_replace("&gt;", ">", $str); //For backlinking
-        }
+        $str =  iconv("utf-8", "utf-8//ignore", $str);
+        $str = htmlspecialchars($str);
 
+        if ($skip_bidi == 0) {
+            // fix malformed bidirectional overrides - insert as many PDFs as RLOs
+            //RLO
+            $str .= str_repeat("\xE2\x80\xAC", substr_count($str, "\xE2\x80\xAE" /* U+202E */ ));
+            $str .= str_repeat("&#8236;", substr_count($str, "&#8238;"));
+            $str .= str_repeat("&#x202c;", substr_count($str, "&#x202e;"));
+            //RLE
+            $str .= str_repeat("\xE2\x80\xAC", substr_count($str, "\xE2\x80\xAB" /* U+202B */ ));
+            $str .= str_repeat("&#8236;", substr_count($str, "&#8235;"));
+            $str .= str_repeat("&#x202c;", substr_count($str, "&#x202b;"));
+        }
         return str_replace(",", "&#44;", $str); //remove commas
     }
 
@@ -103,14 +106,10 @@ class Sanitize {
                         }
                     }
                     $word = implode($cut, $lines);
-
                 }
                 $str .= implode(' ', $words);
             }
         }
         return $str;
     }
-
 }
-
-?>
