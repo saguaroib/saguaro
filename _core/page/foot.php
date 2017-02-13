@@ -19,9 +19,7 @@ class Footer {
             $dat .= $this->adminRibbon();
         }
         
-        if (file_exists(BOARDLIST))
-            $dat .= '<br><span id="boardNavDesktopFoot">' . file_get_contents(BOARDLIST) . '</span>';
-
+        $dat .= '<br><span id="boardNavDesktopFoot">' . get_cached("boardlist") . '</span>';
         $dat .= '</div><div class="footer">' . S_FOOT . '</div><a name="bottom"></a></body></html>'; 
 
         return $dat;
