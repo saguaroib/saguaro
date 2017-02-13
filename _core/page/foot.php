@@ -39,5 +39,3 @@ class Footer {
         return $temp;
     }
 }
-
-?>

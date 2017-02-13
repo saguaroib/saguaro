@@ -35,5 +35,3 @@ class AutoLink {
             return "<a href='/" . BOARD_DIR . "/" . RES_DIR . "$me#$me'>>>$me</a>";
     }
 }
-
-?>

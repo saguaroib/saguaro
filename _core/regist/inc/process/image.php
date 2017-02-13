@@ -46,5 +46,3 @@ class ProcessImage {
         return $info;
     }
 }
-
-?>

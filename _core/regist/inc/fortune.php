@@ -56,5 +56,3 @@ class Fortune {
         return $this->format();
     }
 }
-
-?>

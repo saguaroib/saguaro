@@ -30,5 +30,3 @@ if ($resto == "0") {
     $my_log->update_cache();
     $my_log->update($res);
 }
-
-?>

@@ -148,5 +148,3 @@ class UploadCheck {
         return true;
     }
 }
-
-?>

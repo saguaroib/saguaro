@@ -30,5 +30,3 @@ class Markdown extends TextProcessor {
         "/%%(.*?)%%/Usi" => "<span class='spoiler'>\\1</span>" //Spoilers
     ];
 }
-
-?>
