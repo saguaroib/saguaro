@@ -26,5 +26,3 @@ class GreenText extends TextProcessor {
         "/^(?:\&gt;|\>)(.*?)$/Umi" => "<span class='greentext'>&gt;\\1</span>"
     ];
 }
-
-?>

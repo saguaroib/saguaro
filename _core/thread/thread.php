@@ -109,4 +109,3 @@ class Thread {
         return $post->format();
     }
 }
-?>

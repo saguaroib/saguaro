@@ -21,5 +21,3 @@ class SaguaroQL {
         $this->selectDatabase(SQLDB);
     }
 }
-
-?>

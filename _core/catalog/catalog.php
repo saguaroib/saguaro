@@ -110,5 +110,3 @@ class Catalog extends Log {
         }
     }
 }
-
-?>

@@ -299,5 +299,3 @@ class ModernInfo {
         return $size;
     }
 }
-
-?>

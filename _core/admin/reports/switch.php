@@ -10,9 +10,9 @@ switch($_GET['report']) {
         $clear = new SaguaroClearReport;
         $clear->clear();
         break;
-	default:
-		require_once(CORE_DIR . "/admin/reports/report.php");
+    default:
+        require_once(CORE_DIR . "/admin/reports/report.php");
         $report = new SaguaroReports;
         echo $report->init();
-		break;
+        break;
 }

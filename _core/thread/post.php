@@ -142,5 +142,3 @@ class Post {
         return $link->format($com);
     }
 }
-
-?>

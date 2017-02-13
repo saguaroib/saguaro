@@ -141,7 +141,7 @@ class SaguaroReports {
                 $this->error("Your note was too long.", $no);
             $note = $mysql->escape_string(htmlspecialchars($note));
         }
-		
+
         /*
             How report storing works:
             When a post is reported for the first time, assuming it's valid and all, 
@@ -183,7 +183,7 @@ class SaguaroReports {
         $head = new Head;
         $head->info['page']['title'] = "Report #{$no} success!";
         $head->info['css']['raw'] = array("body {text-align:center;}");
-		//$head->info['js']['script'] = array("reportclose.js");
+        //$head->info['js']['script'] = array("reportclose.js");
 
         $temp = $head->generate($noHead = true);
         $temp .= "<font color='blue' size='5'>Report submitted!</b></font></body>";

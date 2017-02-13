@@ -71,5 +71,3 @@ class CatalogImage {
         return "<a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "'>" . $imgsrc . "</a>";
     }
 }
-
-?>

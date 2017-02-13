@@ -120,5 +120,3 @@ class ProcessFile {
         return true;
     }
 }
-
-?>

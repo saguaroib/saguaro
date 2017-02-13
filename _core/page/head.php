@@ -131,5 +131,3 @@ class Head {
         return $cache[$filename];
     }
 }
-
-?>

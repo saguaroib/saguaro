@@ -108,5 +108,3 @@ class User {
             unset($_SESSION[$this->session_var]);
     }
 }
-
-?>

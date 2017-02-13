@@ -77,7 +77,6 @@ class PostForm {
             $temp .= "<div class='navLinks desktop' /> [<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='" . $resno . PHP_EXT . "#bottom'/>Bottom</a>] </div>\n<hr>";
         else
             $temp .= "<div id='ctrl-top' class='desktop' /> [<a href='" . PHP_SELF2_ABS . "#bottom'/>Bottom</a>]  [<a href='/" . BOARD_DIR . "/" . PHP_SELF . "?mode=catalog'>Catalog</a>]</div><hr>";
-		
         return $temp;
     }
 }

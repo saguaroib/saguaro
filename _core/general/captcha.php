@@ -132,5 +132,3 @@ if ($_SERVER['SCRIPT_FILENAME'] == __FILE__) {
     $a = new Captcha;
     $a->generate();
 }
-
-?>

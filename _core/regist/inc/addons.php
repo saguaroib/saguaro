@@ -72,5 +72,3 @@ function dice($com, $email) {
 	}
 	return $com;
 }
-
-?>

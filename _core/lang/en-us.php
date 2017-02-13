@@ -1,5 +1,7 @@
 <?php
 
+global $upfile_name;
+
 $S_HOME = 'Home';                                               //Forwards to home page
 $S_ADMIN = 'Manage';                                            //Forwards to Management Panel
 $S_RETURN = 'Return';                                           //Returns to image board
@@ -119,5 +121,3 @@ $S_DELOPS = 'Deletion mode: All opening posts (OPs)';
 $S_NOPERM = 'Permission denied!';
 $S_UPDERR = 'File could not be updated!';
 $S_REGFAILED = 'Post registration failed!';
-
-?>

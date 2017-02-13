@@ -28,5 +28,3 @@ class CatalogPost {
         return $temp;
     }
 }
-
-?>
