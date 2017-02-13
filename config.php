@@ -1,15 +1,5 @@
 <?php
 /*
-    General, board-specific settings.
-*/
-
-define('LANGUAGE', 'en-us');                      //Language to use. See "_core/lang/" folder for available languages.
-define('TITLE', 'Saguaro Imageboard!');           //Name of the board.
-define('S_HEADSUB', 'No artificial sweeteners!'); //Board subtitle.
-define('S_DESCR', 'An imageboard powered by saguaro'); //meta description for this board
-
-
-/*
     MySQL information.
     The database and tables are created automatically using these values.
     Scroll below to the MySQL Advanced section for additional options.
@@ -17,7 +7,6 @@ define('S_DESCR', 'An imageboard powered by saguaro'); //meta description for th
 define('SQLUSER', 'username');
 define('SQLPASS', 'password');
 define('SQLHOST', 'localhost');
-
 define('SQLDB', 'saguaro');   //Database used by image board.
 define('PREFIX', 'imgboard'); //Prefix to automatically use for the database tables.
 
@@ -25,72 +14,10 @@ define('PREFIX', 'imgboard'); //Prefix to automatically use for the database tab
 /*
     Something descriptive.
 */
-
-define('PANEL_PASS', 'CHANGEME');  //Staff action key  (CHANGE THIS YO)
 define('SITE_ROOT', 'example.com');//Site domain.
-define('BOARDLIST', '');           //the text file that contains your boardlist, displayed at both header and footer [a/b/c/][d/e/f/] etc.
-define('GLOBAL_NEWS', 'CHANGEME'); //Absolute html path to your global board news file. Appears below post form, above index body
 define('SALTFILE', 'salt');        //Name of the salt file, do not add a file extension for security
 
-//Basic settings
-define('NSFW', false);    //Whether or not this is a NSFW(Red/Saguaba or blue/Sagurichan) board.
-define('SHOWTITLETXT', true);   //Show TITLE at top. False: hide title'', true: display title (Setting this to 2 will show "/{your BOARD_DIR value}/ - {Your TITLE value}"
-define('SHOWTITLEIMG', false);  //Show image at top
-define('TITLEIMG', '');         //Title image (point to an img rotating script if you want rotating banners)
-define('DATE_FORMAT', 'm/d/y'); //Formatting for the date in each post, see http://php.net/manual/en/function.date.php for different options
-
-
-/*
-    Specialized board settings - a board with specific purpose
-*/
-
-define('GIF_ONLY', false); //GIF upload only imageboard.
-
-
-/*
-    Posting'', threads, and images.
-*/
-
-//Pages
-define('PAGE_DEF', 10); //Threads per page.
-define('PAGE_MAX', 10); //Maximum number of pages, posts that are pushed past the last page are deleted.
-define('LOG_MAX',  1500); //Maximum number of posts to store in the table.
-define('UPDATE_THROTTLING', false); //Leave this as 0 unless you recieve /a lot/ of traffic
-define('SHOW_BLOTTER', false);      //Experimental. Added to the top of each board, ex: ex: http://yoursite.com/resources/globalnews.txt
-define('BLOTTER_PATH', 'CHANGEME'); //Experimental. Absolute html path to your blotter file'', this feature is experimental and still is not fully functional.
-
-//Administrative
-define('JANITOR_CAPCODES', false); //Allow janitors to post with a capcode
-define('REPORT_FLOOD', 5); //How many reports a user can file at once.
-
-// Post & Thread
-define('USE_BBCODE', false);  //Use BBcode
-define('DICE_ROLL', false);   //Allow users to roll /dice in the name field
-define('FORTUNE_TRIP', false); //Allows users to recieve a #fortune in the namefield
-
-define('FORCED_ANON', false); //Force anonymous on this board.
-define('DISP_ID', false);     //Display user IDs.
-define('MAX_LINES', 50);      //Max # of line breaks allowed for a post
-define('MAX_LINES_SHOWN', 20);      //Maximum number of user lines shown in the index before they are abbreviated
-define('S_POSTLENGTH', 3000); //Maximum character length of posts
-define('NOPICBOX', false);    //Whether or not to have the [No Picture] checkbox.
-
-define('USE_THUMB', true);    //Use thumbnails.
-define('PROXY_CHECK', true);  //Enable proxy check.
-
-define('COOLDOWN_POST', 10);    //Cooldown between new posts without files, in seconds.
-define('COOLDOWN_FILE', 15);    //Cooldown between new posts with files, in seconds.
-define('COOLDOWN_THREAD', 13);  //Cooldown between new threads, in seconds.
-define('MAX_RES', 500);       //Maximum thread bumps from posts.
-define('STRICT_FILE_COUNT', false); //If true, accounts for multi-file posts otherwise each post is counted as one regardless of amount of files.
-define('MAX_IMGRES', 300);    //Maximum thread bumps from images
-define('EVENT_STICKY_RES', 1500); //The number of replies allowed to an event sticky before in-thread pruning begins. These stickies self delete the oldest posts once the number of replies exceeds this number.
-define('S_OMITT_NUM', 5);     //number of posts to display in each thread on the index.
-
 //Captcha
-define('BOTCHECK', false);    //Use CAPTCHAs
-define('RECAPTCHA', false); //Use reCaptcha instead of the default captcha. Requires the SITEKEY and SECRET to be set below.
-define('RECAPTCHA_SITEKEY', "");//reCaptcha public key.
 define('RECAPTCHA_SECRET', "");//reCaptcha secret key.
 
 //Images
@@ -104,15 +31,15 @@ define('ALLOW_AUDIO', false); //If true, allows WebMs containing an audio stream
 define('MAX_DURATION', 60);   //The maximum duration allowed in seconds.
 
 /*
-	CSS settings
-	To include additional CSS, drop them in your /css/stylesheets/ and add them to the array!
-	Format is: "Display Name" => "path/to/cssfile.css"
+    CSS settings
+    To include additional CSS, drop them in your /css/stylesheets/ and add them to the array!
+    Format is: "Display Name" => "path/to/cssfile.css"
 */
 $cssArray = array(
-	"Saguaba"	 => "/stylesheets/saguaba.css", 	//First array value is the default NSFW stylesheet
-	"Sagurichan" => "/stylesheets/sagurichan.css", 	//Second array value is the default SFW stylesheet
-	//Order doesnt matter for the rest of these
-	"Tomorrow"	 => "/stylesheets/tomorrow.css"
+    "Saguaba"	 => "/stylesheets/saguaba.css", 	//First array value is the default NSFW stylesheet
+    "Sagurichan" => "/stylesheets/sagurichan.css", 	//Second array value is the default SFW stylesheet
+    //Order doesnt matter for the rest of these
+    "Tomorrow"	 => "/stylesheets/tomorrow.css"
 );
 
 define('EXTRA_SHIT', ''); //Any extra javascripts you want to include inside the <head>
@@ -128,16 +55,13 @@ define('ADS_AFTERPOSTS', '<center>ads ads ads</center>'); //advertisement code (
 
 /*
     Security settings.
-
     The defaults here are recommended.
 */
-
 define('SECURE_LOGIN', true); //Enable CAPTCHA on staff login page.
 
 
 /*
     Advanced settings.
-
     Everything past here should "just work" based on settings defined above, only needing fine tuning for enthusiasts.
     Specifically, anything user-unfriendly that a typical single (non-scaled multi-) board installation wouldn't need to worry about.
 */
@@ -194,8 +118,6 @@ define('PUBLIC_THUMB_DIR', '//'.SITE_ROOT_BD.'/'.THUMB_DIR);//Web path to a boar
 define('CACHE_TTL', true);          //Thread caching
 define('EXPIRE_NEGLECTED', true);   //Bump old posts off the last page
 define('S_SAGE', 'sage');           //What to change sage to
-define('COUNTRY_FLAGS', false);     //Display poster's country flag with each post
-define('S_ANONAME', 'Anonymous');   //Default name of all users who do not use a name
 
 //Image uploading.
 define('MAX_W', 250);  //OP images exceeding this width will be thumbnailed
@@ -204,9 +126,6 @@ define('MAXR_W', 125); //Image replies exceeding this width will be thumbnailed
 define('MAXR_H', 125); //Image replies exceeding this height will be thumbnailed
 define('MIN_W', 30);   //minimum image dimensions - width
 define('MIN_H', 30);   //minimum image dimensions - height
-
-$badstring = ["nimp.org"]; // Refused text. Currently unused by Regist.
-$badfile = ["dummy", "dummy2"]; //Refused files (md5 hashes). Currently unused by Regist.
 
 include(CORE_DIR . "/lang/language.php");
 
