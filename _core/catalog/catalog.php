@@ -41,7 +41,7 @@ class Catalog extends Log {
         $temp .= $this->formatPage($static);
         $out = $page->generate($temp);
 
-        $this->print_page(DATA_PATH_BD . "catalog.html", $out, 0);
+        $this->print_page("catalog.html", $out, 0);
     }
 
     private function formatPage($static) {
