@@ -68,8 +68,7 @@ class PostForm {
         $temp .= "<tfoot><tr><td colspan='2'><div id='postFormError'></div></td></tr></tfoot>";
         $temp .= "</table></form>";
 
-        if (defined('ENABLE_BLOTTER') && ENABLE_BLOTTER)
-            $temp .= $this->generateBlotter();
+        if (defined('ENABLE_BLOTTER') && ENABLE_BLOTTER) $temp .= $this->generateBlotter();
         
         if (ENABLE_ADS) $temp .= ADS_BELOWFORM . "<hr>";
             
@@ -81,13 +80,13 @@ class PostForm {
     
     private function generateBlotter() {
         static $blotter;
-        
+
         if (!isset($blotter)) {
             global $mysql;
             $blotter .= '<table id="blotter" class="desktop"><thead><tr><td colspan="2"><hr class="aboveMidAd"></td></tr></thead><tbody id="blotter-msgs">';
-            $query = $mysql->query("SELECT * FROM " . SQLRESOURCES . " WHERE type='blotter' ORDER BY ts ASC LIMIT 3");
+            $query = $mysql->query("SELECT * FROM " . SQLRESOURCES . " WHERE type='blotter' ORDER BY timestamp ASC LIMIT 3");
             while($row = $mysql->fetch_assoc($query)) {
-                $blotter .= "<tr><td data-utc='{$row['ts']}' class='blotter-date'>" . date("m/d/y", $row['ts']) . "</td>";
+                $blotter .= "<tr><td data-utc='{$row['timestamp']}' class='blotter-date'>" . date("m/d/y", $row['timestamp']) . "</td>";
                 $blotter .= "<td class='blotter-content'>{$row['message']}</td></tr>";
             }
             $blotter .= '</tbody></table>';

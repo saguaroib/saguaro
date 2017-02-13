@@ -158,7 +158,7 @@ define('SQLDELLOG', PREFIX.'_del');  //Table for deleted information.
 define('SQLBANNOTES', PREFIX.'_ipnotes'); //Table containing IP notes for warned/banned users
 define('SQLMEDIA', PREFIX.'_media'); //Table for media (or files in general) information.
 define('SQLREPORTS', PREFIX.'_reports'); //Table for report information.
-define('SQLRESOURCES', PREFIX."_resources"); //Table for boardList, announcements and blotter.
+define('SQLRESOURCES', PREFIX.'_resources'); //Table for boardList, announcements and blotter.
 
 //URL pathing.
 define('SITE_SUFFIX', preg_replace('/^.*\.(\w+)$/', '\1', SITE_ROOT));//Domain TLD. By default, this is obtained automatically with regex using SITE_ROOT.

@@ -269,7 +269,7 @@ if (is_file($lockout)) {
                         SQLBANNOTES => "board VARCHAR(25), host VARCHAR(250), type VARCHAR(50), com VARCHAR(3100), reason VARCHAR(2000), admin VARCHAR(250), PRIMARY KEY (host, com), UNIQUE KEY (com)",
                         SQLMEDIA => "primary key(no), no int not null auto_increment, parent int, resto int, filename text, localname text, localthumbname text, filesize int, extension text, width int, height int, thumb_width int, thumb_height int, hash text, board text",
                         SQLREPORTS => "`active` int(1) NOT NULL,  `no` varchar(25) NOT NULL DEFAULT '',  `board` varchar(250) NOT NULL DEFAULT '',  `count` int(4) NOT NULL,  `rule_count` int(4) DEFAULT NULL,  `spam_count` int(4) DEFAULT NULL,  `illegal_count` int(4) DEFAULT NULL, `cp_count` int(4) DEFAULT NULL,  `global` int(1) NOT NULL,`post` longtext,  `note` longtext NOT NULL,  `ip` varchar(250) NOT NULL DEFAULT '',  `reported` int(12) NOT NULL,  PRIMARY KEY (`no`,`board`,`reported`)",
-                        SQLRESOURCES => "`type` varchar(50) NOT NULL, `ts` bigint(20) NOT NULL, `message` text NOT NULL, PRIMARY KEY (`ts`), KEY `type` (`type`)",
+                        SQLRESOURCES => "`type` varchar(50) NOT NULL, `timestamp` bigint(20) NOT NULL, `message` text NOT NULL, PRIMARY KEY (`timestamp`), KEY `type` (`type`)",
                         "rebuildqueue" => "board char(4) NOT NULL, no int(11) NOT NULL, ownedby int(11) NOT NULL default '0', ts timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, PRIMARY KEY (board,no,ownedby)"
                     ];
 
