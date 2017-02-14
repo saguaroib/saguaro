@@ -28,7 +28,7 @@ class PostForm {
         if ($resno)
             $temp .= "<input type='hidden' name='resto' value='" . $resno . "'>";
 
-        $temp .= "<table>";
+        $temp .= "<table id='postForm'>";
 
         if (!FORCED_ANON) //Name
             $temp .= "<tr data-type='Name'><td class='postblock' align='left'>" . S_NAME . "</td><td align='left'><input type='text' name='name' size='28'></td></tr>";
