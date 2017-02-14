@@ -156,27 +156,14 @@ class Post {
     }
 
     public function capcode($capcode, $name, $tripcode) {
-        switch ($capcode) {
-            case 'admin':
-                $name = "<span class='name cap admin' title='This user is an Administrator'>$name <span class='postertrip'>{$tripcode}</span> ## Admin</span>";
-                break;
-            case 'moderator':
-                $name = "<span class='name cap moderator' title='This user is a Moderator'>$name <span class='postertrip'>{$tripcode}</span> ## Mod</span>";
-                break;
-            case 'janitor':
-                $name = "<span class='name cap jani' title='This user is a Janitor'>$name <span class='postertrip'>{$tripcode}</span> ## Janitor</span>";
-                break;
-            case 'manager':
-                $name = "<span class='name cap manager' title='This user is a Manager'>$name <span class='postertrip'>{$tripcode}</span> ## Manager</span>";
-                break;
-            case 'developer':
-                $name = "<span class='name cap developer' title='This user is a Developer'>$name <span class='postertrip'>{$tripcode}</span> ## Developer</span>";
-                break;
-            default:
-                $name = "<span class='name'  title='This user is a MYSTERY'>$name <span class='postertrip'>{$tripcode} ## Mystery</span></span>";
-                break;
-        }
-        
-        return $name;
+
+        $capcodeArray = [
+            'admin'     => ['title'  => 'This user is an Administrator','capcodeTail' => 'Admin','class' => 'admin'],
+            'moderator' => ['title'  => 'This user is a Moderator','capcodeTail' => 'Mod','class' => 'mod'],
+            'janitor'   => ['title'  => 'This user is a board Janitor','capcodeTail' => 'Janitor','class' => 'jani'], 
+            'manager'   => ['title'  => 'This user is a Manager','capcodeTail' => 'Manager','class' => 'manager'], 
+            'developer' => ['title'  => 'This user is a Developer','capcodeTail' => 'Developer','class' => 'developer']
+        ];
+        return "<span class='name cap {$capcodeArray[$capcode]['class']}' title='{$capcodeArray[$capcode]['title']}'>$name <span class='postertrip'>{$tripcode}</span> ## {$capcodeArray[$capcode]['capcodeTail']}</span>";
     }
 }
