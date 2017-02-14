@@ -67,7 +67,7 @@ define('DICE_ROLL', false);   //Allow users to roll /dice in the name field
 define('FORTUNE_TRIP', false); //Allows users to recieve a #fortune in the namefield
 
 define('FORCED_ANON', false); //Force anonymous on this board.
-define('DISP_ID', false);     //Display user IDs.
+define('DISPLAY_ID', false);     //Display user IDs.
 define('MAX_LINES', 50);      //Max # of line breaks allowed for a post
 define('MAX_LINES_SHOWN', 20);      //Maximum number of user lines shown in the index before they are abbreviated
 define('S_POSTLENGTH', 3000); //Maximum character length of posts

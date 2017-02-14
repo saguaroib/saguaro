@@ -116,7 +116,7 @@ class Head {
         $temp .= (NSFW) ? 'var style_group = "nsfw";' : 'var style_group = "sfw";';
 
         if (DISP_ID) {
-            $temp .= "var ids_active = 1;";
+            $temp .= "var ids_enabled = 1;";
         }
 
         if ($admin) { //Admin js variables go here

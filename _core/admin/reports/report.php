@@ -33,7 +33,7 @@ class SaguaroReports {
 
         //Trying to report a sticky?
         if ($row['sticky'] > 0) return $this->error("Stop trying to report a sticky!", $no);
-		//if ($row['capcode'] != '') return $this->error("You can't report this post!", $no);
+        if ($row['capcode'] != '') return $this->error("You can't report this post!", $no);
 
         //User is reporting themself?
         if ($host == $row['host']) return $this->error("You can't report your own post!", $no);

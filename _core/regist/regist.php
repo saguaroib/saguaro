@@ -65,9 +65,10 @@ class Regist {
             //'tim'     => $info['local_name'],
             'time'      => $info['time'],
             'pwd'       => $info['post']['password'],
-            'sticky'    => $info['post']['special']['sticky'],
-            'permasage' => $info['post']['special']['permasage'],
-            'locked'    => $info['post']['special']['locked'],
+            'capcode'   => $info['post']['capcode'],
+            'id'        => $info['post']['id'],
+            'tripcode'  => $info['post']['tripcode'],
+            'country'   => $info['post']['country'],
             'resto'     => $resto,
             'board'     => BOARD_DIR
         ];
@@ -75,7 +76,12 @@ class Regist {
         $set = $this->dynamicBuild($data);
         $query = "insert into ".SQLLOG." (" . $set['keys'] . ") values (" . $set['vals'] .")";
         $mysql->query($query);
+
         $final = (int) $mysql->result('select last_insert_id()');
+
+        $last_modified = ($resto) ? $resto : $final;
+        $mysql->query("UPDATE " . SQLLOG . " SET last_modified='{$info['time']}' WHERE no='{$last_modified}' AND board='" . BOARD_DIR . "'");        
+
         $this->cache['post']['number'] = $final;
         /* if (!$result = ?) { echo E_REGFAILED; }*/
 
@@ -196,10 +202,14 @@ class Regist {
             'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
             'password' => ($_POST['pwd'] !== "") ? substr($_POST['pwd'],0,8) : ($_COOKIE['saguaro_pass']) ? $_COOKIE['saguaro_pass'] : substr(md5(rand()),0,8), //Get and/or supply deletion password.
             'now' => date("m/d/y", $time) . "(" . (string) $day . ")" . date("H:i:s", $time),
-            'special' => $this->sortSpecial(),
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
 
+        //Apply user IDs, dice, EXIF etc to post..
+        require_once("inc/addons.php");
+        $addonsClass = new SaguaroRegistExtras;
+        $post = $addonsClass->init($post);
+        
         //Basic sanitization.
         $moderator = valid("moderator");
         $saniCls = new Sanitize;
@@ -210,17 +220,6 @@ class Regist {
 
         $post['child'] = (bool) ($post['parent'] !== 0);
         $post['comment_md5'] = md5($post['comment']);
-
-        //Apply user IDs, dice, EXIF etc to post..
-        require_once("inc/addons.php");
-        $post['now'] = userID($post['now'], $post['email'], $post['name']);
-        $ret = parseComment($post['comment'], $post['email'], $post['name']);
-        $post['comment'] = $ret['com'];
-        $post['name'] = $ret['name'];
-
-        require_once('inc/tripcode.php');
-        $post['name'] = Tripcode::format($post['name']);
-        $post['name'] = ($post['special']['capcode']) ? Tripcode::adminify($post['name']) : $post['name'];
 
         return $post;
     }
@@ -284,22 +283,6 @@ class Regist {
         }
 
         return $output;
-    }
-
-    private function sortSpecial() {
-        if (valid('janitor')) {
-            //Must leave int values as ints, bool values as bools
-            $cap = (isset($_POST['showCap'])) ? true : false;
-            $sticky = (isset($_POST['isSticky'])) ? true : false;
-            $eventSticky = (isset($_POST['eventSticky'])) ? $sticky = 2 : false;
-            $locked = (isset($_POST['isLocked'])) ? true : false;
-        }
-
-        return [
-            'sticky' => $sticky,
-            'locked' => $locked,
-            'capcode' => $cap
-        ];
     }
 }
 

@@ -15,25 +15,36 @@ class Post {
 
     function formatOP() {
         @extract($this->data);
+        $link = "//" . SITE_ROOT_BD . "/" . RES_DIR . "";
+        if ($email) $name = "<a href='mailto:$email' class='linkmail'>$name</a>";
         $temp = "<div class='thread' id='t$no'/><div class='postContainer opContainer' id='pc$no'/><div class='post op' id='p$no'/>";
 
-        $temp .= "<div class='postInfo desktop' id='pi{$no}'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' data-utc='{$time}'>$now</span>";
-
-        $stickyicon = ($sticky) ? ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="sticky"> ' : "";
-
-        if ($locked) $stickyicon .= ' <img src="' . CSS_PATH . '/imgs/locked.gif" alt="closed"> ';
-
-        if (!$this->inIndex) {
-            $temp .= "<a href='" . $resto . PHP_EXT . "#$no' name='$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon </div>";
-            $temp .= "<input type='hidden' name='anchor' value='$no'>";  //Anchor for in-thread deletion redirect
-        } else {
-            $temp .= "  <a href='" . RES_DIR . $no . PHP_EXT . "#" . $no . "' name='$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a> $stickyicon [<a href='" . RES_DIR . $no . PHP_EXT . "'>" . S_REPLY . "</a>]</div>";
+        if (strpos($sub, "SPOILER<>") === 0) {
+            $sub = substr($sub, strlen("SPOILER<>")); //trim out SPOILER<>
+            $spoiler = true;
         }
 
-        $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $no); //lol
-        $com = $this->auto_link($com, $no);
+        $posterID = (DISPLAY_ID) ? "<span class='posteruid id_{$id}'>(ID: <span class='hand' title='Highlight posts by this ID'>{$id}</span>)</span> " : '';
+        $trip = (($tripcode != '' && ALLOW_TRIP) || true) ? "<span class='postertrip'>{$tripcode}</span> " : '';
 
-        
+        $name = ($capcode) ? $this->capcode($capcode, $name, $tripcode) : "<span class='name'>$name{$trip}</span>";
+
+        $temp .= "<div class='postInfo desktop' id='pi{$no}'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='nameBlock'>{$name} {$posterID}</span><span class='dateTime' data-utc='{$time}'>{$now}</span>";
+
+        if ($sticky) $stickyicon .= ' <img src="' . CSS_PATH . '/imgs/sticky.gif" alt="Sticky"> ';
+        if ($closed) $stickyicon .= ' <img src="' . CSS_PATH . '/imgs/locked.gif" alt="Closed to replies"> ';
+        if ($permasage && SHOW_PERMASAGE) $stickyicon .= ' <img src="' . CSS_PATH . '/imgs/bumplocked.gif" alt="This thread will not bump.">'; 
+
+        if (!$this->inIndex) {
+            $temp .= "<a href='#p{$no}' class='permalink' title='Link to this thread' >  No.</a><a href='javascript:insert(\"$no\")' title='Quote'>$no</a> $stickyicon </div>";
+            $temp .= "<input type='hidden' name='anchor' value='$no'>";  //Anchor for in-thread deletion redirect
+        } else {
+            $temp .= "  <a href='{$link}{$no}" . PHP_EXT . "#{$no}' name='$no' class='permalink' title='Link to this thread' resto='{$no}'>  No.</a><a href='{$link}{$no}" . PHP_EXT . "#{$no}' title='Quote'>$no</a> $stickyicon [<a href='" . RES_DIR  . $no . PHP_EXT . "'>" . S_REPLY . "</a>]</div>";
+        }
+
+        $com = $this->auto_link($com, $no, 0);
+        $com = $this->abbr($com, MAX_LINES_SHOWN, $no, $no); //lol
+
         $image = new Image;
         $image->inIndex = $this->inIndex;
 
@@ -47,8 +58,7 @@ class Post {
             $temp .= "</div>";
         }        
         
-        //$temp .= "<br>";
-        $temp .= ($com == "") ? "<blockquote style='display:none;' class='postMessage' id='m$no' >$com</blockquote>" : "<blockquote class='postMessage' id='m$no' >$com</blockquote>";
+        $temp .= "<blockquote class='postMessage' id='m$no' >$com</blockquote>";
         $temp .= "</div></div>";
         return $temp;
     }
@@ -56,24 +66,27 @@ class Post {
     function format() {
         extract($this->data);
 
-        $temp = "";
+        $link = "//" . SITE_ROOT_BD . "/" . RES_DIR . "";
 
         if ($email) $name = "<a href='mailto:$email' class='linkmail'>$name</a>";
         if (strpos($sub, "SPOILER<>") === 0) {
             $sub = substr($sub, strlen("SPOILER<>")); //trim out SPOILER<>
-            $spoiler = 1;
-        } else {
-            $spoiler = 0;
+            $spoiler = true;
         }
+        $posterID = (DISPLAY_ID) ? " <span class='posteruid id_{$id}'>(ID: <span class='hand' title='Highlight posts by this ID'>{$id}</span>)</span> " : '';
+        $trip = (($tripcode != '' && ALLOW_TRIP) || true) ? "<span class='postertrip'>{$tripcode}</span> " : '';
+
         $temp .= "<div class='postContainer replyContainer' id='pc$no'/>";
         $temp .= "<div class='sideArrows' id='sa$no'>&gt;&gt;</div><div id='p$no' class='post reply'>";
 
-        $temp .= "<div class='postInfo desktop' id='pi{$no}'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='name'>$name</span> <span class='dateTime' data-utc='{$time}'>$now</span> ";
+        $name = ($capcode) ? $this->capcode($capcode, $name, $tripcode) : "<span class='name'>$name{$trip}</span>";
+
+        $temp .= "<div class='postInfo desktop' id='pi{$no}'><input type='checkbox' name='$no' value='delete'><span class='subject'>$sub</span> <span class='nameBlock'>{$name} {$posterID}</span><span class='dateTime' data-utc='{$time}'>{$now}</span>";
 
         if (!$this->inIndex) {
-            $temp .= "<a href='" . $resto . PHP_EXT . "#$no' name='$no' class='permalink' title='Permalink thread'>  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></span></div>";
+            $temp .= "<a href='#p{$no}' class='permalink' title='Link to this thread' >  No.</a><a href='javascript:insert(\"$no\")' title='Quote'>$no</a> $stickyicon </div>";
         } else {
-            $temp .= "<a href='" . RES_DIR . $resto . PHP_EXT . "#$no' name='$no' class='permalink' title='Permalink thread' >  No.</a><a href='javascript:insert(\"$no\")' class='quotejs' title='Quote'>$no</a></div>";
+            $temp .= "  <a href='" . RES_DIR . $resto . PHP_EXT . "#" . $no . "' name='$no' class='permalink' title='Link to this thread' resto='{$resto}'>  No.</a><a href='{$link}{$resto}" . PHP_EXT . "#{$no}' title='Quote'>$no</a></div>";
         }
 
         $image = new Image;
@@ -140,5 +153,17 @@ class Post {
         require_once(CORE_DIR . "/general/text_process/autolink.php");
         $link = new AutoLink;
         return $link->format($com);
+    }
+
+    public function capcode($capcode, $name, $tripcode) {
+
+        $capcodeArray = [
+            'admin'     => ['title'  => 'This user is an Administrator','capcodeTail' => 'Admin','class' => 'admin'],
+            'moderator' => ['title'  => 'This user is a Moderator','capcodeTail' => 'Mod','class' => 'moderator'],
+            'janitor'   => ['title'  => 'This user is a board Janitor','capcodeTail' => 'Janitor','class' => 'jani'], 
+            'manager'   => ['title'  => 'This user is a Manager','capcodeTail' => 'Manager','class' => 'manager'], 
+            'developer' => ['title'  => 'This user is a Developer','capcodeTail' => 'Developer','class' => 'developer']
+        ];
+        return "<span class='name cap {$capcodeArray[$capcode]['class']}' title='{$capcodeArray[$capcode]['title']}'>$name <span class='postertrip'>{$tripcode}</span> ## {$capcodeArray[$capcode]['capcodeTail']}</span>";
     }
 }
