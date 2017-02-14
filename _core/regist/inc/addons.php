@@ -8,9 +8,7 @@ class SaguaroRegistExtras {
         $post['capcode'] = $capcode['cap'];
         $post['email'] = $capcode['email'];
 
-        if (DISP_ID) {
-            $post['id'] = substr(crypt(md5($_SERVER["REMOTE_ADDR"] . 'id' . date("Ymd", $time)), 'id'), +3);
-        }
+        $post['id'] = substr(crypt(md5($_SERVER["REMOTE_ADDR"] . 'id' . date("Ymd", $time)), 'id'), +3);
 
         require_once(CORE_DIR . "/regist/inc/tripcode.php");
         $tripcodeClass = new Tripcode;
