@@ -36,7 +36,7 @@ define('SHOWTITLETXT', true);   //Show TITLE at top. False: hide title'', true: 
 define('SHOWTITLEIMG', false);  //Show image at top
 define('TITLEIMG', '');         //Title image (point to an img rotating script if you want rotating banners)
 define('DATE_FORMAT', 'm/d/y'); //Formatting for the date in each post, see http://php.net/manual/en/function.date.php for different options
-
+define('ENABLE_API', false); //Don't touch this.
 
 /*
     Specialized board settings - a board with specific purpose
