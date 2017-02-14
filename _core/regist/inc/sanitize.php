@@ -2,6 +2,8 @@
 
 class Sanitize {
     function process($post, $moderator = 0) {
+        $post['name'] = $this->CleanStr($post['name'], 0);
+        $post['name'] = preg_replace("[\r\n]", "", $post['name']);
         $post['email'] = $this->CleanStr($post['email'], 0);
         $post['email'] = preg_replace("[\r\n]", "", $post['email']);
         $post['subject']   = $this->CleanStr($post['subject'], 0);

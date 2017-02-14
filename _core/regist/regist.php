@@ -205,6 +205,11 @@ class Regist {
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
 
+        //Apply user IDs, dice, EXIF etc to post..
+        require_once("inc/addons.php");
+        $addonsClass = new SaguaroRegistExtras;
+        $post = $addonsClass->init($post);
+        
         //Basic sanitization.
         $moderator = valid("moderator");
         $saniCls = new Sanitize;
@@ -215,11 +220,6 @@ class Regist {
 
         $post['child'] = (bool) ($post['parent'] !== 0);
         $post['comment_md5'] = md5($post['comment']);
-
-        //Apply user IDs, dice, EXIF etc to post..
-        require_once("inc/addons.php");
-        $addonsClass = new SaguaroRegistExtras;
-        $post = $addonsClass->init($post);
 
         return $post;
     }
