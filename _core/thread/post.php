@@ -24,7 +24,7 @@ class Post {
             $spoiler = true;
         }
 
-        $posterID = (DISP_ID) ? "<span class='posteruid id_{$id}'>(ID: <span class='hand' title='Highlight posts by this ID'>{$id}</span>)</span> " : '';
+        $posterID = (DISPLAY_ID) ? "<span class='posteruid id_{$id}'>(ID: <span class='hand' title='Highlight posts by this ID'>{$id}</span>)</span> " : '';
         $trip = (($tripcode != '' && ALLOW_TRIP) || true) ? "<span class='postertrip'>{$tripcode}</span> " : '';
 
         $name = ($capcode) ? $this->capcode($capcode, $name, $tripcode) : "<span class='name'>$name{$trip}</span>";
@@ -73,7 +73,7 @@ class Post {
             $sub = substr($sub, strlen("SPOILER<>")); //trim out SPOILER<>
             $spoiler = true;
         }
-        $posterID = (DISP_ID) ? " <span class='posteruid id_{$id}'>(ID: <span class='hand' title='Highlight posts by this ID'>{$id}</span>)</span> " : '';
+        $posterID = (DISPLAY_ID) ? " <span class='posteruid id_{$id}'>(ID: <span class='hand' title='Highlight posts by this ID'>{$id}</span>)</span> " : '';
         $trip = (($tripcode != '' && ALLOW_TRIP) || true) ? "<span class='postertrip'>{$tripcode}</span> " : '';
 
         $temp .= "<div class='postContainer replyContainer' id='pc$no'/>";
