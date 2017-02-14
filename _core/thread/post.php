@@ -159,7 +159,7 @@ class Post {
 
         $capcodeArray = [
             'admin'     => ['title'  => 'This user is an Administrator','capcodeTail' => 'Admin','class' => 'admin'],
-            'moderator' => ['title'  => 'This user is a Moderator','capcodeTail' => 'Mod','class' => 'mod'],
+            'moderator' => ['title'  => 'This user is a Moderator','capcodeTail' => 'Mod','class' => 'moderator'],
             'janitor'   => ['title'  => 'This user is a board Janitor','capcodeTail' => 'Janitor','class' => 'jani'], 
             'manager'   => ['title'  => 'This user is a Manager','capcodeTail' => 'Manager','class' => 'manager'], 
             'developer' => ['title'  => 'This user is a Developer','capcodeTail' => 'Developer','class' => 'developer']
