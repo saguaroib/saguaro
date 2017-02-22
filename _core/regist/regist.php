@@ -150,11 +150,12 @@ class Regist {
         $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
 
         //Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
-        require_once("inc/prune.php");
-        prune_old(); //Does the page pruning
+        require_once(CORE_DIR . "/delete/delete.php");
+        $deleteClass = new SaguaroDelete;
+        $deleteClass->prune_old(); //Does the page pruning
 
-        if ($this->cache['post']['special']['sticky'] == 2)
-            pruneThread($parent); //Event stickies.
+        /*if ($this->cache['post']['special']['sticky'] == 2)
+            pruneThread($parent); //Event stickies.*/
 
         //Run update process.
         $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
