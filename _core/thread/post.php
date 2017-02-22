@@ -60,6 +60,11 @@ class Post {
         
         $temp .= "<blockquote class='postMessage' id='m$no' >$com</blockquote>";
         $temp .= "</div></div>";
+        
+        if ($old) { //Only set in the log if EXPIRE_NEGLECTED is enabled.
+            $temp .= "<span class='oldpost'>" . S_OLD . "</span>";
+        }
+        
         return $temp;
     }
 
