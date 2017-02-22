@@ -118,11 +118,7 @@ class Log {
         for ($page = 1; $page <= $numThreads; $page += PAGE_DEF) { //This loop generates every index page
             if (UPDATE_THROTTLING >= 1) {
                 clearstatcache();
-                if ($low_priority && @filemtime("update.stamp") > $update_start) {
-                    return;
-                }
-                if (mt_rand(0, 15) == 0)
-                    return;
+                if (($low_priority && @filemtime("update.stamp") > $update_start) || (mt_rand(0, 15) == 0)) return;
             }
 
             if (!$resno && $page > 1) $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . "- Page {$page}";
@@ -133,62 +129,26 @@ class Log {
             $st = ($resno) ? $page : null;
 
             $dat .= '<form name="delform" id="delform" action="' . PHP_SELF_ABS . '" method="post">';
-
             $dat .= "<div class='board'>";
             
-            for ($i = $st; $i < $st + PAGE_DEF; $i++) {
+            for ($i = $st; $i < $st + PAGE_DEF; $i++) { //Generates each thread on a page. If the page is the thread itself, loops only once.
                 list($_unused, $no) = each($treeline);
-                if (!$no) {
-                    break;
-                }
+                if (!$no) break;
 
                 //This won't need needed once the extra fluff is dealt with as we can just use the Index class.
                 $thread->inIndex = ($resno) ? false : true;
                 $dat .= $thread->format($no);
-
-                // Deletion pending (We'll disable this for now as it currently serves no purpose)
-                /*if (isset($log[$no]['old']))
-                    $dat .= "<span class=\"oldpost\">" . S_OLD . "</span><br>\n"; */
-
-                $resline = $log[$no]['children'];
-                ksort($resline);
-                $countres = count($log[$no]['children']);
-                $t = 0;
-                
-                $disam = ($log[$no]['sticky'] != 0) ? 1 : (defined('REPLIES_SHOWN')) ? REPLIES_SHOWN : 5;
-
-                $s = $countres - $disam;
-                $cur = 1;
-                while ($s >= $cur) {
-                    list($row) = each($resline);
-                    if ($log[$row]["fsize"] != 0) {
-                        $t++;
-                    }
-                    $cur++;
-                }
-                if ($countres != 0)
-                    reset($resline);
-
-
-                /*possibility for ads after each post*/
                 $dat .= "</span><hr>";
 
-                if ($resno)
-                    $dat .= "<div class='navLinks navLinksBot'>[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]</div><hr>";
+                if ($resno) $dat .= "<div class='navLinks navLinksBot'>[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]</div><hr>";
 
-                clearstatcache(); //clear stat cache of a file
-                //mysql_free_result($resline);
-                $p++;
-                if ($resno) {
-                    break;
-                } //only one tree line at time of res
+                clearstatcache();
+                if ($resno) break;
             }
 
-            
             $dat .= "</div>";
 
-            if (ENABLE_ADS)
-                $dat .= ADS_BELOWFORM . '<hr>';
+            if (ENABLE_ADS) $dat .= ADS_BELOWFORM . '<hr>';
 
             //afterPosts div is closed in page/foot.php
             $dat .= '<div class="afterPosts"><div align="right" class="delsettings">';
@@ -198,11 +158,11 @@ class Log {
             $dat .= S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']';
             //$dat .= S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />';
             $dat .= '<input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="report();"></form>';
-			$dat .= "<span class='styleChanger'> Style: <select id='styleSelector'>";
-			foreach($cssArray as $styleName => $stylePath) {
-				$dat .= "<option value='{$styleName}'>{$styleName}</option>";
-			}
-			$dat .= "</select></span></div>";
+            $dat .= "<span class='styleChanger'> Style: <select id='styleSelector'>";
+            foreach($cssArray as $styleName => $stylePath) {
+                $dat .= "<option value='{$styleName}'>{$styleName}</option>";
+            }
+            $dat .= "</select></span></div>";
 
             //Page switcher
             if (!$resno) {
