@@ -50,8 +50,8 @@ define('GIF_ONLY', false); //GIF upload only imageboard.
 */
 
 //Pages
-define('PAGE_DEF', 10); //Threads per page.
-define('PAGE_MAX', 10); //Maximum number of pages, posts that are pushed past the last page are deleted.
+define('THREADS_PER_PAGE', 10); //Threads per page.
+define('PAGES_PER_BOARD', 10); //Maximum number of pages, posts that are pushed past the last page are deleted.
 define('LOG_MAX',  1500); //Maximum number of posts to store in the table.
 define('UPDATE_THROTTLING', false); //Leave this as 0 unless you recieve /a lot/ of traffic
 define('ENABLE_BLOTTER', false); //Show blotter under postform. Edit blotter contents from admin panel.

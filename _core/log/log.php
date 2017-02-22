@@ -87,19 +87,6 @@ class Log {
             $this->print_page($logfilename, $dat);
         }
 
-        if (UPDATE_THROTTLING >= 1) { //Throttling for Index pages (Bulk page updating, save disk I/O)
-            $update_start = time();
-            touch("update.stamp", $update_start);
-            $low_priority = false;
-            clearstatcache();
-            if (@filemtime(PHP_SELF) > $update_start - UPDATE_THROTTLING) {
-                $low_priority = true;
-            } else {
-                touch(PHP_SELF, $update_start);
-            }
-        }
-
-
         if (CACHE_TTL >= 1) {        //using CACHE_TTL method (Bulk page updating, save disk I/O)
             $logfilename = ($resno) ?  RES_DIR . $resno . PHP_EXT : PHP_SELF2;
             //if(USE_GZIP == 1) $logfilename .= '.html';
@@ -115,15 +102,7 @@ class Log {
             }
         }
 
-        for ($page = 1; $page <= $numThreads; $page += PAGE_DEF) { //This loop generates every index page
-            if (UPDATE_THROTTLING >= 1) {
-                clearstatcache();
-                if ($low_priority && @filemtime("update.stamp") > $update_start) {
-                    return;
-                }
-                if (mt_rand(0, 15) == 0)
-                    return;
-            }
+        for ($page = 1; $page <= $numThreads; $page += THREADS_PER_PAGE) { //This loop generates every index page
 
             if (!$resno && $page > 1) $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . "- Page {$page}";
             $dat = $head->generate();
@@ -133,62 +112,26 @@ class Log {
             $st = ($resno) ? $page : null;
 
             $dat .= '<form name="delform" id="delform" action="' . PHP_SELF_ABS . '" method="post">';
-
             $dat .= "<div class='board'>";
             
-            for ($i = $st; $i < $st + PAGE_DEF; $i++) {
+            for ($i = $st; $i < $st + THREADS_PER_PAGE; $i++) { //Generates each thread on a page. If the page is the thread itself, loops only once.
                 list($_unused, $no) = each($treeline);
-                if (!$no) {
-                    break;
-                }
+                if (!$no) break;
 
                 //This won't need needed once the extra fluff is dealt with as we can just use the Index class.
                 $thread->inIndex = ($resno) ? false : true;
                 $dat .= $thread->format($no);
-
-                // Deletion pending (We'll disable this for now as it currently serves no purpose)
-                /*if (isset($log[$no]['old']))
-                    $dat .= "<span class=\"oldpost\">" . S_OLD . "</span><br>\n"; */
-
-                $resline = $log[$no]['children'];
-                ksort($resline);
-                $countres = count($log[$no]['children']);
-                $t = 0;
-                
-                $disam = ($log[$no]['sticky'] != 0) ? 1 : (defined('REPLIES_SHOWN')) ? REPLIES_SHOWN : 5;
-
-                $s = $countres - $disam;
-                $cur = 1;
-                while ($s >= $cur) {
-                    list($row) = each($resline);
-                    if ($log[$row]["fsize"] != 0) {
-                        $t++;
-                    }
-                    $cur++;
-                }
-                if ($countres != 0)
-                    reset($resline);
-
-
-                /*possibility for ads after each post*/
                 $dat .= "</span><hr>";
 
-                if ($resno)
-                    $dat .= "<div class='navLinks navLinksBot'>[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]</div><hr>";
+                if ($resno) $dat .= "<div class='navLinks navLinksBot'>[<a href='" . PHP_SELF2_ABS . "'>" . S_RETURN . "</a>] [<a href='$resno" . PHP_EXT . "#top'>Top</a>]</div><hr>";
 
-                clearstatcache(); //clear stat cache of a file
-                //mysql_free_result($resline);
-                $p++;
-                if ($resno) {
-                    break;
-                } //only one tree line at time of res
+                clearstatcache();
+                if ($resno) break;
             }
 
-            
             $dat .= "</div>";
 
-            if (ENABLE_ADS)
-                $dat .= ADS_BELOWFORM . '<hr>';
+            if (ENABLE_ADS) $dat .= ADS_BELOWFORM . '<hr>';
 
             //afterPosts div is closed in page/foot.php
             $dat .= '<div class="afterPosts"><div align="right" class="delsettings">';
@@ -198,11 +141,11 @@ class Log {
             $dat .= S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']';
             //$dat .= S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />';
             $dat .= '<input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="report();"></form>';
-			$dat .= "<span class='styleChanger'> Style: <select id='styleSelector'>";
-			foreach($cssArray as $styleName => $stylePath) {
-				$dat .= "<option value='{$styleName}'>{$styleName}</option>";
-			}
-			$dat .= "</select></span></div>";
+            $dat .= "<span class='styleChanger'> Style: <select id='styleSelector'>";
+            foreach($cssArray as $styleName => $stylePath) {
+                $dat .= "<option value='{$styleName}'>{$styleName}</option>";
+            }
+            $dat .= "</select></span></div>";
 
             //Page switcher
             if (!$resno) {
@@ -213,10 +156,10 @@ class Log {
                     $dat .= "<input type='submit' value='" . S_PREV . "' />";
                     $dat .= "</form></div>";
                 }
-                for ($i = 1; $i <= PAGE_MAX; $i+=1) {
-                    $dat .= ($i !== $page && ($numThreads > (PAGE_DEF *  $i))) ? "[<a href='" . $i . PHP_EXT . "'>{$i}</a>] " : ($i === $page) ? "[<strong>{$i}</strong>] ": "[{$i}] "; //this ones for you hitler
+                for ($i = 1; $i <= PAGES_PER_BOARD; $i+=1) {
+                    $dat .= ($i !== $page && ($numThreads > (THREADS_PER_PAGE *  $i))) ? "[<a href='" . $i . PHP_EXT . "'>{$i}</a>] " : ($i === $page) ? "[<strong>{$i}</strong>] ": "[{$i}] "; //this ones for you hitler
                 }
-                if ($page < PAGE_MAX && ($numThreads > (PAGE_DEF *  $i))) {
+                if ($page < PAGES_PER_BOARD && ($numThreads > (THREADS_PER_PAGE *  $i))) {
                     $dat .= "<div class='nextPage'><form action='" . ($page + 1) . "'>";
                     $dat .= "<input type='submit' value='" . S_NEXT . "' />";
                     $dat .= "</form></div>";
@@ -235,7 +178,7 @@ class Log {
                     $deferred = $this->update(0);
                 break;
             }
-            $logfilename = ($page === 1) ? PHP_SELF2 : $page / PAGE_DEF . PHP_EXT;
+            $logfilename = ($page === 1) ? PHP_SELF2 : $page / THREADS_PER_PAGE . PHP_EXT;
 
             $this->print_page($logfilename, $dat);
         }
@@ -298,29 +241,17 @@ class Log {
                 }
 
                 // add this post to list of children
-                /*$log[$row['resto']]['children'][$row['no']] = 1;
-                if ($row['fsize']) {
+                $log[$row['resto']]['children'][$row['no']] = 1;
+                if ($row['media']) {
                     if (!isset($log[$row['resto']]['imgreplycount'])) {
                         $log[$row['resto']]['imgreplycount'] = 0;
                     } else {
                         $log[$row['resto']]['imgreplycount']++;
                     }
-                }*/
-            }
-        }
-        
-        $mysql->free_result($query); //Since the data has been moved to $log, free up $query
-        $query = $mysql->query("SELECT * FROM " . SQLMEDIA . " WHERE board='" . BOARD_DIR . "'");
-        
-        while ($row = $mysql->fetch_assoc($query)) {
-            if (!isset($log[$row['parent']][$row['no']])) {
-                $log[$row['parent']][$row['no']] = $row;
-            } else { // otherwise merge it with $row
-                foreach ($row as $key => $val) {
-                    $log[$row['parent']][$row['no']][$key] = $val;
                 }
             }
         }
+        
         $mysql->free_result($query); //Since the data has been moved to $log, free up $query
 
         //Basic support for bump order with new 'last' column.
@@ -338,8 +269,8 @@ class Log {
             rsort($threads, SORT_NUMERIC);
 
             $threadcount = count($threads);
-            if (PAGE_MAX > 0) { // the lowest 5% of maximum threads get marked old
-                for ($i = floor(0.95 * PAGE_MAX * PAGE_DEF); $i < $threadcount; $i++) {
+            if (PAGES_PER_BOARD > 0) { // the lowest 5% of maximum threads get marked old
+                for ($i = floor(0.95 * PAGES_PER_BOARD * THREADS_PER_PAGE); $i < $threadcount; $i++) {
                     if (!$log[$threads[$i]]['sticky'] && EXPIRE_NEGLECTED !== 1) {
                         $log[$threads[$i]]['old'] = 1;
                     }
@@ -356,79 +287,6 @@ class Log {
         $ipcount = count($ips);
 
         $this->cache = $log;
-    }
-
-    function generate($type, $no, $inIndex = false) {
-        require_once(CORE_DIR . "/postform.php");
-
-        $dat = '<form name= "delform" action="' . PHP_SELF_ABS . '" method="post">';
-        $foot = '<table align="right"><tr><td class="delsettings" nowrap="nowrap" align="center">
-                <input type="hidden" name="mode" value="usrdel" />' . S_REPDEL . '[<input type="checkbox" name="onlyimgdel" value="on" />' . S_DELPICONLY . ']
-                ' . S_DELKEY . '<input type="password" name="pwd" size="8" maxlength="8" value="" />
-                <input type="submit" value="' . S_DELETE . '" /><input type="button" value="Report" onclick="var o=document.getElementsByTagName(\'INPUT\');for(var i=0;i<o.length;i++)if(o[i].type==\'checkbox\' && o[i].checked && o[i].value==\'delete\') return reppop(\'' . PHP_SELF_ABS . '?mode=report&no=\'+o[i].name+\'\');"></tr></td></form><script>document.delform.pwd.value=l(' . SITE_ROOT . '_pass");</script></td></tr></table>';
-
-        if ($type == "index") {
-            return PostForm::format() . $dat . $this->generate_index($no, $inIndex) . $foot;
-        } elseif ($type == "thread") {
-            return PostForm::format($no) . $dat . $this->generate_thread($no, $inIndex) . $foot;
-        }
-    }
-
-    function generate_index($no, $cacheThreads = false) {
-        $this->update_cache();
-
-        require_once(CORE_DIR . "/index/index.php");
-        $index = new Index;
-        $index_temp = $index->format($no, 0, $cacheThreads);
-
-        $this->thread_cache = $index->thread_cache; //Copy Index thread cache.
-
-        return $index_temp;
-    }
-
-    function generate_thread($no, $inIndex) {
-        $this->update_cache();
-
-        if ($inIndex && $this->thread_cache[$no]) { //Use $this->thread_cache if we want to generate an inIndex thread and it already exists.
-           return $this->thread_cache[$no];
-        } else {
-            require_once(CORE_DIR . "/thread/thread.php"); //Safety.
-            $thread->inIndex = $inIndex;
-            $thread = new Thread;
-
-            return $thread->format($no, true);
-        }
-    }
-
-    function generate_all() {
-        $this->update_cache();
-
-        require_once(CORE_DIR . "/page/page.php");
-        $pageC = new Page;
-
-        $profile = microtime(); //Basic profiling.
-        for ($page = 1; $page <= ceil(count($this->cache['THREADS']) / PAGE_DEF); $page++) {
-            //Generate Index pages.
-            $pageC->headVars['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE;
-            $temp = $pageC->generate($this->generate("index", $page, false));
-            $logfilename = ($page == 1) ? PHP_SELF2 : ($page - 1). PHP_EXT;
-
-            echo "Writing out Index $page ($logfilename)... ";
-            $this->print_page($logfilename , $temp);
-            echo "Done!<br>";
-        }
-
-        foreach ($this->cache['THREADS'] as $no) {
-                $pageC->headVars['page']['title'] = "/" . BOARD_DIR . "/" . (!empty($this->cache[$no]['sub']) ? " - " . $this->cache[$no]['sub'] : '') . " - " . TITLE;
-                $logfilename = RES_DIR . $no . PHP_EXT;
-                echo "Writing out #$no ($logfilename)... ";
-                $temp = $pageC->generate($this->generate("thread", $no, false));
-
-                $this->print_page($logfilename, $temp);
-                echo "Done!<br>";
-        }
-
-        echo sprintf("<br>Took %f", microtime() - $profile) . " seconds.";
     }
 
     function print_page($filename, $contents, $force_nogzip = 0) {
