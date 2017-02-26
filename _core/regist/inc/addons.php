@@ -32,6 +32,11 @@ class SaguaroRegistExtras {
             }
         }
         
+        if ($post['capcode']) { //Don't store ID or country for users posting with a capcode.
+            $post['id'] = 'Heaven';
+            $post['country'] = '';
+        }
+        
         return $post;
     }
 
