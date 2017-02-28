@@ -36,7 +36,13 @@ define('SHOWTITLETXT', true);   //Show TITLE at top. False: hide title'', true: 
 define('SHOWTITLEIMG', false);  //Show image at top
 define('TITLEIMG', '');         //Title image (point to an img rotating script if you want rotating banners)
 define('DATE_FORMAT', 'm/d/y'); //Formatting for the date in each post, see http://php.net/manual/en/function.date.php for different options
-define('ENABLE_API', false); //Don't touch this.
+
+/*
+    Generate .json files as part of saguaro's read only JSON API. 
+    Documentation: https://github.com/saguaroib/saguaro/wiki/API-Documentation
+    Warning: Disabling this will break some aspects of the native javascript extension.
+*/
+define('ENABLE_API', false);
 
 /*
     Specialized board settings - a board with specific purpose
@@ -188,6 +194,13 @@ define('PLUG_PATH_PUBLIC', '//'.SITE_ROOT_BD.'/'.PLUG_PATH); //Public URL path t
 define('JS_PATH', PLUG_PATH_PUBLIC); //jQuery folder. (usually in the plugins folder)
 define('PUBLIC_IMAGE_DIR', '//'.SITE_ROOT_BD.'/'.IMG_DIR); //Web path to a board's image folder
 define('PUBLIC_THUMB_DIR', '//'.SITE_ROOT_BD.'/'.THUMB_DIR);//Web path to a board's thumbnail folder
+
+/*
+    Warning: Changing API pathing may sometimes require modifying header controls on your http server
+    See documentation for more info: https://github.com/saguaroib/saguaro/wiki/API-Documentation#modifying-headers
+*/
+define('API_DIR', '/'); //Path to store catalog.json, index json files and threads.json (not the indivudual thread json files)
+define('API_DIR_RES', API_DIR . 'res/'); //Path to store thread json files
 
 //Posting and Threads
 define('CACHE_TTL', true);          //Thread caching

@@ -31,9 +31,10 @@ class SaguaroDelete {
 
         foreach ($rebuild as $key => $val) {
             if (ENABLE_API) {
-                require_once(CORE_DIR . "/api/apoi.php");
+                require_once(CORE_DIR . "/api/apoapi.php");
                 $api = new SaguaroAPI;
-                $api->formatThread($key, 0); //Update .json files to reflect deleted posts
+                $api->thread($key); //Update .json files to reflect deleted posts
+                $api->generatePages();
             }
             $my_log->update($key, 1); //Leaving second parameter as 0 rebuilds the index each time!
         }

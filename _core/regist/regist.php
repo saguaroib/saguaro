@@ -162,6 +162,12 @@ class Regist {
         $target = ($child) ? $parent : $number;
         $my_log->update($target, $static_rebuild);
 
+        if (defined('ENABLE_API') && ENABLE_API) {
+            require_once(CORE_DIR . "api/apoapi.php");
+            $apiClass = new SaguaroAPI;
+            $apiClass->thread($parent);
+        }
+
         //Auto-noko.
         $url = DATA_SERVER . BOARD_DIR . "/" . RES_DIR;
         $target = $url . $target . PHP_EXT . (($child) ? "#$number" : "");
