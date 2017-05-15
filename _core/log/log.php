@@ -185,6 +185,9 @@ class Log {
 
         if (!$resno) { //Rebuild catalog page if index is changed
             $catalog->generate();
+            if (defined('ENABLE_API') && ENABLE_API) {
+                $apiClass->generatePages();
+            }
         }
 
         if (isset($deferred))
