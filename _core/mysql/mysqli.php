@@ -1,103 +1,51 @@
 <?php
 
-/*
+class SaguaroSQLi {
 
-    MySQLi support for SaguaroQL.
+	public $connection;
+	public $last;
 
-*/
+	public function connect() {
+		$this->connection = new mysqli(SQLHOST, SQLUSER, SQLPASS);
+		$this->selectDatabase(SQLDB);
 
-require_once("saguaroql.php");
+		if (!$this->connection->ping()) {
+			$this->handleError(S_SQLCONF,'', true);
+		}
+	}
 
-class SaguaroMySQLi extends SaguaroQL {
-    function connect($host, $username, $password) {
-        $this->connection = new mysqli($host, $username, $password);
+	public function selectDatabase($database) {
+		return $this->connection->select_db($database);
+	}
 
-        if (!$this->connection) {
-            die(S_SQLCONF);
-        }
-    }
+	public function query($string, $bind = false, $temp = []) {
+		if ($bind) {
+            $this->last = $this->connection->prepare($string);
+            foreach($bind as $key => $value) $temp[$key] = &$bind[$key];
+            call_user_func_array([$this->last, "bind_param"], $bind);
+            $this->last->execute();
+            $this->last = mysqli_stmt_fetch();
+		} else {
+			$this->last = $this->connection->query($string);
+		}
+		return $this->last;
+	}
 
-    function selectDatabase($database) {
-        //Attempts to select the working database.
-        if (!$this->connection->select_db(SQLDB)) {
-            echo S_SQLDBSF;
-        }
-    }
+	public function result($string, $bind = false) {
+		$this->query($string, $bind);
+		return mysqli_fetch_array($this->last)[0];
+	}
 
-    function escape_string($string) {
-        if (!$this->connection)
-            return 'Not connected to a SQL database, cannot escape.';
+	public function free_result($destroy) {
+        mysqli_free_result($destroy);
+		$this->last = null; return;
+	}
 
-        return $this->connection->escape_string($string);
-    }
+	private function handleError($message, $query, $fatal = false) {
+		echo $message;
 
-    private function sanitizeString($string) {
-        return $string;
-    }
-
-    function query($string) {
-        $string = $this->sanitizeString($string);
-
-        $ret = $this->connection->query($string);
-        if (!$ret) {
-            if (DEBUG_MODE) {
-                echo "Error #" . $this->connection->error . " on query: " . $string . "<br>";
-            } else {
-                //echo "MySQL error!<br>";
-            }
-        }
-        return $ret;
-    }
-
-    function result($string, $index = 0, $field = null) {
-        //MySQLi has no compliment to mysql_result, so this is specifically for backwards compatability.
-        $true = (is_resource($string)) ? $string : $this->query($string);
-        $string->data_seek($true);
-        if ($field == null) {
-            return $true;
-        } else {
-            $datarow = $true->fetch_array();
-            return $datarow[$true];
-        }
-    }
-
-    function free_result($res) {
-        return mysqli_free_result($res);
-    }
-
-    function fetch_row($string) {
-        if (!$string) return $this->last;
-
-        $true = is_resource($string) ? $string : $this->query($string);
-        $this->last = $true->fetch_row();
-        return $this->last;
-    }
-
-    function fetch_array($string) {
-        if (!$string) return $this->last;
-
-        $true = is_resource($string) ? $string : $this->query($string);
-        $this->last = $true->fetch_array();
-        return $this->last;
-    }
-
-    function fetch_assoc($string) {
-        if (!$string) return $this->last;
-
-        $true = is_resource($string) ? $string : $this->query($string);
-        $this->last = $true->fetch_assoc();
-        return $this->last;
-    }
-
-    function num_rows($string) {
-        if (!$string) return $this->last->num_rows;
-
-        $true = is_resource($string) ? $string : $this->query($string);
-        $this->last = $true->num_rows;
-        return $this->last;
-    }
-
-    function stats() {
-        return mysqli_stat($this->connection);
-    }
+		if ($fatal) {
+			die();
+		}
+	}
 }

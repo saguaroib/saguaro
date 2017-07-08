@@ -74,13 +74,14 @@ class Regist {
         ];
 
         $set = $this->dynamicBuild($data);
-        $query = "insert into ".SQLLOG." (" . $set['keys'] . ") values (" . $set['vals'] .")";
-        $mysql->query($query);
+        $mysql->query("INSERT INTO ".SQLLOG." (" . $set['keys'] . ") VALUES (" . $set['vals'] .")", $set['bindmap']);
 
-        $final = (int) $mysql->result('select last_insert_id()');
+        $final = (int) $mysql->result('SELECT last_insert_id()');
 
         $last_modified = ($resto) ? $resto : $final;
-        $mysql->query("UPDATE " . SQLLOG . " SET last_modified='{$info['time']}' WHERE no='{$last_modified}' AND board='" . BOARD_DIR . "'");        
+        $last_modified = (int) $last_modified;
+        $info['time'] = (int) $info['time'];
+        $mysql->query("UPDATE " . SQLLOG . " SET last_modified=:time WHERE no=:post AND board=:board", [":time" => $info['time'], ":post" => $last_modified, ":board" => BOARD_DIR], ["iis"]);        
 
         $this->cache['post']['number'] = $final;
         /* if (!$result = ?) { echo E_REGFAILED; }*/
@@ -103,13 +104,11 @@ class Regist {
                     'filename'     => $file['original_name'],
                     'localname'    => $file['localname'],
                     'board' => BOARD_DIR
-                ];
+                ]; 
 
                 $set = $this->dynamicBuild($out);
-                $query = "insert into ".SQLMEDIA." (" . $set['keys'] . ") values (" . $set['vals'] .")";
-                $mysql->query($query); //Disable this to skip writing to the media table.
+                $mysql->query("INSERT INTO ".SQLMEDIA." (" . $set['keys'] . ") VALUES (" . $set['vals'] .")", $set['bindmap']); //Disable this to skip writing to the media table.
 
-                //array_push($items, $mysql->result('select last_insert_id()')); //Old behavior of just pushing out the media row numbers.
                 unset($out['parent'], $out['resto'], $out['board']); //Delete unnecessary keys.
                 array_push($items, $out); //Push.
             }
@@ -117,8 +116,7 @@ class Regist {
             $items = json_encode($items);
 
             //Update the media column of the parent.
-            $query = "update ".SQLLOG." set media='$items' where no=$final";
-            $mysql->query($query);
+            $mysql->query("UPDATE ".SQLLOG." SET media=:items where no=:final", [":items" => $items, ":final" => $final], ['si']);
         }
 
         return $final; //Return 'no', latest auto-incremented column.
@@ -128,17 +126,17 @@ class Regist {
         global $mysql;
 
         //Dynamically build the SQL command, numerous advantages.
-        $keys = []; $vals = [];
+        $keys = []; $vals = []; $bindMap = [];
         foreach($set as $column => $value) {
-            array_push($keys,$column);
-
-            //If the value is numeric (but may be a string) or a boolean, cast it to an integer. Otherwise wrap in doublequotes and escape it.
-            array_push($vals,(is_numeric($value) || is_bool($value)) ? (int) $value : '"' . $mysql->escape_string($value) . '"');
+            $columns .= $column . ",";
+            $values .= ":".$column.",";
+            $bindMap[":".$column] = (empty($value) ? '' : $value);
+            
         }
-        $keys = implode(",",$keys);
-        $vals = implode(",",$vals);
+        $columns = rtrim($columns, ',');
+        $values = rtrim($values, ',');
 
-        return ['keys' => $keys, 'vals' => $vals];
+        return ['keys' => $columns, 'vals' => $values,'bindmap' => $bindMap];
     }
 
     private function updateCache() {
@@ -147,7 +145,7 @@ class Regist {
         $child = $this->cache['post']['child'];
         $number = (int) $this->cache['post']['number'];
         $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
-        $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
+        $mysql->query("UPDATE " . SQLLOG . " SET last=:number WHERE no=:parent", [":number" => $number, ":parent" => $parent], ["ii"]);
 
         //Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
         require_once(CORE_DIR . "/delete/delete.php");
@@ -167,7 +165,6 @@ class Regist {
             $apiClass = new SaguaroAPI;
             $apiClass->thread($parent);
         }
-
         //Auto-noko.
         $url = DATA_SERVER . BOARD_DIR . "/" . RES_DIR;
         $target = $url . $target . PHP_EXT . (($child) ? "#$number" : "");
