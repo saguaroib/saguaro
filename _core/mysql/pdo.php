@@ -15,7 +15,7 @@ class SaguaroPDO {
 	}
 
 	public function selectDatabase($database) {
-		return $this->query("USE ?", [$database]);
+		return $this->query("USE :database", [":database"=>$database]);
 	}
 
 	public function query($string, $bind = false) {
@@ -30,7 +30,7 @@ class SaguaroPDO {
 
 	public function result($string, $bind = false) {
 		$this->query($string, $bind);
-        return $this->last->fetchColumn(); //call the cops i dont give a FUCK
+        return $this->last->fetchColumn();
 	}
     
     public function num_rows($string, $bind = false) {
@@ -39,7 +39,6 @@ class SaguaroPDO {
     }
     
     public function fetch_array($string, $bind = false) {
-        debug_print_backtrace();
         die("UPDATE THIS STRING DUMMY " . $string);
     }
     
