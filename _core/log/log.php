@@ -248,7 +248,7 @@ class Log {
         $mysql->free_result($query); //Since the data has been moved to $log, free up $query
 
         //Basic support for bump order with new 'last' column.
-        $query = $mysql->fetch_assoc('SELECT no FROM `'. SQLLOG . '` WHERE `resto` = 0 ORDER BY sticky DESC, IF(sticky=0, last, sticky) DESC');
+        $query = $mysql->fetch_assoc('SELECT no FROM `'. SQLLOG . '` WHERE `resto` = 0 ORDER BY last_modified DESC, IF(sticky=0, last, sticky) DESC');
         foreach ($query as $row) {
             if (isset($log[$row['no']]) && $log[$row['no']]['resto'] == 0) {
                 $threads[] = $row['no'];
