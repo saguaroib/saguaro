@@ -57,16 +57,6 @@ class Log {
         }
 
         $treeline = ($resno) ? array($resno) : $log['THREADS'];
-
-        //Finding the last entry number
-        if (!$result = $mysql->query("select max(no) from " . SQLLOG)) {
-            echo S_SQLFAIL;
-        }
-
-        $row = $mysql->fetch_array($result);
-        $lastno = (int) $row[0];
-        $mysql->free_result($result);
-
         $numThreads = count($treeline);
         
         $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE;
@@ -214,9 +204,9 @@ class Log {
 
         $mysql->query("SET read_buffer_size=1048576");
         $mysql_unbuffered_reads = 1;
-        $query = $mysql->query("SELECT * FROM " . SQLLOG);
+        $query = $mysql->fetch_assoc("SELECT * FROM " . SQLLOG);
 
-        while ($row = $mysql->fetch_assoc($query)) {
+        foreach($query as $row) {
             if ($row['no'] > $lastno) {
                 $lastno = $row['no'];
             }
@@ -258,8 +248,8 @@ class Log {
         $mysql->free_result($query); //Since the data has been moved to $log, free up $query
 
         //Basic support for bump order with new 'last' column.
-        $query = $mysql->query('SELECT no FROM `'. SQLLOG . '` WHERE `resto` = 0 ORDER BY sticky DESC, IF(sticky=0, last, sticky) DESC');
-        while ($row = $mysql->fetch_assoc($query)) {
+        $query = $mysql->fetch_assoc('SELECT no FROM `'. SQLLOG . '` WHERE `resto` = 0 ORDER BY last_modified DESC, IF(sticky=0, last, sticky) DESC');
+        foreach ($query as $row) {
             if (isset($log[$row['no']]) && $log[$row['no']]['resto'] == 0) {
                 $threads[] = $row['no'];
             }

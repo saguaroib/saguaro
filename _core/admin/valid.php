@@ -14,14 +14,14 @@ class Valid {
                 return false;
             }
             if ($user && $pass) {
-                $row = $mysql->result("SELECT perms FROM " . SQLMODSLOG . " WHERE user='{$user}' and password='{$pass}' LIMIT 1");
+                $row = $mysql->result("SELECT perms FROM " . SQLMODSLOG . " WHERE user=:username and password=:password LIMIT 1", [":username" => $_COOKIE['saguaro_auser'], ":password" => $_COOKIE['saguaro_apass']]);
                 $valid_cache = json_decode($row, true);
             }
         }
 
         switch ($action) {
             case 'delete': //If they're a janitor on another board, check for illegal post unlock	
-                $illegal_count = $mysql->result("SELECT COUNT(*) FROM " . SQLREPORTS . " WHERE board='" . BOARD_DIR . "' AND no='{$no}' AND cat=2");
+                $illegal_count = $mysql->result("SELECT COUNT(*) FROM " . SQLREPORTS . " WHERE board=:board AND no=:post AND cat=2", [":board" => BOARD_DIR, ":post" => $no]);
                 return $illegal_count >= 3;
             case 'boardlist':
                 return $valid_cache['_boards'];

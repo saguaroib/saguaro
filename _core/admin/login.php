@@ -6,11 +6,8 @@ class Login {
         global $mysql, $csrf;
         
         if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['usernm']) && isset($_POST['passwd'])) {
-            $username = $mysql->escape_string($_POST['usernm']);
-            $passwd = $mysql->escape_string($_POST['passwd']);
 
-            $check = $mysql->result("SELECT COUNT(user) FROM " . SQLMODSLOG . " WHERE user='{$username}'");
-
+            $check = $mysql->result("SELECT COUNT(user) FROM " . SQLMODSLOG . " WHERE user=:username", [":username" => $_POST['usernm']]);
             if (SECURE_LOGIN) {
                 require_once(CORE_DIR . '/general/captcha.php');
                 $captcha = new Captcha;
@@ -26,8 +23,8 @@ class Login {
             } else { //Username exists, hash given password and compare.
                 require_once(CORE_DIR . '/crypt/legacy.php');
                 $crypt = new SaguaroCryptLegacy;
-                $check = $mysql->fetch_assoc("SELECT user,password,public_salt FROM " . SQLMODSLOG . " WHERE user='{$username}'");
-                if (!$crypt->compare_hash($passwd, $check['password'], $check['public_salt'])) {
+                $check = $mysql->fetch_assoc("SELECT user,password,public_salt FROM " . SQLMODSLOG . " WHERE user=:username", [":username" => $_POST['usernm']])[0];
+                if (!$crypt->compare_hash($_POST['passwd'], $check['password'], $check['public_salt'])) {
                     error(S_WRONGPASS);
                     die("</body></html>");
                 } else {

@@ -21,7 +21,7 @@ function get_cached($file) {
     static $cache = []; 
     if (!isset($cache[$file])) {
         global $mysql;
-        $cache[$file] = $mysql->result("SELECT message FROM " . SQLRESOURCES . " WHERE type='{$file}' LIMIT 1");
+        $cache[$file] = $mysql->result("SELECT message FROM " . SQLRESOURCES . " WHERE type=:file LIMIT 1", [":file" => $file], ['s']);
     }
     return $cache[$file];
 }
