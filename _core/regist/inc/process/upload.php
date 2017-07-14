@@ -17,8 +17,9 @@ class UploadCheck {
         if ($_SERVER["REQUEST_METHOD"] !== "POST") { error(S_UNJUST); } //Ensure the data was sent via POST.
         if ($this->captcha() !== true) { error($this->last); } //Captcha check.
         if ($this->proxy() !== true) { error($this->last); } //Proxy check.
-
+        
         //These checks access the SQL server so we should prioritize these last and then order based on how intensive they are.
+        if ($this->threadExists() !== true) { error($this->last);} //thread check
         if ($this->banned() !== true) { error($this->last); } //Ban check.
         if ($this->locked() !== true) { error($this->last); } //Lock check.
         if ($this->media() !== true) { error($this->last); } //Media check.
@@ -95,6 +96,21 @@ class UploadCheck {
                 $mysql->free_result($file_count);
                 $this->last = 'Media bump limit reached.';
                 //error("Max limit of " . MAX_IMGRES . " image replies has been reached.", $upfile);
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    function threadExists() { //Check if thread exists still.
+        $resto = (int) $_POST['resto'];
+        if ($resto) {
+            global $mysql;
+            
+            $thread = (int) $mysql->result("SELECT no FROM " . SQLLOG . " WHERE no=:resto LIMIT 1", [":resto"=>$resto], ["i"]);
+            
+            if (!$thread) {
+                $this->last = S_NOTHREADERR;
                 return false;
             }
         }
