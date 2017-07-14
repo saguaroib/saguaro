@@ -14,16 +14,16 @@ class UploadCheck {
     private $last = "";
 
     function run() {
-        if ($_SERVER["REQUEST_METHOD"] !== "POST") { error(S_UNJUST); } //Ensure the data was sent via POST.
-        if ($this->captcha() !== true) { error($this->last); } //Captcha check.
-        if ($this->proxy() !== true) { error($this->last); } //Proxy check.
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") { error(S_UNJUST);} //Ensure the data was sent via POST.
+        if ($this->captcha() !== true) { error($this->last);} //Captcha check.
+        if ($this->proxy() !== true) { error($this->last);} //Proxy check.
         
         //These checks access the SQL server so we should prioritize these last and then order based on how intensive they are.
         if ($this->threadExists() !== true) { error($this->last);} //thread check
-        if ($this->banned() !== true) { error($this->last); } //Ban check.
-        if ($this->locked() !== true) { error($this->last); } //Lock check.
-        if ($this->media() !== true) { error($this->last); } //Media check.
-        if ($this->cooldown() !== true) { error($this->last); }//Flood/cooldown checks.
+        if ($this->banned() !== true) { error($this->last);} //Ban check.
+        if ($this->locked() !== true) { error($this->last);} //Lock check.
+        if ($this->media() !== true) { error($this->last);} //Media check.
+        if ($this->cooldown() !== true) { error($this->last);}//Flood/cooldown checks.
     }
 
     function captcha() {
@@ -106,9 +106,9 @@ class UploadCheck {
         $resto = (int) $_POST['resto'];
         if ($resto) {
             global $mysql;
-            
+
             $thread = (int) $mysql->result("SELECT no FROM " . SQLLOG . " WHERE no=:resto LIMIT 1", [":resto"=>$resto], ["i"]);
-            
+
             if (!$thread) {
                 $this->last = S_NOTHREADERR;
                 return false;
@@ -125,7 +125,15 @@ class UploadCheck {
 
         $resto = (int) $_POST['resto'];
         $time = time();
-        $has_file = ($_FILES['upfile']['error'][0] == UPLOAD_ERR_NO_FILE) ? 0 : 1;
+        //$has_file = ($_FILES['upfile']['error'][0] == UPLOAD_ERR_NO_FILE) ? 0 : 1; //??????
+        $has_file = $_FILES['upfile']['size'][0]>0;
+
+        if (!$has_file && !$resto) {
+            if (!valid('moderator') && defined('ALLOW_TEXTONLY') && !ALLOW_TEXTONLY) {
+                $this->last = S_NOPIC;
+                return false;
+            }
+        }
 
         //Pull all recent rows (to the highest timeout) from the SQL table.
         $min = $time - max(COOLDOWN_POST, COOLDOWN_FILE, COOLDOWN_THREAD);
