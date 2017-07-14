@@ -96,7 +96,7 @@ class Log {
 
             if (!$resno && $page > 1) $head->info['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . "- Page {$page}";
             $dat = $head->generate();
-            $postform->ribbon = [['link' => 'catalog.html','name' => 'Catalog']/*,['link' => PUBLIC_SERVER . BOARD_DIR . '/imgboard.php?mode=arc','name' => 'Archive'], ['link' => PUBLIC_SERVER . BOARD_DIR . '/imgboard.php?mode=logs','name' => 'Logs']*/];
+            $postform->ribbon = [['link' => ($resno ? '../catalog.html' : 'catalog.html'),'name' => 'Catalog']/*,['link' => PUBLIC_SERVER . BOARD_DIR . '/imgboard.php?mode=arc','name' => 'Archive'], ['link' => PUBLIC_SERVER . BOARD_DIR . '/imgboard.php?mode=logs','name' => 'Logs']*/];
 
             $dat .= $postform->format($resno);
             $st = ($resno) ? $page : null;
