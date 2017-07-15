@@ -70,6 +70,7 @@ class Regist {
             'tripcode'  => $info['post']['tripcode'],
             'country'   => $info['post']['country'],
             'resto'     => $resto,
+            'root'      => "0",
             'board'     => BOARD_DIR
         ];
 
@@ -81,7 +82,10 @@ class Regist {
         $last_modified = ($resto) ? $resto : $final;
         $last_modified = (int) $last_modified;
         $info['time'] = (int) $info['time'];
-        $mysql->query("UPDATE " . SQLLOG . " SET last_modified=:time WHERE no=:post AND board=:board", [":time" => $info['time'], ":post" => $last_modified, ":board" => BOARD_DIR], ["iis"]);        
+        
+        $root = ($resto && stripos($_POST['email'], "sage") !== false) ? "root" : "NOW()";
+        
+        $mysql->query("UPDATE " . SQLLOG . " SET last_modified=:time, root={$root} WHERE no=:post AND board=:board", [":time" => $info['time'], ":post" => $last_modified, ":board" => BOARD_DIR], ["iis"]);        
 
         $this->cache['post']['number'] = $final;
         /* if (!$result = ?) { echo E_REGFAILED; }*/
@@ -145,7 +149,7 @@ class Regist {
         $child = $this->cache['post']['child'];
         $number = (int) $this->cache['post']['number'];
         $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
-        $mysql->query("UPDATE " . SQLLOG . " SET last=:number WHERE no=:parent", [":number" => $number, ":parent" => $parent], ["ii"]);
+        //$mysql->query("UPDATE " . SQLLOG . " SET last=:number WHERE no=:parent", [":number" => $number, ":parent" => $parent], ["ii"]);
 
         //Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
         require_once(CORE_DIR . "/delete/delete.php");
