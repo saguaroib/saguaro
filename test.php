@@ -16,7 +16,7 @@ if (is_file($lockout)) {
 } else {
     //These should be the only things changed without knowing what you're doing, everything that uses them is automated.
     $defaults = [ //Default accounts.
-                    ['name' => 'admin', 'pass' => 'guest', 'priv' => 'janitor_board,moderator,admin,manager', 'deny' => 'none']
+                    ['name' => 'admin', 'pass' => 'guest', '_flags' => ['janitor'=>1,'developer'=>1,'janitor_board'=>1,'moderator'=>1,'admin'=>1,'manager'=>1], '_boards' => ['*']]
                 ];
 
     //Point of no return. Casual users shouldn't go past here.
@@ -24,7 +24,7 @@ if (is_file($lockout)) {
     error_reporting(E_ALL & ~E_NOTICE);
 
     $config_file = 'config.php';
-    $min_php = '4.2.0';
+    $min_php = '5.2.0';
     $min_gd = '2.0.0';
     $min_mysql = '4.0.0';
 
@@ -84,7 +84,7 @@ if (is_file($lockout)) {
             if (mysqli_connect_errno()) {
                 echo "There was a problem with MySQL, cannot initialize MySQL data. (" . mysqli_connect_errno() . ")";
             } else {
-                $tables = [SQLLOG, SQLBANLOG, SQLMODSLOG, SQLDELLOG, SQLMEDIA];
+                $tables = [SQLLOG, SQLBANLOG, SQLMODSLOG, SQLDELLOG, SQLMEDIA, SQLREPORTS, SQLRESOURCES];
                 mysqli_select_db($mysqli, SQLDB);
 
                 echo "These SQL queries are executed as <strong>" . SQLUSER . "</strong> on the SQL server <strong>" . SQLHOST . "</strong>.<br><br>";
@@ -209,7 +209,7 @@ if (is_file($lockout)) {
         } else {
             echo "<br>";
 
-            if (!defined(BOARDLIST) && BOARDLIST !== '') {
+            /*if (!defined(BOARDLIST) && BOARDLIST !== '') {
                 $bl = '<strong>BOARDLIST</strong> (' . BOARDLIST . ')';
                 $url = rawurlencode(BOARDLIST);
 
@@ -222,7 +222,7 @@ if (is_file($lockout)) {
                 }
             } else {
                 echo "<strong>BOARDLIST</strong> was empty or undefined, skipping.<br>";
-            }
+            }*/
         }
         }
         echo "</div>";
@@ -262,14 +262,15 @@ if (is_file($lockout)) {
 
                     //Create tables.
                     $tables = [
-                        SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, media text, time int, sticky int, permasage int, locked int, last int, modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, resto int, board text",
+                        //SQLLOG => "primary key(no), no int not null auto_increment, now text, name text, email text, sub text, com text, host text, pwd text, media text, time int, sticky int, permasage int, locked int, last int, modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, resto int, board text",
+                        SQLLOG => "`no` int(11) NOT NULL AUTO_INCREMENT,  `now` text,  `name` text,  `email` text,  `sub` text,  `com` text,  `host` text,  `pwd` text,  `media` text,  `time` int(11) DEFAULT NULL,  `sticky` int(1) DEFAULT NULL,  `archived` int(1) DEFAULT NULL,  `permasage` int(1) DEFAULT NULL,  `locked` int(1) DEFAULT NULL,  `last` int(11) DEFAULT NULL,  `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  `resto` int(11) DEFAULT NULL,  `board` varchar(55),  `capcode` varchar(50) DEFAULT NULL,  `id` varchar(50) DEFAULT NULL,  `country` varchar(4) DEFAULT NULL,  `last_modified` int(25) NOT NULL,  `tripcode` varchar(100) DEFAULT NULL, PRIMARY KEY (`no`,`board`)",                     
                         SQLBANLOG => "board VARCHAR(20), global INT(1), name VARCHAR(200), host VARCHAR(50), com VARCHAR(3000), reason VARCHAR(1000), length INT(25), admin VARCHAR(100), placed INT(25) NOT NULL, PRIMARY KEY (board, placed)",
-                        SQLMODSLOG => "user VARCHAR(25), password VARCHAR(250), public_salt VARCHAR(256), allowed VARCHAR(250), denied VARCHAR(250), PRIMARY KEY (user), UNIQUE KEY (user)",
+                        SQLMODSLOG => "user VARCHAR(25), password VARCHAR(250), public_salt VARCHAR(256), perms TEXT, PRIMARY KEY (user), UNIQUE KEY (user)",
                         SQLDELLOG => "admin VARCHAR(250), postno VARCHAR(20) PRIMARY KEY, action VARCHAR(25), board VARCHAR(250), name VARCHAR(50), sub VARCHAR(50), com VARCHAR(" . S_POSTLENGTH . ")", //Why does S_POSTLENGTH start with S_?
-                        SQLBANNOTES => "board VARCHAR(25), host VARCHAR(250), type VARCHAR(50), com VARCHAR(3100), reason VARCHAR(2000), admin VARCHAR(250), PRIMARY KEY (host, com), UNIQUE KEY (com)",
+                        //SQLBANNOTES => "board VARCHAR(25), host VARCHAR(250), type VARCHAR(50), com VARCHAR(3100), reason VARCHAR(2000), admin VARCHAR(250), PRIMARY KEY (host, com), UNIQUE KEY (com)",
                         SQLMEDIA => "primary key(no), no int not null auto_increment, parent int, resto int, filename text, localname text, localthumbname text, filesize int, extension text, width int, height int, thumb_width int, thumb_height int, hash text, board text",
-                        "reports" => "no VARCHAR(25), board  VARCHAR(250), type VARCHAR(250), ip VARCHAR(250), reported TIMESTAMP, PRIMARY KEY(no, ip)",
-                        "loginattempts" => "userattempt VARCHAR(25) PRIMARY KEY, passattempt VARCHAR(250), board VARCHAR(250), ip VARCHAR(250), attemptno VARCHAR(50)",
+                        SQLREPORTS => "`active` int(1) NOT NULL,  `no` varchar(25) NOT NULL DEFAULT '',  `board` varchar(250) NOT NULL DEFAULT '',  `count` int(4) NOT NULL,  `rule_count` int(4) DEFAULT NULL,  `spam_count` int(4) DEFAULT NULL,  `illegal_count` int(4) DEFAULT NULL, `cp_count` int(4) DEFAULT NULL,  `global` int(1) NOT NULL,`post` longtext,  `note` longtext NOT NULL,  `ip` varchar(250) NOT NULL DEFAULT '',  `reported` int(12) NOT NULL,  PRIMARY KEY (`no`,`board`,`reported`)",
+                        SQLRESOURCES => "`type` varchar(50) NOT NULL, `timestamp` bigint(20) NOT NULL, `message` text NOT NULL, PRIMARY KEY (`timestamp`), KEY `type` (`type`)",
                         "rebuildqueue" => "board char(4) NOT NULL, no int(11) NOT NULL, ownedby int(11) NOT NULL default '0', ts timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, PRIMARY KEY (board,no,ownedby)"
                     ];
 
@@ -297,9 +298,11 @@ if (is_file($lockout)) {
                             $password = $crypt->generate_hash($account['pass']); //Generate password hash and public salt with SaguaroCrypt.
 
                             //$pass = ($autolock === true) ? "<span class='spoiler'>" . $account['pass'] . "</span>" : "";
-                            echo "<strong>" . $account['name'] . "</strong> $pass (<span class='info' title='Privileges'>" . $account['priv'] . "</span> / <span class='info' title='Denied'>" . $account['deny'] . "</span>) ";
+                            echo "<strong>" . $account['name'] . "</strong> $pass (<span class='info' title='Privileges'>" . $account['_flags'] . "</span>) ";
 
-                            $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, public_salt, allowed, denied) VALUES ('{$account['name']}', '{$password['hash']}', '{$password['public_salt']}', '{$account['priv']}', '{$account['deny']}')");
+                            $permArr = ['_flags' => $account['_flags'], '_boards' => $account['_boards']];
+                            $permissions = json_encode($permArr);
+                            $status = mysqli_query($mysqli, "INSERT INTO " . SQLMODSLOG . " (user, password, public_salt, perms) VALUES ('{$account['name']}', '{$password['hash']}', '{$password['public_salt']}', '{$permissions}')");
                             $unfail = (mysqli_errno($mysqli) == 1062) ? "<span class='fail'>ALREADY EXISTS</span><br>" : $fail;
                             echo ($status) ? $success : "(" . mysqli_errno($mysqli) . ") " . $unfail;
                         }

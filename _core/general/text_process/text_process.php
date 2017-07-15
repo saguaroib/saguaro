@@ -39,5 +39,3 @@ class TextProcessor {
         return $this->process($input);
     }
 }
-
-?>

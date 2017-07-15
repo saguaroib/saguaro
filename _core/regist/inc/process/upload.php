@@ -14,15 +14,16 @@ class UploadCheck {
     private $last = "";
 
     function run() {
-        if ($_SERVER["REQUEST_METHOD"] !== "POST") { error(S_UNJUST); } //Ensure the data was sent via POST.
-        if ($this->captcha() !== true) { error($this->last); } //Captcha check.
-        if ($this->proxy() !== true) { error($this->last); } //Proxy check.
-
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") { error(S_UNJUST);} //Ensure the data was sent via POST.
+        if ($this->captcha() !== true) { error($this->last);} //Captcha check.
+        if ($this->proxy() !== true) { error($this->last);} //Proxy check.
+        
         //These checks access the SQL server so we should prioritize these last and then order based on how intensive they are.
-        if ($this->banned() !== true) { header("Location: banned.php"); die(); } //Ban check.
-        if ($this->locked() !== true) { error($this->last); } //Lock check.
-        if ($this->media() !== true) { error($this->last); } //Media check.
-        if ($this->cooldown() !== true) { error($this->last); }//Flood/cooldown checks.
+        if ($this->threadExists() !== true) { error($this->last);} //thread check
+        if ($this->banned() !== true) { error($this->last);} //Ban check.
+        if ($this->locked() !== true) { error($this->last);} //Lock check.
+        if ($this->media() !== true) { error($this->last);} //Media check.
+        if ($this->cooldown() !== true) { error($this->last);}//Flood/cooldown checks.
     }
 
     function captcha() {
@@ -75,9 +76,9 @@ class UploadCheck {
             global $mysql;
 
             //Could potentially just WHERE locked=1 with a count or something, but is that better?
-            $locked = $mysql->fetch_assoc("SELECT locked FROM ".SQLLOG." WHERE no=$resto")['locked'];
+            $locked = $mysql->result("SELECT locked FROM ".SQLLOG." WHERE no=:resto", [":resto" => $resto], ["i"]);
 
-            if ($locked) {
+            if ($locked == 1) {
                 $this->last = S_THREADLOCKED; //error(S_THREADLOCKED);
                 return false;
             }
@@ -90,17 +91,26 @@ class UploadCheck {
         if ($resto) {
             global $mysql;
 
-            //The latter (default) replicates old behavior where each post counts as one file, regardless of its actual amount.
-            $query = (STRICT_FILE_COUNT === true) ? '*' : 'DISTINCT parent';
-            $query = "select COUNT({$query}) from ".SQLMEDIA." where resto=$resto OR parent=$resto";
-
-            $file_count = $mysql->query($query);
-            $file_count = $mysql->fetch_row($file_count)[0];
-
+            $files_count = (int) $mysql->result("SELECT COUNT(*) FROM ".SQLMEDIA." WHERE (resto=:resto OR parent=:resto)", [":resto" => $resto, ":resto" => $resto], ["ii"]);
             if ($file_count > MAX_IMGRES) {
                 $mysql->free_result($file_count);
                 $this->last = 'Media bump limit reached.';
                 //error("Max limit of " . MAX_IMGRES . " image replies has been reached.", $upfile);
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    function threadExists() { //Check if thread exists still.
+        $resto = (int) $_POST['resto'];
+        if ($resto) {
+            global $mysql;
+
+            $thread = (int) $mysql->result("SELECT no FROM " . SQLLOG . " WHERE no=:resto LIMIT 1", [":resto"=>$resto], ["i"]);
+
+            if (!$thread) {
+                $this->last = S_NOTHREADERR;
                 return false;
             }
         }
@@ -111,24 +121,30 @@ class UploadCheck {
         //Check for cooldown violations for text posts, file posts, and thread creation.
         if (valid('moderator')) { return true; }
 
-        global $mysql;
+        global $mysql, $host;
 
         $resto = (int) $_POST['resto'];
-        $host = $mysql->escape_string($_SERVER['REMOTE_ADDR']);
         $time = time();
-        $has_file = ($_FILES['upfile']['error'][0] == UPLOAD_ERR_NO_FILE) ? 0 : 1;
+        //$has_file = ($_FILES['upfile']['error'][0] == UPLOAD_ERR_NO_FILE) ? 0 : 1; //??????
+        $has_file = $_FILES['upfile']['size'][0]>0;
+
+        if (!$has_file && !$resto) {
+            if (!valid('moderator') && defined('ALLOW_TEXTONLY') && !ALLOW_TEXTONLY) {
+                $this->last = S_NOPIC;
+                return false;
+            }
+        }
 
         //Pull all recent rows (to the highest timeout) from the SQL table.
         $min = $time - max(COOLDOWN_POST, COOLDOWN_FILE, COOLDOWN_THREAD);
-        $query = "SELECT time,resto FROM `".SQLLOG."` WHERE host='{$host}' AND time>=$min";
-        $query = $mysql->query($query);
-        $amount = $mysql->num_rows($query);
+        $query = $mysql->query("SELECT time,resto FROM `".SQLLOG."` WHERE host=:host AND time>=:min", [":host" => $host, ":min" => $min], ["si"]);
+        $amount = $mysql->num_rows("SELECT time,resto FROM `".SQLLOG."` WHERE host=:host AND time>=:min", [":host" => $host, ":min" => $min], ["si"]);
 
         if ($amount > 0) { //We have at least one post that violates the cooldown periods.
             $this->last = S_RENZOKU; //We could theoretically stop here if we don't care to give a SPECIFIC error message or care about the differences.
 
             //Check each row.
-            while ($row = $mysql->fetch_assoc($query)) {
+            foreach ($query as $row) {
                 //Types: text post, text post (dupe?), file post, thread
                 $diff = ($time - $row['time']); //Time difference before valid.
 
@@ -148,5 +164,3 @@ class UploadCheck {
         return true;
     }
 }
-
-?>

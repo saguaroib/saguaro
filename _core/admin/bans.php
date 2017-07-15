@@ -20,11 +20,10 @@
 class Banish {
     
     //If user is banned, return true.
-    function isBanned($ip, $redirect = 0) {
-        global $mysql;
-        
-        $exists   = $mysql->num_rows("SELECT * FROM " . SQLBANLOG . " WHERE host='$ip' AND (board='" . BOARD_DIR . "' or global=1)");
-        return ($exists > 0) ? true : false;
+    function isBanned($legacy = null) {
+        global $mysql, $host;
+        $exists = (int) $mysql->result("SELECT COUNT(active) FROM " . SQLBANLOG . " WHERE host=:host AND board=:board AND active='1'", [":host" => $host, ":board"=>BOARD_DIR]);
+        return $exists>0;
     }
 
     //Files the ban
@@ -222,8 +221,10 @@ class Banish {
 	
 	//Formats banned.php HTML
 	function banScreen($host) {
-		global $page;
-
+		
+        require_once(CORE_DIR . "/page/page.php");
+        $page = new Page;
+        
 		//If ban exists in the table, get the information array. Otherwise, user isn't banned
 		if ($this->isBanned($host)) {
 			$info = $this->banInfo($host);
@@ -256,7 +257,7 @@ class Banish {
 			//$page->headVars['css']['extra'] = "banned.css";
             $temp = '<div class="container"><div class="header">You are not banned!</div><div class="banBody">You are not banned from posting.</div></div>';
             
-            return $temp;
+            return $page->generate($temp);
         }
         
         return "There was an issue retrieving ban information.";
@@ -371,5 +372,3 @@ class Banish {
 
     }
 }
-
-?>

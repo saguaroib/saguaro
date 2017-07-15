@@ -42,7 +42,7 @@ class ImageThumbnail {
         ];
     }
 
-    private function bumpMemory($input) {
+    private function bumpMemory() {
         $this->memory_limit_increased = false;
         $input = $this->stats;
         $pixels = $input['width'] * $input['height'];

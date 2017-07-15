@@ -3,17 +3,12 @@
 global $my_log, $mysql;
 
 $res = (int) $res;
+$redirect = $mysql->fetch_assoc("SELECT no,resto FROM " . SQLLOG . " WHERE no=:res", [":res" => $res], ['i'])[0];
 
-if (!$redir = $mysql->fetch_row("select no,resto from " . SQLLOG . " where no=" . $res)) {
-    echo S_SQLFAIL;
-}
-
-list($no, $resto) = $redir;
-
-if (!$no) {
+if (!$redirect['no']) {
     global $mysql;
     
-    $maxq = $mysql->query("select max(no) from " . SQLLOG);
+    $maxq = $mysql->result("SELECT MAX(no) FROM " . SQLLOG);
     list($max) = $mysql->fetch_row($maxq);
     if (!$max || ($res > $max))
         header("HTTP/1.0 404 Not Found");
@@ -22,13 +17,11 @@ if (!$no) {
     error(S_NOTHREADERR, $dest);
 }
 
-$redirect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "/" . (($resto == 0) ? $no : $resto) . PHP_EXT . '#' . $no;
+$redirectect = DATA_SERVER . BOARD_DIR . "/" . RES_DIR . "/" . (($redirect['resto'] == 0) ? $redirect['no'] : $redirect['resto']) . PHP_EXT . '#' . $redirect['no'];
 
-echo "<META HTTP-EQUIV='refresh' content='0;URL=$redirect'>";
+echo "<META HTTP-EQUIV='refresh' content='0;URL=$redirectect'>";
 
-if ($resto == "0") {
+if ($redirect['resto'] == "0") {
     $my_log->update_cache();
     $my_log->update($res);
 }
-
-?>

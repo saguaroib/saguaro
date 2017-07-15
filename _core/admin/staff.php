@@ -73,7 +73,4 @@ class Staff {
     function modifyStaff($targUser, $actUser, $actPass, $perms = array(), $self = 0) {
         //modify existing user
     }
-
 }
-
-?>

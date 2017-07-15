@@ -31,9 +31,10 @@ class SaguaroDelete {
 
         foreach ($rebuild as $key => $val) {
             if (ENABLE_API) {
-                require_once(CORE_DIR . "/api/apoi.php");
+                require_once(CORE_DIR . "/api/apoapi.php");
                 $api = new SaguaroAPI;
-                $api->formatThread($key, 0); //Update .json files to reflect deleted posts
+                $api->thread($key); //Update .json files to reflect deleted posts
+                $api->generatePages();
             }
             $my_log->update($key, 1); //Leaving second parameter as 0 rebuilds the index each time!
         }
@@ -65,19 +66,19 @@ class SaguaroDelete {
 
         if ($admindel) { //Any actions for staff deletions
             $auser   = $mysql->escape_string($_COOKIE['saguaro_auser']);
-            $mysql->query("INSERT INTO " . SQLDELLOG . " (admin, type, action, time, board, postno) VALUES ('{$auser}', '2', 'Deleted post #{$no}', '" . time() . "', '" . BOARD_DIR . "', '{$no}')");
+            //$mysql->query("INSERT INTO " . SQLDELLOG . " (admin, type, action, time, board, postno) VALUES ('{$auser}', '2', 'Deleted post #{$no}', '" . time() . "', '" . BOARD_DIR . "', '{$no}')");
         }
         
-        $conditions = ($row['resto'] == 0 && $children && !$imgonly) ? "(no='{$no}' OR resto='{$no}')" : "no='{$no}'"; 
-        $result = $mysql->query("SELECT no,resto,tim,ext FROM " . SQLLOG . " WHERE {$conditions} AND board='" . BOARD_DIR . "'");
+        $conditions = ($row['resto'] == 0 && $children && !$imgonly) ? "(no=:no OR resto=:no)" : "(no=:no)";
+        $conditionsArray = ($row['resto'] == 0 && $children && !$imgonly) ? [":no" => $no, ":no" => $no, ":board" => BOARD_DIR] : [":no" => $no, ":board" => BOARD_DIR];
+        $result = $mysql->fetch_assoc("SELECT * FROM " . SQLLOG . " WHERE {$conditions} AND board=:board", $conditionsArray);
 
-        while ($delrow = $mysql->fetch_assoc($result)) { //This does the resource deletions
+        foreach ($result as $delrow) {
             $this->deleteFile($delrow, $imgonly); //Delete all associated media.
-            $this->deleteResources($delrow, $imgonly); //Delete API, HTML page if necessary
+            $this->deleteResources($delrow, $imgonly); //Delete API, HTML page if necessary            
         }
-
         //Remove posts from the database
-        $mysql->query("DELETE FROM " . SQLLOG . " WHERE {$conditions} AND board='" . BOARD_DIR . "'");
+        $mysql->query("DELETE FROM " . SQLLOG . " WHERE {$conditions} AND board=:board", $conditionsArray);
         
         return $row['resto']; // so the caller can know what pages need to be rebuilt
     }
@@ -86,24 +87,19 @@ class SaguaroDelete {
     private function deleteFile($post, $imgonly = false) {
         global $mysql;
 
+        $files = json_decode($post['media'], true);
         $path = realpath("./") . '/' . IMG_DIR;
-        $delfile  = $path . $post['tim'] . $post['ext']; //Path to file
-        $delthumb = THUMB_DIR . $post['tim'] . 's.jpg';//Path to thumbnail
-        
-        if ($imgonly) {
-            $mysql->query("UPDATE " . SQLLOG . " SET fsize='-1' WHERE no='$no' and board='" . BOARD_DIR ."'");
-        }
-        if ($post['embed']) { //Unset embed
-            $mysql->query("UPDATE " . SQLLOG . " SET embed='deleted' WHERE no='$no'");
-        }
-        if (is_file($delfile)) {
-            unlink($delfile); //Delete image
-        }
-        if (is_file($delthumb)) {
-            unlink($delthumb); //Delete thumbnail
-        }
-        if (OEKAKI_BOARD == 1 && is_file($path . $post['tim'] . '.pch')) {
-            unlink($path . $post['tim'] . '.pch'); // delete oe animation
+        foreach($files as $file) {
+            $delfile = IMG_DIR . $file['localname']; //Path to file
+            $delthumb = THUMB_DIR . $file['localthumbname'];//Path to thumbnail
+            if ($imgonly) {
+                return $mysql->query("UPDATE " . SQLMEDIA . " SET filesize='-1' WHERE no=:post and board=:board", [":post" => $no, ":board" => BOARD_DIR]);
+            }
+
+            $mysql->query("DELETE FROM " . SQLMEDIA . " WHERE parent=:post and board=:board", [":post" => $post['no'], ":board" => BOARD_DIR]);
+
+            if (is_file($delfile)) unlink($delfile); //Delete image
+            if (is_file($delthumb)) unlink($delthumb); //Delete thumbnail
         }
     }
 
@@ -121,10 +117,72 @@ class SaguaroDelete {
             @unlink(API_DIR_RES . $post['no'] . ".json"); //Delete API json. Catalog/threads/index files are rebuilt later anyway.
         } 
         $my_log->cache['THREADS'] = array_diff($my_log->cache['THREADS'], array($post['no'])); //Remove from THREADS array
-        $mysql->query("DELETE FROM " . SQLREPORTS . " WHERE no='{$post['no']}'"); //Clear associated reports
+        $mysql->query("DELETE FROM " . SQLREPORTS . " WHERE no=:post", [":post" => $post['no']]); //Clear associated reports
         if (USE_GZIP) {
             @unlink(RES_DIR . $post['no'] . PHP_EXT . '.gz');
         }
         @unlink(RES_DIR . $post['no'] . PHP_EXT);
+    }
+    
+    public function prune_old() { //This does the old thread pruning
+        global $my_log, $mysql;
+        $my_log->update_cache();
+
+        if (PAGES_PER_BOARD >= 1) {
+            $maxposts   = LOG_MAX;
+            $maxthreads = (PAGES_PER_BOARD > 0) ? (PAGES_PER_BOARD * THREADS_PER_PAGE) : 0;
+            //number of pages x how many threads per page
+
+            if ($maxthreads) {
+                $exp_order = (EXPIRE_NEGLECTED == true) ? 'modified' : (defined(EXPIRE_NEGLECTED) ? 'no' : 'modified'); //Legacy config support. For now.
+                
+                $result = $mysql->fetch_assoc("SELECT no FROM " . SQLLOG . " WHERE sticky=0 AND resto=0 ORDER BY $exp_order ASC");
+                $threadcount = $mysql->num_rows("SELECT no FROM " . SQLLOG . " WHERE sticky=0 AND resto=0 ORDER BY $exp_order ASC");
+                while ($threadcount > $maxthreads) {
+                    foreach ($result as $row) {
+                        $this->delete_post($row['no'], 'trim', 0, 1, 1, 0); // imgonly=0, automatic=1, children=1
+                        $threadcount--;
+                    }
+                }
+                $my_log->update_cache(1); //Force rebuild the cache after batch of deletions is done, instead after every single deletion. 
+                $mysql->free_result($result);
+                // Original max-posts method (note: cleans orphaned posts later than parent posts)
+            } else {
+                // make list of stickies
+                $stickies = array(); // keys are stickied thread numbers
+                $result = $mysql->fetch_assoc("SELECT no from " . SQLLOG . " where sticky>=1 and resto=0");
+                foreach ($result as $row) {
+                    $stickies[$row['no']] = 1;
+                }
+
+                $result    = $mysql->query("SELECT no,resto,sticky FROM " . SQLLOG . " ORDER BY no ASC");
+                $postcount = $mysql->num_rows("SELECT no,resto,sticky FROM " . SQLLOG . " ORDER BY no ASC");
+                while ($postcount >= $maxposts) {
+                    foreach ($result as $row) {
+                        if ($row['sticky'] > 0) continue; // don't delete if this is a sticky thread
+                        if ($row['resto'] != 0 && $stickies[$row['resto']] == 1) continue; // don't delete if this is a REPLY to a sticky
+                        $this->delete_post($row['no'], 'trim', 0, 1, 0, 0); // imgonly=0, automatic=1, children=0
+                        $postcount--;
+                    }   
+                }
+                $mysql->free_result($result);
+            }
+        }
+    }
+
+    public function pruneThread($no) {
+        global $my_log, $mysql;
+        $my_log->update_cache();
+        $maxreplies = EVENT_STICKY_RES;
+
+        $result = $mysql->fetch_assoc("SELECT no FROM " . SQLLOG . " WHERE resto='$no' ORDER BY time ASC");
+        $repcount = $mysql->num_rows("SELECT no FROM " . SQLLOG . " WHERE resto='$no' ORDER BY time ASC");
+        while ($repcount >= $maxreplies) {
+            foreach($result as $row) {
+                delete_post($row['no'], 'trim', 0, 1, 0, 0); // imgonly=0, automatic=1, children=1
+                $repcount--;
+            }
+        }
+        $mysql->free_result($result);
     }
 }

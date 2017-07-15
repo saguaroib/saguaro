@@ -90,4 +90,3 @@ class SaguaroAPI {
         return $temp;
     }
 }
-?>

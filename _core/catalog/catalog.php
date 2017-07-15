@@ -19,41 +19,91 @@ require("post.php");
 class Catalog extends Log {
     private $data = [];
 
-    function formatPage($static = false) {     
+    public function generate() {
         require_once(CORE_DIR . "/page/page.php");
         $page = new Page;
+        require_once(CORE_DIR . "/postform.php");
+        $pf = new PostForm;
+
         $page->headVars['page']['title'] = "/" . BOARD_DIR . "/ - " . TITLE . " - Catalog";
-        //if ($static !== true) array_push($page->headVars['js']['script'], "catalog.js");
-        array_push($page->headVars['css']['sheet'], "/stylesheets/catalog.css");
-        $out = $page->generate($this->format($static));
-        
-        $this->print_page("catalog" . PHP_EXT, $out, 0);
+        array_push($page->headVars['css']['sheet'], "stylesheets/catalog.css");
+
+        $pf->ribbon = [['link' => SITE_ROOT_BD,'name' => 'Return']];
+        $temp = $pf->format();
+
+       $static = (defined('STATIC_CATALOG') && STATIC_CATALOG);
+         
+        if (!$static) {
+            $page->headVars['js']['script'] =  ["catalog.js"];
+            array_push($page->headVars['js']['raw'], "var catalog = " . $this->catalogJS(). ";");
+        }
+
+        $temp .= $this->formatPage($static);
+        $out = $page->generate($temp);
+
+        $this->print_page("catalog.html", $out, 0);
     }
 
-    function format() {
+    private function formatPage($static) {
         global $my_log;
 
-        $my_log->update_cache();
-        $log = $my_log->cache;
         $temp = "";
-
-        $this->parseOPs();
-        $this->parseReplies();
-        $this->sortOPs();
-
-        foreach ($this->data as $entry) {
-            $temp .= $this->generateOP($log[$entry['no']],$entry);
-        }
         
-        require_once(CORE_DIR . "/postform.php");
-        $form = new PostForm;
-        $temp = $form->format();
+        if ($static) {
+            $my_log->update_cache();
+            $log = $my_log->cache;
+            $this->parseOPs();
+            $this->parseReplies();
+            $this->sortOPs();
+            foreach ($this->data as $entry) {
+                $temp .= $this->generateOP($log[$entry['no']],$entry);
+            }
+        }
 
-        $temp .= "<div class='catalog_container'>" . $temp . "</div>";
+        $temp .= "<div id='catalog_container'>" . $temp . "</div>";
+        $temp .= "<hr>";
 
         return $temp;
     }
-    function sortOPs() {
+
+    private function catalogJS() {
+        global $my_log;
+
+        $catalog = ["count" =>  (int) count($my_log->cache['THREADS']), "slug" => BOARD_DIR];
+        $catalog['threads'] = [];
+
+        foreach ($my_log->cache['THREADS'] as $key) {
+            $file = false;
+            if ($my_log->cache[$key]['media'] != null) {
+                $file = json_decode($my_log->cache[$key]['media'], true);
+            }
+ 
+            $pushMe = [
+                'no'   => $key,
+                'date' => $my_log->cache[$key]['time'],
+                'file' => (($file) ? $file[0]['filename'] : null),
+                'r'    => count($my_log->cache[$key]['children']),
+                'i'    => $my_log->cache[$key]['images'],
+                'author' => $my_log->cache[$key]['name'],
+                'imgurl' => (($file) ? $file[0]['localthumbname'] : null),
+                'tn_w' => (($file) ? $file[0]['thumb_width'] : null),
+                'tn_h' => (($file) ? $file[0]['thumb_height'] : null),
+                'sub'  => $my_log->cache[$key]['sub'],
+                'teaser' => $my_log->cache[$key]['com']
+            ];
+
+            foreach ($pushMe as $key) {
+                if (empty($key)){
+                    unset($key);
+                }
+            }
+            array_push($catalog['threads'], $pushMe);
+        }
+
+        return json_encode($catalog);
+    }
+   
+   private function sortOPs() {
         //Seperate stickies from non-stickies to process further.
         $temp = ['sticky' => [], 'regular' => []];
         
@@ -73,11 +123,13 @@ class Catalog extends Log {
         
         $this->data = array_merge($temp['sticky'], $temp['regular']);
     }
-    function generateOP($input,$stats) {
+    
+    private function generateOP($input,$stats) {
         $post = new CatalogPost;
 
         return $post->format($input,$stats);
     }
+
     private function parseOPs() {
         global $my_log;
         $log = $my_log->cache;
@@ -94,6 +146,7 @@ class Catalog extends Log {
                 ];
         }
     }
+
     private function parseReplies() {
         global $my_log;
         $log = $my_log->cache;
@@ -110,5 +163,3 @@ class Catalog extends Log {
         }
     }
 }
-
-?>

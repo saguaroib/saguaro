@@ -65,17 +65,28 @@ class Regist {
             //'tim'     => $info['local_name'],
             'time'      => $info['time'],
             'pwd'       => $info['post']['password'],
-            'sticky'    => $info['post']['special']['sticky'],
-            'permasage' => $info['post']['special']['permasage'],
-            'locked'    => $info['post']['special']['locked'],
+            'capcode'   => $info['post']['capcode'],
+            'id'        => $info['post']['id'],
+            'tripcode'  => $info['post']['tripcode'],
+            'country'   => $info['post']['country'],
             'resto'     => $resto,
+            'root'      => "0",
             'board'     => BOARD_DIR
         ];
 
         $set = $this->dynamicBuild($data);
-        $query = "insert into ".SQLLOG." (" . $set['keys'] . ") values (" . $set['vals'] .")";
-        $mysql->query($query);
-        $final = (int) $mysql->result('select last_insert_id()');
+        $mysql->query("INSERT INTO ".SQLLOG." (" . $set['keys'] . ") VALUES (" . $set['vals'] .")", $set['bindmap']);
+
+        $final = (int) $mysql->result('SELECT last_insert_id()');
+
+        $last_modified = ($resto) ? $resto : $final;
+        $last_modified = (int) $last_modified;
+        $info['time'] = (int) $info['time'];
+        
+        $root = ($resto && stripos($_POST['email'], "sage") !== false) ? "root" : "NOW()";
+        
+        $mysql->query("UPDATE " . SQLLOG . " SET last_modified=:time, root={$root} WHERE no=:post AND board=:board", [":time" => $info['time'], ":post" => $last_modified, ":board" => BOARD_DIR], ["iis"]);        
+
         $this->cache['post']['number'] = $final;
         /* if (!$result = ?) { echo E_REGFAILED; }*/
 
@@ -97,20 +108,19 @@ class Regist {
                     'filename'     => $file['original_name'],
                     'localname'    => $file['localname'],
                     'board' => BOARD_DIR
-                ];
+                ]; 
 
                 $set = $this->dynamicBuild($out);
-                $query = "insert into ".SQLMEDIA." (" . $set['keys'] . ") values (" . $set['vals'] .")";
-                $mysql->query($query);
+                $mysql->query("INSERT INTO ".SQLMEDIA." (" . $set['keys'] . ") VALUES (" . $set['vals'] .")", $set['bindmap']); //Disable this to skip writing to the media table.
 
-                array_push($items, $mysql->result('select last_insert_id()'));
+                unset($out['parent'], $out['resto'], $out['board']); //Delete unnecessary keys.
+                array_push($items, $out); //Push.
             }
-            $items = implode(" ", $items);
+            //$items = implode(" ", $items); //Old behavior of joining the media row numbers.
+            $items = json_encode($items);
 
-
-            //Update the medial column of the parent.
-            $query = "update ".SQLLOG." set media='$items' where no=$final";
-            $mysql->query($query);
+            //Update the media column of the parent.
+            $mysql->query("UPDATE ".SQLLOG." SET media=:items where no=:final", [":items" => $items, ":final" => $final], ['si']);
         }
 
         return $final; //Return 'no', latest auto-incremented column.
@@ -120,17 +130,17 @@ class Regist {
         global $mysql;
 
         //Dynamically build the SQL command, numerous advantages.
-        $keys = []; $vals = [];
+        $keys = []; $vals = []; $bindMap = [];
         foreach($set as $column => $value) {
-            array_push($keys,$column);
-
-            //If the value is numeric (but may be a string) or a boolean, cast it to an integer. Otherwise wrap in doublequotes and escape it.
-            array_push($vals,(is_numeric($value) || is_bool($value)) ? (int) $value : '"' . $mysql->escape_string($value) . '"');
+            $columns .= $column . ",";
+            $values .= ":".$column.",";
+            $bindMap[":".$column] = (empty($value) ? '' : $value);
+            
         }
-        $keys = implode(",",$keys);
-        $vals = implode(",",$vals);
+        $columns = rtrim($columns, ',');
+        $values = rtrim($values, ',');
 
-        return ['keys' => $keys, 'vals' => $vals];
+        return ['keys' => $columns, 'vals' => $values,'bindmap' => $bindMap];
     }
 
     private function updateCache() {
@@ -139,20 +149,26 @@ class Regist {
         $child = $this->cache['post']['child'];
         $number = (int) $this->cache['post']['number'];
         $parent = (int) (!$child) ? $number : $this->cache['post']['parent'];
-        $mysql->query("update " . SQLLOG . " set last=$number where no=$parent");
+        //$mysql->query("UPDATE " . SQLLOG . " SET last=:number WHERE no=:parent", [":number" => $number, ":parent" => $parent], ["ii"]);
 
         //Initiate prune now that we're clear of all potential errors. Do this before rebuilding any pages!
-        require_once("inc/prune.php");
-        prune_old(); //Does the page pruning
+        require_once(CORE_DIR . "/delete/delete.php");
+        $deleteClass = new SaguaroDelete;
+        $deleteClass->prune_old(); //Does the page pruning
 
-        if ($this->cache['post']['special']['sticky'] == 2)
-            pruneThread($parent); //Event stickies.
+        /*if ($this->cache['post']['special']['sticky'] == 2)
+            pruneThread($parent); //Event stickies.*/
 
         //Run update process.
         $static_rebuild = defined("STATIC_REBUILD") && (STATIC_REBUILD == 1);
         $target = ($child) ? $parent : $number;
         $my_log->update($target, $static_rebuild);
 
+        if (defined('ENABLE_API') && ENABLE_API) {
+            require_once(CORE_DIR . "api/apoapi.php");
+            $apiClass = new SaguaroAPI;
+            $apiClass->thread($parent);
+        }
         //Auto-noko.
         $url = DATA_SERVER . BOARD_DIR . "/" . RES_DIR;
         $target = $url . $target . PHP_EXT . (($child) ? "#$number" : "");
@@ -194,30 +210,24 @@ class Regist {
             'comment' => ($_POST['com']) ? $_POST['com'] : S_ANOTEXT,
             'password' => ($_POST['pwd'] !== "") ? substr($_POST['pwd'],0,8) : ($_COOKIE['saguaro_pass']) ? $_COOKIE['saguaro_pass'] : substr(md5(rand()),0,8), //Get and/or supply deletion password.
             'now' => date("m/d/y", $time) . "(" . (string) $day . ")" . date("H:i:s", $time),
-            'special' => $this->sortSpecial(),
             'parent' => ($_POST['resto']) ? (int) $_POST['resto'] : 0
         ];
 
+        //Apply user IDs, dice, EXIF etc to post..
+        require_once("inc/addons.php");
+        $addonsClass = new SaguaroRegistExtras;
+        $post = $addonsClass->init($post);
+        
         //Basic sanitization.
         $moderator = valid("moderator");
-        $sanitize = ['name','subject','email','comment'];
-        foreach ($sanitize as $key) {
-            $post[$key] = Sanitize::CleanStr($post[$key], $moderator);
+        $saniCls = new Sanitize;
+        $sanitize = $saniCls->process($post, $moderator); //['name','subject','email','comment'];
+        foreach ($sanitize as $key => $value) {
+            $post[$key] = $value;
         }
 
         $post['child'] = (bool) ($post['parent'] !== 0);
         $post['comment_md5'] = md5($post['comment']);
-
-        //Apply user IDs, dice, EXIF etc to post..
-        require_once("inc/addons.php");
-        $post['now'] = userID($post['now'], $post['email'], $post['name']);
-        $ret = parseComment($post['comment'], $post['email'], $post['name']);
-        $post['comment'] = $ret['com'];
-        $post['name'] = $ret['name'];
-
-        require_once('inc/tripcode.php');
-        $post['name'] = Tripcode::format($post['name']);
-        $post['name'] = ($post['special']['capcode']) ? Tripcode::adminify($post['name']) : $post['name'];
 
         return $post;
     }
@@ -226,6 +236,7 @@ class Regist {
         $files = [];
         $f = $_FILES['upfile'];
         $num_files = count($f['name']);
+        $this->cache['filecount'] = (int) $num_files;
         $max = min($num_files, MAX_FILE_COUNT); //Set the loop cap to the number of files or maximum allowed, whichever is lower.
         if ($num_files > MAX_FILE_COUNT) { //IF we want to impose the file limit and disregard the post itself, this is how we do it.
             //foreach ($f['fname'] as $key => $value) { unlink($value); } //By default, upload files should be in a temporary status and location which PHP should clean up on script completion.
@@ -274,32 +285,14 @@ class Regist {
         require_once("inc/thumb/thumb.php");
         require_once("inc/process/image.php"); //Required for video thumbnail stats.
 
-        $output = thumb($location, ($this->cache['post']['child']));
+        $output = thumb($location, ($this->cache['post']['child']), $this->cache['filecount']);
         if (!$output['location'] && $ext != ".pdf") {
             cleanup(S_UNUSUAL);
         }
 
         return $output;
     }
-
-    private function sortSpecial() {
-        if (valid('janitor')) {
-            //Must leave int values as ints, bool values as bools
-            $cap = (isset($_POST['showCap'])) ? true : false;
-            $sticky = (isset($_POST['isSticky'])) ? true : false;
-            $eventSticky = (isset($_POST['eventSticky'])) ? $sticky = 2 : false;
-            $locked = (isset($_POST['isLocked'])) ? true : false;
-        }
-
-        return [
-            'sticky' => $sticky,
-            'locked' => $locked,
-            'capcode' => $cap
-        ];
-    }
 }
 
 $regist = new Regist;
 $regist->run();
-
-?>

@@ -92,5 +92,3 @@ if (valid('admin'))
 
 $temp .= "<center><tr><td><input type='submit' value='Ban'/></td></tr></center></table></form><br><hr>";
 $temp .= "<tr>[<a href='" . PHP_ASELF . "' />Return</a>]</tr><br>";
-
-?>
