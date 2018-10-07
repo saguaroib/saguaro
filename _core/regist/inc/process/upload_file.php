@@ -12,8 +12,8 @@ class ProcessFile {
     private $last = "";
 
     function run($file) {
-        //Return early and do nothing if check fails.
-        if ($this->check($file) !== true) { return ['passCheck' => false, 'message' => $this->last]; }
+        if ($this->check($file) !== true) { return $this->error($file); } //Return early and do nothing if check fails.
+        if ($this->signature($file) !== true) { return $this->error($file); } //Check for embedded signatures.
 
         global $path;
         $info = [];
@@ -85,6 +85,10 @@ class ProcessFile {
         return $info;
     }
 
+    function error($file) {
+        return ['passCheck' => false, 'message' => $this->last . " (" . $file['name'] . ")"];
+    }
+
     function checkHash($hash) {
         //Returns true (pass/unique/disabled) or false (fail/dupe).
         global $mysql;
@@ -115,6 +119,41 @@ class ProcessFile {
         if (/*$upfile_name && */$file["size"] == 0) {
             $this->last = S_TOOBIGORNONE; //error(S_TOOBIGORNONE, $upfile);
             return false;
+        }
+
+        return true;
+    }
+
+    function signature($file) {
+        //Checks the entire file for additional, potentially unwanted or malicious file signatures which may have been embedded.
+        //This is most likely really slow, and should eventually be made configurable to use or not.
+
+        //Open file for reading, read it into local scope, then close the handle.
+        $input = $file['temp'];
+        $handle = fopen($input, "r");
+        $read = fread($handle, $file['size']);
+        fclose($handle);
+
+        /*
+            List of signatures check for and error out if found.
+            https://wikipedia.org/wiki/List_of_file_signatures
+            Keep in mind this checks through the entire file, not just from the start.
+            Therefore, $bad_signatures should could contain as uniquely identifiable (long) signatures as possible.
+            Shorter signatures may return false positives and therefore should be avoided with this method.
+        */
+        $bad_signatures = [
+            'ZIP' => 'PK(\x03\x04|\x05\x06|\x07|\x08)',
+            'RAR' => 'Rar!\x1A\x07',
+            '7ZIP' => '\x37\x7A\xBC\xAF\x27\x1C',
+            'TAR' => 'ustar(\x00\x30\x30|\x20\x20\x00)'
+        ];
+
+        foreach ($bad_signatures as $type => $signature) {
+            preg_match("/$signature/", $read, $matches);
+            if (count($matches) > 0) {
+                $this->last = "Potentially malicious file detected ($type), rejected.";
+                return false;
+            }
         }
 
         return true;
