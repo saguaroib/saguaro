@@ -1,7 +1,6 @@
 # This repository does not work and is not in active development.
 
 ## Saguaro Imageboard
-[Take a look at our demo boards!](http://saguaroimgboard.tk)
 
 *something-or-other*    
 
@@ -22,15 +21,15 @@ While there is no official licensing info due to this being a fork of a fork [..
 - libav (avconv/avprobe) for WebMs
 
 **Additional installation resources:**
-- [Installing](//github.com/spootTheLousy/saguaro/wiki/Installing)
-- [Setting up multiple boards](//github.com/spootTheLousy/saguaro/wiki/Adding-multiple-boards)
+- [Installing](//github.com/saguaroib/saguaro/wiki/Installing)
+- [Setting up multiple boards](//github.com/saguaroib/saguaro/wiki/Adding-multiple-boards)
 
 ## Additional support
-- [Quick start guide for developers](//github.com/spootTheLousy/saguaro/wiki/For-new-developers)
-- [The Wiki](//github.com/spootTheLousy/saguaro/wiki)
-- [API Documentation](//github.com/spootTheLousy/saguaro/wiki/API-Documentation) 
+- [Quick start guide for developers](//github.com/saguaroib/saguaro/wiki/For-new-developers)
+- [The Wiki](//github.com/saguaroib/saguaro/wiki)
+- [API Documentation](//github.com/saguaroib/saguaro/wiki/API-Documentation) 
 - #saguaroimgboard @ irc.rizon.net
 
 ## Testing, Development, and Contributing
-- Setting up a basic [Development Environment](//github.com/spootTheLousy/saguaro/wiki/Development-Environment)
-- [Contributing and standards](//github.com/spootTheLousy/saguaro/wiki/Contributing)
+- Setting up a basic [Development Environment](//github.com/saguaroib/saguaro/wiki/Development-Environment)
+- [Contributing and standards](//github.com/saguaroib/saguaro/wiki/Contributing)
