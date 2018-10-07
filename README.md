@@ -1,4 +1,4 @@
-# This repository does not work out of the box and is not in active development.
+# This repository does not work and is not in active development.
 
 ## Saguaro Imageboard
 [Take a look at our demo boards!](http://saguaroimgboard.tk)
